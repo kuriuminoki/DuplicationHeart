@@ -19,6 +19,11 @@
     <Filter Include="ソース ファイル\Domain">
       <UniqueIdentifier>{7b8b83f6-fff8-4c5d-b827-2db2ae89d09e}</UniqueIdentifier>
     </Filter>
+    <Filter Include="ヘッダー ファイル\ui">
+      <UniqueIdentifier>{b43d6885-1f2e-4bf4-b2f5-7f70517a9d51}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ソース ファイル\ui">
+      <UniqueIdentifier>{61fdfc5b-7eeb-40bd-a876-4a4ee95c01a5}</UniqueIdentifier>
     <Filter Include="ヘッダー ファイル\api">
       <UniqueIdentifier>{46b60107-7b6b-4f6b-826d-9863fc8197dd}</UniqueIdentifier>
     </Filter>
@@ -36,6 +41,8 @@
     <ClCompile Include="Character.cpp">
       <Filter>ソース ファイル\Domain</Filter>
     </ClCompile>
+    <ClCompile Include="CharacterDrawer.cpp">
+      <Filter>ソース ファイル\ui</Filter>
     <ClCompile Include="CharacterController.cpp">
       <Filter>ソース ファイル\api</Filter>
     </ClCompile>
@@ -50,6 +57,8 @@
     <ClInclude Include="Character.h">
       <Filter>ヘッダー ファイル\Domain</Filter>
     </ClInclude>
+    <ClInclude Include="CharacterDrawer.h">
+      <Filter>ヘッダー ファイル\ui</Filter>
     <ClInclude Include="CharacterController.h">
       <Filter>ヘッダー ファイル\api</Filter>
     </ClInclude>

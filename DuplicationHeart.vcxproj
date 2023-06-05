@@ -152,12 +152,14 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="Character.cpp" />
+    <ClCompile Include="CharacterDrawer.cpp" />
     <ClCompile Include="CharacterController.cpp" />
     <ClCompile Include="Control.cpp" />
     <ClCompile Include="Main.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Character.h" />
+    <ClInclude Include="CharacterDrawer.h" />
     <ClInclude Include="CharacterController.h" />
     <ClInclude Include="Control.h" />
     <ClInclude Include="Define.h" />
