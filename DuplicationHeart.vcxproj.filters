@@ -1,17 +1,69 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup>
-    <ClCompile Include="Character.cpp" />
-    <ClCompile Include="CharacterDrawer.cpp" />
-    <ClCompile Include="CharacterController.cpp" />
-    <ClCompile Include="Control.cpp" />
-    <ClCompile Include="Main.cpp" />
+    <Filter Include="ソース ファイル">
+      <UniqueIdentifier>{4FC737F1-C7A5-4376-A066-2A32D752A2FF}</UniqueIdentifier>
+      <Extensions>cpp;c;cc;cxx;c++;cppm;ixx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
+    </Filter>
+    <Filter Include="ヘッダー ファイル">
+      <UniqueIdentifier>{93995380-89BD-4b04-88EB-625FBE52EBFB}</UniqueIdentifier>
+      <Extensions>h;hh;hpp;hxx;h++;hm;inl;inc;ipp;xsd</Extensions>
+    </Filter>
+    <Filter Include="リソース ファイル">
+      <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
+      <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
+    </Filter>
+    <Filter Include="ヘッダー ファイル\Domain">
+      <UniqueIdentifier>{8685b8a3-5a51-4fad-aa69-0d6840c5e442}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ソース ファイル\Domain">
+      <UniqueIdentifier>{7b8b83f6-fff8-4c5d-b827-2db2ae89d09e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ヘッダー ファイル\ui">
+      <UniqueIdentifier>{b43d6885-1f2e-4bf4-b2f5-7f70517a9d51}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ソース ファイル\ui">
+      <UniqueIdentifier>{61fdfc5b-7eeb-40bd-a876-4a4ee95c01a5}</UniqueIdentifier>
+	</Filter>
+    <Filter Include="ヘッダー ファイル\api">
+      <UniqueIdentifier>{46b60107-7b6b-4f6b-826d-9863fc8197dd}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ソース ファイル\api">
+      <UniqueIdentifier>{90673ed7-0489-46f2-9ea0-a008e3b9cd13}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="Character.h" />
-    <ClInclude Include="CharacterDrawer.h" />
-    <ClInclude Include="CharacterController.h" />
-    <ClInclude Include="Control.h" />
-    <ClInclude Include="Define.h" />
+    <ClCompile Include="Main.cpp">
+      <Filter>ソース ファイル</Filter>
+    </ClCompile>
+    <ClCompile Include="Control.cpp">
+      <Filter>ソース ファイル</Filter>
+    </ClCompile>
+    <ClCompile Include="Character.cpp">
+      <Filter>ソース ファイル\Domain</Filter>
+    </ClCompile>
+    <ClCompile Include="CharacterDrawer.cpp">
+      <Filter>ソース ファイル\ui</Filter>
+    </ClCompile>
+    <ClCompile Include="CharacterController.cpp">
+      <Filter>ソース ファイル\api</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="Define.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="Control.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="Character.h">
+      <Filter>ヘッダー ファイル\Domain</Filter>
+    </ClInclude>
+    <ClInclude Include="CharacterDrawer.h">
+      <Filter>ヘッダー ファイル\ui</Filter>
+    </ClInclude>
+    <ClInclude Include="CharacterController.h">
+      <Filter>ヘッダー ファイル\api</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>
