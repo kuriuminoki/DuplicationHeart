@@ -43,6 +43,7 @@
     </ClCompile>
     <ClCompile Include="CharacterDrawer.cpp">
       <Filter>ソース ファイル\ui</Filter>
+    </ClCompile>
     <ClCompile Include="CharacterController.cpp">
       <Filter>ソース ファイル\api</Filter>
     </ClCompile>
@@ -59,6 +60,7 @@
     </ClInclude>
     <ClInclude Include="CharacterDrawer.h">
       <Filter>ヘッダー ファイル\ui</Filter>
+    </ClInclude>
     <ClInclude Include="CharacterController.h">
       <Filter>ヘッダー ファイル\api</Filter>
     </ClInclude>
