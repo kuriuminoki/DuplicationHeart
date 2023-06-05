@@ -24,6 +24,7 @@
     </Filter>
     <Filter Include="ソース ファイル\ui">
       <UniqueIdentifier>{61fdfc5b-7eeb-40bd-a876-4a4ee95c01a5}</UniqueIdentifier>
+	</Filter>
     <Filter Include="ヘッダー ファイル\api">
       <UniqueIdentifier>{46b60107-7b6b-4f6b-826d-9863fc8197dd}</UniqueIdentifier>
     </Filter>
