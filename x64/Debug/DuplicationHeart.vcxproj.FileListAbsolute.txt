@@ -1,1 +1,2 @@
 D:\複製のHeart\DuplicationHeart\x64\Debug\DuplicationHeart.exe
+D:\複製のHeart\git_api\DuplicationHeart\x64\Debug\DuplicationHeart.exe
