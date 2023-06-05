@@ -1,2 +1,3 @@
-﻿  Character.cpp
+﻿  CharacterController.cpp
+  LINK : 前回のインクリメンタル リンクで D:\複製のHeart\git_api\DuplicationHeart\x64\Debug\DuplicationHeart.exe が見つからなかったか、ビルドされませんでした。フル リンクを行います。
   DuplicationHeart.vcxproj -> D:\複製のHeart\git_api\DuplicationHeart\x64\Debug\DuplicationHeart.exe
