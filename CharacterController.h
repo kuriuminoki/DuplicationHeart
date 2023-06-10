@@ -1,18 +1,50 @@
 #ifndef CHACACTER_CONTROLLER_H_INCLUDED
 #define CHACACTER_CONTROLLER_H_INCLUDED
 
-class Character;
+class CharacterAction;
 
 /*
-  キャラクターを動かすクラス
+* キャラクターを操作する
 */
 class CharacterController {
-private:
-	//動かす対象のキャラクター
-	Character* m_character;
-
+protected:
+	CharacterAction* m_characterAction;
 public:
-	CharacterController(Character* character);
+	CharacterController(CharacterAction* characterAction);
+
+	// デバッグ
+	virtual void debug(int x, int y, int color) = 0;
+
+	// キャラの操作
+	virtual void control() = 0;
+};
+
+
+/*
+* キャラクターを操作するためのキーボードのクラス
+*/
+class CharacterKeyboard {
+public:
+	void controlStick(int& right, int& left, int& up, int& down);
+};
+
+/*
+* キーボードによるキャラ操作
+*/
+class CharacterKeyboardController :
+	public CharacterController {
+
+private:
+	CharacterKeyboard m_keyboard;
+	int m_rightStick;
+	int m_leftStick;
+	int m_upStick;
+	int m_downStick;
+public:
+	void debug(int x, int y, int color);
+
+	// キャラの操作
+	void control();
 };
 
 #endif
