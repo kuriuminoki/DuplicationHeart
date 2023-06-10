@@ -10,9 +10,12 @@ class CharacterController {
 protected:
 	CharacterAction* m_characterAction;
 public:
+	CharacterController();
 	CharacterController(CharacterAction* characterAction);
+	~CharacterController();
 
 	// デバッグ
+	void debugController(int x, int y, int color);
 	virtual void debug(int x, int y, int color) = 0;
 
 	// キャラの操作
@@ -41,6 +44,8 @@ private:
 	int m_upStick;
 	int m_downStick;
 public:
+	CharacterKeyboardController(CharacterAction* characterAction);
+
 	void debug(int x, int y, int color);
 
 	// キャラの操作

@@ -1,5 +1,6 @@
 #include "CharacterAction.h"
 #include "Character.h"
+#include "Define.h"
 #include "DxLib.h"
 
 
@@ -16,19 +17,20 @@ CharacterAction::CharacterAction(Character* character) {
 	m_vy = 0;
 }
 
-void CharacterAction::debugAction(int x, int y, int color) {
-	DrawFormatString(x, y, color, "**CharacterAction**");
-	DrawFormatString(x, y + 10, color, "state=%d, grand=%d, (vx,vy)=(%d,%d)", m_state, m_grand, m_vx, m_vy);
-}
+CharacterAction::CharacterAction() :
+	CharacterAction(NULL)
+{
 
+}
 
 
 /*
 * 空を飛ばない普通の棒人間
 */
-void StickAction::debug(int x, int y, int color) {
-	DrawFormatString(x, y, color, "**StickAction**");
-	debugAction(x + 10, y + 10, color);
+StickAction::StickAction(Character* character):
+	CharacterAction(character)
+{
+
 }
 
 void StickAction::action() {
@@ -53,10 +55,19 @@ void StickAction::action() {
 
 // 状態に応じて画像セット
 void StickAction::switchHandle() {
-	switch (m_state) {
-	case STAND: //立ち状態
-		m_character->switchStand();
-		break;
+	if (m_grand) { // 地面にいるとき
+		switch (m_state) {
+		case CHARACTER_STATE::STAND: //立ち状態
+			m_character->switchStand();
+			break;
+		}
+	}
+	else { // 宙にいるとき
+		switch (m_state) {
+		case CHARACTER_STATE::STAND: //立ち状態
+			m_character->switchStand();
+			break;
+		}
 	}
 }
 

@@ -1,4 +1,3 @@
-#pragma once
 #ifndef CHACACTER_ACTION_H_INCLUDED
 #define CHACACTER_ACTION_H_INCLUDED
 
@@ -6,7 +5,7 @@ class Character;
 
 
 // キャラクターの状態
-enum CHARACTER_STATE {
+enum class CHARACTER_STATE {
 	STAND,
 	WARK,
 	JUMP_UP,
@@ -17,6 +16,7 @@ enum CHARACTER_STATE {
 
 /*
 * キャラクターを動かすクラス
+* Controllerが使用する。それ以外のインスタンスから使われることはない。
 */
 class CharacterAction {
 protected:
@@ -34,6 +34,7 @@ protected:
 	int m_vy;
 
 public:
+	CharacterAction();
 	CharacterAction(Character* character);
 
 	// デバッグ
@@ -71,6 +72,8 @@ private:
 	void walk(bool right, bool left);
 
 public:
+	StickAction(Character* character);
+
 	void debug(int x, int y, int color);
 
 	// 物理演算 毎フレーム行う

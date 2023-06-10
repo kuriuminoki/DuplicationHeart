@@ -156,7 +156,10 @@
     <ClCompile Include="CharacterDrawer.cpp" />
     <ClCompile Include="CharacterController.cpp" />
     <ClCompile Include="Control.cpp" />
+    <ClCompile Include="Debug.cpp" />
+    <ClCompile Include="Game.cpp" />
     <ClCompile Include="Main.cpp" />
+    <ClCompile Include="World.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Character.h" />
@@ -165,6 +168,8 @@
     <ClInclude Include="CharacterController.h" />
     <ClInclude Include="Control.h" />
     <ClInclude Include="Define.h" />
+    <ClInclude Include="Game.h" />
+    <ClInclude Include="World.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
