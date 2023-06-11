@@ -6,7 +6,7 @@
 * プレイヤーやエネミーの基底クラス
 */
 class Character {
-private:
+protected:
 	// 最大体力
 	int m_maxHp;
 
@@ -22,13 +22,22 @@ private:
 	// 表示される画像
 	int m_handle;
 
+	// 画像の拡大率
+	double m_ex;
+
 	// 移動スピード
 	int m_moveSpeed;
+
+	// ジャンプの強さ
+	int m_jumpHeight;
+
+	// キャラ名
+	const char* m_name;
 
 public:
 	// コンストラクタ
 	Character();
-	Character(int maxHp, int hp, int x, int y, int moveSpeed);
+	Character(int maxHp, int hp, int x, int y);
 
 	// デバッグ
 	void debugCharacter(int x, int y, int color);
@@ -53,7 +62,17 @@ public:
 
 	inline void setY(int y) { m_y = y; }
 
+	inline int getWide() { return m_wide; }
+
+	inline int getHeight() { return m_height; }
+
 	inline int getMoveSpeed() { return m_moveSpeed; }
+
+	inline int getJumpHeight() { return m_jumpHeight; }
+
+	inline const char* getName() { return m_name; }
+
+	inline void setEx(double ex) { m_ex = ex; }
 
 	// 画像のセッタ。画像の横幅(wide)と縦幅(height)もセットする。
 	void setHandle(int handle);
@@ -61,6 +80,11 @@ public:
 	// 立ち画像をセット
 	virtual void switchStand() = 0;
 
+	// 移動する（座標を動かす）
+	void moveRight(int d);
+	void moveLeft(int d);
+	void moveUp(int d);
+	void moveDown(int d);
 };
 
 
@@ -71,12 +95,22 @@ class Heart :
 	public Character
 {
 private:
+	const char* const NAME = "ハート";
+	// 画像の拡大率
+	const double DRAW_EX = 0.5;
+
+	// 走るスピード
+	const int MOVE_SPEED = 5;
+
+	// ジャンプの強さ
+	const int JUMP_HEIGHT = 30;
+
 	//立ち画像
 	int m_standHandle;
 	
 public:
 	// コンストラクタ
-	Heart(int maxHp, int hp, int x, int y, int moveSpeed);
+	Heart(int maxHp, int hp, int x, int y);
 
 	// デバッグ
 	void debug(int x, int y, int color);

@@ -5,6 +5,7 @@
 
 class CharacterController;
 class Character;
+class Object;
 
 class World {
 private:
@@ -13,6 +14,9 @@ private:
 
 	// 戦闘のためにキャラを動かすコントローラ
 	std::queue<CharacterController*> m_characterControllers;
+
+	// 全てのオブジェクト
+	std::queue<Object*> m_objects;
 
 	// いま世界のどのエリアにいるか（メモリ節約のためプレイヤーの付近のみを読み込む）
 	int m_areaNum;

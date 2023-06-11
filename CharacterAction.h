@@ -7,9 +7,10 @@ class Character;
 // キャラクターの状態
 enum class CHARACTER_STATE {
 	STAND,
-	WARK,
+	WALK,
 	JUMP_UP,
 	JUMP_DOWN,
+	ATTACK,
 	DAMAGE
 };
 
@@ -29,9 +30,21 @@ protected:
 	// キャラが地面にいる
 	bool m_grand;
 
+	// 移動中
+	bool m_moveRight;
+	bool m_moveLeft;
+	bool m_moveUp;
+	bool m_moveDown;
+
 	// 加速度
 	int m_vx;
 	int m_vy;
+
+	// 移動のロック（オブジェクト等で動けない方向はtrue）
+	bool m_rightLock;
+	bool m_leftLock;
+	bool m_upLock;
+	bool m_downLock;
 
 public:
 	CharacterAction();
@@ -42,9 +55,27 @@ public:
 	virtual void debug(int x, int y, int color) = 0;
 
 	// ゲッタとセッタ
-	bool getGrand() { return m_grand; }
-	bool getVx() { return m_vx; }
-	bool getVy() { return m_vy; }
+	inline bool getGrand() { return m_grand; }
+	inline void setGrand(bool grand) { m_grand = grand; }
+	inline int getVx() { return m_vx; }
+	inline int getVy() { return m_vy; }
+	void setRightLock(bool lock);
+	void setLeftLock(bool lock);
+	void setUpLock(bool lock);
+	void setDownLock(bool lock);
+
+	// キャラクターの情報取得
+	int getCharacterX();
+	int getCharacterY();
+	int getCharacterWide();
+	int getCharacterHeight();
+
+	// キャラクターのセッタ
+	void setCharacterX(int x);
+	void setCharacterY(int y);
+
+	// 行動前の処理 毎フレーム行う
+	virtual void init() = 0;
 
 	// 物理演算 毎フレーム行う
 	virtual void action() = 0;
@@ -54,6 +85,9 @@ public:
 
 	// 移動 引数は４方向分 キャラによっては斜めに移動できるため。
 	virtual void move(bool right, bool left, bool up, bool down) = 0;
+
+	// ジャンプ rate%の力で飛び上がる。
+	virtual void jump(int rate) = 0;
 };
 
 
@@ -71,19 +105,25 @@ private:
 	// 横へ歩く 引数は右と左の２つ
 	void walk(bool right, bool left);
 
+	// キャラの画像を状態(state)に応じて変更
+	void switchHandle();
+
 public:
 	StickAction(Character* character);
 
 	void debug(int x, int y, int color);
 
+	//行動前の処理 毎フレーム行う
+	void init();
+
 	// 物理演算 毎フレーム行う
 	void action();
 
-	// キャラの画像を変更
-	void switchHandle();
-
 	// 移動 引数は４方向分
 	void move(bool right, bool left, bool up, bool down);
+
+	// ジャンプ rate%の力で飛び上がる。
+	void jump(int rate);
 };
 
 #endif
