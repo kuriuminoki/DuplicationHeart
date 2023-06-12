@@ -100,7 +100,7 @@ private:
 	const double DRAW_EX = 0.5;
 
 	// 走るスピード
-	const int MOVE_SPEED = 5;
+	const int MOVE_SPEED = 10;
 
 	// ジャンプの強さ
 	const int JUMP_HEIGHT = 30;

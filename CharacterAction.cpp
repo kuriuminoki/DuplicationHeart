@@ -95,7 +95,7 @@ void StickAction::init() {
 	// ‚¢‚Á‚½‚ñ‘S•ûŒü‚É“®‚¯‚é‚æ‚¤‚É‚·‚é
 	m_rightLock = false;
 	m_leftLock = false;
-	m_downLock = false;
+	m_upLock = false;
 	m_downLock = false;
 
 	// ‚¢‚Á‚½‚ñ’ˆ‚É•‚‚©‚¹‚é

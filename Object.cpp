@@ -49,7 +49,7 @@ void BoxObject::atari(CharacterController* characterController) {
 			characterController->setCharacterY(m_y1 - characterController->getCharacterHeight());
 		}
 		// 上に移動中のキャラが下から当たっているか判定
-		else if (characterY1 >= m_y2 && characterY1 + characterVy <= m_y1) {
+		else if (characterY1 >= m_y2 && characterY1 + characterVy <= m_y2) {
 			// キャラは上へ移動できない
 			characterController->setActionUpLock(true);
 			// 密着状態までは移動させる
@@ -60,18 +60,35 @@ void BoxObject::atari(CharacterController* characterController) {
 	// キャラが左右移動で当たっているか判定
 	if (characterY2 > m_y1 && characterY1 < m_y2) {
 		// 右に移動中のキャラが左から当たっているか判定
+		DrawFormatString(1000, 150, WHITE, "vx=%d", characterVx);
 		if (characterX2 <= m_x1 && characterX2 + characterVx >= m_x1) {
-			// キャラは右へ移動できない
-			characterController->setActionRightLock(true);
-			// 密着状態までは移動させる
-			characterController->setCharacterX(m_x1 - characterController->getCharacterWide());
+			// 段差とみなして乗り越える
+			if (characterY2 - STAIR_HEIGHT <= m_y1 && characterX2 == m_x1) {
+				DrawFormatString(1000, 100, WHITE, "ok");
+				characterController->setCharacterX(characterX1 + characterController->getCharacterWide() / 2);
+				characterController->setCharacterY(m_y1 - characterController->getCharacterHeight());
+			}
+			else {
+				// キャラは右へ移動できない
+				characterController->setActionRightLock(true);
+				// 密着状態までは移動させる
+				characterController->setCharacterX(m_x1 - characterController->getCharacterWide());
+			}
 		}
 		// 左に移動中のキャラが右から当たっているか判定
 		else if (characterX1 >= m_x2 && characterX1 + characterVx <= m_x2) {
-			// キャラは左へ移動できない
-			characterController->setActionLeftLock(true);
-			// 密着状態までは移動させる
-			characterController->setCharacterX(m_x2);
+			// 段差とみなして乗り越える
+			if (characterY2 - STAIR_HEIGHT <= m_y1 && characterX1 == m_x2) {
+				DrawFormatString(1000, 100, WHITE, "ok");
+				characterController->setCharacterX(characterX1 - characterController->getCharacterWide() / 2);
+				characterController->setCharacterY(m_y1 - characterController->getCharacterHeight());
+			}
+			else {
+				// キャラは左へ移動できない
+				characterController->setActionLeftLock(true);
+				// 密着状態までは移動させる
+				characterController->setCharacterX(m_x2);
+			}
 		}
 	}
 }
@@ -139,8 +156,17 @@ void TriangleObject::atari(CharacterController* characterController) {
 
 	// キャラが上下移動で当たっているか判定
 	if (characterX2 > m_x1 && characterX1 < m_x2) {
+		// 下りているときはこの条件式がtrueになる
+		if (characterY2 == getY(characterX1_5 - characterVx)) {
+			// 前のフレームでは着地していたので、引き続き着地
+			characterController->setCharacterGrand(true);
+			// キャラは下へ移動できない
+			characterController->setActionDownLock(true);
+			// 密着状態までは移動させる
+			characterController->setCharacterY(getY(characterX1_5) - characterController->getCharacterHeight());
+		}
 		// 下に移動中のキャラが上から当たっているか判定
-		if (characterY2 <= getY(characterX1_5) && characterY2 + characterVy >= getY(characterX1_5)) {
+		else if (characterY2 <= getY(characterX1_5) && characterY2 + characterVy >= getY(characterX1_5)) {
 			// 着地
 			characterController->setCharacterGrand(true);
 			// キャラは下へ移動できない
@@ -149,7 +175,7 @@ void TriangleObject::atari(CharacterController* characterController) {
 			characterController->setCharacterY(getY(characterX1_5) - characterController->getCharacterHeight());
 		}
 		// 上に移動中のキャラが下から当たっているか判定
-		else if (characterY1 >= m_y2 && characterY1 + characterVy <= m_y1) {
+		else if (characterY1 >= m_y2 && characterY1 + characterVy <= m_y2) {
 			// キャラは上へ移動できない
 			characterController->setActionUpLock(true);
 			// 密着状態までは移動させる
@@ -159,13 +185,34 @@ void TriangleObject::atari(CharacterController* characterController) {
 
 	// 坂を移動
 	if (characterX2 > m_x1 && characterX1 < m_x2 && characterY2 <= m_y2 && characterY2 >= getY(characterX1_5)) {
-		DrawFormatString(900, 100, WHITE, "y=%d", getY(characterX1_5));
 		// 着地
 		characterController->setCharacterGrand(true);
 		// キャラは下へ移動できない
 		characterController->setActionDownLock(true);
-		// 既に中にいる
+		// 適切な高さへ移動
 		characterController->setCharacterY(getY(characterX1_5) - characterController->getCharacterHeight());
+	}
+
+	// 坂の鋭角（先端）の当たり判定
+	if (m_y2 > characterY1 && m_y2 < characterY2) {
+		if (m_leftDown) {// 左肩下がり
+			// 右に移動中のキャラが右から当たっているか判定
+			if (characterX2 <= m_x1 && characterX2 + characterVx >= m_x1) {
+				// キャラは右へ移動できない
+				characterController->setActionRightLock(true);
+				// 密着状態までは移動させる
+				characterController->setCharacterX(m_x1 - characterController->getCharacterWide());
+			}
+		}
+		else {
+			// 左に移動中のキャラが左から当たっているか判定
+			if (characterX1 >= m_x2 && characterX1 + characterVx <= m_x2) {
+				// キャラは左へ移動できない
+				characterController->setActionLeftLock(true);
+				// 密着状態までは移動させる
+				characterController->setCharacterX(m_x2);
+			}
+		}
 	}
 
 	// キャラが左右移動で当たっているか判定

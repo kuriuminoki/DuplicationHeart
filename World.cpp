@@ -20,9 +20,9 @@ World::World(int areaNum) {
 	// エリアに存在するオブジェクトをロード
 	Object* object1 = new BoxObject(0, 900, 1920, 1080, WHITE);
 	m_objects.push(object1);
-	Object* object2 = new TriangleObject(300, 800, 700, 900, WHITE, false);
+	Object* object2 = new TriangleObject(700, 600, 1300, 900, WHITE, false);
+	Object* object3 = new BoxObject(300, 600, 700, 900, WHITE);
 	m_objects.push(object2);
-	Object* object3 = new TriangleObject(1000, 600, 1400, 900, WHITE, true);
 	m_objects.push(object3);
 
 	// 主人公をロード
