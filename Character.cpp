@@ -1,4 +1,5 @@
 #include "Character.h"
+#include "Object.h"
 #include "Define.h"
 #include "DxLib.h"
 
@@ -10,6 +11,10 @@ Character::Character() :
 }
 
 Character::Character(int maxHp, int hp, int x, int y) {
+	// ID‚ğU‚é
+	characterId++;
+	m_id = characterId;
+
 	m_name = "–¼–³‚µ";
 	m_maxHp = maxHp;
 	m_hp = hp;
@@ -23,6 +28,14 @@ Character::Character(int maxHp, int hp, int x, int y) {
 
 	m_moveSpeed = 1;
 	m_jumpHeight = 1;
+
+	m_attackInfo = new AttackInfo();
+
+	m_leftDirection = true;
+}
+
+Character::~Character() {
+	delete m_attackInfo;
 }
 
 void Character::setHandle(int handle) {
@@ -72,4 +85,16 @@ Heart::Heart(int maxHp, int hp, int x, int y) :
 
 	// Še‰æ‘œ‚Ìƒ[ƒh
 	m_standHandle = LoadGraph("picture/stick/stand.png");
+}
+
+// ËŒ‚UŒ‚‚ğ‚·‚é(ƒLƒƒƒ‰‚²‚Æ‚Éˆá‚¤)
+Object* Heart::bulletAttack(int gx, int gy) {
+
+	return NULL;
+}
+
+// aŒ‚UŒ‚‚ğ‚·‚é(ƒLƒƒƒ‰‚²‚Æ‚Éˆá‚¤)
+Object* Heart::slashAttack(int cnt, int gx, int gy) {
+
+	return NULL;
 }

@@ -24,6 +24,10 @@ CharacterAction::CharacterAction(Character* character) {
 	m_leftLock = false;
 	m_upLock = false;
 	m_downLock = false;
+
+	int bulletCnt = 0;
+
+	int slashCnt = 0;
 }
 
 CharacterAction::CharacterAction() :

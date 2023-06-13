@@ -46,6 +46,12 @@ protected:
 	bool m_upLock;
 	bool m_downLock;
 
+	// 射撃用カウント
+	int bulletCnt;
+
+	// 斬撃用カウント
+	int slashCnt;
+
 public:
 	CharacterAction();
 	CharacterAction(Character* character);

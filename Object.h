@@ -75,4 +75,38 @@ public:
 	void atari(CharacterController* character);
 };
 
+/*
+* 弾のオブジェクト
+*/
+class BulletObject :
+	public Object
+{
+private:
+	// オブジェクトの色
+	int m_color;
+
+	// 半径
+	int m_rx;
+	int m_ry;
+
+	// スピード
+	int m_v;
+
+	// 目標地点
+	int m_gx;
+	int m_gy;
+
+	// ダメージ
+	int m_damage;
+
+public:
+	BulletObject(int x1, int y1, int x2, int y2, int color, int gx, int gy, int damage);
+
+	void debug(int x, int y, int color);
+
+	// キャラとの当たり判定
+	// 当たっているならキャラを操作する。
+	void atari(CharacterController* character);
+};
+
 #endif

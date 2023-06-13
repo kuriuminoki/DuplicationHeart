@@ -108,12 +108,18 @@ void Object::debugObject(int x, int y, int color) {
 	DrawBox(m_x1, m_y1, m_x2, m_y2, color, FALSE);
 }
 
+/*
+* í∑ï˚å`ÇÃè·äQï®
+*/
 void BoxObject::debug(int x, int y, int color) {
 	DrawFormatString(x, y, color, "**BoxObject**");
 	debugObject(x + DRAW_FORMAT_STRING_SIZE, y + DRAW_FORMAT_STRING_SIZE, color);
 	DrawBox(m_x1, m_y1, m_x2, m_y2, color, TRUE);
 }
 
+/*
+* íºäpéOäpå`ÇÃè·äQï®
+*/
 void TriangleObject::debug(int x, int y, int color) {
 	DrawFormatString(x, y, color, "**TriangleObject**");
 	DrawFormatString(x, y + DRAW_FORMAT_STRING_SIZE, color, "mideleY=%d", getY(m_x2 - m_x1));
@@ -124,4 +130,14 @@ void TriangleObject::debug(int x, int y, int color) {
 	else {
 		DrawTriangle(m_x1, m_y1, m_x2, m_y2, m_x1, m_y2, color, TRUE);
 	}
+}
+
+/*
+* ë»â~ÇÃíeä€
+*/
+void BulletObject::debug(int x, int y, int color) {
+	DrawFormatString(x, y, color, "**TriangleObject**");
+	DrawFormatString(x, y + DRAW_FORMAT_STRING_SIZE, color, "(gx,gy)=(%d,%d)", m_gx, m_gy);
+	debugObject(x + DRAW_FORMAT_STRING_SIZE, y + DRAW_FORMAT_STRING_SIZE * 2, color);
+	DrawOval(m_x1 + m_rx, m_y1 + m_ry, m_rx, m_ry, m_color, TRUE);
 }

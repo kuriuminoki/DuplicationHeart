@@ -2,6 +2,7 @@
 #include "CharacterController.h"
 #include "Define.h"
 #include "DxLib.h"
+#include <algorithm>
 
 
 Object::Object() :
@@ -15,6 +16,9 @@ Object::Object(int x1, int y1, int x2, int y2) {
 	m_y1 = y1;
 	m_x2 = x2;
 	m_y2 = y2;
+	// 大小関係は 1 <= 2
+	if (m_x1 > m_x2) { std::swap(m_x1, m_x2); }
+	if (m_y1 > m_y2) { std::swap(m_y1, m_y2); }
 }
 
 
@@ -235,5 +239,32 @@ void TriangleObject::atari(CharacterController* characterController) {
 				characterController->setCharacterX(m_x1 - characterController->getCharacterWide());
 			}
 		}
+	}
+}
+
+
+BulletObject::BulletObject(int x1, int y1, int x2, int y2, int color, int gx, int gy, int damage) :
+	Object(x1, y1, x2, y2)
+{
+	m_color = color;
+	m_gx = gx;
+	m_gy = gy;
+	m_rx = (m_x2 - m_x1) / 2;
+	m_ry = (m_y2 - m_y1) / 2;
+	m_damage = damage;
+}
+
+// キャラとの当たり判定
+// 当たっているならキャラを操作する。
+void BulletObject::atari(CharacterController* characterController) {
+	// キャラの情報　座標と移動スピード
+	int characterX1 = characterController->getCharacterX();
+	int characterY1 = characterController->getCharacterY();
+	int characterX2 = characterX1 + characterController->getCharacterWide();
+	int characterY2 = characterY1 + characterController->getCharacterHeight();
+
+	// 当たり判定
+	if (characterX2 > m_x1 && characterX1 < m_x2 && characterY2 > m_y1 && characterY1 < m_y2) {
+
 	}
 }

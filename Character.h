@@ -2,11 +2,44 @@
 #define CHARACTER_H_INCLUDED
 
 
+class Object;
+
+
+class AttackInfo {
+public:
+	// 弾丸のダメージ
+	int m_bulletDamage;
+
+	// 弾丸の大きさ
+	int m_bulletRx, m_bulletRy;
+
+	// 弾丸のスピード
+	int m_bulletSpeed;
+
+	// 弾丸の連射力
+	int m_bulletRapid;
+
+	// 斬撃のダメージ
+	int m_slashDamage;
+
+	// 斬撃の大きさ
+	int m_slashRx, m_slashRy;
+
+	// 斬撃の全体フレーム
+	int m_slashCountSum;
+};
+
+
 /*
 * プレイヤーやエネミーの基底クラス
 */
 class Character {
 protected:
+	static int characterId;
+
+	// ID
+	int m_id;
+
 	// 最大体力
 	int m_maxHp;
 
@@ -34,10 +67,17 @@ protected:
 	// キャラ名
 	const char* m_name;
 
+	// 攻撃の情報
+	AttackInfo* m_attackInfo;
+
+	// 左を向いている
+	bool m_leftDirection;
+
 public:
 	// コンストラクタ
 	Character();
 	Character(int maxHp, int hp, int x, int y);
+	~Character();
 
 	// デバッグ
 	void debugCharacter(int x, int y, int color);
@@ -85,6 +125,12 @@ public:
 	void moveLeft(int d);
 	void moveUp(int d);
 	void moveDown(int d);
+
+	// 射撃攻撃をする(キャラごとに違う)
+	virtual Object* bulletAttack(int gx, int gy) = 0;
+
+	// 斬撃攻撃をする(キャラごとに違う)
+	virtual Object* slashAttack(int cnt, int gx, int gy) = 0;
 };
 
 
@@ -117,6 +163,12 @@ public:
 
 	// 立ち画像をセット
 	inline void switchStand() { setHandle(m_standHandle); }
+
+	// 射撃攻撃をする(キャラごとに違う)
+	Object* bulletAttack(int gx, int gy);
+
+	// 斬撃攻撃をする(キャラごとに違う)
+	Object* slashAttack(int cnt, int gx, int gy);
 };
 
 
