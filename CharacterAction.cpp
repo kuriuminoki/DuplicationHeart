@@ -25,9 +25,9 @@ CharacterAction::CharacterAction(Character* character) {
 	m_upLock = false;
 	m_downLock = false;
 
-	int bulletCnt = 0;
+	m_bulletCnt = 0;
 
-	int slashCnt = 0;
+	m_slashCnt = 0;
 }
 
 CharacterAction::CharacterAction() :
@@ -107,6 +107,10 @@ void StickAction::init() {
 }
 
 void StickAction::action() {
+	// 射撃のインターバル処理
+	if (m_bulletCnt > 0) { m_bulletCnt--; }
+
+	// 重力の処理
 	// 宙にいる
 	if(!m_grand) { 
 		// 重力
@@ -202,4 +206,16 @@ void StickAction::jump(int rate) {
 		m_vy -= power;
 		m_grand = false;
 	}
+}
+
+// 射撃攻撃
+Object* StickAction::bulletAttack(int gx, int gy) {
+	// 射撃可能状態なら
+	if (m_bulletCnt == 0) {
+		// 射撃不可能状態にして
+		m_bulletCnt = m_character->getBulletRapid();
+		// 攻撃を返す
+		return m_character->bulletAttack(gx, gy);
+	}
+	return NULL;
 }

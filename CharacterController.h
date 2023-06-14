@@ -2,6 +2,7 @@
 #define CHACACTER_CONTROLLER_H_INCLUDED
 
 class CharacterAction;
+class Object;
 
 /*
 * キャラクターを操作する
@@ -47,6 +48,9 @@ public:
 
 	// 操作や当たり判定の結果を反映（実際にキャラを動かす）毎フレーム行う
 	void action();
+
+	// 射撃攻撃
+	virtual Object* bulletAttack() = 0;
 };
 
 
@@ -85,6 +89,9 @@ public:
 
 	// キャラの操作 毎フレーム行う
 	void control();
+
+	// 射撃攻撃
+	Object* bulletAttack();
 };
 
 #endif

@@ -2,6 +2,7 @@
 #define CHACACTER_ACTION_H_INCLUDED
 
 class Character;
+class Object;
 
 
 // キャラクターの状態
@@ -47,10 +48,10 @@ protected:
 	bool m_downLock;
 
 	// 射撃用カウント
-	int bulletCnt;
+	int m_bulletCnt;
 
 	// 斬撃用カウント
-	int slashCnt;
+	int m_slashCnt;
 
 public:
 	CharacterAction();
@@ -94,6 +95,9 @@ public:
 
 	// ジャンプ rate%の力で飛び上がる。
 	virtual void jump(int rate) = 0;
+
+	// 射撃攻撃
+	virtual Object* bulletAttack(int gx, int gy) = 0;
 };
 
 
@@ -130,6 +134,9 @@ public:
 
 	// ジャンプ rate%の力で飛び上がる。
 	void jump(int rate);
+
+	// 射撃攻撃
+	Object* bulletAttack(int gx, int gy);
 };
 
 #endif

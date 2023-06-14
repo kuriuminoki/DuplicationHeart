@@ -22,8 +22,8 @@ World::World(int areaNum) {
 	m_objects.push(object1);
 	Object* object2 = new TriangleObject(700, 600, 1300, 900, WHITE, false);
 	Object* object3 = new BoxObject(300, 600, 700, 900, WHITE);
-	m_objects.push(object2);
 	m_objects.push(object3);
+	m_objects.push(object2);
 
 	// 主人公をロード
 	Heart* heart = new Heart(100, 100, 0, 0);
@@ -69,19 +69,32 @@ void World::battle() {
 		// 行動前の処理
 		controller->init();
 
-		// 当たり判定
+		// オブジェクトの処理 (当たり判定と動き)
 		size_t objectSum = m_objects.size();
 		while (objectSum > 0) {
 			Object* object = m_objects.front();
 			m_objects.pop();
+			// オブジェクトの動き
+			object->action();
 			// 当たり判定をここで行う
 			object->atari(controller);
-			m_objects.push(object);
+			// deleteFlagがtrueなら削除する
+			if (object->getDeleteFlag()) {
+				delete object;
+			}
+			else {
+				// 削除しない
+				m_objects.push(object);
+			}
 			objectSum--;
 		}
 
 		// 操作
 		controller->control();
+
+		// 射撃攻撃
+		Object* attack = controller->bulletAttack();
+		if (attack != NULL) { m_objects.push(attack); }
 
 		// 反映
 		controller->action();

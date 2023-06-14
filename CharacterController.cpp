@@ -149,3 +149,14 @@ void CharacterKeyboardController::control() {
 		m_characterAction->jump((100 * m_jumpKey) / JUMP_KEY_LONG);
 	}
 }
+
+Object* CharacterKeyboardController::bulletAttack() {
+	// クリックされているなら
+	if (leftClick() > 0) {
+		int mouseX, mouseY;
+		GetMousePoint(&mouseX, &mouseY);
+		// マウスの位置に向かって射撃
+		return m_characterAction->bulletAttack(mouseX, mouseY);
+	}
+	return NULL;
+}

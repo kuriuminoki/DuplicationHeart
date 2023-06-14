@@ -15,6 +15,9 @@ protected:
 	// 右下の座標+1
 	int m_x2, m_y2;
 
+	// 削除フラグ trueならWorldに消してもらう
+	bool m_deleteFlag;
+
 public:
 	Object();
 	Object(int x1, int y1, int x2, int y2);
@@ -22,8 +25,14 @@ public:
 	void debugObject(int x, int y, int color);
 	virtual void debug(int x, int y, int color) = 0;
 
+	// ゲッタ
+	inline bool getDeleteFlag() { return m_deleteFlag; }
+
 	// キャラとの当たり判定
 	virtual void atari(CharacterController* character) = 0;
+
+	// 動くオブジェクト用 毎フレーム行う
+	virtual void action() = 0;
 };
 
 
@@ -48,6 +57,9 @@ public:
 	// キャラとの当たり判定
 	// 当たっているならキャラを操作する。
 	void atari(CharacterController* character);
+
+	// 動くオブジェクト用 毎フレーム行う
+	void action();
 };
 
 /*
@@ -73,15 +85,21 @@ public:
 	// キャラとの当たり判定
 	// 当たっているならキャラを操作する。
 	void atari(CharacterController* character);
+
+	// 動くオブジェクト用 毎フレーム行う
+	void action();
 };
 
 /*
-* 弾のオブジェクト
+* 直進する弾のオブジェクト
 */
 class BulletObject :
 	public Object
 {
 private:
+	// この攻撃を出したキャラのＩＤ 自滅やチームキル防止用
+	int m_characterId;
+
 	// オブジェクトの色
 	int m_color;
 
@@ -91,22 +109,33 @@ private:
 
 	// スピード
 	int m_v;
+	int m_vx;
+	int m_vy;
 
 	// 目標地点
 	int m_gx;
 	int m_gy;
 
+	// 残りの飛距離
+	int m_d;
+
 	// ダメージ
 	int m_damage;
 
 public:
-	BulletObject(int x1, int y1, int x2, int y2, int color, int gx, int gy, int damage);
+	BulletObject(int x1, int y1, int x2, int y2, int color, int gx, int gy, int damage, int speed, int distance);
 
 	void debug(int x, int y, int color);
+
+	// セッタ
+	inline void setCharacterId(int id) { m_characterId = id; }
 
 	// キャラとの当たり判定
 	// 当たっているならキャラを操作する。
 	void atari(CharacterController* character);
+
+	// 動くオブジェクト用 毎フレーム行う
+	void action();
 };
 
 #endif

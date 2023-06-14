@@ -4,6 +4,31 @@
 #include "DxLib.h"
 
 
+AttackInfo::AttackInfo():
+	AttackInfo(0, 0, 0, 0, 0, 0, 0, 0, 0, 0)
+{
+
+}
+// CSVファイルから読み込む予定
+AttackInfo::AttackInfo(const char* characterName) {
+
+}
+AttackInfo::AttackInfo(int bulletDamage, int bulletRx, int bulletRy, int bulletSpeed, int bulletRapid, int bulletDistance, int slashDamage, int slashRx, int slashRy, int slashCountSum) {
+	m_bulletDamage = bulletDamage;
+	m_bulletRx = bulletRx;
+	m_bulletRy = bulletRy;
+	m_bulletSpeed = bulletSpeed;
+	m_bulletRapid = bulletRapid;
+	m_bulletDistance = bulletDistance;
+	m_slashDamage = slashDamage;
+	m_slashRx = slashRx;
+	m_slashRy = slashRy;
+	m_slashCountSum = slashCountSum;
+}
+
+
+int Character::characterId;
+
 Character::Character() :
 	Character(100, 100, 0, 0)
 {
@@ -29,13 +54,15 @@ Character::Character(int maxHp, int hp, int x, int y) {
 	m_moveSpeed = 1;
 	m_jumpHeight = 1;
 
-	m_attackInfo = new AttackInfo();
+	m_attackInfo = NULL;
 
 	m_leftDirection = true;
 }
 
 Character::~Character() {
-	delete m_attackInfo;
+	if (m_attackInfo != NULL) {
+		delete m_attackInfo;
+	}
 }
 
 void Character::setHandle(int handle) {
@@ -85,12 +112,18 @@ Heart::Heart(int maxHp, int hp, int x, int y) :
 
 	// 各画像のロード
 	m_standHandle = LoadGraph("picture/stick/stand.png");
+
+	m_attackInfo = new AttackInfo(0, 100, 100, 50, 30, 800, 0, 30, 30, 30);
 }
 
 // 射撃攻撃をする(キャラごとに違う)
 Object* Heart::bulletAttack(int gx, int gy) {
-
-	return NULL;
+	BulletObject* attackObject = new BulletObject(m_x, m_y,
+		m_x + m_attackInfo->m_bulletRx, m_y + m_attackInfo->m_bulletRy,
+		WHITE, gx, gy,
+		m_attackInfo->m_bulletDamage, m_attackInfo->m_bulletSpeed, m_attackInfo->m_bulletDistance);
+	attackObject->setCharacterId(m_id);
+	return attackObject;
 }
 
 // 斬撃攻撃をする(キャラごとに違う)

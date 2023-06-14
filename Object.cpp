@@ -3,6 +3,7 @@
 #include "Define.h"
 #include "DxLib.h"
 #include <algorithm>
+#include <cmath>
 
 
 Object::Object() :
@@ -19,6 +20,8 @@ Object::Object(int x1, int y1, int x2, int y2) {
 	// 大小関係は 1 <= 2
 	if (m_x1 > m_x2) { std::swap(m_x1, m_x2); }
 	if (m_y1 > m_y2) { std::swap(m_y1, m_y2); }
+
+	m_deleteFlag = false;
 }
 
 
@@ -62,15 +65,19 @@ void BoxObject::atari(CharacterController* characterController) {
 	}
 
 	// キャラが左右移動で当たっているか判定
-	if (characterY2 > m_y1 && characterY1 < m_y2) {
+	if (characterY2 + characterVy > m_y1 && characterY1 + characterVy < m_y2) {
 		// 右に移動中のキャラが左から当たっているか判定
-		DrawFormatString(1000, 150, WHITE, "vx=%d", characterVx);
 		if (characterX2 <= m_x1 && characterX2 + characterVx >= m_x1) {
 			// 段差とみなして乗り越える
 			if (characterY2 - STAIR_HEIGHT <= m_y1 && characterX2 == m_x1) {
+				// 適切な座標へ
 				DrawFormatString(1000, 100, WHITE, "ok");
 				characterController->setCharacterX(characterX1 + characterController->getCharacterWide() / 2);
 				characterController->setCharacterY(m_y1 - characterController->getCharacterHeight());
+				// 着地
+				characterController->setCharacterGrand(true);
+				// キャラは下へ移動できない
+				characterController->setActionDownLock(true);
 			}
 			else {
 				// キャラは右へ移動できない
@@ -84,8 +91,13 @@ void BoxObject::atari(CharacterController* characterController) {
 			// 段差とみなして乗り越える
 			if (characterY2 - STAIR_HEIGHT <= m_y1 && characterX1 == m_x2) {
 				DrawFormatString(1000, 100, WHITE, "ok");
+				// 適切な座標へ
 				characterController->setCharacterX(characterX1 - characterController->getCharacterWide() / 2);
 				characterController->setCharacterY(m_y1 - characterController->getCharacterHeight());
+				// 着地
+				characterController->setCharacterGrand(true);
+				// キャラは下へ移動できない
+				characterController->setActionDownLock(true);
 			}
 			else {
 				// キャラは左へ移動できない
@@ -95,6 +107,20 @@ void BoxObject::atari(CharacterController* characterController) {
 			}
 		}
 	}
+
+	// 万が一オブジェクトの中に入り込んでしまったら
+	if (characterVy != 0 && characterY2 > m_y1 && characterY1 < m_y2 && characterX2 > m_x1 && characterX1 < m_x2) {
+		// 真上へ
+		characterController->setCharacterY(m_y1 - characterController->getCharacterHeight());
+		// 着地
+		characterController->setCharacterGrand(true);
+		// キャラは下へ移動できない
+		characterController->setActionDownLock(true);
+	}
+}
+
+void BoxObject::action() {
+
 }
 
 TriangleObject::TriangleObject(int x1, int y1, int x2, int y2, int color, bool leftDown):
@@ -242,16 +268,33 @@ void TriangleObject::atari(CharacterController* characterController) {
 	}
 }
 
+void TriangleObject::action() {
 
-BulletObject::BulletObject(int x1, int y1, int x2, int y2, int color, int gx, int gy, int damage) :
+}
+
+
+BulletObject::BulletObject(int x1, int y1, int x2, int y2, int color, int gx, int gy, int damage, int speed, int distance) :
 	Object(x1, y1, x2, y2)
 {
+	// 必要なら後からセッタで設定
+	m_characterId = -1;
+
 	m_color = color;
 	m_gx = gx;
 	m_gy = gy;
 	m_rx = (m_x2 - m_x1) / 2;
 	m_ry = (m_y2 - m_y1) / 2;
 	m_damage = damage;
+
+	// 角度を計算し、VXとVYを決定
+	int dx = gx - x1;
+	int dy = gy - y1;
+	double r = std::atan2((double)dy, (double)dx);
+	m_v = speed;
+	m_vx = (int)speed * std::cos(r);
+	m_vy = (int)speed * std::sin(r);
+
+	m_d = distance;
 }
 
 // キャラとの当たり判定
@@ -265,6 +308,19 @@ void BulletObject::atari(CharacterController* characterController) {
 
 	// 当たり判定
 	if (characterX2 > m_x1 && characterX1 < m_x2 && characterY2 > m_y1 && characterY1 < m_y2) {
+		// 貫通弾じゃないなら消滅
+		m_deleteFlag = true;
+	}
+}
 
+void BulletObject::action() {
+	m_x1 += m_vx;
+	m_x2 += m_vx;
+	m_y1 += m_vy;
+	m_y2 += m_vy;
+	m_d -= m_v;
+	// 飛距離がきたら消滅
+	if (m_d <= 0) {
+		m_deleteFlag = true;
 	}
 }

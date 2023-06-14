@@ -19,6 +19,9 @@ public:
 	// 弾丸の連射力
 	int m_bulletRapid;
 
+	// 弾丸の飛距離
+	int m_bulletDistance;
+
 	// 斬撃のダメージ
 	int m_slashDamage;
 
@@ -27,6 +30,11 @@ public:
 
 	// 斬撃の全体フレーム
 	int m_slashCountSum;
+
+public:
+	AttackInfo();
+	AttackInfo(const char* characterName);
+	AttackInfo(int bulletDamage, int bulletRx, int bulletRy, int bulletSpeed, int bulletRapid, int bulletDistance, int slashDamage, int slashRx, int slashRy, int slashCountSum);
 };
 
 
@@ -114,6 +122,9 @@ public:
 
 	inline void setEx(double ex) { m_ex = ex; }
 
+	// AttackInfoのセッタとゲッタ
+	inline int getBulletRapid() { return m_attackInfo->m_bulletRapid; }
+
 	// 画像のセッタ。画像の横幅(wide)と縦幅(height)もセットする。
 	void setHandle(int handle);
 
@@ -143,7 +154,7 @@ class Heart :
 private:
 	const char* const NAME = "ハート";
 	// 画像の拡大率
-	const double DRAW_EX = 0.5;
+	const double DRAW_EX = 0.30;
 
 	// 走るスピード
 	const int MOVE_SPEED = 10;

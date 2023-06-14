@@ -136,7 +136,7 @@ void TriangleObject::debug(int x, int y, int color) {
 * ‘È‰~‚Ì’eŠÛ
 */
 void BulletObject::debug(int x, int y, int color) {
-	DrawFormatString(x, y, color, "**TriangleObject**");
+	DrawFormatString(x, y, color, "**BulletObject**");
 	DrawFormatString(x, y + DRAW_FORMAT_STRING_SIZE, color, "(gx,gy)=(%d,%d)", m_gx, m_gy);
 	debugObject(x + DRAW_FORMAT_STRING_SIZE, y + DRAW_FORMAT_STRING_SIZE * 2, color);
 	DrawOval(m_x1 + m_rx, m_y1 + m_ry, m_rx, m_ry, m_color, TRUE);
