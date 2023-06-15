@@ -324,3 +324,48 @@ void BulletObject::action() {
 		m_deleteFlag = true;
 	}
 }
+
+
+SlashObject::SlashObject(int x1, int y1, int x2, int y2, int* handle, int handleSum, int damage, int slashCountSum) :
+	Object(x1, y1, x2, y2)
+{
+	// 必要なら後からセッタで設定
+	m_characterId = -1;
+
+	// 画像
+	m_handle = handle;
+	m_handleSum = handleSum;
+	
+	// ダメージ
+	m_damage = damage;
+
+	// 全体フレーム
+	m_slashCountSum = slashCountSum;
+
+	// カウント
+	m_cnt = 0;
+}
+
+// キャラとの当たり判定
+// 当たっているならキャラを操作する。
+void SlashObject::atari(CharacterController* characterController) {
+	// キャラの情報　座標と移動スピード
+	int characterX1 = characterController->getCharacterX();
+	int characterY1 = characterController->getCharacterY();
+	int characterX2 = characterX1 + characterController->getCharacterWide();
+	int characterY2 = characterY1 + characterController->getCharacterHeight();
+
+	// 当たり判定
+	if (characterX2 > m_x1 && characterX1 < m_x2 && characterY2 > m_y1 && characterY1 < m_y2) {
+		// 貫通弾じゃないなら消滅
+		m_deleteFlag = true;
+	}
+}
+
+void SlashObject::action() {
+	m_cnt++;
+
+	if (m_cnt == m_slashCountSum) {
+		m_deleteFlag = true;
+	}
+}

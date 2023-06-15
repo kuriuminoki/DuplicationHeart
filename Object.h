@@ -138,4 +138,46 @@ public:
 	void action();
 };
 
+
+/*
+* 近距離攻撃のオブジェクト
+*/
+class SlashObject :
+	public Object
+{
+private:
+	// この攻撃を出したキャラのＩＤ 自滅やチームキル防止用
+	int m_characterId;
+
+	// オブジェクトの画像配列
+	int* m_handle;
+
+	// 画像の数
+	int m_handleSum;
+
+	// ダメージ
+	int m_damage;
+
+	// 何フレーム目か
+	int m_cnt;
+
+	// 全体フレーム
+	int m_slashCountSum;
+
+public:
+	SlashObject(int x1, int y1, int x2, int y2, int* handle, int handleSum, int damage, int slashCountSum);
+
+	void debug(int x, int y, int handle);
+
+	// セッタ
+	inline void setCharacterId(int id) { m_characterId = id; }
+
+	// キャラとの当たり判定
+	// 当たっているならキャラを操作する。
+	void atari(CharacterController* character);
+
+	// 動くオブジェクト用 毎フレーム行う
+	void action();
+};
+
 #endif

@@ -219,3 +219,9 @@ Object* StickAction::bulletAttack(int gx, int gy) {
 	}
 	return NULL;
 }
+
+// ŽaŒ‚UŒ‚
+Object* StickAction::slashAttack(bool leftDirection) {
+
+	return m_character->slashAttack(leftDirection);
+}

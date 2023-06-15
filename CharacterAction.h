@@ -98,6 +98,9 @@ public:
 
 	// ËŒ‚UŒ‚
 	virtual Object* bulletAttack(int gx, int gy) = 0;
+
+	// aŒ‚UŒ‚
+	virtual Object* slashAttack(bool leftDirection) = 0;
 };
 
 
@@ -137,6 +140,9 @@ public:
 
 	// ËŒ‚UŒ‚
 	Object* bulletAttack(int gx, int gy);
+
+	// aŒ‚UŒ‚
+	Object* slashAttack(bool leftDirection);
 };
 
 #endif

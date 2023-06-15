@@ -141,7 +141,7 @@ public:
 	virtual Object* bulletAttack(int gx, int gy) = 0;
 
 	// 斬撃攻撃をする(キャラごとに違う)
-	virtual Object* slashAttack(int cnt, int gx, int gy) = 0;
+	virtual Object* slashAttack(bool leftDirection) = 0;
 };
 
 
@@ -164,10 +164,17 @@ private:
 
 	//立ち画像
 	int m_standHandle;
+
+	// 斬撃攻撃画像
+	int m_slashHandleSum;
+	int* m_slashHandles;
 	
 public:
 	// コンストラクタ
 	Heart(int maxHp, int hp, int x, int y);
+
+	// デストラクタ
+	~Heart();
 
 	// デバッグ
 	void debug(int x, int y, int color);
@@ -179,7 +186,7 @@ public:
 	Object* bulletAttack(int gx, int gy);
 
 	// 斬撃攻撃をする(キャラごとに違う)
-	Object* slashAttack(int cnt, int gx, int gy);
+	Object* slashAttack(bool leftDirection);
 };
 
 

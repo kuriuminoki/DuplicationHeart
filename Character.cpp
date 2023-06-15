@@ -113,7 +113,19 @@ Heart::Heart(int maxHp, int hp, int x, int y) :
 	// 各画像のロード
 	m_standHandle = LoadGraph("picture/stick/stand.png");
 
+	m_slashHandleSum = 3;
+	m_slashHandles = new int[m_slashHandleSum];
+
 	m_attackInfo = new AttackInfo(0, 100, 100, 50, 30, 800, 0, 30, 30, 30);
+}
+
+// デストラクタ
+Heart::~Heart() {
+	DeleteGraph(m_standHandle);
+	for (int i = 0; i < m_slashHandleSum; i++) {
+		DeleteGraph(m_slashHandles[i]);
+	}
+	delete m_slashHandles;
 }
 
 // 射撃攻撃をする(キャラごとに違う)
@@ -127,7 +139,20 @@ Object* Heart::bulletAttack(int gx, int gy) {
 }
 
 // 斬撃攻撃をする(キャラごとに違う)
-Object* Heart::slashAttack(int cnt, int gx, int gy) {
-
-	return NULL;
+Object* Heart::slashAttack(bool leftDirection) {
+	int x2 = m_x;
+	int y2 = m_y;
+	if (leftDirection) { // 左向きに攻撃
+		x2 -= m_attackInfo->m_slashRx;
+		y2 -= m_attackInfo->m_slashRy;
+	}
+	else { // 右向きに攻撃
+		x2 += m_attackInfo->m_slashRx;
+		y2 += m_attackInfo->m_slashRy;
+	}
+	SlashObject* attackObject = new SlashObject(m_x, m_y, 
+		m_x + m_attackInfo->m_slashRx, m_y + m_attackInfo->m_slashRy,
+		m_slashHandles, m_slashHandleSum, 
+		m_attackInfo->m_slashDamage, m_attackInfo->m_slashCountSum);
+	return attackObject;
 }
