@@ -84,10 +84,10 @@ void Character::debugCharacter(int x, int y, int color) {
 	DrawFormatString(x, y + DRAW_FORMAT_STRING_SIZE, color, "HP=%d/%d, (x,y)=(%d,%d)", m_hp, m_maxHp, m_x, m_y);
 	DrawFormatString(x, y + DRAW_FORMAT_STRING_SIZE * 2, color, "(wide, height)=(%d,%d), handle=%d", m_wide, m_height, m_handle);
 	// 画像
-	DrawRotaGraph(GAME_WIDE - (m_wide / 2), y + (m_height / 2), m_ex, 0.0, m_handle, FALSE, FALSE);
+	DrawRotaGraph(GAME_WIDE - (m_wide / 2), y + (m_height / 2), m_characterInfo->handleEx(), 0.0, m_handle, FALSE, FALSE);
 	DrawBox(m_x, m_y, m_x + m_wide, m_y + m_height, color, TRUE);
 	DrawBox(m_x + 10, m_y + (m_height / 2) - 20, m_x + m_wide - 10, m_y + (m_height / 2) + 20, BLACK, TRUE);
-	DrawFormatString(m_x + 10, m_y + (m_height / 2), WHITE, "[%s]", m_name);
+	DrawFormatString(m_x + 10, m_y + (m_height / 2), WHITE, "[%s]", m_characterInfo->name().c_str());
 }
 
 // Heartクラスのデバッグ
@@ -140,4 +140,15 @@ void BulletObject::debug(int x, int y, int color) {
 	DrawFormatString(x, y + DRAW_FORMAT_STRING_SIZE, color, "(gx,gy)=(%d,%d)", m_gx, m_gy);
 	debugObject(x + DRAW_FORMAT_STRING_SIZE, y + DRAW_FORMAT_STRING_SIZE * 2, color);
 	DrawOval(m_x1 + m_rx, m_y1 + m_ry, m_rx, m_ry, m_color, TRUE);
+}
+
+
+/*
+* 斬撃のデバッグ
+*/
+void SlashObject::debug(int x, int y, int color) {
+	DrawFormatString(x, y, color, "**SlashObject**");
+	DrawFormatString(x, y + DRAW_FORMAT_STRING_SIZE, color, "cnt=%d", m_cnt);
+	debugObject(x + DRAW_FORMAT_STRING_SIZE, y + DRAW_FORMAT_STRING_SIZE * 2, color);
+	DrawBox(m_x1, m_y1, m_x2, m_y2, color, FALSE);
 }

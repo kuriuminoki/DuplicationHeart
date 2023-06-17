@@ -71,7 +71,6 @@ void BoxObject::atari(CharacterController* characterController) {
 			// 段差とみなして乗り越える
 			if (characterY2 - STAIR_HEIGHT <= m_y1 && characterX2 == m_x1) {
 				// 適切な座標へ
-				DrawFormatString(1000, 100, WHITE, "ok");
 				characterController->setCharacterX(characterX1 + characterController->getCharacterWide() / 2);
 				characterController->setCharacterY(m_y1 - characterController->getCharacterHeight());
 				// 着地
@@ -90,7 +89,6 @@ void BoxObject::atari(CharacterController* characterController) {
 		else if (characterX1 >= m_x2 && characterX1 + characterVx <= m_x2) {
 			// 段差とみなして乗り越える
 			if (characterY2 - STAIR_HEIGHT <= m_y1 && characterX1 == m_x2) {
-				DrawFormatString(1000, 100, WHITE, "ok");
 				// 適切な座標へ
 				characterController->setCharacterX(characterX1 - characterController->getCharacterWide() / 2);
 				characterController->setCharacterY(m_y1 - characterController->getCharacterHeight());
@@ -309,7 +307,7 @@ void BulletObject::atari(CharacterController* characterController) {
 	// 当たり判定
 	if (characterX2 > m_x1 && characterX1 < m_x2 && characterY2 > m_y1 && characterY1 < m_y2) {
 		// 貫通弾じゃないなら消滅
-		m_deleteFlag = true;
+		//m_deleteFlag = true;
 	}
 }
 

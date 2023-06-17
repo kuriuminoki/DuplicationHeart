@@ -1,0 +1,3 @@
+﻿name,bulletDamage,bulletRx,bulletRy,bulletSpeed,bulletRapid,bulletDistance,bulletImpactX,bulletImpactY,slashDamage,slashRx,slashRy,slashCountSum,slashImpactX,slashImpactY
+test,10,50,50,50,30,800,10,10,10,100,200,30,20,20
+ハート,10,50,50,50,30,800,10,10,10,100,200,30,20,20

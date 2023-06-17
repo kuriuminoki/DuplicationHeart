@@ -2,11 +2,45 @@
 #define CHARACTER_H_INCLUDED
 
 
+#include<string>
+
 class Object;
 
 
-class AttackInfo {
+class CharacterInfo {
+private:
+	// キャラの名前
+	std::string m_name;
+
+	// キャラの初期体力
+	int m_maxHp;
+
+	// 画像の拡大率
+	double m_handleEx;
+
+	// 走るスピード
+	int m_moveSpeed;
+
+	// ジャンプ時のY方向の初速
+	int m_jumpHeight;
+
 public:
+	// デフォルト値で初期化
+	CharacterInfo();
+	// csvファイルを読み込み、キャラ名で検索しパラメータ取得
+	CharacterInfo(const char* characterName);
+
+	// ゲッタのみを持つ
+	inline std::string name() { return m_name; }
+	inline int maxHp() { return m_maxHp; }
+	inline double handleEx() { return m_handleEx; }
+	inline int moveSpeed() { return m_moveSpeed; }
+	inline int jumpHeight() { return m_jumpHeight; }
+};
+
+
+class AttackInfo {
+private:
 	// 弾丸のダメージ
 	int m_bulletDamage;
 
@@ -22,6 +56,12 @@ public:
 	// 弾丸の飛距離
 	int m_bulletDistance;
 
+	// 弾丸の吹っ飛び(X方向の初速)
+	int m_bulletImpactX;
+
+	// 弾丸の吹っ飛び(Y方向の初速)
+	int m_bulletImpactY;
+
 	// 斬撃のダメージ
 	int m_slashDamage;
 
@@ -31,10 +71,33 @@ public:
 	// 斬撃の全体フレーム
 	int m_slashCountSum;
 
+	// 斬撃の吹っ飛び(X方向の初速)
+	int m_slashImpactX;
+
+	// 斬撃の吹っ飛び(Y方向の初速)
+	int m_slashImpactY;
+
 public:
+	// デフォルト値で初期化
 	AttackInfo();
+	// csvファイルを読み込み、キャラ名で検索しパラメータ取得
 	AttackInfo(const char* characterName);
-	AttackInfo(int bulletDamage, int bulletRx, int bulletRy, int bulletSpeed, int bulletRapid, int bulletDistance, int slashDamage, int slashRx, int slashRy, int slashCountSum);
+	
+	// ゲッタのみを持つ
+	int bulletDamage() { return m_bulletDamage; }
+	int bulletRx() { return m_bulletRx; }
+	int bulletRy() { return m_bulletRy; }
+	int bulletSpeed() { return m_bulletSpeed; }
+	int bulletRapid() { return m_bulletRapid; }
+	int bulletDistance() { return m_bulletDistance; }
+	int bulletImpactX() { return m_bulletImpactX; }
+	int bulletImpactY() { return m_bulletImpactY; }
+	int slashDamage() { return m_slashDamage; }
+	int slashRx() { return m_slashRx; }
+	int slashRy() { return m_slashRy; }
+	int slashCountSum() { return m_slashCountSum; }
+	int slashImpactX() { return m_slashImpactX; }
+	int slashImpactY() { return m_slashImpactY; }
 };
 
 
@@ -63,17 +126,8 @@ protected:
 	// 表示される画像
 	int m_handle;
 
-	// 画像の拡大率
-	double m_ex;
-
-	// 移動スピード
-	int m_moveSpeed;
-
-	// ジャンプの強さ
-	int m_jumpHeight;
-
-	// キャラ名
-	const char* m_name;
+	// キャラの情報
+	CharacterInfo* m_characterInfo;
 
 	// 攻撃の情報
 	AttackInfo* m_attackInfo;
@@ -114,16 +168,14 @@ public:
 
 	inline int getHeight() { return m_height; }
 
-	inline int getMoveSpeed() { return m_moveSpeed; }
+	inline int getMoveSpeed() { return m_characterInfo->moveSpeed(); }
 
-	inline int getJumpHeight() { return m_jumpHeight; }
+	inline int getJumpHeight() { return m_characterInfo->jumpHeight(); }
 
-	inline const char* getName() { return m_name; }
-
-	inline void setEx(double ex) { m_ex = ex; }
+	inline std::string getName() { return m_characterInfo->name(); }
 
 	// AttackInfoのセッタとゲッタ
-	inline int getBulletRapid() { return m_attackInfo->m_bulletRapid; }
+	inline int getBulletRapid() { return m_attackInfo->bulletRapid(); }
 
 	// 画像のセッタ。画像の横幅(wide)と縦幅(height)もセットする。
 	void setHandle(int handle);
@@ -152,15 +204,8 @@ class Heart :
 	public Character
 {
 private:
+	// キャラの名前
 	const char* const NAME = "ハート";
-	// 画像の拡大率
-	const double DRAW_EX = 0.30;
-
-	// 走るスピード
-	const int MOVE_SPEED = 10;
-
-	// ジャンプの強さ
-	const int JUMP_HEIGHT = 30;
 
 	//立ち画像
 	int m_standHandle;
