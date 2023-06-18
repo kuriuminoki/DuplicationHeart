@@ -28,6 +28,8 @@ CharacterAction::CharacterAction(Character* character) {
 	m_bulletCnt = 0;
 
 	m_slashCnt = 0;
+
+	m_attackLeftDirection = false;
 }
 
 CharacterAction::CharacterAction() :
@@ -83,6 +85,9 @@ void CharacterAction::setCharacterX(int x) {
 void CharacterAction::setCharacterY(int y) {
 	m_character->setY(y);
 }
+void CharacterAction::setCharacterLeftDirection(bool leftDirection) {
+	m_character->setLeftDirection(leftDirection);
+}
 
 
 /*
@@ -109,6 +114,9 @@ void StickAction::init() {
 void StickAction::action() {
 	// 射撃のインターバル処理
 	if (m_bulletCnt > 0) { m_bulletCnt--; }
+
+	// 斬撃のインターバル処理
+	if (m_slashCnt > 0) { m_slashCnt--; }
 
 	// 重力の処理
 	// 宙にいる
@@ -221,7 +229,12 @@ Object* StickAction::bulletAttack(int gx, int gy) {
 }
 
 // 斬撃攻撃
-Object* StickAction::slashAttack(bool leftDirection) {
-
-	return m_character->slashAttack(leftDirection);
+Object* StickAction::slashAttack() {
+	// 攻撃開始
+	if (m_slashCnt == 0) {
+		m_attackLeftDirection = m_character->getLeftDirection();
+		m_slashCnt = m_character->getSlashCountSum();
+	}
+	// 攻撃のタイミングじゃないならNULLが返る
+	return m_character->slashAttack(m_attackLeftDirection, m_slashCnt);
 }

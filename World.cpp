@@ -93,8 +93,12 @@ void World::battle() {
 		controller->control();
 
 		// ŽËŒ‚UŒ‚
-		Object* attack = controller->bulletAttack();
-		if (attack != NULL) { m_objects.push(attack); }
+		Object* bulletAttack = controller->bulletAttack();
+		if (bulletAttack != NULL) { m_objects.push(bulletAttack); }
+
+		// ŽaŒ‚UŒ‚
+		Object* slashAttack = controller->slashAttack();
+		if (slashAttack != NULL) { m_objects.push(slashAttack); }
 
 		// ”½‰f
 		controller->action();

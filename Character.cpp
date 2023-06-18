@@ -1,6 +1,7 @@
 #include "Character.h"
 #include "Object.h"
 #include "CsvReader.h"
+#include "GraphHandle.h"
 #include "Define.h"
 #include "DxLib.h"
 #include <cstdlib>
@@ -52,8 +53,8 @@ AttackInfo::AttackInfo(const char* characterName) {
 	m_bulletImpactX = stoi(data["bulletImpactX"]);
 	m_bulletImpactY = stoi(data["bulletImpactY"]);
 	m_slashDamage = stoi(data["slashDamage"]);
-	m_slashRx = stoi(data["slashRx"]);
-	m_slashRy = stoi(data["slashRy"]);
+	m_slashLenX = stoi(data["slashLenX"]);
+	m_slashLenY = stoi(data["slashLenY"]);
 	m_slashCountSum = stoi(data["slashCountSum"]);
 	m_slashImpactX = stoi(data["slashImpactX"]);
 	m_slashImpactY = stoi(data["slashImpactY"]);
@@ -80,7 +81,7 @@ Character::Character(int maxHp, int hp, int x, int y) {
 
 	m_wide = 0;
 	m_height = 0;
-	m_handle = -1;
+	m_graphHandle = NULL;
 
 	m_characterInfo = NULL;
 	m_attackInfo = NULL;
@@ -89,20 +90,22 @@ Character::Character(int maxHp, int hp, int x, int y) {
 }
 
 Character::~Character() {
+	// CharacterInfoの削除
 	if (m_characterInfo != NULL) {
 		delete m_characterInfo;
 	}
+	// AttackInfoの削除
 	if (m_attackInfo != NULL) {
 		delete m_attackInfo;
 	}
 }
 
-void Character::setHandle(int handle) {
+void Character::setHandle(GraphHandle* handle) {
 
-	m_handle = handle;
+	m_graphHandle = handle;
 
 	// 画像の縦幅と横幅を取得する。
-	GetGraphSize(m_handle, &m_wide, &m_height);
+	GetGraphSize(m_graphHandle->getHandle(), &m_wide, &m_height);
 
 	// 画像の拡大率も考慮してサイズを決定
 	m_wide = (int)(m_wide * m_characterInfo->handleEx());
@@ -135,48 +138,54 @@ Heart::Heart(int maxHp, int hp, int x, int y) :
 	m_attackInfo = new AttackInfo(NAME);
 
 	// 各画像のロード
-	m_standHandle = LoadGraph("picture/stick/stand.png");
+	double ex = m_characterInfo->handleEx();
+	m_standHandle = new GraphHandle("picture/stick/stand.png", ex);
 
-	m_slashHandleSum = 3;
-	m_slashHandles = new int[m_slashHandleSum];
-
-	m_attackInfo = new AttackInfo();
+	m_slashHandles = new GraphHandles("picture/stick/zangeki", 3, ex);
 }
 
 // デストラクタ
 Heart::~Heart() {
-	DeleteGraph(m_standHandle);
-	for (int i = 0; i < m_slashHandleSum; i++) {
-		DeleteGraph(m_slashHandles[i]);
-	}
+	// 画像を削除
+	delete m_standHandle;
 	delete m_slashHandles;
 }
 
 // 射撃攻撃をする(キャラごとに違う)
 Object* Heart::bulletAttack(int gx, int gy) {
-	BulletObject* attackObject = new BulletObject(m_x, m_y,
-		m_x + m_attackInfo->bulletRx(), m_y + m_attackInfo->bulletRy(),
-		WHITE, gx, gy,
-		m_attackInfo->bulletDamage(), m_attackInfo->bulletSpeed(), m_attackInfo->bulletDistance());
+	BulletObject* attackObject = new BulletObject(m_x, m_y, WHITE, gx, gy, m_attackInfo);
 	attackObject->setCharacterId(m_id);
 	return attackObject;
 }
 
 // 斬撃攻撃をする(キャラごとに違う)
-Object* Heart::slashAttack(bool leftDirection) {
+Object* Heart::slashAttack(bool leftDirection, int cnt) {
+	// 攻撃範囲を決定
 	int x2 = m_x;
-	int y2 = m_y;
+	int y2 = m_y + m_attackInfo->slashLenY();
 	if (leftDirection) { // 左向きに攻撃
-		x2 -= m_attackInfo->slashRx();
-		y2 -= m_attackInfo->slashRy();
+		x2 -= m_attackInfo->slashLenX();
 	}
 	else { // 右向きに攻撃
-		x2 += m_attackInfo->slashRx();
-		y2 += m_attackInfo->slashRy();
+		x2 += m_attackInfo->slashLenX();
 	}
-	SlashObject* attackObject = new SlashObject(m_x, m_y, 
-		m_x + m_attackInfo->slashRx(), m_y + m_attackInfo->slashRy(),
-		m_slashHandles, m_slashHandleSum, 
-		m_attackInfo->slashDamage(), m_attackInfo->slashCountSum());
+
+	// 攻撃の画像と持続時間(cntを考慮して決定)
+	int index = 0;
+	int slashCountSum = 5;
+	SlashObject* attackObject = NULL;
+	// cntが攻撃のタイミングならオブジェクト生成
+	if (cnt == m_attackInfo->slashCountSum()) {
+		attackObject = new SlashObject(m_x, m_y, x2, y2,
+			m_slashHandles->getGraphHandle(index), slashCountSum, m_attackInfo);
+	}
+	else if (cnt == m_attackInfo->slashCountSum() * 2 / 3) {
+		attackObject = new SlashObject(m_x, m_y, x2, y2,
+			m_slashHandles->getGraphHandle(index), slashCountSum, m_attackInfo);
+	}
+	else if (cnt == m_attackInfo->slashCountSum() / 3) {
+		attackObject = new SlashObject(m_x, m_y, x2, y2,
+			m_slashHandles->getGraphHandle(index), slashCountSum, m_attackInfo);
+	}
 	return attackObject;
 }

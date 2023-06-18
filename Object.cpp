@@ -1,6 +1,8 @@
 #include "Object.h"
+#include "Character.h"
 #include "CharacterController.h"
 #include "Define.h"
+#include "GraphHandle.h"
 #include "DxLib.h"
 #include <algorithm>
 #include <cmath>
@@ -271,28 +273,29 @@ void TriangleObject::action() {
 }
 
 
-BulletObject::BulletObject(int x1, int y1, int x2, int y2, int color, int gx, int gy, int damage, int speed, int distance) :
-	Object(x1, y1, x2, y2)
+BulletObject::BulletObject(int x, int y, int color, int gx, int gy, AttackInfo* attackInfo) :
+	Object(x - attackInfo->bulletRx(), y - attackInfo->bulletRx(), x + attackInfo->bulletRx(), y + attackInfo->bulletRy())
 {
 	// 必要なら後からセッタで設定
 	m_characterId = -1;
+	m_groupId = -1;
 
+	// 各パラメータの設定
 	m_color = color;
 	m_gx = gx;
 	m_gy = gy;
-	m_rx = (m_x2 - m_x1) / 2;
-	m_ry = (m_y2 - m_y1) / 2;
-	m_damage = damage;
+	m_rx = attackInfo->bulletRx();
+	m_ry = attackInfo->bulletRy();
+	m_damage = attackInfo->bulletDamage();
+	m_d = attackInfo->bulletDistance();
 
 	// 角度を計算し、VXとVYを決定
-	int dx = gx - x1;
-	int dy = gy - y1;
+	int dx = gx - x;
+	int dy = gy - y;
 	double r = std::atan2((double)dy, (double)dx);
-	m_v = speed;
-	m_vx = (int)speed * std::cos(r);
-	m_vy = (int)speed * std::sin(r);
-
-	m_d = distance;
+	m_v = attackInfo->bulletSpeed();
+	m_vx = (int)(m_v * std::cos(r));
+	m_vy = (int)(m_v * std::sin(r));
 }
 
 // キャラとの当たり判定
@@ -324,7 +327,7 @@ void BulletObject::action() {
 }
 
 
-SlashObject::SlashObject(int x1, int y1, int x2, int y2, int* handle, int handleSum, int damage, int slashCountSum) :
+SlashObject::SlashObject(int x1, int y1, int x2, int y2, GraphHandle* handle, int slashCountSum, AttackInfo* attackInfo) :
 	Object(x1, y1, x2, y2)
 {
 	// 必要なら後からセッタで設定
@@ -332,16 +335,23 @@ SlashObject::SlashObject(int x1, int y1, int x2, int y2, int* handle, int handle
 
 	// 画像
 	m_handle = handle;
-	m_handleSum = handleSum;
 	
 	// ダメージ
-	m_damage = damage;
+	m_damage = attackInfo->slashDamage();
 
 	// 全体フレーム
 	m_slashCountSum = slashCountSum;
 
 	// カウント
 	m_cnt = 0;
+}
+
+// 大きさを指定しない場合。画像からサイズ取得。生存時間、AttackInfo
+SlashObject::SlashObject(int x, int y, GraphHandle* handle, int slashCountSum, AttackInfo* attackInfo) {
+	int x2 = 0;
+	int y2 = 0;
+	GetGraphSize(handle->getHandle(), &x2, &y2);
+	SlashObject(x, y, x2, y2, handle, slashCountSum, attackInfo);
 }
 
 // キャラとの当たり判定
@@ -356,13 +366,15 @@ void SlashObject::atari(CharacterController* characterController) {
 	// 当たり判定
 	if (characterX2 > m_x1 && characterX1 < m_x2 && characterY2 > m_y1 && characterY1 < m_y2) {
 		// 貫通弾じゃないなら消滅
-		m_deleteFlag = true;
+		// m_deleteFlag = true;
 	}
 }
 
 void SlashObject::action() {
+	// 時間経過
 	m_cnt++;
 
+	// 時間が来たので消滅
 	if (m_cnt == m_slashCountSum) {
 		m_deleteFlag = true;
 	}

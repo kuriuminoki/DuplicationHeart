@@ -51,6 +51,9 @@ public:
 
 	// ËŒ‚UŒ‚
 	virtual Object* bulletAttack() = 0;
+
+	// aŒ‚UŒ‚
+	virtual Object* slashAttack() = 0;
 };
 
 
@@ -92,6 +95,9 @@ public:
 
 	// ËŒ‚UŒ‚
 	Object* bulletAttack();
+
+	// aŒ‚UŒ‚
+	Object* slashAttack();
 };
 
 #endif

@@ -53,6 +53,9 @@ protected:
 	// 斬撃用カウント
 	int m_slashCnt;
 
+	// 攻撃する方向
+	bool m_attackLeftDirection;
+
 public:
 	CharacterAction();
 	CharacterAction(Character* character);
@@ -66,6 +69,7 @@ public:
 	inline void setGrand(bool grand) { m_grand = grand; }
 	inline int getVx() { return m_vx; }
 	inline int getVy() { return m_vy; }
+	inline int getSlashCnt() { return m_slashCnt; }
 	void setRightLock(bool lock);
 	void setLeftLock(bool lock);
 	void setUpLock(bool lock);
@@ -80,6 +84,7 @@ public:
 	// キャラクターのセッタ
 	void setCharacterX(int x);
 	void setCharacterY(int y);
+	void setCharacterLeftDirection(bool leftDirection);
 
 	// 行動前の処理 毎フレーム行う
 	virtual void init() = 0;
@@ -100,7 +105,7 @@ public:
 	virtual Object* bulletAttack(int gx, int gy) = 0;
 
 	// 斬撃攻撃
-	virtual Object* slashAttack(bool leftDirection) = 0;
+	virtual Object* slashAttack() = 0;
 };
 
 
@@ -142,7 +147,7 @@ public:
 	Object* bulletAttack(int gx, int gy);
 
 	// 斬撃攻撃
-	Object* slashAttack(bool leftDirection);
+	Object* slashAttack();
 };
 
 #endif

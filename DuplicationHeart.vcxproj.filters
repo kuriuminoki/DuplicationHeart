@@ -66,6 +66,9 @@
     <ClCompile Include="CsvReader.cpp">
       <Filter>ソース ファイル\api</Filter>
     </ClCompile>
+    <ClCompile Include="GraphHandle.cpp">
+      <Filter>ソース ファイル\Domain</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Define.h">
@@ -97,6 +100,9 @@
     </ClInclude>
     <ClInclude Include="CsvReader.h">
       <Filter>ヘッダー ファイル\api</Filter>
+    </ClInclude>
+    <ClInclude Include="GraphHandle.h">
+      <Filter>ヘッダー ファイル\Domain</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

@@ -2,6 +2,9 @@
 #define OBJECT_H_INCLUDED
 
 class CharacterController;
+class AttackInfo;
+class GraphHandle;
+class GraphHandles;
 
 
 /*
@@ -92,13 +95,17 @@ public:
 
 /*
 * 直進する弾のオブジェクト
+* gx, gyに向かって飛んでいき、一定距離移動したら消滅
 */
 class BulletObject :
 	public Object
 {
 private:
-	// この攻撃を出したキャラのＩＤ 自滅やチームキル防止用
+	// この攻撃を出したキャラのＩＤ 自滅防止用
 	int m_characterId;
+
+	// この攻撃が当たらないグループのID チームキル防止用
+	int m_groupId;
 
 	// オブジェクトの色
 	int m_color;
@@ -123,11 +130,13 @@ private:
 	int m_damage;
 
 public:
-	BulletObject(int x1, int y1, int x2, int y2, int color, int gx, int gy, int damage, int speed, int distance);
+	// x, y, gx, gyは弾の中心座標
+	BulletObject(int x, int y, int color, int gx, int gy, AttackInfo* attackInfo);
 
 	void debug(int x, int y, int color);
 
 	// セッタ
+	// キャラクターIDを取得
 	inline void setCharacterId(int id) { m_characterId = id; }
 
 	// キャラとの当たり判定
@@ -141,6 +150,7 @@ public:
 
 /*
 * 近距離攻撃のオブジェクト
+* 一定時間経過したら消滅
 */
 class SlashObject :
 	public Object
@@ -149,11 +159,8 @@ private:
 	// この攻撃を出したキャラのＩＤ 自滅やチームキル防止用
 	int m_characterId;
 
-	// オブジェクトの画像配列
-	int* m_handle;
-
-	// 画像の数
-	int m_handleSum;
+	// オブジェクトの画像
+	GraphHandle* m_handle;
 
 	// ダメージ
 	int m_damage;
@@ -165,9 +172,13 @@ private:
 	int m_slashCountSum;
 
 public:
-	SlashObject(int x1, int y1, int x2, int y2, int* handle, int handleSum, int damage, int slashCountSum);
+	// 座標、画像、生存時間、AttackInfo
+	SlashObject(int x1, int y1, int x2, int y2, GraphHandle* handle, int slashCountSum, AttackInfo* attackInfo);
 
-	void debug(int x, int y, int handle);
+	// 大きさを指定しない場合。画像からサイズ取得。生存時間、AttackInfo
+	SlashObject(int x, int y, GraphHandle* handle, int slashCountSum, AttackInfo* attackInfo);
+
+	void debug(int x, int y, int color);
 
 	// セッタ
 	inline void setCharacterId(int id) { m_characterId = id; }

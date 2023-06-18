@@ -133,6 +133,12 @@ CharacterKeyboardController::CharacterKeyboardController(CharacterAction* charac
 }
 
 void CharacterKeyboardController::control() {
+	// キャラの向きを変える
+	// マウスの情報取得
+	int mouseX, mouseY;
+	GetMousePoint(&mouseX, &mouseY);
+	m_characterAction->setCharacterLeftDirection(mouseX < m_characterAction->getCharacterX());
+
 	// 移動 stickなどの入力状態を更新する
 	m_keyboard.controlStick(m_rightStick, m_leftStick, m_upStick, m_downStick);
 
@@ -151,12 +157,21 @@ void CharacterKeyboardController::control() {
 }
 
 Object* CharacterKeyboardController::bulletAttack() {
-	// クリックされているなら
+	// 左クリックされているなら
 	if (leftClick() > 0) {
+		// マウスの情報取得
 		int mouseX, mouseY;
 		GetMousePoint(&mouseX, &mouseY);
 		// マウスの位置に向かって射撃
 		return m_characterAction->bulletAttack(mouseX, mouseY);
+	}
+	return NULL;
+}
+
+Object* CharacterKeyboardController::slashAttack() {
+	// 右クリックされたか、した後で今が攻撃タイミングなら
+	if (rightClick() == 1 || m_characterAction->getSlashCnt() > 0) {
+		return m_characterAction->slashAttack();
 	}
 	return NULL;
 }

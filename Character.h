@@ -5,6 +5,8 @@
 #include<string>
 
 class Object;
+class GraphHandle;
+class GraphHandles;
 
 
 class CharacterInfo {
@@ -44,7 +46,7 @@ private:
 	// 弾丸のダメージ
 	int m_bulletDamage;
 
-	// 弾丸の大きさ
+	// 弾丸の大きさ(半径)
 	int m_bulletRx, m_bulletRy;
 
 	// 弾丸のスピード
@@ -65,8 +67,8 @@ private:
 	// 斬撃のダメージ
 	int m_slashDamage;
 
-	// 斬撃の大きさ
-	int m_slashRx, m_slashRy;
+	// 斬撃の大きさ(長方形の辺の長さ)
+	int m_slashLenX, m_slashLenY;
 
 	// 斬撃の全体フレーム
 	int m_slashCountSum;
@@ -93,8 +95,8 @@ public:
 	int bulletImpactX() { return m_bulletImpactX; }
 	int bulletImpactY() { return m_bulletImpactY; }
 	int slashDamage() { return m_slashDamage; }
-	int slashRx() { return m_slashRx; }
-	int slashRy() { return m_slashRy; }
+	int slashLenX() { return m_slashLenX; }
+	int slashLenY() { return m_slashLenY; }
 	int slashCountSum() { return m_slashCountSum; }
 	int slashImpactX() { return m_slashImpactX; }
 	int slashImpactY() { return m_slashImpactY; }
@@ -124,7 +126,7 @@ protected:
 	int m_wide, m_height;
 
 	// 表示される画像
-	int m_handle;
+	GraphHandle* m_graphHandle;
 
 	// キャラの情報
 	CharacterInfo* m_characterInfo;
@@ -174,11 +176,16 @@ public:
 
 	inline std::string getName() { return m_characterInfo->name(); }
 
+	inline bool getLeftDirection() { return m_leftDirection; }
+
+	inline void setLeftDirection(bool leftDirection) { m_leftDirection = leftDirection; }
+
 	// AttackInfoのセッタとゲッタ
 	inline int getBulletRapid() { return m_attackInfo->bulletRapid(); }
+	inline int getSlashCountSum() { return m_attackInfo->slashCountSum(); }
 
 	// 画像のセッタ。画像の横幅(wide)と縦幅(height)もセットする。
-	void setHandle(int handle);
+	void setHandle(GraphHandle* handle);
 
 	// 立ち画像をセット
 	virtual void switchStand() = 0;
@@ -192,8 +199,8 @@ public:
 	// 射撃攻撃をする(キャラごとに違う)
 	virtual Object* bulletAttack(int gx, int gy) = 0;
 
-	// 斬撃攻撃をする(キャラごとに違う)
-	virtual Object* slashAttack(bool leftDirection) = 0;
+	// 斬撃攻撃をする(キャラごとに違う) 左を向いているか、今何カウントか
+	virtual Object* slashAttack(bool leftDirection, int cnt) = 0;
 };
 
 
@@ -208,11 +215,10 @@ private:
 	const char* const NAME = "ハート";
 
 	//立ち画像
-	int m_standHandle;
+	GraphHandle* m_standHandle;
 
 	// 斬撃攻撃画像
-	int m_slashHandleSum;
-	int* m_slashHandles;
+	GraphHandles* m_slashHandles;
 	
 public:
 	// コンストラクタ
@@ -231,7 +237,7 @@ public:
 	Object* bulletAttack(int gx, int gy);
 
 	// 斬撃攻撃をする(キャラごとに違う)
-	Object* slashAttack(bool leftDirection);
+	Object* slashAttack(bool leftDirection, int cnt);
 };
 
 
