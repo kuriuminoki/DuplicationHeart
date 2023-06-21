@@ -74,6 +74,8 @@ Character::Character(int maxHp, int hp, int x, int y) {
 	characterId++;
 	m_id = characterId;
 
+	m_groupId = 0;
+
 	m_maxHp = maxHp;
 	m_hp = hp;
 	m_x = x;

@@ -21,22 +21,27 @@ void Game::debug(int x, int y, int color) {
 /*
 * World
 */
+void debugObjects(int x, int y, int color, std::queue<Object*> objects) {
+	int i = 0;
+	size_t objectSum = objects.size();
+	while (i < objectSum) {
+		Object* object = objects.front();
+		objects.pop();
+		// 当たり判定をここで行う
+		object->debug(x + 500, y + DRAW_FORMAT_STRING_SIZE * i * 4, color);
+		objects.push(object);
+		i++;
+	}
+}
+
 // Worldクラスのデバッグ
 void World::debug(int x, int y, int color) {
 	DrawFormatString(x, y, color, "**World**");
 	DrawFormatString(x, y + DRAW_FORMAT_STRING_SIZE, color, "CharacterSum=%d, ControllerSum=%d", m_characters.size(), m_characterControllers.size());
 	m_characterControllers.front()->debug(x + DRAW_FORMAT_STRING_SIZE, y + DRAW_FORMAT_STRING_SIZE * 2, color);
 	// オブジェクト
-	int i = 0;
-	size_t objectSum = m_objects.size();
-	while (i < objectSum) {
-		Object* object = m_objects.front();
-		m_objects.pop();
-		// 当たり判定をここで行う
-		object->debug(x + 500, y + DRAW_FORMAT_STRING_SIZE * i * 4, color);
-		m_objects.push(object);
-		i++;
-	}
+	debugObjects(x, y, color, m_stageObjects);
+	debugObjects(x + 500, y, RED, m_attackObjects);
 }
 
 

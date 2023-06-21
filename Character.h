@@ -113,6 +113,9 @@ protected:
 	// ID
 	int m_id;
 
+	// グループID 味方識別用
+	int m_groupId;
+
 	// 最大体力
 	int m_maxHp;
 

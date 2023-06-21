@@ -15,8 +15,11 @@ private:
 	// 戦闘のためにキャラを動かすコントローラ
 	std::queue<CharacterController*> m_characterControllers;
 
-	// 全てのオブジェクト
-	std::queue<Object*> m_objects;
+	// 壁や床のオブジェクト
+	std::queue<Object*> m_stageObjects;
+
+	// 攻撃のあたり判定のオブジェクト
+	std::queue<Object*> m_attackObjects;
 
 	// いま世界のどのエリアにいるか（メモリ節約のためプレイヤーの付近のみを読み込む）
 	int m_areaNum;
@@ -31,8 +34,18 @@ public:
 	// キャラに戦わせる
 	void battle();
 
+	// キャラクターの動き
+	void controlCharacter();
+
+	// オブジェクトの動き
+	void controlObject();
+
+	// 壁や床<->攻撃の当たり判定
+	void atariStageAndAttack();
+
 	// キャラに会話させる
 	void talk();
+
 };
 
 #endif
