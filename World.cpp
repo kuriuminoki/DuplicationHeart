@@ -182,7 +182,7 @@ void World::atariStageAndAttack() {
 			m_stageObjects.pop();
 
 			// “–‚½‚Á‚Ä‚¢‚é‚©”»’è
-
+			stageObject->atariObject(attackObject);
 
 			// deleteFlag‚ªtrue‚È‚çíœ‚·‚é
 			if (stageObject->getDeleteFlag()) {

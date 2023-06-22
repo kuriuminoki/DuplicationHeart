@@ -20,6 +20,8 @@ protected:
 
 	// 削除フラグ trueならWorldに消してもらう
 	bool m_deleteFlag;
+	// 攻撃で削除可能なオブジェクトならtrue
+	bool m_ableDelete;
 
 public:
 	Object();
@@ -30,9 +32,20 @@ public:
 
 	// ゲッタ
 	inline bool getDeleteFlag() { return m_deleteFlag; }
+	inline bool getAbleDelete() { return m_ableDelete; }
+	inline int getX1() { return m_x1; }
+	inline int getX2() { return m_x2; }
+	inline int getY1() { return m_y1; }
+	inline int getY2() { return m_y2; }
+
+	// セッタ
+	inline void setDeleteFlag(bool deleteFlag) { m_deleteFlag = deleteFlag; }
 
 	// キャラとの当たり判定
 	virtual void atari(CharacterController* character) = 0;
+
+	// 他オブジェクトとの当たり判定
+	virtual void atariObject(Object* object) = 0;
 
 	// 動くオブジェクト用 毎フレーム行う
 	virtual void action() = 0;
@@ -61,6 +74,9 @@ public:
 	// 当たっているならキャラを操作する。
 	void atari(CharacterController* character);
 
+	// 他オブジェクトとの当たり判定
+	void atariObject(Object* object);
+
 	// 動くオブジェクト用 毎フレーム行う
 	void action();
 };
@@ -88,6 +104,9 @@ public:
 	// キャラとの当たり判定
 	// 当たっているならキャラを操作する。
 	void atari(CharacterController* character);
+
+	// 他オブジェクトとの当たり判定
+	void atariObject(Object* object);
 
 	// 動くオブジェクト用 毎フレーム行う
 	void action();
@@ -143,6 +162,9 @@ public:
 	// 当たっているならキャラを操作する。
 	void atari(CharacterController* character);
 
+	// 他オブジェクトとの当たり判定
+	void atariObject(Object* object);
+
 	// 動くオブジェクト用 毎フレーム行う
 	void action();
 };
@@ -186,6 +208,9 @@ public:
 	// キャラとの当たり判定
 	// 当たっているならキャラを操作する。
 	void atari(CharacterController* character);
+
+	// 他オブジェクトとの当たり判定
+	void atariObject(Object* object);
 
 	// 動くオブジェクト用 毎フレーム行う
 	void action();

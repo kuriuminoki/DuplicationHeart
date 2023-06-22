@@ -24,6 +24,7 @@ Object::Object(int x1, int y1, int x2, int y2) {
 	if (m_y1 > m_y2) { std::swap(m_y1, m_y2); }
 
 	m_deleteFlag = false;
+	m_ableDelete = false;
 }
 
 
@@ -116,6 +117,16 @@ void BoxObject::atari(CharacterController* characterController) {
 		characterController->setCharacterGrand(true);
 		// キャラは下へ移動できない
 		characterController->setActionDownLock(true);
+	}
+}
+
+// 他オブジェクトとの当たり判定
+void BoxObject::atariObject(Object* object) {
+	// 破壊不能オブジェクト
+	if (!object->getAbleDelete()) { return; }
+	// 当たっているなら
+	if (m_x2 > object->getX1() && m_x1 < object->getX2() && m_y2 > object->getY1() && m_y1 < object->getY2()) {
+		object->setDeleteFlag(true);
 	}
 }
 
@@ -268,6 +279,24 @@ void TriangleObject::atari(CharacterController* characterController) {
 	}
 }
 
+// 他オブジェクトとの当たり判定
+void TriangleObject::atariObject(Object* object) {
+	// 破壊不能オブジェクト
+	if (!object->getAbleDelete()) { return; }
+	// 斜辺を考慮して当たり判定を計算
+	int y = object->getY1();
+	if (m_leftDown) {
+		y = getY(object->getX2());
+	}
+	else {
+		y = getY(object->getX1());
+	}
+	// 当たっているなら
+	if (m_x2 > object->getX1() && m_x1 < object->getX2() && m_y2 > object->getY1() && y < object->getY2()) {
+		object->setDeleteFlag(true);
+	}
+}
+
 void TriangleObject::action() {
 
 }
@@ -288,6 +317,7 @@ BulletObject::BulletObject(int x, int y, int color, int gx, int gy, AttackInfo* 
 	m_ry = attackInfo->bulletRy();
 	m_damage = attackInfo->bulletDamage();
 	m_d = attackInfo->bulletDistance();
+	m_ableDelete = true;
 
 	// 角度を計算し、VXとVYを決定
 	int dx = gx - x;
@@ -312,6 +342,11 @@ void BulletObject::atari(CharacterController* characterController) {
 		// 貫通弾じゃないなら消滅
 		//m_deleteFlag = true;
 	}
+}
+
+// 他オブジェクトとの当たり判定
+void BulletObject::atariObject(Object* object) {
+
 }
 
 void BulletObject::action() {
@@ -368,6 +403,11 @@ void SlashObject::atari(CharacterController* characterController) {
 		// 貫通弾じゃないなら消滅
 		// m_deleteFlag = true;
 	}
+}
+
+// 他オブジェクトとの当たり判定
+void SlashObject::atariObject(Object* object) {
+
 }
 
 void SlashObject::action() {
