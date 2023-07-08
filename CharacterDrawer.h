@@ -1,8 +1,18 @@
 #ifndef CHARACTER_DRAWER_H_INCLUDED
 #define CHARACTER_DRAWER_H_INCLUDED
 
+class Camera;
+class CharacterAction;
+
+// CharacterActionを見てキャラを描画する
 class CharacterDrawer {
 private:
+	// キャラの動きの情報 const関数しか呼ばない
+	const CharacterAction* m_characterAction;
+
+	// カウント アニメーション用
+	int m_cnt;
+
 	// 描画する画像
 	int m_handle;
 
@@ -13,7 +23,9 @@ private:
 	int m_ex;
 
 public:
-	CharacterDrawer();
+	CharacterDrawer(const CharacterAction* const characterAction);
+
+	void drawCharacter(const Camera* const camera);
 };
 
 #endif
