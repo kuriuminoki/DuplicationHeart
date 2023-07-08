@@ -114,6 +114,11 @@ void Character::setHandle(GraphHandle* handle) {
 	m_height = (int)(m_height * m_characterInfo->handleEx());
 }
 
+void Character::setLeftDirection(bool leftDirection) { 
+	m_leftDirection = leftDirection;
+	m_graphHandle->setReverseX(m_leftDirection);
+}
+
 // 移動する（座標を動かす）
 void Character::moveRight(int d) {
 	m_x += d;
@@ -144,6 +149,9 @@ Heart::Heart(int maxHp, int hp, int x, int y) :
 	m_standHandle = new GraphHandle("picture/stick/stand.png", ex);
 
 	m_slashHandles = new GraphHandles("picture/stick/zangeki", 3, ex);
+
+	// とりあえず立ち画像でスタート
+	switchStand();
 }
 
 // デストラクタ

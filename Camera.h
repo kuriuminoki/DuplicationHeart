@@ -29,6 +29,9 @@ public:
 
 	// カメラの座標を考慮した描画位置の補正
 	void setCamera(int* x, int* y, double* ex) const;
+
+	// マウスの位置を取得
+	void getMouse(int* x, int* y) const;
 };
 
 

@@ -1,5 +1,7 @@
 #include "CharacterController.h"
 #include "CharacterAction.h"
+#include "Character.h"
+#include "Camera.h"
 #include "Control.h"
 #include "Define.h"
 #include "DxLib.h"
@@ -23,38 +25,6 @@ CharacterController::~CharacterController() {
 	if (m_characterAction != NULL) {
 		delete m_characterAction;
 	}
-}
-
-// キャラクターの情報取得
-// キャラクターのX座標取得
-int CharacterController::getCharacterX() {
-	return m_characterAction->getCharacterX();
-}
-
-// キャラクターのY座標取得
-int CharacterController::getCharacterY() {
-	return m_characterAction->getCharacterY();
-}
-
-// キャラクターの横幅取得
-int CharacterController::getCharacterWide() {
-	return m_characterAction->getCharacterWide();
-}
-
-// キャラクターの縦幅取得
-int CharacterController::getCharacterHeight() {
-	return m_characterAction->getCharacterHeight();
-}
-
-// アクションの情報取得
-// キャラクターのVX取得
-int CharacterController::getCharacterVx() {
-	return m_characterAction->getVx();
-}
-
-// キャラクターのVY取得
-int CharacterController::getCharacterVy() {
-	return m_characterAction->getVy();
 }
 
 // アクションのセッタ
@@ -120,11 +90,12 @@ void CharacterKeyboard::controlJump(int& nowSpaceKey, int& preSpaceKey) {
 
 
 /*
-* キーボードによるキャラコントロール
+* キーボードによるキャラコントロール マウスも使うのでCameraが必要
 */
-CharacterKeyboardController::CharacterKeyboardController(CharacterAction* characterAction):
+CharacterKeyboardController::CharacterKeyboardController(CharacterAction* characterAction, const Camera* camera):
 	CharacterController(characterAction)
 {
+	m_camera = camera;
 	m_rightStick = 0;
 	m_leftStick = 0;
 	m_upStick = 0;
@@ -134,10 +105,12 @@ CharacterKeyboardController::CharacterKeyboardController(CharacterAction* charac
 
 void CharacterKeyboardController::control() {
 	// キャラの向きを変える
-	// マウスの情報取得
+	// マウスの情報取得（カメラを使用）
 	int mouseX, mouseY;
-	GetMousePoint(&mouseX, &mouseY);
-	m_characterAction->setCharacterLeftDirection(mouseX < m_characterAction->getCharacterX());
+	m_camera->getMouse(&mouseX, &mouseY);
+	
+	// マウスとキャラの位置関係を見る
+	m_characterAction->setCharacterLeftDirection(mouseX < m_characterAction->getCharacter()->getX());
 
 	// 移動 stickなどの入力状態を更新する
 	m_keyboard.controlStick(m_rightStick, m_leftStick, m_upStick, m_downStick);
@@ -161,7 +134,7 @@ Object* CharacterKeyboardController::bulletAttack() {
 	if (leftClick() > 0) {
 		// マウスの情報取得
 		int mouseX, mouseY;
-		GetMousePoint(&mouseX, &mouseY);
+		m_camera->getMouse(&mouseX, &mouseY);
 		// マウスの位置に向かって射撃
 		return m_characterAction->bulletAttack(mouseX, mouseY);
 	}

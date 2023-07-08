@@ -74,12 +74,16 @@ World::World(int areaNum) {
 	m_areaNum = areaNum;
 
 	// エリアに存在するオブジェクトをロード
-	Object* object1 = new BoxObject(0, 900, 1920, 1080, WHITE);
+	Object* object1 = new BoxObject(0, 900, 10000, 1080, WHITE);
 	m_stageObjects.push(object1);
 	Object* object2 = new TriangleObject(700, 600, 1300, 900, WHITE, false);
+	m_stageObjects.push(object2);
 	Object* object3 = new BoxObject(300, 600, 700, 900, WHITE);
 	m_stageObjects.push(object3);
-	m_stageObjects.push(object2);
+	Object* object4 = new TriangleObject(2000, 600, 2600, 900, WHITE, true);
+	m_stageObjects.push(object4);
+	Object* object5 = new BoxObject(2600, 600, 4000, 900, WHITE);
+	m_stageObjects.push(object5);
 
 	// 主人公をロード
 	Heart* heart = new Heart(100, 100, 0, 0);
@@ -95,7 +99,7 @@ World::World(int areaNum) {
 	StickAction* heartAction = new StickAction(heart);
 
 	//主人公のコントローラ作成
-	CharacterKeyboardController* heartController = new CharacterKeyboardController(heartAction);
+	CharacterKeyboardController* heartController = new CharacterKeyboardController(heartAction, m_camera);
 	m_characterControllers.push(heartController);
 }
 
