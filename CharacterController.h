@@ -26,6 +26,7 @@ public:
 	int getCharacterHeight();
 
 	// ƒAƒNƒVƒ‡ƒ“‚Ìî•ñæ“¾
+	inline CharacterAction* getAction() { return m_characterAction; }
 	int getCharacterVx();
 	int getCharacterVy();
 

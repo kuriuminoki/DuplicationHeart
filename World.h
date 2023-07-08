@@ -4,11 +4,16 @@
 #include<queue>
 
 class CharacterController;
+class CharacterAction;
 class Character;
 class Object;
+class Camera;
 
 class World {
 private:
+	// 描画用のカメラ
+	Camera* m_camera;
+
 	// 世界に存在するキャラクター
 	std::queue<Character*> m_characters;
 
@@ -27,6 +32,10 @@ private:
 public:
 	World(int areaNum);
 	~World();
+
+	// ゲッタとセッタ
+	inline const Camera* getCamera() const { return m_camera; }
+	std::queue<const CharacterAction*> getActions() const;
 
 	//デバッグ
 	void debug(int x, int y, int color);

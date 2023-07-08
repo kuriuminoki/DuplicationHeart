@@ -161,11 +161,11 @@ public:
 		m_hp = (hp > m_maxHp) ? m_maxHp : hp;
 	}
 
-	inline int getX() { return m_x; }
+	inline int getX() const { return m_x; }
 
 	inline void setX(int x) { m_x = x; }
 
-	inline int getY() { return m_y; }
+	inline int getY() const { return m_y; }
 
 	inline void setY(int y) { m_y = y; }
 
@@ -182,6 +182,8 @@ public:
 	inline bool getLeftDirection() { return m_leftDirection; }
 
 	inline void setLeftDirection(bool leftDirection) { m_leftDirection = leftDirection; }
+
+	inline const GraphHandle* getGraphHandle() const { return m_graphHandle; }
 
 	// AttackInfoのセッタとゲッタ
 	inline int getBulletRapid() { return m_attackInfo->bulletRapid(); }

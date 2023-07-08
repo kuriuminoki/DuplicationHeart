@@ -74,6 +74,7 @@ public:
 	void setLeftLock(bool lock);
 	void setUpLock(bool lock);
 	void setDownLock(bool lock);
+	inline const Character* getCharacter() const { return m_character; };
 
 	// キャラクターの情報取得
 	int getCharacterX();

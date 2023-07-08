@@ -3,6 +3,7 @@
 #include "Character.h"
 #include "CharacterAction.h"
 #include "CharacterController.h"
+#include "Camera.h"
 #include "Define.h"
 #include "DxLib.h"
 
@@ -84,6 +85,9 @@ World::World(int areaNum) {
 	Heart* heart = new Heart(100, 100, 0, 0);
 	m_characters.push(heart);
 
+	// カメラを主人公注目、倍率1.0で作成
+	m_camera = new Camera(heart->getX(), heart->getY(), 1.0);
+
 	// 主人公の動きを作成
 	StickAction* heartAction = new StickAction(heart);
 
@@ -93,6 +97,9 @@ World::World(int areaNum) {
 }
 
 World::~World() {
+	// カメラを削除する
+	delete m_camera;
+
 	// 全オブジェクトを削除する。
 	deleteObject(m_stageObjects);
 	deleteObject(m_attackObjects);
@@ -105,6 +112,21 @@ World::~World() {
 		delete controller;
 		characterSum--;
 	}
+}
+
+// CharacterActionのキューを返す
+queue<const CharacterAction*> World::getActions() const {
+	// コントローラのコピーを作成（constメソッドにするため対策）
+	queue<CharacterController*> controllers = m_characterControllers;
+
+	queue<const CharacterAction*> actions;
+	while (!controllers.empty()) {
+		// コントローラを取得
+		CharacterController* controller = controllers.front();
+		controllers.pop();
+		actions.push(controller->getAction());
+	}
+	return actions;
 }
 
 // 戦わせる

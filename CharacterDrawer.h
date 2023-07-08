@@ -25,6 +25,9 @@ private:
 public:
 	CharacterDrawer(const CharacterAction* const characterAction);
 
+	// ƒZƒbƒ^
+	void setCharacterAction(const CharacterAction* action) { m_characterAction = action; }
+
 	void drawCharacter(const Camera* const camera);
 };
 

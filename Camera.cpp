@@ -17,7 +17,7 @@ Camera::Camera(int x, int y, double ex) {
 }
 
 // カメラで座標と拡大率を調整する
-void Camera::setCamera(int handle, int* x, int* y, double* ex) {
+void Camera::setCamera(int* x, int* y, double* ex) const {
 	// カメラからのずれを計算
 	int dx = *x - m_x;
 	int dy = *y - m_y;
