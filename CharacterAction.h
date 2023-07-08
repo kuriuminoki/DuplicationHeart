@@ -67,20 +67,14 @@ public:
 	// ゲッタとセッタ
 	inline bool getGrand() { return m_grand; }
 	inline void setGrand(bool grand) { m_grand = grand; }
-	inline int getVx() { return m_vx; }
-	inline int getVy() { return m_vy; }
+	inline int getVx() const { return m_vx; }
+	inline int getVy() const { return m_vy; }
 	inline int getSlashCnt() { return m_slashCnt; }
 	void setRightLock(bool lock);
 	void setLeftLock(bool lock);
 	void setUpLock(bool lock);
 	void setDownLock(bool lock);
-	inline const Character* getCharacter() const { return m_character; };
-
-	// キャラクターの情報取得
-	int getCharacterX();
-	int getCharacterY();
-	int getCharacterWide();
-	int getCharacterHeight();
+	inline const Character* getCharacter() const { return m_character; }
 
 	// キャラクターのセッタ
 	void setCharacterX(int x);

@@ -1,5 +1,6 @@
 #include "CharacterController.h"
 #include "CharacterAction.h"
+#include "Character.h"
 #include "Control.h"
 #include "Define.h"
 #include "DxLib.h"
@@ -23,38 +24,6 @@ CharacterController::~CharacterController() {
 	if (m_characterAction != NULL) {
 		delete m_characterAction;
 	}
-}
-
-// キャラクターの情報取得
-// キャラクターのX座標取得
-int CharacterController::getCharacterX() {
-	return m_characterAction->getCharacterX();
-}
-
-// キャラクターのY座標取得
-int CharacterController::getCharacterY() {
-	return m_characterAction->getCharacterY();
-}
-
-// キャラクターの横幅取得
-int CharacterController::getCharacterWide() {
-	return m_characterAction->getCharacterWide();
-}
-
-// キャラクターの縦幅取得
-int CharacterController::getCharacterHeight() {
-	return m_characterAction->getCharacterHeight();
-}
-
-// アクションの情報取得
-// キャラクターのVX取得
-int CharacterController::getCharacterVx() {
-	return m_characterAction->getVx();
-}
-
-// キャラクターのVY取得
-int CharacterController::getCharacterVy() {
-	return m_characterAction->getVy();
 }
 
 // アクションのセッタ
@@ -137,7 +106,8 @@ void CharacterKeyboardController::control() {
 	// マウスの情報取得
 	int mouseX, mouseY;
 	GetMousePoint(&mouseX, &mouseY);
-	m_characterAction->setCharacterLeftDirection(mouseX < m_characterAction->getCharacterX());
+	// マウスとキャラの位置関係を見る
+	m_characterAction->setCharacterLeftDirection(mouseX < m_characterAction->getCharacter()->getX());
 
 	// 移動 stickなどの入力状態を更新する
 	m_keyboard.controlStick(m_rightStick, m_leftStick, m_upStick, m_downStick);

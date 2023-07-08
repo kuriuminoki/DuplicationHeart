@@ -1,5 +1,6 @@
 #include "Object.h"
 #include "Character.h"
+#include "CharacterAction.h"
 #include "CharacterController.h"
 #include "Define.h"
 #include "GraphHandle.h"
@@ -40,12 +41,14 @@ BoxObject::BoxObject(int x1, int y1, int x2, int y2, int color) :
 // キャラクターとの当たり判定
 void BoxObject::atari(CharacterController* characterController) {
 	// キャラの情報　座標と移動スピード
-	int characterX1 = characterController->getCharacterX();
-	int characterY1 = characterController->getCharacterY();
-	int characterX2 = characterX1 + characterController->getCharacterWide();
-	int characterY2 = characterY1 + characterController->getCharacterHeight();
-	int characterVx = characterController->getCharacterVx();
-	int characterVy = characterController->getCharacterVy();
+	int characterX1 = characterController->getAction()->getCharacter()->getX();
+	int characterY1 = characterController->getAction()->getCharacter()->getY();
+	int characterWide = characterController->getAction()->getCharacter()->getWide();
+	int characterHeight = characterController->getAction()->getCharacter()->getHeight();
+	int characterX2 = characterX1 + characterWide;
+	int characterY2 = characterY1 + characterHeight;
+	int characterVx = characterController->getAction()->getVx();
+	int characterVy = characterController->getAction()->getVy();
 
 	// キャラが上下移動で当たっているか判定
 	if (characterX2 > m_x1 && characterX1 < m_x2) {
@@ -56,7 +59,7 @@ void BoxObject::atari(CharacterController* characterController) {
 			// キャラは下へ移動できない
 			characterController->setActionDownLock(true);
 			// 密着状態までは移動させる
-			characterController->setCharacterY(m_y1 - characterController->getCharacterHeight());
+			characterController->setCharacterY(m_y1 - characterHeight);
 		}
 		// 上に移動中のキャラが下から当たっているか判定
 		else if (characterY1 >= m_y2 && characterY1 + characterVy <= m_y2) {
@@ -74,8 +77,8 @@ void BoxObject::atari(CharacterController* characterController) {
 			// 段差とみなして乗り越える
 			if (characterY2 - STAIR_HEIGHT <= m_y1 && characterX2 == m_x1) {
 				// 適切な座標へ
-				characterController->setCharacterX(characterX1 + characterController->getCharacterWide() / 2);
-				characterController->setCharacterY(m_y1 - characterController->getCharacterHeight());
+				characterController->setCharacterX(characterX1 + characterWide / 2);
+				characterController->setCharacterY(m_y1 - characterHeight);
 				// 着地
 				characterController->setCharacterGrand(true);
 				// キャラは下へ移動できない
@@ -85,7 +88,7 @@ void BoxObject::atari(CharacterController* characterController) {
 				// キャラは右へ移動できない
 				characterController->setActionRightLock(true);
 				// 密着状態までは移動させる
-				characterController->setCharacterX(m_x1 - characterController->getCharacterWide());
+				characterController->setCharacterX(m_x1 - characterWide);
 			}
 		}
 		// 左に移動中のキャラが右から当たっているか判定
@@ -93,8 +96,8 @@ void BoxObject::atari(CharacterController* characterController) {
 			// 段差とみなして乗り越える
 			if (characterY2 - STAIR_HEIGHT <= m_y1 && characterX1 == m_x2) {
 				// 適切な座標へ
-				characterController->setCharacterX(characterX1 - characterController->getCharacterWide() / 2);
-				characterController->setCharacterY(m_y1 - characterController->getCharacterHeight());
+				characterController->setCharacterX(characterX1 - characterWide / 2);
+				characterController->setCharacterY(m_y1 - characterHeight);
 				// 着地
 				characterController->setCharacterGrand(true);
 				// キャラは下へ移動できない
@@ -112,7 +115,7 @@ void BoxObject::atari(CharacterController* characterController) {
 	// 万が一オブジェクトの中に入り込んでしまったら
 	if (characterVy != 0 && characterY2 > m_y1 && characterY1 < m_y2 && characterX2 > m_x1 && characterX1 < m_x2) {
 		// 真上へ
-		characterController->setCharacterY(m_y1 - characterController->getCharacterHeight());
+		characterController->setCharacterY(m_y1 - characterHeight);
 		// 着地
 		characterController->setCharacterGrand(true);
 		// キャラは下へ移動できない
@@ -186,14 +189,16 @@ int TriangleObject::getY(int x) {
 // キャラクターとの当たり判定
 void TriangleObject::atari(CharacterController* characterController) {
 	// キャラの情報　座標と移動スピード
-	int characterX1 = characterController->getCharacterX();
-	int characterY1 = characterController->getCharacterY();
-	int characterX1_5 = characterX1 + (characterController->getCharacterWide() / 2);
-	int characterY1_5 = characterY1 + (characterController->getCharacterHeight() / 2);
-	int characterX2 = characterX1 + characterController->getCharacterWide();
-	int characterY2 = characterY1 + characterController->getCharacterHeight();
-	int characterVx = characterController->getCharacterVx();
-	int characterVy = characterController->getCharacterVy();
+	int characterX1 = characterController->getAction()->getCharacter()->getX();
+	int characterY1 = characterController->getAction()->getCharacter()->getY();
+	int characterWide = characterController->getAction()->getCharacter()->getWide();
+	int characterHeight = characterController->getAction()->getCharacter()->getHeight();
+	int characterX2 = characterX1 + characterWide;
+	int characterY2 = characterY1 + characterHeight;
+	int characterX1_5 = characterX1 + (characterWide / 2);
+	int characterY1_5 = characterY1 + (characterHeight / 2);
+	int characterVx = characterController->getAction()->getVx();
+	int characterVy = characterController->getAction()->getVy();
 
 	// キャラが上下移動で当たっているか判定
 	if (characterX2 > m_x1 && characterX1 < m_x2) {
@@ -204,7 +209,7 @@ void TriangleObject::atari(CharacterController* characterController) {
 			// キャラは下へ移動できない
 			characterController->setActionDownLock(true);
 			// 密着状態までは移動させる
-			characterController->setCharacterY(getY(characterX1_5) - characterController->getCharacterHeight());
+			characterController->setCharacterY(getY(characterX1_5) - characterHeight);
 		}
 		// 下に移動中のキャラが上から当たっているか判定
 		else if (characterY2 <= getY(characterX1_5) && characterY2 + characterVy >= getY(characterX1_5)) {
@@ -213,7 +218,7 @@ void TriangleObject::atari(CharacterController* characterController) {
 			// キャラは下へ移動できない
 			characterController->setActionDownLock(true);
 			// 密着状態までは移動させる
-			characterController->setCharacterY(getY(characterX1_5) - characterController->getCharacterHeight());
+			characterController->setCharacterY(getY(characterX1_5) - characterHeight);
 		}
 		// 上に移動中のキャラが下から当たっているか判定
 		else if (characterY1 >= m_y2 && characterY1 + characterVy <= m_y2) {
@@ -231,7 +236,7 @@ void TriangleObject::atari(CharacterController* characterController) {
 		// キャラは下へ移動できない
 		characterController->setActionDownLock(true);
 		// 適切な高さへ移動
-		characterController->setCharacterY(getY(characterX1_5) - characterController->getCharacterHeight());
+		characterController->setCharacterY(getY(characterX1_5) - characterHeight);
 	}
 
 	// 坂の鋭角（先端）の当たり判定
@@ -242,7 +247,7 @@ void TriangleObject::atari(CharacterController* characterController) {
 				// キャラは右へ移動できない
 				characterController->setActionRightLock(true);
 				// 密着状態までは移動させる
-				characterController->setCharacterX(m_x1 - characterController->getCharacterWide());
+				characterController->setCharacterX(m_x1 - characterWide);
 			}
 		}
 		else {
@@ -273,7 +278,7 @@ void TriangleObject::atari(CharacterController* characterController) {
 				// キャラは右へ移動できない
 				characterController->setActionRightLock(true);
 				// 密着状態までは移動させる
-				characterController->setCharacterX(m_x1 - characterController->getCharacterWide());
+				characterController->setCharacterX(m_x1 - characterWide);
 			}
 		}
 	}
@@ -332,10 +337,10 @@ BulletObject::BulletObject(int x, int y, int color, int gx, int gy, AttackInfo* 
 // 当たっているならキャラを操作する。
 void BulletObject::atari(CharacterController* characterController) {
 	// キャラの情報　座標と移動スピード
-	int characterX1 = characterController->getCharacterX();
-	int characterY1 = characterController->getCharacterY();
-	int characterX2 = characterX1 + characterController->getCharacterWide();
-	int characterY2 = characterY1 + characterController->getCharacterHeight();
+	int characterX1 = characterController->getAction()->getCharacter()->getX();
+	int characterY1 = characterController->getAction()->getCharacter()->getY();
+	int characterX2 = characterX1 + characterController->getAction()->getCharacter()->getWide();
+	int characterY2 = characterY1 + characterController->getAction()->getCharacter()->getHeight();
 
 	// 当たり判定
 	if (characterX2 > m_x1 && characterX1 < m_x2 && characterY2 > m_y1 && characterY1 < m_y2) {
@@ -393,10 +398,10 @@ SlashObject::SlashObject(int x, int y, GraphHandle* handle, int slashCountSum, A
 // 当たっているならキャラを操作する。
 void SlashObject::atari(CharacterController* characterController) {
 	// キャラの情報　座標と移動スピード
-	int characterX1 = characterController->getCharacterX();
-	int characterY1 = characterController->getCharacterY();
-	int characterX2 = characterX1 + characterController->getCharacterWide();
-	int characterY2 = characterY1 + characterController->getCharacterHeight();
+	int characterX1 = characterController->getAction()->getCharacter()->getX();
+	int characterY1 = characterController->getAction()->getCharacter()->getY();
+	int characterX2 = characterX1 + characterController->getAction()->getCharacter()->getWide();
+	int characterY2 = characterY1 + characterController->getAction()->getCharacter()->getHeight();
 
 	// 当たり判定
 	if (characterX2 > m_x1 && characterX1 < m_x2 && characterY2 > m_y1 && characterY1 < m_y2) {

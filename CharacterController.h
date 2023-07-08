@@ -19,16 +19,8 @@ public:
 	void debugController(int x, int y, int color);
 	virtual void debug(int x, int y, int color) = 0;
 
-	// キャラクターの情報取得
-	int getCharacterX();
-	int getCharacterY();
-	int getCharacterWide();
-	int getCharacterHeight();
-
 	// アクションの情報取得
-	inline CharacterAction* getAction() { return m_characterAction; }
-	int getCharacterVx();
-	int getCharacterVy();
+	inline const CharacterAction* getAction() const { return m_characterAction; }
 
 	// アクションのセッタ
 	void setCharacterGrand(bool grand);

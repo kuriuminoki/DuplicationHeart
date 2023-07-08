@@ -58,26 +58,6 @@ void CharacterAction::setDownLock(bool lock) {
 	m_moveDown;
 }
 
-// キャラクターのX座標取得
-int CharacterAction::getCharacterX() {
-	return m_character->getX();
-}
-
-// キャラクターのY座標取得
-int CharacterAction::getCharacterY() {
-	return m_character->getY();
-}
-
-// キャラクターの横幅取得
-int CharacterAction::getCharacterWide() {
-	return m_character->getWide();
-}
-
-// キャラクターの縦幅取得
-int CharacterAction::getCharacterHeight() {
-	return m_character->getHeight();
-}
-
 // キャラクターのセッタ
 void CharacterAction::setCharacterX(int x) {
 	m_character->setX(x);
