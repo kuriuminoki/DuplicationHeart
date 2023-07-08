@@ -21,8 +21,8 @@ GraphHandle::~GraphHandle() {
 }
 
 // •`‰æ‚·‚é
-void GraphHandle::draw(int x, int y) {
-	DrawRotaGraph(x, y, m_ex, m_angle, m_handle, m_trans, m_reverseX, m_reverseY);
+void GraphHandle::draw(int x, int y, double ex = 1.0) const {
+	DrawRotaGraph(x, y, ex, m_angle, m_handle, m_trans, m_reverseX, m_reverseY);
 }
 
 

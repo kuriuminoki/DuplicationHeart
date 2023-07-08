@@ -2,14 +2,14 @@
 #define GRAPH_HANDLE_H_INCLUDED
 
 /*
-* 画像データ(ハンドル、拡大率、向き)をまとめて扱うためのクラス
+* 画像データ(ハンドル、画像固有の拡大率、向き)をまとめて扱うためのクラス
 */
 class GraphHandle {
 private:
 	// 画像ハンドル
 	int m_handle;
 
-	// 拡大率
+	// (この画像固有の)拡大率
 	double m_ex;
 
 	// 向き
@@ -28,6 +28,7 @@ public:
 
 	// ゲッタ
 	inline int getHandle() { return m_handle; }
+	inline double getEx() const { return m_ex; }
 
 	// セッタ
 	inline void setEx(double ex) { m_ex = ex; }
@@ -37,7 +38,7 @@ public:
 	inline void setReverseY(bool reverse) { m_reverseY = reverse; }
 
 	// 描画する
-	void draw(int x, int y);
+	void draw(int x, int y, double ex) const;
 };
 
 

@@ -3,6 +3,7 @@
 #include "Character.h"
 #include "CharacterAction.h"
 #include "CharacterController.h"
+#include "Camera.h"
 #include "Define.h"
 #include "DxLib.h"
 
@@ -84,6 +85,12 @@ World::World(int areaNum) {
 	Heart* heart = new Heart(100, 100, 0, 0);
 	m_characters.push(heart);
 
+	// カメラを主人公注目、倍率1.0で作成
+	m_playerId = heart->getId();
+	m_focusId = m_playerId;
+	m_camera = new Camera(0, 0, 1.0);
+	updateCamera();
+
 	// 主人公の動きを作成
 	StickAction* heartAction = new StickAction(heart);
 
@@ -93,6 +100,9 @@ World::World(int areaNum) {
 }
 
 World::~World() {
+	// カメラを削除する
+	delete m_camera;
+
 	// 全オブジェクトを削除する。
 	deleteObject(m_stageObjects);
 	deleteObject(m_attackObjects);
@@ -107,6 +117,41 @@ World::~World() {
 	}
 }
 
+// CharacterActionのキューを返す
+queue<const CharacterAction*> World::getActions() const {
+	// コントローラのコピーを作成（constメソッドにするため対策）
+	queue<CharacterController*> controllers = m_characterControllers;
+
+	queue<const CharacterAction*> actions;
+	while (!controllers.empty()) {
+		// コントローラを取得
+		CharacterController* controller = controllers.front();
+		controllers.pop();
+		actions.push(controller->getAction());
+	}
+	return actions;
+}
+
+// Objectのキューを返す
+queue<const Object*> World::getObjects() const {
+	// Objectのコピーを作成（constメソッドにするため対策）
+	queue<Object*> stageObjects = m_stageObjects;
+	queue<Object*> attackObjects = m_attackObjects;
+
+	queue<const Object*> objects;
+	while (!stageObjects.empty()) {
+		// Objectをpush
+		objects.push(stageObjects.front());
+		stageObjects.pop();
+	}
+	while (!attackObjects.empty()) {
+		// Objectをpush
+		objects.push(attackObjects.front());
+		attackObjects.pop();
+	}
+	return objects;
+}
+
 // 戦わせる
 void World::battle() {
 
@@ -116,6 +161,26 @@ void World::battle() {
 	// オブジェクトの動き
 	controlObject();
 
+	// カメラの更新
+	updateCamera();
+
+}
+
+// カメラの更新
+void World::updateCamera() {
+	size_t characterSum = m_characters.size();
+	int x = 0, y = 0;
+	while (characterSum > 0) {
+		Character* character = m_characters.front();
+		m_characters.pop();
+		if(m_focusId == character->getId()){
+			x = character->getX();
+			y = character->getY();
+			m_camera->setPoint(x, y);
+		}
+		m_characters.push(character);
+		characterSum--;
+	}
 }
 
 // キャラクターの動き

@@ -151,6 +151,8 @@ public:
 	virtual void debug(int x, int y, int color) = 0;
 
 	// ゲッタとセッタ
+	inline int getId() { return m_id; }
+
 	inline int getMaxHp() { return m_maxHp; }
 
 	inline void setMaxHp(int maxHp) { m_maxHp = maxHp; }
@@ -161,17 +163,17 @@ public:
 		m_hp = (hp > m_maxHp) ? m_maxHp : hp;
 	}
 
-	inline int getX() { return m_x; }
+	inline int getX() const { return m_x; }
 
 	inline void setX(int x) { m_x = x; }
 
-	inline int getY() { return m_y; }
+	inline int getY() const { return m_y; }
 
 	inline void setY(int y) { m_y = y; }
 
-	inline int getWide() { return m_wide; }
+	inline int getWide() const { return m_wide; }
 
-	inline int getHeight() { return m_height; }
+	inline int getHeight() const { return m_height; }
 
 	inline int getMoveSpeed() { return m_characterInfo->moveSpeed(); }
 
@@ -182,6 +184,8 @@ public:
 	inline bool getLeftDirection() { return m_leftDirection; }
 
 	inline void setLeftDirection(bool leftDirection) { m_leftDirection = leftDirection; }
+
+	inline const GraphHandle* getGraphHandle() const { return m_graphHandle; }
 
 	// AttackInfoのセッタとゲッタ
 	inline int getBulletRapid() { return m_attackInfo->bulletRapid(); }

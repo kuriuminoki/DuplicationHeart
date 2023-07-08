@@ -48,6 +48,9 @@
     <ClCompile Include="CharacterController.cpp">
       <Filter>ソース ファイル\api</Filter>
     </ClCompile>
+    <ClCompile Include="Camera.cpp">
+      <Filter>ソース ファイル\Domain</Filter>
+    </ClCompile>
     <ClCompile Include="CharacterAction.cpp">
       <Filter>ソース ファイル\api</Filter>
     </ClCompile>
@@ -69,6 +72,15 @@
     <ClCompile Include="GraphHandle.cpp">
       <Filter>ソース ファイル\Domain</Filter>
     </ClCompile>
+    <ClCompile Include="WorldDrawer.cpp">
+      <Filter>ソース ファイル\ui</Filter>
+    </ClCompile>
+    <ClCompile Include="GameDrawer.cpp">
+      <Filter>ソース ファイル\ui</Filter>
+    </ClCompile>
+    <ClCompile Include="ObjectDrawer.cpp">
+      <Filter>ソース ファイル\ui</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Define.h">
@@ -85,6 +97,9 @@
     </ClInclude>
     <ClInclude Include="CharacterController.h">
       <Filter>ヘッダー ファイル\api</Filter>
+    </ClInclude>
+    <ClInclude Include="Camera.h">
+      <Filter>ヘッダー ファイル\Domain</Filter>
     </ClInclude>
     <ClInclude Include="CharacterAction.h">
       <Filter>ヘッダー ファイル\api</Filter>
@@ -103,6 +118,15 @@
     </ClInclude>
     <ClInclude Include="GraphHandle.h">
       <Filter>ヘッダー ファイル\Domain</Filter>
+    </ClInclude>
+    <ClInclude Include="GameDrawer.h">
+      <Filter>ヘッダー ファイル\ui</Filter>
+    </ClInclude>
+    <ClInclude Include="WorldDrawer.h">
+      <Filter>ヘッダー ファイル\ui</Filter>
+    </ClInclude>
+    <ClInclude Include="ObjectDrawer.h">
+      <Filter>ヘッダー ファイル\ui</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

@@ -4,11 +4,22 @@
 #include<queue>
 
 class CharacterController;
+class CharacterAction;
 class Character;
 class Object;
+class Camera;
 
 class World {
 private:
+	// 描画用のカメラ
+	Camera* m_camera;
+
+	// カメラで見ているキャラのID
+	int m_focusId;
+
+	// プレイヤー（ハート）のID
+	int m_playerId;
+
 	// 世界に存在するキャラクター
 	std::queue<Character*> m_characters;
 
@@ -28,11 +39,19 @@ public:
 	World(int areaNum);
 	~World();
 
+	// ゲッタとセッタ
+	inline const Camera* getCamera() const { return m_camera; }
+	std::queue<const CharacterAction*> getActions() const;
+	std::queue<const Object*> getObjects() const;
+
 	//デバッグ
 	void debug(int x, int y, int color);
 
 	// キャラに戦わせる
 	void battle();
+
+	// カメラの更新
+	void updateCamera();
 
 	// キャラクターの動き
 	void controlCharacter();
