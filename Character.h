@@ -183,7 +183,7 @@ public:
 
 	inline bool getLeftDirection() { return m_leftDirection; }
 
-	inline void setLeftDirection(bool leftDirection) { m_leftDirection = leftDirection; }
+	void setLeftDirection(bool leftDirection);
 
 	inline const GraphHandle* getGraphHandle() const { return m_graphHandle; }
 

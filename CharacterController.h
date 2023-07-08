@@ -3,6 +3,7 @@
 
 class CharacterAction;
 class Object;
+class Camera;
 
 /*
 * キャラクターを操作する
@@ -71,6 +72,7 @@ class CharacterKeyboardController :
 
 private:
 	CharacterKeyboard m_keyboard;
+	const Camera* m_camera;
 	int m_rightStick;
 	int m_leftStick;
 	int m_upStick;
@@ -79,7 +81,7 @@ private:
 	const int JUMP_KEY_LONG = 10;
 	int m_jumpKey;
 public:
-	CharacterKeyboardController(CharacterAction* characterAction);
+	CharacterKeyboardController(CharacterAction* characterAction, const Camera* camera);
 
 	void debug(int x, int y, int color);
 

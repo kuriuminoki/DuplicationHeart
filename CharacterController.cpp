@@ -1,6 +1,7 @@
 #include "CharacterController.h"
 #include "CharacterAction.h"
 #include "Character.h"
+#include "Camera.h"
 #include "Control.h"
 #include "Define.h"
 #include "DxLib.h"
@@ -89,11 +90,12 @@ void CharacterKeyboard::controlJump(int& nowSpaceKey, int& preSpaceKey) {
 
 
 /*
-* キーボードによるキャラコントロール
+* キーボードによるキャラコントロール マウスも使うのでCameraが必要
 */
-CharacterKeyboardController::CharacterKeyboardController(CharacterAction* characterAction):
+CharacterKeyboardController::CharacterKeyboardController(CharacterAction* characterAction, const Camera* camera):
 	CharacterController(characterAction)
 {
+	m_camera = camera;
 	m_rightStick = 0;
 	m_leftStick = 0;
 	m_upStick = 0;
@@ -103,9 +105,10 @@ CharacterKeyboardController::CharacterKeyboardController(CharacterAction* charac
 
 void CharacterKeyboardController::control() {
 	// キャラの向きを変える
-	// マウスの情報取得
+	// マウスの情報取得（カメラを使用）
 	int mouseX, mouseY;
-	GetMousePoint(&mouseX, &mouseY);
+	m_camera->getMouse(&mouseX, &mouseY);
+	
 	// マウスとキャラの位置関係を見る
 	m_characterAction->setCharacterLeftDirection(mouseX < m_characterAction->getCharacter()->getX());
 
@@ -131,7 +134,7 @@ Object* CharacterKeyboardController::bulletAttack() {
 	if (leftClick() > 0) {
 		// マウスの情報取得
 		int mouseX, mouseY;
-		GetMousePoint(&mouseX, &mouseY);
+		m_camera->getMouse(&mouseX, &mouseY);
 		// マウスの位置に向かって射撃
 		return m_characterAction->bulletAttack(mouseX, mouseY);
 	}
