@@ -51,6 +51,27 @@
     <ClCompile Include="Camera.cpp">
       <Filter>ソース ファイル\Domain</Filter>
     </ClCompile>
+    <ClCompile Include="CharacterAction.cpp">
+      <Filter>ソース ファイル\api</Filter>
+    </ClCompile>
+    <ClCompile Include="World.cpp">
+      <Filter>ソース ファイル\api</Filter>
+    </ClCompile>
+    <ClCompile Include="Game.cpp">
+      <Filter>ソース ファイル\api</Filter>
+    </ClCompile>
+    <ClCompile Include="Debug.cpp">
+      <Filter>ソース ファイル\api</Filter>
+    </ClCompile>
+    <ClCompile Include="Object.cpp">
+      <Filter>ソース ファイル\api</Filter>
+    </ClCompile>
+    <ClCompile Include="CsvReader.cpp">
+      <Filter>ソース ファイル\api</Filter>
+    </ClCompile>
+    <ClCompile Include="GraphHandle.cpp">
+      <Filter>ソース ファイル\Domain</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Define.h">
@@ -69,6 +90,24 @@
       <Filter>ヘッダー ファイル\api</Filter>
     </ClInclude>
     <ClInclude Include="Camera.h">
+      <Filter>ヘッダー ファイル\Domain</Filter>
+    </ClInclude>
+    <ClInclude Include="CharacterAction.h">
+      <Filter>ヘッダー ファイル\api</Filter>
+    </ClInclude>
+    <ClInclude Include="World.h">
+      <Filter>ヘッダー ファイル\api</Filter>
+    </ClInclude>
+    <ClInclude Include="Game.h">
+      <Filter>ヘッダー ファイル\api</Filter>
+    </ClInclude>
+    <ClInclude Include="Object.h">
+      <Filter>ヘッダー ファイル\api</Filter>
+    </ClInclude>
+    <ClInclude Include="CsvReader.h">
+      <Filter>ヘッダー ファイル\api</Filter>
+    </ClInclude>
+    <ClInclude Include="GraphHandle.h">
       <Filter>ヘッダー ファイル\Domain</Filter>
     </ClInclude>
   </ItemGroup>

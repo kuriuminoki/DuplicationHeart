@@ -153,18 +153,31 @@
   <ItemGroup>
     <ClCompile Include="Camera.cpp" />
     <ClCompile Include="Character.cpp" />
+    <ClCompile Include="CharacterAction.cpp" />
     <ClCompile Include="CharacterDrawer.cpp" />
     <ClCompile Include="CharacterController.cpp" />
     <ClCompile Include="Control.cpp" />
+    <ClCompile Include="CsvReader.cpp" />
+    <ClCompile Include="Debug.cpp" />
+    <ClCompile Include="Game.cpp" />
+    <ClCompile Include="GraphHandle.cpp" />
     <ClCompile Include="Main.cpp" />
+    <ClCompile Include="Object.cpp" />
+    <ClCompile Include="World.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Camera.h" />
     <ClInclude Include="Character.h" />
+    <ClInclude Include="CharacterAction.h" />
     <ClInclude Include="CharacterDrawer.h" />
     <ClInclude Include="CharacterController.h" />
     <ClInclude Include="Control.h" />
+    <ClInclude Include="CsvReader.h" />
     <ClInclude Include="Define.h" />
+    <ClInclude Include="Game.h" />
+    <ClInclude Include="GraphHandle.h" />
+    <ClInclude Include="Object.h" />
+    <ClInclude Include="World.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
