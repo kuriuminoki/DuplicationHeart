@@ -78,6 +78,9 @@
     <ClCompile Include="GameDrawer.cpp">
       <Filter>ソース ファイル\ui</Filter>
     </ClCompile>
+    <ClCompile Include="ObjectDrawer.cpp">
+      <Filter>ソース ファイル\ui</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Define.h">
@@ -120,6 +123,9 @@
       <Filter>ヘッダー ファイル\ui</Filter>
     </ClInclude>
     <ClInclude Include="WorldDrawer.h">
+      <Filter>ヘッダー ファイル\ui</Filter>
+    </ClInclude>
+    <ClInclude Include="ObjectDrawer.h">
       <Filter>ヘッダー ファイル\ui</Filter>
     </ClInclude>
   </ItemGroup>

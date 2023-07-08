@@ -7,11 +7,6 @@
 
 CharacterDrawer::CharacterDrawer(const CharacterAction* const characterAction) {
 	m_characterAction = characterAction;
-	m_cnt = 0;
-	m_handle = -1;
-	m_x = 0;
-	m_y = 0;
-	m_ex = 0;
 }
 
 // キャラを描画する
@@ -25,8 +20,10 @@ void CharacterDrawer::drawCharacter(const Camera* const camera) {
 	// 座標と拡大率取得
 	int x, y;
 	double ex;
-	x = character->getX();
-	y = character->getY();
+	// 画像の中心を座標とする
+	x = character->getX() + (character->getWide() / 2);
+	y = character->getY() + (character->getHeight() / 2);
+	// 画像固有の拡大率取得
 	ex = graphHandle->getEx();
 
 	// カメラで調整

@@ -90,7 +90,7 @@ void Character::debugCharacter(int x, int y, int color) {
 	DrawFormatString(x, y + DRAW_FORMAT_STRING_SIZE, color, "HP=%d/%d, (x,y)=(%d,%d), left=%d", m_hp, m_maxHp, m_x, m_y, m_leftDirection);
 	DrawFormatString(x, y + DRAW_FORMAT_STRING_SIZE * 2, color, "(wide, height)=(%d,%d), handle=%d", m_wide, m_height, m_graphHandle->getHandle());
 	// ‰æ‘œ
-	m_graphHandle->draw(GAME_WIDE - (m_wide / 2), y + (m_height / 2), m_graphHandle->getEx());
+	m_graphHandle->draw(GAME_WIDE - (m_wide / 2), (m_height / 2), m_graphHandle->getEx());
 	DrawBox(m_x, m_y, m_x + m_wide, m_y + m_height, color, TRUE);
 	DrawBox(m_x + 10, m_y + (m_height / 2) - 20, m_x + m_wide - 10, m_y + (m_height / 2) + 20, BLACK, TRUE);
 	DrawFormatString(m_x + 10, m_y + (m_height / 2), WHITE, "[%s]", m_characterInfo->name().c_str());
@@ -120,7 +120,7 @@ void Object::debugObject(int x, int y, int color) {
 void BoxObject::debug(int x, int y, int color) {
 	DrawFormatString(x, y, color, "**BoxObject**");
 	debugObject(x + DRAW_FORMAT_STRING_SIZE, y + DRAW_FORMAT_STRING_SIZE, color);
-	DrawBox(m_x1, m_y1, m_x2, m_y2, color, TRUE);
+	DrawBox(m_x1, m_y1, m_x2, m_y2, RED, FALSE);
 }
 
 /*
@@ -131,10 +131,10 @@ void TriangleObject::debug(int x, int y, int color) {
 	DrawFormatString(x, y + DRAW_FORMAT_STRING_SIZE, color, "mideleY=%d", getY(m_x2 - m_x1));
 	debugObject(x + DRAW_FORMAT_STRING_SIZE, y + DRAW_FORMAT_STRING_SIZE * 2, color);
 	if (m_leftDown) {
-		DrawTriangle(m_x2, m_y1, m_x2, m_y2, m_x1, m_y2, color, TRUE);
+		DrawTriangle(m_x2, m_y1, m_x2, m_y2, m_x1, m_y2, RED, FALSE);
 	}
 	else {
-		DrawTriangle(m_x1, m_y1, m_x2, m_y2, m_x1, m_y2, color, TRUE);
+		DrawTriangle(m_x1, m_y1, m_x2, m_y2, m_x1, m_y2, RED, FALSE);
 	}
 }
 

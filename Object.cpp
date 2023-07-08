@@ -419,3 +419,28 @@ void SlashObject::action() {
 		m_deleteFlag = true;
 	}
 }
+
+// 描画用
+// オブジェクト描画（画像がないときに使う）
+void BoxObject::drawObject(int x1, int y1, int x2, int y2) const {
+	DrawBox(x1, y1, x2, y2, m_color, TRUE);
+}
+// オブジェクト描画（画像がないときに使う）
+void TriangleObject::drawObject(int x1, int y1, int x2, int y2) const {
+	if (m_leftDown) {
+		DrawTriangle(x2, y1, x2, y2, x1, y2, m_color, TRUE);
+	}
+	else {
+		DrawTriangle(x1, y1, x2, y2, x1, y2, m_color, TRUE);
+	}
+}
+// オブジェクト描画（画像がないときに使う）
+void BulletObject::drawObject(int x1, int y1, int x2, int y2) const {
+	int rx = abs(x2 - x1) / 2;
+	int ry = abs(y2 - y1) / 2;
+	DrawOval(x1 + rx, y1 + ry, rx, ry, m_color, TRUE);
+}
+// オブジェクト描画（画像がないときに使う）
+void SlashObject::drawObject(int x1, int y1, int x2, int y2) const {
+	
+}

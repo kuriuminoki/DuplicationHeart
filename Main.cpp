@@ -57,7 +57,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 	//ゲーム本体
 	Game game;
 	// ゲーム描画用
-	//GameDrawer gameDrawer(&game);
+	GameDrawer gameDrawer(&game);
 	bool title_flag = false;//trueならタイトル画面終了
 	while (ScreenFlip() == 0 && ProcessMessage() == 0 && ClearDrawScreen() == 0)
 	{
@@ -66,7 +66,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 
 		/////メイン////
 		game.play();
-		//gameDrawer.draw();
+		gameDrawer.draw();
 		///////////////
 
 		//FPS操作

@@ -151,6 +151,8 @@ public:
 	virtual void debug(int x, int y, int color) = 0;
 
 	// ゲッタとセッタ
+	inline int getId() { return m_id; }
+
 	inline int getMaxHp() { return m_maxHp; }
 
 	inline void setMaxHp(int maxHp) { m_maxHp = maxHp; }
@@ -169,9 +171,9 @@ public:
 
 	inline void setY(int y) { m_y = y; }
 
-	inline int getWide() { return m_wide; }
+	inline int getWide() const { return m_wide; }
 
-	inline int getHeight() { return m_height; }
+	inline int getHeight() const { return m_height; }
 
 	inline int getMoveSpeed() { return m_characterInfo->moveSpeed(); }
 

@@ -86,7 +86,10 @@ World::World(int areaNum) {
 	m_characters.push(heart);
 
 	// カメラを主人公注目、倍率1.0で作成
-	m_camera = new Camera(heart->getX(), heart->getY(), 1.0);
+	m_playerId = heart->getId();
+	m_focusId = m_playerId;
+	m_camera = new Camera(0, 0, 1.0);
+	updateCamera();
 
 	// 主人公の動きを作成
 	StickAction* heartAction = new StickAction(heart);
@@ -129,6 +132,26 @@ queue<const CharacterAction*> World::getActions() const {
 	return actions;
 }
 
+// Objectのキューを返す
+queue<const Object*> World::getObjects() const {
+	// Objectのコピーを作成（constメソッドにするため対策）
+	queue<Object*> stageObjects = m_stageObjects;
+	queue<Object*> attackObjects = m_attackObjects;
+
+	queue<const Object*> objects;
+	while (!stageObjects.empty()) {
+		// Objectをpush
+		objects.push(stageObjects.front());
+		stageObjects.pop();
+	}
+	while (!attackObjects.empty()) {
+		// Objectをpush
+		objects.push(attackObjects.front());
+		attackObjects.pop();
+	}
+	return objects;
+}
+
 // 戦わせる
 void World::battle() {
 
@@ -138,6 +161,26 @@ void World::battle() {
 	// オブジェクトの動き
 	controlObject();
 
+	// カメラの更新
+	updateCamera();
+
+}
+
+// カメラの更新
+void World::updateCamera() {
+	size_t characterSum = m_characters.size();
+	int x = 0, y = 0;
+	while (characterSum > 0) {
+		Character* character = m_characters.front();
+		m_characters.pop();
+		if(m_focusId == character->getId()){
+			x = character->getX();
+			y = character->getY();
+			m_camera->setPoint(x, y);
+		}
+		m_characters.push(character);
+		characterSum--;
+	}
 }
 
 // キャラクターの動き

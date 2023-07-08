@@ -33,10 +33,16 @@ public:
 	// ゲッタ
 	inline bool getDeleteFlag() { return m_deleteFlag; }
 	inline bool getAbleDelete() { return m_ableDelete; }
-	inline int getX1() { return m_x1; }
-	inline int getX2() { return m_x2; }
-	inline int getY1() { return m_y1; }
-	inline int getY2() { return m_y2; }
+	inline int getX1() const { return m_x1; }
+	inline int getX2() const { return m_x2; }
+	inline int getY1() const { return m_y1; }
+	inline int getY2() const { return m_y2; }
+
+	// 画像を返す　ないならNULL
+	virtual GraphHandle* getHandle() const = 0;
+
+	// オブジェクト描画（画像がないときに使う）
+	virtual void drawObject(int x1, int y1, int x2, int y2) const = 0;
 
 	// セッタ
 	inline void setDeleteFlag(bool deleteFlag) { m_deleteFlag = deleteFlag; }
@@ -70,6 +76,12 @@ public:
 
 	void debug(int x, int y, int color);
 
+	// 画像を返す　ないならNULL
+	GraphHandle* getHandle() const { return nullptr; }
+
+	// オブジェクト描画（画像がないときに使う）
+	void drawObject(int x1, int y1, int x2, int y2) const;
+
 	// キャラとの当たり判定
 	// 当たっているならキャラを操作する。
 	void atari(CharacterController* character);
@@ -100,6 +112,12 @@ public:
 	TriangleObject(int x1, int y1, int x2, int y2, int color, bool leftDown);
 
 	void debug(int x, int y, int color);
+
+	// 画像を返す　ないならNULL
+	GraphHandle* getHandle() const { return nullptr; }
+
+	// オブジェクト描画（画像がないときに使う）
+	void drawObject(int x1, int y1, int x2, int y2) const;
 
 	// キャラとの当たり判定
 	// 当たっているならキャラを操作する。
@@ -154,6 +172,12 @@ public:
 
 	void debug(int x, int y, int color);
 
+	// 画像を返す　ないならNULL
+	GraphHandle* getHandle() const { return nullptr; }
+
+	// オブジェクト描画（画像がないときに使う）
+	void drawObject(int x1, int y1, int x2, int y2) const;
+
 	// セッタ
 	// キャラクターIDを取得
 	inline void setCharacterId(int id) { m_characterId = id; }
@@ -201,6 +225,12 @@ public:
 	SlashObject(int x, int y, GraphHandle* handle, int slashCountSum, AttackInfo* attackInfo);
 
 	void debug(int x, int y, int color);
+
+	// 画像を返す　ないならNULL
+	GraphHandle* getHandle() const { return m_handle; }
+
+	// オブジェクト描画（画像がないときに使う）
+	void drawObject(int x1, int y1, int x2, int y2) const;
 
 	// セッタ
 	inline void setCharacterId(int id) { m_characterId = id; }

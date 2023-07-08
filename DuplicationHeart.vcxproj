@@ -164,6 +164,7 @@
     <ClCompile Include="GraphHandle.cpp" />
     <ClCompile Include="Main.cpp" />
     <ClCompile Include="Object.cpp" />
+    <ClCompile Include="ObjectDrawer.cpp" />
     <ClCompile Include="World.cpp" />
     <ClCompile Include="WorldDrawer.cpp" />
   </ItemGroup>
@@ -180,6 +181,7 @@
     <ClInclude Include="GameDrawer.h" />
     <ClInclude Include="GraphHandle.h" />
     <ClInclude Include="Object.h" />
+    <ClInclude Include="ObjectDrawer.h" />
     <ClInclude Include="World.h" />
     <ClInclude Include="WorldDrawer.h" />
   </ItemGroup>
