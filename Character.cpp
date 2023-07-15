@@ -114,6 +114,12 @@ void Character::setHandle(GraphHandle* handle) {
 	m_height = (int)(m_height * m_characterInfo->handleEx());
 }
 
+void Character::getHandleSize(int& wide, int& height) {
+	// 今セットしている画像の縦幅と横幅を取得する。
+	wide = m_wide;
+	height = m_height;
+}
+
 void Character::setLeftDirection(bool leftDirection) { 
 	m_leftDirection = leftDirection;
 	m_graphHandle->setReverseX(m_leftDirection);

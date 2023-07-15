@@ -109,6 +109,10 @@ public:
 
 	// 斬撃攻撃
 	virtual Object* slashAttack() = 0;
+
+protected:
+	// 画像のサイズ変更による位置調整
+	void afterChangeGraph(int beforeWide, int beforeHeight, int afterWide, int afterHeight);
 };
 
 

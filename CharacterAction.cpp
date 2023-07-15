@@ -148,6 +148,9 @@ void StickAction::action() {
 
 // 状態に応じて画像セット
 void StickAction::switchHandle() {
+	// セット前の画像のサイズ
+	int wide, height;
+	m_character->getHandleSize(wide, height);
 	if (m_grand) { // 地面にいるとき
 		switch (m_state) {
 		case CHARACTER_STATE::STAND: //立ち状態
@@ -157,10 +160,46 @@ void StickAction::switchHandle() {
 	}
 	else { // 宙にいるとき
 		switch (m_state) {
-		case CHARACTER_STATE::STAND: //立ち状態
-			m_character->switchStand();
+		case CHARACTER_STATE::STAND: //立ち状態(なにもなしの状態)
+			if (m_vy < 0) {
+				m_character->switchJump();
+			}
+			else {
+				m_character->switchDown();
+			}
 			break;
 		}
+	}
+	// セット後の画像のサイズ
+	int afterWide, afterHeight;
+	m_character->getHandleSize(afterWide, afterHeight);
+
+	// サイズ変更による位置調整
+	afterChangeGraph(wide, height, afterWide, afterHeight);
+}
+
+// 画像のサイズ変更による位置調整
+void CharacterAction::afterChangeGraph(int beforeWide, int beforeHeight, int afterWide, int afterHeight) {
+	// 下へ行けないなら
+	if (m_downLock) {
+		// 上へ動かす
+		m_character->moveUp((afterHeight - beforeHeight));
+	}
+	// 上へ行けないなら
+	if (m_upLock) {
+		// 下へ動かす
+		m_character->moveDown((afterHeight - beforeHeight));
+	}
+
+	// 右へ行けないなら
+	if (m_rightLock) {
+		// 左へ動かす
+		m_character->moveLeft((afterWide - beforeWide));
+	}
+	// 左へ行けないなら
+	if (m_leftLock) {
+		// 右へ動かす
+		m_character->moveRight((afterWide - beforeWide));
 	}
 }
 
@@ -193,7 +232,7 @@ void StickAction::move(bool right, bool left, bool up, bool down) {
 // ジャンプ
 void StickAction::jump(int cnt) {
 	// ジャンプ前の状態なら
-	if (m_grand && m_preJumpCnt == -1) {
+	if (cnt > 0 && m_grand && m_preJumpCnt == -1) {
 		m_preJumpCnt = 0;
 	}
 	if (m_grand && m_preJumpCnt >= 0) {

@@ -193,6 +193,7 @@ public:
 
 	// 画像のセッタ。画像の横幅(wide)と縦幅(height)もセットする。
 	void setHandle(GraphHandle* handle);
+	void getHandleSize(int& wide, int& height);
 
 	// 立ち画像をセット
 	virtual void switchStand(int cnt = 0) = 0;
