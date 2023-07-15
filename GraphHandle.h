@@ -58,6 +58,7 @@ public:
 	// ゲッタ
 	inline GraphHandle* getGraphHandle(int i) { return m_handles[i]; }
 	inline int getHandle(int i) { return m_handles[i]->getHandle(); }
+	inline int getSize() { return m_handleSum; }
 
 	// セッタ
 	void setEx(double ex);

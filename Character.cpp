@@ -147,8 +147,19 @@ Heart::Heart(int maxHp, int hp, int x, int y) :
 	// 各画像のロード
 	double ex = m_characterInfo->handleEx();
 	m_standHandle = new GraphHandle("picture/stick/stand.png", ex);
-
 	m_slashHandles = new GraphHandles("picture/stick/zangeki", 3, ex);
+	m_squatHandle = new GraphHandle("picture/stick/squat.png", ex);
+	m_standBulletHandle = new GraphHandle("picture/stick/bullet.png", ex);
+	m_standSlashHandle = new GraphHandle("picture/stick/slash.png", ex);
+	m_runHandles = new GraphHandles("picture/stick/run", 6, ex);
+	m_landHandle = new GraphHandle("picture/stick/land.png", ex);
+	m_jumpHandle = new GraphHandle("picture/stick/jump.png", ex);
+	m_downHandle = new GraphHandle("picture/stick/down.png", ex);
+	m_preJumpHandles = new GraphHandles("picture/stick/preJump", 2, ex);
+	m_damageHandle = new GraphHandle("picture/stick/damage.png", ex);
+	m_boostHandle = new GraphHandle("picture/stick/boost.png", ex);
+	m_airBulletHandle = new GraphHandle("picture/stick/airBullet.png", ex);
+	m_airSlashHandle = new GraphHandle("picture/stick/airSlash.png", ex);
 
 	// とりあえず立ち画像でスタート
 	switchStand();
@@ -159,11 +170,34 @@ Heart::~Heart() {
 	// 画像を削除
 	delete m_standHandle;
 	delete m_slashHandles;
+	delete m_squatHandle;
+	delete m_standBulletHandle;
+	delete m_standSlashHandle;
+	delete m_runHandles;
+	delete m_landHandle;
+	delete m_jumpHandle;
+	delete m_downHandle;
+	delete m_preJumpHandles;
+	delete m_damageHandle;
+	delete m_boostHandle;
+	delete m_airBulletHandle;
+	delete m_airSlashHandle;
+}
+
+// 走り画像をセット
+void Heart::switchRun(int cnt) { 
+	int index = (cnt / RUN_ANIME_SPEED) % (m_runHandles->getSize());
+	setHandle(m_runHandles->getGraphHandle(index));
+}
+// ジャンプ前画像をセット
+void Heart::switchPreJump(int cnt) { 
+	int index = (cnt / RUN_PREJUMP_SPEED) % (m_preJumpHandles->getSize());
+	setHandle(m_preJumpHandles->getGraphHandle(cnt));
 }
 
 // 射撃攻撃をする(キャラごとに違う)
 Object* Heart::bulletAttack(int gx, int gy) {
-	BulletObject* attackObject = new BulletObject(m_x, m_y, WHITE, gx, gy, m_attackInfo);
+	BulletObject* attackObject = new BulletObject(m_x + m_wide / 2, m_y + m_height / 2, WHITE, gx, gy, m_attackInfo);
 	attackObject->setCharacterId(m_id);
 	return attackObject;
 }
