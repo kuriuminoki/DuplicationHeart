@@ -13,6 +13,9 @@ CharacterAction::CharacterAction(Character* character) {
 	//初期状態
 	m_state = CHARACTER_STATE::STAND;
 	m_grand = false;
+	m_runCnt = -1;
+	m_squat = false;
+	m_preJumpCnt = -1;
 	m_moveRight = false;
 	m_moveLeft = false;
 	m_moveUp = false;
@@ -188,11 +191,22 @@ void StickAction::move(bool right, bool left, bool up, bool down) {
 }
 
 // ジャンプ
-void StickAction::jump(int rate) {
-	if (m_grand) {// 地上にいるなら
-		int power = (m_character->getJumpHeight() * rate) / 100;
-		m_vy -= power;
-		m_grand = false;
+void StickAction::jump(int cnt) {
+	// ジャンプ前の状態なら
+	if (m_grand && m_preJumpCnt == -1) {
+		m_preJumpCnt = 0;
+	}
+	if (m_grand && m_preJumpCnt >= 0) {
+		if (cnt == 0 || m_preJumpCnt == 10) {
+			int rate = (100 * m_preJumpCnt) / 10;
+			int power = (m_character->getJumpHeight() * rate) / 100;
+			m_vy -= power;
+			m_grand = false;
+			m_preJumpCnt = -1;
+		}
+		else {
+			m_preJumpCnt++;
+		}
 	}
 }
 

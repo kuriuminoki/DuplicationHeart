@@ -7,12 +7,11 @@ class Object;
 
 // キャラクターの状態
 enum class CHARACTER_STATE {
-	STAND,
-	WALK,
-	JUMP_UP,
-	JUMP_DOWN,
-	ATTACK,
-	DAMAGE
+	STAND,	// 何もしていない
+	DAMAGE,	// ダメージ受け中 着地で解除
+	BULLET,	// 射撃中
+	SLASH,	// 斬撃中
+	PREJUMP	// ジャンプ前
 };
 
 
@@ -30,6 +29,15 @@ protected:
 
 	// キャラが地面にいる
 	bool m_grand;
+
+	// キャラが走っていないなら-1 そうでないなら走ったフレーム数
+	int m_runCnt;
+
+	// しゃがみ中
+	bool m_squat;
+
+	// ジャンプ前の動作
+	int m_preJumpCnt;
 
 	// 移動中
 	bool m_moveRight;
@@ -135,8 +143,8 @@ public:
 	// 移動 引数は４方向分
 	void move(bool right, bool left, bool up, bool down);
 
-	// ジャンプ rate%の力で飛び上がる。
-	void jump(int rate);
+	// ジャンプ cntフレーム目
+	void jump(int cnt);
 
 	// 射撃攻撃
 	Object* bulletAttack(int gx, int gy);

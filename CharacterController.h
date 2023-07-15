@@ -56,12 +56,11 @@ public:
 */
 class CharacterKeyboard {
 private:
-	int m_nowSpaceKey;
-	int m_preSpaceKey;
+
 public:
 	CharacterKeyboard();
 	void controlStick(int& right, int& left, int& up, int& down);
-	void controlJump(int& nowSpaceKey, int& preSpaceKey);
+	void controlJump(int& spaceKey);
 };
 
 /*
@@ -85,7 +84,7 @@ public:
 
 	void debug(int x, int y, int color);
 
-	// キャラの操作 毎フレーム行う
+	// キャラの移動やしゃがみ(;攻撃以外の)操作 毎フレーム行う
 	void control();
 
 	// 射撃攻撃
