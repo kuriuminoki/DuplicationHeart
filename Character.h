@@ -263,7 +263,7 @@ private:
 	GraphHandle* m_standSlashHandle;
 
 	// 走り
-	const int RUN_ANIME_SPEED = 3;
+	const int RUN_ANIME_SPEED = 6;
 	GraphHandles* m_runHandles;
 
 	// 着地
@@ -276,7 +276,7 @@ private:
 	GraphHandle* m_downHandle;
 
 	// ジャンプ前
-	const int RUN_PREJUMP_SPEED = 3;
+	const int RUN_PREJUMP_SPEED = 6;
 	GraphHandles* m_preJumpHandles;
 
 	// ダメージ

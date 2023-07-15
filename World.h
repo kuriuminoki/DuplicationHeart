@@ -14,6 +14,9 @@ private:
 	// 描画用のカメラ
 	Camera* m_camera;
 
+	// カメラの移動速度の初期値
+	const int CAMERA_SPEED_DEFAULT = 5;
+
 	// カメラで見ているキャラのID
 	int m_focusId;
 

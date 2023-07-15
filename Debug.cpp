@@ -68,7 +68,7 @@ void CharacterKeyboardController::debug(int x, int y, int color) {
 // Actionクラスのデバッグ
 void CharacterAction::debugAction(int x, int y, int color) {
 	DrawFormatString(x, y, color, "**CharacterAction**");
-	DrawFormatString(x, y + DRAW_FORMAT_STRING_SIZE, color, "state=%d, grand=%d, (vx,vy)=(%d,%d)", (int)m_state, m_grand, m_vx, m_vy);
+	DrawFormatString(x, y + DRAW_FORMAT_STRING_SIZE, color, "state=%d, grand=%d, (vx,vy)=(%d,%d), runCnt=%d", (int)m_state, m_grand, m_vx, m_vy, m_runCnt);
 	DrawFormatString(x, y + DRAW_FORMAT_STRING_SIZE * 2, color, "制限中：(←, →, ↑, ↓)=(%d,%d,%d,%d)", m_leftLock, m_rightLock, m_upLock, m_downLock);
 	DrawFormatString(x, y + DRAW_FORMAT_STRING_SIZE * 3, color, "移動中：(←, →, ↑, ↓)=(%d,%d,%d,%d)", m_moveLeft, m_moveRight, m_moveUp, m_moveDown);
 	m_character->debug(x + DRAW_FORMAT_STRING_SIZE, y + DRAW_FORMAT_STRING_SIZE * 4, color);

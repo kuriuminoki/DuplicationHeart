@@ -45,20 +45,15 @@ CharacterAction::CharacterAction() :
 void CharacterAction::setRightLock(bool lock) { 
 	// ロックして
 	m_rightLock = lock;
-	// 移動状態も解除
-	m_moveRight = false;
 }
 void CharacterAction::setLeftLock(bool lock) { 
 	m_leftLock = lock;
-	m_moveLeft = false;
 }
 void CharacterAction::setUpLock(bool lock) { 
 	m_upLock = lock;
-	m_moveUp = false;
 }
 void CharacterAction::setDownLock(bool lock) { 
 	m_downLock = lock;
-	m_moveDown;
 }
 
 // キャラクターのセッタ
@@ -154,7 +149,15 @@ void StickAction::switchHandle() {
 	if (m_grand) { // 地面にいるとき
 		switch (m_state) {
 		case CHARACTER_STATE::STAND: //立ち状態
-			m_character->switchStand();
+			if (m_runCnt != -1) {
+				m_character->switchRun(m_runCnt);
+			}
+			else {
+				m_character->switchStand();
+			}
+			break;
+		case CHARACTER_STATE::PREJUMP:
+			m_character->switchPreJump(m_preJumpCnt);
 			break;
 		}
 	}
@@ -176,9 +179,11 @@ void StickAction::switchHandle() {
 
 	// サイズ変更による位置調整
 	afterChangeGraph(wide, height, afterWide, afterHeight);
+
+	m_character->setLeftDirection(m_character->getLeftDirection());
 }
 
-// 画像のサイズ変更による位置調整
+// 画像のサイズ変更による位置調整 (座標は画像の左上であることに注意)
 void CharacterAction::afterChangeGraph(int beforeWide, int beforeHeight, int afterWide, int afterHeight) {
 	// 下へ行けないなら
 	if (m_downLock) {
@@ -186,32 +191,42 @@ void CharacterAction::afterChangeGraph(int beforeWide, int beforeHeight, int aft
 		m_character->moveUp((afterHeight - beforeHeight));
 	}
 	// 上へ行けないなら
-	if (m_upLock) {
-		// 下へ動かす
-		m_character->moveDown((afterHeight - beforeHeight));
+	else if (m_upLock) {
+		// 下へ動かす必要はない（画像が下方向に拡大されるから）
+	}
+	// 上下どっちにでも行ける
+	else {
+		// 上へ動かす
+		m_character->moveUp((afterHeight - beforeHeight) / 2);
 	}
 
 	// 右へ行けないなら
-	if (m_rightLock) {
+	if (m_rightLock && !m_leftLock) {
 		// 左へ動かす
 		m_character->moveLeft((afterWide - beforeWide));
 	}
 	// 左へ行けないなら
-	if (m_leftLock) {
-		// 右へ動かす
-		m_character->moveRight((afterWide - beforeWide));
+	else if (m_leftLock && !m_rightLock) {
+		// 右へ動かす必要はない（画像が右方向に拡大されるから）
+	}
+	// 左右どっちにでも行ける、もしくはいけない
+	else {
+		// 左へ動かす
+		m_character->moveLeft((afterWide - beforeWide) / 2);
 	}
 }
 
 // 歩く ダメージ中は不可
 void StickAction::walk(bool right, bool left) {
-	if (m_moveRight && !right) { // 右へ歩くのをやめる
+	if (m_moveRight && (!right || m_rightLock)) { // 右へ歩くのをやめる
 		m_vx -= m_character->getMoveSpeed();
 		m_moveRight = false;
+		m_runCnt = -1;
 	}
-	if (m_moveLeft && !left) { // 左へ歩くのをやめる
+	if (m_moveLeft && (!left || m_leftLock)) { // 左へ歩くのをやめる
 		m_vx += m_character->getMoveSpeed();
 		m_moveLeft = false;
+		m_runCnt = -1;
 	}
 	if (!m_rightLock && !m_moveRight && !m_moveLeft && right) { // 右へ歩く
 		m_vx += m_character->getMoveSpeed();
@@ -220,6 +235,9 @@ void StickAction::walk(bool right, bool left) {
 	if (!m_leftLock && !m_moveRight && !m_moveLeft && left) { // 左へ歩く
 		m_vx -= m_character->getMoveSpeed();
 		m_moveLeft = true;
+	}
+	if (m_moveLeft || m_moveRight) {
+		m_runCnt++;
 	}
 }
 
@@ -234,14 +252,16 @@ void StickAction::jump(int cnt) {
 	// ジャンプ前の状態なら
 	if (cnt > 0 && m_grand && m_preJumpCnt == -1) {
 		m_preJumpCnt = 0;
+		m_state = CHARACTER_STATE::PREJUMP;
 	}
 	if (m_grand && m_preJumpCnt >= 0) {
-		if (cnt == 0 || m_preJumpCnt == 10) {
-			int rate = (100 * m_preJumpCnt) / 10;
+		if (cnt == 0 || m_preJumpCnt == PRE_JUMP_MAX) {
+			int rate = (100 * m_preJumpCnt) / PRE_JUMP_MAX;
 			int power = (m_character->getJumpHeight() * rate) / 100;
 			m_vy -= power;
 			m_grand = false;
 			m_preJumpCnt = -1;
+			m_state = CHARACTER_STATE::STAND;
 		}
 		else {
 			m_preJumpCnt++;

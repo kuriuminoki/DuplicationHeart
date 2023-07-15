@@ -3,17 +3,37 @@
 
 
 Camera::Camera() :
-	Camera(0, 0, 1.0)
+	Camera(0, 0, 1.0, 1)
 {
 
 }
 
-Camera::Camera(int x, int y, double ex) {
+Camera::Camera(int x, int y, double ex, int speed) {
 	m_x = x;
 	m_y = y;
+	m_gx = x;
+	m_gy = y;
 	m_ex = ex;
+	m_speed = 1;
+	m_maxSpeed = speed;
 	m_centerX = GAME_WIDE / 2;
 	m_centerY = GAME_HEIGHT / 2;
+}
+
+// カメラの移動 目標地点が近いほど鈍感になる
+void Camera::move() {
+	if (m_x < m_gx) {
+		m_x += (m_gx - m_x) / 2 + 1;
+	}
+	if (m_x > m_gx) {
+		m_x -= (m_x - m_gx) / 2 + 1;
+	}
+	if (m_y < m_gy) {
+		m_y += (m_gy - m_y) / 2 + 1;
+	}
+	if (m_y > m_gy) {
+		m_y -= (m_y - m_gy) / 2 + 1;
+	}
 }
 
 // カメラで座標と拡大率を調整する

@@ -198,7 +198,7 @@ void Heart::switchRun(int cnt) {
 // ジャンプ前画像をセット
 void Heart::switchPreJump(int cnt) { 
 	int index = (cnt / RUN_PREJUMP_SPEED) % (m_preJumpHandles->getSize());
-	setHandle(m_preJumpHandles->getGraphHandle(cnt));
+	setHandle(m_preJumpHandles->getGraphHandle(index));
 }
 
 // 射撃攻撃をする(キャラごとに違う)

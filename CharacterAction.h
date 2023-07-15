@@ -39,6 +39,9 @@ protected:
 	// ジャンプ前の動作
 	int m_preJumpCnt;
 
+	// ジャンプのため時間の最大
+	const int PRE_JUMP_MAX = 10;
+
 	// 移動中
 	bool m_moveRight;
 	bool m_moveLeft;

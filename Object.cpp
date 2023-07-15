@@ -114,12 +114,25 @@ void BoxObject::atari(CharacterController* characterController) {
 
 	// 万が一オブジェクトの中に入り込んでしまったら
 	if (characterVy != 0 && characterY2 > m_y1 && characterY1 < m_y2 && characterX2 > m_x1 && characterX1 < m_x2) {
-		// 真上へ
-		characterController->setCharacterY(m_y1 - characterHeight);
-		// 着地
-		characterController->setCharacterGrand(true);
-		// キャラは下へ移動できない
-		characterController->setActionDownLock(true);
+		// キャラが横にはみ出しているなら
+		if (!(characterX1 >= m_x1 && characterX2 <= m_x2)) {
+			if ((characterX1 + characterX2) < (m_x1 + m_x2)) {
+				// 密着状態まで移動させる
+				characterController->setCharacterX(m_x1 - characterWide);
+			}
+			else {
+				// 密着状態まで移動させる
+				characterController->setCharacterX(m_x2);
+			}
+		}
+		else {
+			// 真上へ
+			characterController->setCharacterY(m_y1 - characterHeight);
+			// 着地
+			characterController->setCharacterGrand(true);
+			// キャラは下へ移動できない
+			characterController->setActionDownLock(true);
+		}
 	}
 }
 
