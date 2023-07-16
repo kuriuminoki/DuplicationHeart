@@ -34,7 +34,7 @@ GraphHandles::GraphHandles(const char* filePath, int handleSum, double ex, doubl
 	m_handles = new GraphHandle* [m_handleSum];
 	for (int i = 0; i < m_handleSum; i++) {
 		ostringstream oss;
-		oss << filePath << i << ".png";
+		oss << filePath << i + 1 << ".png";
 		m_handles[i] = new GraphHandle(oss.str().c_str(), ex, angle, trans, reverseX, reverseY);
 	}
 }

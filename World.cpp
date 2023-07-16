@@ -92,7 +92,8 @@ World::World(int areaNum) {
 	// カメラを主人公注目、倍率1.0で作成
 	m_playerId = heart->getId();
 	m_focusId = m_playerId;
-	m_camera = new Camera(0, 0, 1.0);
+	m_camera = new Camera(0, 0, 1.0, CAMERA_SPEED_DEFAULT);
+	m_camera->setPoint(heart->getCenterX(), heart->getCenterY());
 	updateCamera();
 
 	// 主人公の動きを作成
@@ -177,14 +178,17 @@ void World::updateCamera() {
 	while (characterSum > 0) {
 		Character* character = m_characters.front();
 		m_characters.pop();
+		// 今フォーカスしているキャラの座標に合わせる
 		if(m_focusId == character->getId()){
-			x = character->getX();
-			y = character->getY();
-			m_camera->setPoint(x, y);
+			x = character->getCenterX();
+			y = character->getCenterY();
+			m_camera->setGPoint(x, y);
 		}
 		m_characters.push(character);
 		characterSum--;
 	}
+	// カメラはゆっくり動く
+	m_camera->move();
 }
 
 // キャラクターの動き

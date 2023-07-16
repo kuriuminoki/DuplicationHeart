@@ -7,12 +7,12 @@ class Object;
 
 // キャラクターの状態
 enum class CHARACTER_STATE {
-	STAND,
-	WALK,
-	JUMP_UP,
-	JUMP_DOWN,
-	ATTACK,
-	DAMAGE
+	STAND,	// 何もしていない
+	DAMAGE,	// ダメージ受け中 着地で解除
+	BULLET,	// 射撃中
+	SLASH,	// 斬撃中
+	PREJUMP,	// ジャンプ前
+	SQUAT		// しゃがみ中
 };
 
 
@@ -30,6 +30,27 @@ protected:
 
 	// キャラが地面にいる
 	bool m_grand;
+
+	// キャラが走っていないなら-1 そうでないなら走ったフレーム数
+	int m_runCnt;
+
+	// しゃがみ中
+	bool m_squat;
+
+	// ジャンプ前の動作
+	int m_preJumpCnt;
+
+	// ジャンプのため時間の最大
+	const int PRE_JUMP_MAX = 10;
+
+	// 着地モーションの残り時間
+	int m_landCnt;
+
+	// 着地モーションの総時間
+	const int LAND_TIME = 10;
+
+	int m_boostCnt;
+	const int BOOST_TIME = 10;
 
 	// 移動中
 	bool m_moveRight;
@@ -65,8 +86,13 @@ public:
 	virtual void debug(int x, int y, int color) = 0;
 
 	// ゲッタとセッタ
-	inline bool getGrand() { return m_grand; }
-	inline void setGrand(bool grand) { m_grand = grand; }
+	inline bool getGrand() const { return m_grand; }
+	inline void setGrand(bool grand) { 
+		if (m_vy > 0) { // 着地モーションになる
+			m_landCnt = LAND_TIME;
+		}
+		m_grand = grand;
+	}
 	inline int getVx() const { return m_vx; }
 	inline int getVy() const { return m_vy; }
 	inline int getSlashCnt() { return m_slashCnt; }
@@ -74,7 +100,9 @@ public:
 	void setLeftLock(bool lock);
 	void setUpLock(bool lock);
 	void setDownLock(bool lock);
+	inline void setBoost() { m_boostCnt = BOOST_TIME; }
 	inline const Character* getCharacter() const { return m_character; }
+	virtual void setState(CHARACTER_STATE state) = 0;
 
 	// キャラクターのセッタ
 	void setCharacterX(int x);
@@ -101,6 +129,10 @@ public:
 
 	// 斬撃攻撃
 	virtual Object* slashAttack() = 0;
+
+protected:
+	// 画像のサイズ変更による位置調整
+	void afterChangeGraph(int beforeWide, int beforeHeight, int afterWide, int afterHeight);
 };
 
 
@@ -126,6 +158,8 @@ public:
 
 	void debug(int x, int y, int color);
 
+	void setState(CHARACTER_STATE state);
+
 	//行動前の処理 毎フレーム行う
 	void init();
 
@@ -135,8 +169,8 @@ public:
 	// 移動 引数は４方向分
 	void move(bool right, bool left, bool up, bool down);
 
-	// ジャンプ rate%の力で飛び上がる。
-	void jump(int rate);
+	// ジャンプ cntフレーム目
+	void jump(int cnt);
 
 	// 射撃攻撃
 	Object* bulletAttack(int gx, int gy);

@@ -167,6 +167,9 @@ public:
 
 	inline void setX(int x) { m_x = x; }
 
+	inline int getCenterX() const{ return m_x + (m_wide / 2); }
+	inline int getCenterY() const { return m_y + (m_height / 2); }
+
 	inline int getY() const { return m_y; }
 
 	inline void setY(int y) { m_y = y; }
@@ -193,9 +196,35 @@ public:
 
 	// 画像のセッタ。画像の横幅(wide)と縦幅(height)もセットする。
 	void setHandle(GraphHandle* handle);
+	void getHandleSize(int& wide, int& height);
 
 	// 立ち画像をセット
-	virtual void switchStand() = 0;
+	virtual void switchStand(int cnt = 0) = 0;
+	// 立ち射撃画像をセット
+	virtual void switchBullet(int cnt = 0) = 0;
+	// 立ち斬撃画像をセット
+	virtual void switchSlash(int cnt = 0) = 0;
+	// しゃがみ画像をセット
+	virtual void switchSquat(int cnt = 0) = 0;
+	// 走り画像をセット
+	virtual void switchRun(int cnt = 0) = 0;
+	// 着地画像をセット
+	virtual void switchLand(int cnt = 0) = 0;
+	// 上昇画像をセット
+	virtual void switchJump(int cnt = 0) = 0;
+	// 降下画像をセット
+	virtual void switchDown(int cnt = 0) = 0;
+	// ジャンプ前画像をセット
+	virtual void switchPreJump(int cnt = 0) = 0;
+	// ダメージ画像をセット
+	virtual void switchDamage(int cnt = 0) = 0;
+	// ブースト画像をセット
+	virtual void switchBoost(int cnt = 0) = 0;
+	// 空中射撃画像をセット
+	virtual void switchAirBullet(int cnt = 0) = 0;
+	// 空中斬撃画像をセット
+	virtual void switchAirSlash(int cnt = 0) = 0;
+
 
 	// 移動する（座標を動かす）
 	void moveRight(int d);
@@ -221,11 +250,49 @@ private:
 	// キャラの名前
 	const char* const NAME = "ハート";
 
-	//立ち画像
+	// 立ち画像
 	GraphHandle* m_standHandle;
 
 	// 斬撃攻撃画像
 	GraphHandles* m_slashHandles;
+
+	// しゃがみ
+	GraphHandle* m_squatHandle;
+
+	// 立ち射撃
+	GraphHandle* m_standBulletHandle;
+
+	// 立ち斬撃
+	GraphHandle* m_standSlashHandle;
+
+	// 走り
+	const int RUN_ANIME_SPEED = 6;
+	GraphHandles* m_runHandles;
+
+	// 着地
+	GraphHandle* m_landHandle;
+
+	// 上昇
+	GraphHandle* m_jumpHandle;
+
+	// 下降
+	GraphHandle* m_downHandle;
+
+	// ジャンプ前
+	const int RUN_PREJUMP_SPEED = 6;
+	GraphHandles* m_preJumpHandles;
+
+	// ダメージ
+	GraphHandle* m_damageHandle;
+
+	// ブースト
+	GraphHandle* m_boostHandle;
+
+	// 空中射撃
+	GraphHandle* m_airBulletHandle;
+
+	// 空中斬撃
+	GraphHandle* m_airSlashHandle;
 	
 public:
 	// コンストラクタ
@@ -238,7 +305,31 @@ public:
 	void debug(int x, int y, int color);
 
 	// 立ち画像をセット
-	inline void switchStand() { setHandle(m_standHandle); }
+	inline void switchStand(int cnt = 0) { setHandle(m_standHandle); }
+	// 立ち射撃画像をセット
+	inline void switchBullet(int cnt = 0) { setHandle(m_standBulletHandle); }
+	// 立ち斬撃画像をセット
+	inline void switchSlash(int cnt = 0) { setHandle(m_standSlashHandle); }
+	// しゃがみ画像をセット
+	inline void switchSquat(int cnt = 0) { setHandle(m_squatHandle); }
+	// 走り画像をセット
+	void switchRun(int cnt = 0);
+	// 着地画像をセット
+	inline void switchLand(int cnt = 0) { setHandle(m_landHandle); }
+	// 上昇画像をセット
+	inline void switchJump(int cnt = 0) { setHandle(m_jumpHandle); }
+	// 降下画像をセット
+	inline void switchDown(int cnt = 0) { setHandle(m_downHandle); }
+	// ジャンプ前画像をセット
+	void switchPreJump(int cnt = 0);
+	// ダメージ画像をセット
+	inline void switchDamage(int cnt = 0) { setHandle(m_damageHandle); }
+	// ブースト画像をセット
+	inline void switchBoost(int cnt = 0) { setHandle(m_boostHandle); }
+	// 空中射撃画像をセット
+	inline void switchAirBullet(int cnt = 0) { setHandle(m_airBulletHandle); }
+	// 空中斬撃画像をセット
+	inline void switchAirSlash(int cnt = 0) { setHandle(m_airSlashHandle); }
 
 	// 射撃攻撃をする(キャラごとに違う)
 	Object* bulletAttack(int gx, int gy);

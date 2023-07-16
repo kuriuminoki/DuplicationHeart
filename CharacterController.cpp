@@ -43,6 +43,9 @@ void CharacterController::setActionUpLock(bool lock) {
 void CharacterController::setActionDownLock(bool lock) {
 	m_characterAction->setDownLock(lock);
 }
+void CharacterController::setActionBoost() {
+	m_characterAction->setBoost();
+}
 
 // キャラクターのセッタ
 void CharacterController::setCharacterX(int x) {
@@ -68,8 +71,7 @@ void CharacterController::action() {
 * キーボード
 */
 CharacterKeyboard::CharacterKeyboard() {
-	m_nowSpaceKey = 0;
-	m_preSpaceKey = 0;
+
 }
 // 上下左右のキー
 void CharacterKeyboard::controlStick(int& right, int& left, int& up, int& down) {
@@ -80,12 +82,13 @@ void CharacterKeyboard::controlStick(int& right, int& left, int& up, int& down) 
 }
 
 // スペースキー
-void CharacterKeyboard::controlJump(int& nowSpaceKey, int& preSpaceKey) {
-	m_preSpaceKey = m_nowSpaceKey;
-	m_nowSpaceKey = controlSpace();
+void CharacterKeyboard::controlJump(int& spaceKey) {
+	spaceKey = controlSpace();
+}
 
-	preSpaceKey = m_preSpaceKey;
-	nowSpaceKey = m_nowSpaceKey;
+// Sキー
+void CharacterKeyboard::controlSquat(int& sKey) {
+	sKey = controlS();
 }
 
 
@@ -119,14 +122,8 @@ void CharacterKeyboardController::control() {
 	m_characterAction->move(m_rightStick, m_leftStick, m_upStick, m_downStick);
 
 	// ジャンプ
-	int nowSpaceKey = 0;
-	// 1フレーム前のスペースキーを取得
-	m_keyboard.controlJump(nowSpaceKey, m_jumpKey);
-
-	// ジャンプする
-	if ((nowSpaceKey == 0 && m_jumpKey > 0 && m_jumpKey < JUMP_KEY_LONG) || m_jumpKey == JUMP_KEY_LONG) {
-		m_characterAction->jump((100 * m_jumpKey) / JUMP_KEY_LONG);
-	}
+	m_keyboard.controlJump(m_jumpKey);
+	m_characterAction->jump(m_jumpKey);
 }
 
 Object* CharacterKeyboardController::bulletAttack() {

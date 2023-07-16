@@ -81,6 +81,7 @@ void BoxObject::atari(CharacterController* characterController) {
 				characterController->setCharacterY(m_y1 - characterHeight);
 				// 着地
 				characterController->setCharacterGrand(true);
+				characterController->setActionBoost();
 				// キャラは下へ移動できない
 				characterController->setActionDownLock(true);
 			}
@@ -100,6 +101,7 @@ void BoxObject::atari(CharacterController* characterController) {
 				characterController->setCharacterY(m_y1 - characterHeight);
 				// 着地
 				characterController->setCharacterGrand(true);
+				characterController->setActionBoost();
 				// キャラは下へ移動できない
 				characterController->setActionDownLock(true);
 			}
@@ -113,13 +115,30 @@ void BoxObject::atari(CharacterController* characterController) {
 	}
 
 	// 万が一オブジェクトの中に入り込んでしまったら
-	if (characterVy != 0 && characterY2 > m_y1 && characterY1 < m_y2 && characterX2 > m_x1 && characterX1 < m_x2) {
-		// 真上へ
-		characterController->setCharacterY(m_y1 - characterHeight);
-		// 着地
-		characterController->setCharacterGrand(true);
-		// キャラは下へ移動できない
-		characterController->setActionDownLock(true);
+	if (characterY2 > m_y1 && characterY1 < m_y2 && characterX2 > m_x1 && characterX1 < m_x2) {
+		// キャラが横にはみ出しているなら
+		if (characterY2 == m_y2 && !(characterX1 >= m_x1 && characterX2 <= m_x2)) {
+			if ((characterX1 + characterX2) < (m_x1 + m_x2)) {
+				// 密着状態まで移動させる
+				characterController->setCharacterX(m_x1 - characterWide);
+				// キャラは右へ移動できない
+				characterController->setActionRightLock(true);
+			}
+			else {
+				// 密着状態まで移動させる
+				characterController->setCharacterX(m_x2);
+				// キャラは左へ移動できない
+				characterController->setActionLeftLock(true);
+			}
+		}
+		else if(characterVy != 0) {
+			// 真上へ
+			characterController->setCharacterY(m_y1 - characterHeight);
+			// 着地
+			characterController->setCharacterGrand(true);
+			// キャラは下へ移動できない
+			characterController->setActionDownLock(true);
+		}
 	}
 }
 
