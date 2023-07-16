@@ -124,6 +124,10 @@ void CharacterKeyboardController::control() {
 	// ƒWƒƒƒ“ƒv
 	m_keyboard.controlJump(m_jumpKey);
 	m_characterAction->jump(m_jumpKey);
+
+	int sKey;
+	m_keyboard.controlSquat(sKey);
+	m_characterAction->setSquat(sKey);
 }
 
 Object* CharacterKeyboardController::bulletAttack() {
