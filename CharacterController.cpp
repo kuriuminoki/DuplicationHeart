@@ -43,6 +43,9 @@ void CharacterController::setActionUpLock(bool lock) {
 void CharacterController::setActionDownLock(bool lock) {
 	m_characterAction->setDownLock(lock);
 }
+void CharacterController::setActionBoost() {
+	m_characterAction->setBoost();
+}
 
 // キャラクターのセッタ
 void CharacterController::setCharacterX(int x) {
@@ -81,6 +84,11 @@ void CharacterKeyboard::controlStick(int& right, int& left, int& up, int& down) 
 // スペースキー
 void CharacterKeyboard::controlJump(int& spaceKey) {
 	spaceKey = controlSpace();
+}
+
+// Sキー
+void CharacterKeyboard::controlSquat(int& sKey) {
+	sKey = controlS();
 }
 
 

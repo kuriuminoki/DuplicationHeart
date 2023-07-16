@@ -29,6 +29,7 @@ public:
 	void setActionLeftLock(bool lock);
 	void setActionUpLock(bool lock);
 	void setActionDownLock(bool lock);
+	void setActionBoost();
 
 	// キャラクターのセッタ
 	void setCharacterX(int x);
@@ -61,6 +62,7 @@ public:
 	CharacterKeyboard();
 	void controlStick(int& right, int& left, int& up, int& down);
 	void controlJump(int& spaceKey);
+	void controlSquat(int& sKey);
 };
 
 /*

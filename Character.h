@@ -167,6 +167,9 @@ public:
 
 	inline void setX(int x) { m_x = x; }
 
+	inline int getCenterX() const{ return m_x + (m_wide / 2); }
+	inline int getCenterY() const { return m_y + (m_height / 2); }
+
 	inline int getY() const { return m_y; }
 
 	inline void setY(int y) { m_y = y; }

@@ -11,7 +11,8 @@ enum class CHARACTER_STATE {
 	DAMAGE,	// ダメージ受け中 着地で解除
 	BULLET,	// 射撃中
 	SLASH,	// 斬撃中
-	PREJUMP	// ジャンプ前
+	PREJUMP,	// ジャンプ前
+	SQUAT		// しゃがみ中
 };
 
 
@@ -41,6 +42,15 @@ protected:
 
 	// ジャンプのため時間の最大
 	const int PRE_JUMP_MAX = 10;
+
+	// 着地モーションの残り時間
+	int m_landCnt;
+
+	// 着地モーションの総時間
+	const int LAND_TIME = 10;
+
+	int m_boostCnt;
+	const int BOOST_TIME = 10;
 
 	// 移動中
 	bool m_moveRight;
@@ -76,8 +86,13 @@ public:
 	virtual void debug(int x, int y, int color) = 0;
 
 	// ゲッタとセッタ
-	inline bool getGrand() { return m_grand; }
-	inline void setGrand(bool grand) { m_grand = grand; }
+	inline bool getGrand() const { return m_grand; }
+	inline void setGrand(bool grand) { 
+		if (m_vy > 0) { // 着地モーションになる
+			m_landCnt = LAND_TIME;
+		}
+		m_grand = grand;
+	}
 	inline int getVx() const { return m_vx; }
 	inline int getVy() const { return m_vy; }
 	inline int getSlashCnt() { return m_slashCnt; }
@@ -85,7 +100,9 @@ public:
 	void setLeftLock(bool lock);
 	void setUpLock(bool lock);
 	void setDownLock(bool lock);
+	inline void setBoost() { m_boostCnt = BOOST_TIME; }
 	inline const Character* getCharacter() const { return m_character; }
+	virtual void setState(CHARACTER_STATE state) = 0;
 
 	// キャラクターのセッタ
 	void setCharacterX(int x);
@@ -140,6 +157,8 @@ public:
 	StickAction(Character* character);
 
 	void debug(int x, int y, int color);
+
+	void setState(CHARACTER_STATE state);
 
 	//行動前の処理 毎フレーム行う
 	void init();

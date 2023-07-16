@@ -93,7 +93,7 @@ World::World(int areaNum) {
 	m_playerId = heart->getId();
 	m_focusId = m_playerId;
 	m_camera = new Camera(0, 0, 1.0, CAMERA_SPEED_DEFAULT);
-	m_camera->setPoint(heart->getX(), heart->getY());
+	m_camera->setPoint(heart->getCenterX(), heart->getCenterY());
 	updateCamera();
 
 	// 主人公の動きを作成
@@ -180,8 +180,8 @@ void World::updateCamera() {
 		m_characters.pop();
 		// 今フォーカスしているキャラの座標に合わせる
 		if(m_focusId == character->getId()){
-			x = character->getX();
-			y = character->getY();
+			x = character->getCenterX();
+			y = character->getCenterY();
 			m_camera->setGPoint(x, y);
 		}
 		m_characters.push(character);

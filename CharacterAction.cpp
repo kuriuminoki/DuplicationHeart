@@ -33,6 +33,9 @@ CharacterAction::CharacterAction(Character* character) {
 	m_slashCnt = 0;
 
 	m_attackLeftDirection = false;
+
+	m_landCnt = 0;
+	m_boostCnt = 0;
 }
 
 CharacterAction::CharacterAction() :
@@ -89,6 +92,18 @@ void StickAction::init() {
 	m_grand = false;
 }
 
+void StickAction::setState(CHARACTER_STATE state) {
+	switch (state) {
+	// しゃがみ機能実装何気に厄介。しゃがみを解除する処理も必要。ControllerとActionのどちらで制御するか。
+	case CHARACTER_STATE::SQUAT:
+
+		break;
+	default:
+		m_state = state;
+		break;
+	}
+}
+
 void StickAction::action() {
 	// 射撃のインターバル処理
 	if (m_bulletCnt > 0) { m_bulletCnt--; }
@@ -102,6 +117,10 @@ void StickAction::action() {
 		// 重力
 		m_vy += G;
 	}
+
+	// アニメーション用のカウント
+	if (m_landCnt > 0) { m_landCnt--; }
+	if (m_boostCnt > 0) { m_boostCnt--; }
 
 	// 移動
 	if (m_vx > 0) {// 右
@@ -149,7 +168,10 @@ void StickAction::switchHandle() {
 	if (m_grand) { // 地面にいるとき
 		switch (m_state) {
 		case CHARACTER_STATE::STAND: //立ち状態
-			if (m_runCnt != -1) {
+			if (m_landCnt > 0) {
+				m_character->switchLand();
+			}
+			else if (m_runCnt != -1) {
 				m_character->switchRun(m_runCnt);
 			}
 			else {
@@ -159,12 +181,18 @@ void StickAction::switchHandle() {
 		case CHARACTER_STATE::PREJUMP:
 			m_character->switchPreJump(m_preJumpCnt);
 			break;
+		case CHARACTER_STATE::SQUAT:
+			m_character->switchSquat();
+			break;
 		}
 	}
 	else { // 宙にいるとき
 		switch (m_state) {
 		case CHARACTER_STATE::STAND: //立ち状態(なにもなしの状態)
-			if (m_vy < 0) {
+			if (m_boostCnt > 0) {
+				m_character->switchBoost();
+			}
+			else if (m_vy < 0) {
 				m_character->switchJump();
 			}
 			else {
@@ -249,6 +277,11 @@ void StickAction::move(bool right, bool left, bool up, bool down) {
 
 // ジャンプ
 void StickAction::jump(int cnt) {
+	// 宙に浮いたらジャンプ中止
+	if (!m_grand) {
+		m_preJumpCnt = -1;
+		m_state = CHARACTER_STATE::STAND;
+	}
 	// ジャンプ前の状態なら
 	if (cnt > 0 && m_grand && m_preJumpCnt == -1) {
 		m_preJumpCnt = 0;
