@@ -25,30 +25,23 @@ void WorldDrawer::draw() {
 	// カメラを取得
 	const Camera* camera = m_world->getCamera();
 
-	// キャラを描画
-	queue<const CharacterAction*> actions = m_world->getActions();
 	// 各Actionを描画
-	while (!actions.empty()) {
-		// Actionを取得
-		const CharacterAction* action = actions.front();
-		actions.pop();
-
+	vector<const CharacterAction*> actions = m_world->getActions();
+	size_t size = actions.size();
+	for (unsigned int i = 0; i < size; i++) {
 		// キャラをDrawerにセット
-		m_characterDrawer->setCharacterAction(action);
+		m_characterDrawer->setCharacterAction(actions[i]);
 
 		// カメラを使ってキャラを描画
 		m_characterDrawer->drawCharacter(camera);
 	}
 
-	queue<const Object*> objects = m_world->getObjects();
 	// 各Objectを描画
-	while (!objects.empty()) {
-		// Objectを取得
-		const Object* object = objects.front();
-		objects.pop();
-
+	vector<const Object*> objects = m_world->getObjects();
+	size = objects.size();
+	for (unsigned int i = 0; i < size; i++) {
 		// ObjectをDrawerにセット
-		m_objectDrawer->setObject(object);
+		m_objectDrawer->setObject(objects[i]);
 
 		// カメラを使ってObjectを描画
 		m_objectDrawer->drawObject(camera);

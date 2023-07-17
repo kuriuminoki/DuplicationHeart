@@ -151,7 +151,7 @@ public:
 	virtual void debug(int x, int y, int color) = 0;
 
 	// ゲッタとセッタ
-	inline int getId() { return m_id; }
+	inline int getId() const { return m_id; }
 
 	inline int getMaxHp() { return m_maxHp; }
 

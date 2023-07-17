@@ -102,8 +102,19 @@ int NormalAI::bulletOrder() {
 // 攻撃対象を決める(targetのままか、characterに変更するか)
 void NormalAI::searchTarget(Character* character) {
 	if (m_target == NULL || m_target->getHp() == 0) {
-		m_target = character;
+		// 自分自身や味方じゃなければ
+		if (character->getId() != m_characterAction->getCharacter()->getId()) {
+			m_target = character;
+		}
 	}
+}
+
+// 攻撃対象を変更する必要があるならtrueでアピールする。
+bool NormalAI::needSearchTarget() const {
+	if (m_target == NULL || GetRand(99) == 0) {
+		return true;
+	}
+	return false;
 }
 
 

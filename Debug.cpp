@@ -21,16 +21,9 @@ void Game::debug(int x, int y, int color) {
 /*
 * World
 */
-void debugObjects(int x, int y, int color, std::queue<Object*> objects) {
-	int i = 0;
-	size_t objectSum = objects.size();
-	while (i < objectSum) {
-		Object* object = objects.front();
-		objects.pop();
-		// “–‚½‚è”»’è‚ð‚±‚±‚Ås‚¤
-		object->debug(x + 500, y + DRAW_FORMAT_STRING_SIZE * i * 4, color);
-		objects.push(object);
-		i++;
+void debugObjects(int x, int y, int color, std::vector<Object*> objects) {
+	for (unsigned int i = 0; i < objects.size(); i++) {
+		objects[i]->debug(x + 500, y + DRAW_FORMAT_STRING_SIZE * i * 4, color);
 	}
 }
 

@@ -38,7 +38,10 @@ public:
 	virtual int bulletOrder() = 0;
 
 	// 攻撃対象を決める(AIクラスでオーバライドする。)
-	void searchTarget(Character* character) {  }
+	virtual void searchTarget(Character* character) = 0;
+
+	// 攻撃対象を変更する必要があるならtrueでアピールする(AIクラスでオーバライドする)。
+	virtual bool needSearchTarget() const = 0;
 };
 
 /*
@@ -59,6 +62,8 @@ public:
 	int squatOrder();
 	int slashOrder();
 	int bulletOrder();
+	void searchTarget(Character* character) {  }
+	bool needSearchTarget() const { return false; }
 };
 
 /*
@@ -81,6 +86,9 @@ public:
 
 	// 攻撃対象を決める(targetのままか、characterに変更するか)
 	void searchTarget(Character* character);
+
+	// 攻撃対象を変更する必要があるならtrueでアピールする。
+	bool needSearchTarget() const;
 };
 
 
@@ -107,6 +115,9 @@ public:
 
 	// アクションの情報取得
 	inline const CharacterAction* getAction() const { return m_characterAction; }
+
+	// Brainの情報取得
+	inline const Brain* getBrain() const { return m_brain; }
 
 	// アクションのセッタ
 	void setCharacterGrand(bool grand);
