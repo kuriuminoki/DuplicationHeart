@@ -21,16 +21,9 @@ void Game::debug(int x, int y, int color) {
 /*
 * World
 */
-void debugObjects(int x, int y, int color, std::queue<Object*> objects) {
-	int i = 0;
-	size_t objectSum = objects.size();
-	while (i < objectSum) {
-		Object* object = objects.front();
-		objects.pop();
-		// 当たり判定をここで行う
-		object->debug(x + 500, y + DRAW_FORMAT_STRING_SIZE * i * 4, color);
-		objects.push(object);
-		i++;
+void debugObjects(int x, int y, int color, std::vector<Object*> objects) {
+	for (unsigned int i = 0; i < objects.size(); i++) {
+		objects[i]->debug(x + 500, y + DRAW_FORMAT_STRING_SIZE * i * 4, color);
 	}
 }
 
@@ -55,9 +48,8 @@ void CharacterController::debugController(int x, int y, int color) {
 }
 
 // CharacterKeyboardControllerクラスのデバッグ
-void CharacterKeyboardController::debug(int x, int y, int color) {
+void NormalController::debug(int x, int y, int color) {
 	DrawFormatString(x, y, color, "**CharacterKeyboardController**");
-	DrawFormatString(x, y + DRAW_FORMAT_STRING_SIZE, color, "(←, →, ↑, ↓)=(%d,%d,%d,%d), jump=%d", m_rightStick, m_leftStick, m_upStick, m_downStick, m_jumpKey);
 	debugController(x + DRAW_FORMAT_STRING_SIZE, y + DRAW_FORMAT_STRING_SIZE * 2, color);
 }
 

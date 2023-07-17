@@ -221,7 +221,7 @@ void CharacterAction::afterChangeGraph(int beforeWide, int beforeHeight, int aft
 	}
 	// ã‰º‚Ç‚Á‚¿‚É‚Å‚às‚¯‚é
 	else {
-		// ã‚Ö“®‚©‚·
+		// —¼•û‚ÉL‚°‚é
 		m_character->moveUp((afterHeight - beforeHeight) / 2);
 	}
 
@@ -236,7 +236,7 @@ void CharacterAction::afterChangeGraph(int beforeWide, int beforeHeight, int aft
 	}
 	// ¶‰E‚Ç‚Á‚¿‚É‚Å‚às‚¯‚éA‚à‚µ‚­‚Í‚¢‚¯‚È‚¢
 	else {
-		// ¶‚Ö“®‚©‚·
+		// —¼•û‚ÉL‚°‚é
 		m_character->moveLeft((afterWide - beforeWide) / 2);
 	}
 }

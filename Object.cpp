@@ -132,12 +132,20 @@ void BoxObject::atari(CharacterController* characterController) {
 			}
 		}
 		else if(characterVy != 0) {
-			// 真上へ
-			characterController->setCharacterY(m_y1 - characterHeight);
-			// 着地
-			characterController->setCharacterGrand(true);
-			// キャラは下へ移動できない
-			characterController->setActionDownLock(true);
+			if ((characterY1 + characterY2) < (m_y1 + m_y2)) {
+				// 真上へ
+				characterController->setCharacterY(m_y1 - characterHeight);
+				// 着地
+				characterController->setCharacterGrand(true);
+				// キャラは下へ移動できない
+				characterController->setActionDownLock(true);
+			}
+			else {
+				// 真下へ
+				characterController->setCharacterY(m_y2);
+				// キャラは上へ移動できない
+				characterController->setActionUpLock(true);
+			}
 		}
 	}
 }

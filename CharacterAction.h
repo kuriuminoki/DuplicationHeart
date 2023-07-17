@@ -85,6 +85,7 @@ public:
 	virtual void debug(int x, int y, int color) = 0;
 
 	// ゲッタとセッタ
+	inline CHARACTER_STATE getState() const { return m_state; }
 	inline bool getGrand() const { return m_grand; }
 	inline void setGrand(bool grand) { 
 		if (m_vy > 0) { // 着地モーションになる
@@ -95,6 +96,10 @@ public:
 	inline int getVx() const { return m_vx; }
 	inline int getVy() const { return m_vy; }
 	inline int getSlashCnt() { return m_slashCnt; }
+	bool getRightLock() const { return m_rightLock; }
+	bool getLeftLock() const { return m_leftLock; }
+	bool getUpLock() const { return m_upLock; }
+	bool getDownLock() const { return m_downLock; }
 	void setRightLock(bool lock);
 	void setLeftLock(bool lock);
 	void setUpLock(bool lock);

@@ -151,13 +151,13 @@ public:
 	virtual void debug(int x, int y, int color) = 0;
 
 	// ゲッタとセッタ
-	inline int getId() { return m_id; }
+	inline int getId() const { return m_id; }
 
 	inline int getMaxHp() { return m_maxHp; }
 
 	inline void setMaxHp(int maxHp) { m_maxHp = maxHp; }
 
-	inline int getHp() { return m_hp; }
+	inline int getHp() const { return m_hp; }
 
 	inline void setHp(int hp) {
 		m_hp = (hp > m_maxHp) ? m_maxHp : hp;
