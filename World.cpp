@@ -19,7 +19,7 @@ void deleteObject(vector<Object*>& objects) {
 	}
 }
 
-// キューに入った全オブジェクトを動かす
+// vectorに入った全オブジェクトを動かす
 void actionObject(vector<Object*>& objects) {
 	// 壁や床オブジェクトの処理 (当たり判定と動き)
 	for (unsigned int i = 0; i < objects.size(); i++) {
@@ -37,7 +37,7 @@ void actionObject(vector<Object*>& objects) {
 }
 
 // キャラクターとオブジェクトの当たり判定
-void atariCharacterAndObject(CharacterController* controller, vector<Object*> objects) {
+void atariCharacterAndObject(CharacterController* controller, vector<Object*>& objects) {
 	// 壁や床オブジェクトの処理 (当たり判定と動き)
 	for (unsigned int i = 0; i < objects.size(); i++) {
 		// 当たり判定をここで行う
@@ -50,6 +50,15 @@ void atariCharacterAndObject(CharacterController* controller, vector<Object*> ob
 			objects.pop_back();
 			i--;
 		}
+	}
+}
+
+// キャラクターとオブジェクトの貫通時判定
+void penetrationCharacterAndObject(CharacterController* controller, vector<Object*> objects) {
+	// 壁や床オブジェクトの処理 (当たり判定と動き)
+	for (unsigned int i = 0; i < objects.size(); i++) {
+		// 当たり判定をここで行う
+		objects[i]->penetration(controller);
 	}
 }
 
@@ -70,11 +79,11 @@ World::World(int areaNum) {
 	m_stageObjects.push_back(object3);
 	Object* object4 = new TriangleObject(2000, 600, 2600, 900, WHITE, true);
 	m_stageObjects.push_back(object4);
-	Object* object5 = new BoxObject(2600, 600, 3100, 900, WHITE);
+	Object* object5 = new BoxObject(2600, 600, 4000, 900, WHITE);
 	m_stageObjects.push_back(object5);
 	Object* object6 = new BoxObject(-500, -1000, -400, 1080, WHITE);
 	m_stageObjects.push_back(object6);
-	Object* object7 = new BoxObject(4000, -1000, 4100, 1080, WHITE);
+	Object* object7 = new BoxObject(5000, -1000, 5100, 1080, WHITE);
 	m_stageObjects.push_back(object7);
 	Object* object8 = new BoxObject(3000, 400, 3300, 600, WHITE);
 	m_stageObjects.push_back(object8);
@@ -221,6 +230,9 @@ void World::controlCharacter() {
 
 		// 反映
 		controller->action();
+
+		// オブジェクトとの貫通判定
+		penetrationCharacterAndObject(controller, m_stageObjects);
 	}
 }
 

@@ -113,11 +113,22 @@ void BoxObject::atari(CharacterController* characterController) {
 			}
 		}
 	}
+}
 
+// キャラがオブジェクトに入り込んでいるときの処理
+void BoxObject::penetration(CharacterController* characterController) {
+	// キャラの情報　座標と移動スピード
+	int characterX1 = characterController->getAction()->getCharacter()->getX();
+	int characterY1 = characterController->getAction()->getCharacter()->getY();
+	int characterWide = characterController->getAction()->getCharacter()->getWide();
+	int characterHeight = characterController->getAction()->getCharacter()->getHeight();
+	int characterX2 = characterX1 + characterWide;
+	int characterY2 = characterY1 + characterHeight;
 	// 万が一オブジェクトの中に入り込んでしまったら
-	if (characterY2 > m_y1 && characterY1 < m_y2 && characterX2 > m_x1 && characterX1 < m_x2) {
+	bool slope = characterController->getAction()->getGrandLeftSlope() || characterController->getAction()->getGrandRightSlope();
+	if (!slope && characterY2 > m_y1 && characterY1 < m_y2 && characterX2 > m_x1 && characterX1 < m_x2) {
 		// キャラが横にはみ出しているなら
-		if (characterY2 == m_y2 && !(characterX1 >= m_x1 && characterX2 <= m_x2)) {
+		if (characterX1 < m_x1 || characterX2 > m_x2) {
 			if ((characterX1 + characterX2) < (m_x1 + m_x2)) {
 				// 密着状態まで移動させる
 				characterController->setCharacterX(m_x1 - characterWide);
@@ -131,7 +142,7 @@ void BoxObject::atari(CharacterController* characterController) {
 				characterController->setActionLeftLock(true);
 			}
 		}
-		else if(characterVy != 0) {
+		else if (characterY1 < m_y1 || characterY2 > m_y2) {
 			if ((characterY1 + characterY2) < (m_y1 + m_y2)) {
 				// 真上へ
 				characterController->setCharacterY(m_y1 - characterHeight);
@@ -272,6 +283,12 @@ void TriangleObject::atari(CharacterController* characterController) {
 	if (characterX2 > m_x1 && characterX1 < m_x2 && characterY2 <= m_y2 && characterY2 >= getY(characterX1_5)) {
 		// 着地
 		characterController->setCharacterGrand(true);
+		if (m_leftDown) {
+			characterController->setCharacterGrandRightSlope(true);
+		}
+		else {
+			characterController->setCharacterGrandLeftSlope(true);
+		}
 		// キャラは下へ移動できない
 		characterController->setActionDownLock(true);
 		// 適切な高さへ移動
@@ -318,6 +335,54 @@ void TriangleObject::atari(CharacterController* characterController) {
 				characterController->setActionRightLock(true);
 				// 密着状態までは移動させる
 				characterController->setCharacterX(m_x1 - characterWide);
+			}
+		}
+	}
+}
+
+// キャラがオブジェクトに入り込んでいるときの処理
+void TriangleObject::penetration(CharacterController* characterController) {
+	// キャラの情報　座標と移動スピード
+	int characterX1 = characterController->getAction()->getCharacter()->getX();
+	int characterY1 = characterController->getAction()->getCharacter()->getY();
+	int characterWide = characterController->getAction()->getCharacter()->getWide();
+	int characterHeight = characterController->getAction()->getCharacter()->getHeight();
+	int characterX1_5 = characterController->getAction()->getCharacter()->getCenterX();
+	int characterY1_5 = characterController->getAction()->getCharacter()->getCenterY();
+	int characterX2 = characterX1 + characterWide;
+	int characterY2 = characterY1 + characterHeight;
+	int slopeY = getY(characterX1_5);
+	// 万が一オブジェクトの中に入り込んでしまったら
+	if (characterY2 > slopeY && characterY1 < m_y2 && characterX2 > m_x1 && characterX1 < m_x2) {
+		if (characterY1 < slopeY || characterY2 > m_y2) {
+			if ((characterY1 + characterY2) < (slopeY + m_y2)) {
+				// 真上へ
+				characterController->setCharacterY(slopeY - characterHeight);
+				// 着地
+				characterController->setCharacterGrand(true);
+				// キャラは下へ移動できない
+				characterController->setActionDownLock(true);
+			}
+			else {
+				// 真下へ
+				characterController->setCharacterY(m_y2);
+				// キャラは上へ移動できない
+				characterController->setActionUpLock(true);
+			}
+		}
+		// キャラが横にはみ出しているなら
+		else if (characterX1 < m_x1 || characterX2 > m_x2) {
+			if ((characterX1 + characterX2) < (m_x1 + m_x2)) {
+				// 密着状態まで移動させる
+				characterController->setCharacterX(m_x1 - characterWide);
+				// キャラは右へ移動できない
+				characterController->setActionRightLock(true);
+			}
+			else {
+				// 密着状態まで移動させる
+				characterController->setCharacterX(m_x2);
+				// キャラは左へ移動できない
+				characterController->setActionLeftLock(true);
 			}
 		}
 	}
@@ -375,6 +440,10 @@ BulletObject::BulletObject(int x, int y, int color, int gx, int gy, AttackInfo* 
 // キャラとの当たり判定
 // 当たっているならキャラを操作する。
 void BulletObject::atari(CharacterController* characterController) {
+	if (m_characterId == characterController->getAction()->getCharacter()->getId()) {
+		return;
+	}
+
 	// キャラの情報　座標と移動スピード
 	int characterX1 = characterController->getAction()->getCharacter()->getX();
 	int characterY1 = characterController->getAction()->getCharacter()->getY();
@@ -384,7 +453,8 @@ void BulletObject::atari(CharacterController* characterController) {
 	// 当たり判定
 	if (characterX2 > m_x1 && characterX1 < m_x2 && characterY2 > m_y1 && characterY1 < m_y2) {
 		// 貫通弾じゃないなら消滅
-		//m_deleteFlag = true;
+		m_deleteFlag = true;
+		characterController->damage(m_vx / 2, m_vy / 2, m_damage, -1);
 	}
 }
 

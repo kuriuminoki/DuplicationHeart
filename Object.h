@@ -50,6 +50,9 @@ public:
 	// キャラとの当たり判定
 	virtual void atari(CharacterController* character) = 0;
 
+	// キャラがオブジェクトに入り込んでいるときの処理
+	virtual void penetration(CharacterController* characterController) = 0;
+
 	// 他オブジェクトとの当たり判定
 	virtual void atariObject(Object* object) = 0;
 
@@ -85,6 +88,9 @@ public:
 	// キャラとの当たり判定
 	// 当たっているならキャラを操作する。
 	void atari(CharacterController* character);
+
+	// キャラがオブジェクトに入り込んでいるときの処理
+	void penetration(CharacterController* characterController);
 
 	// 他オブジェクトとの当たり判定
 	void atariObject(Object* object);
@@ -122,6 +128,9 @@ public:
 	// キャラとの当たり判定
 	// 当たっているならキャラを操作する。
 	void atari(CharacterController* character);
+
+	// キャラがオブジェクトに入り込んでいるときの処理
+	void penetration(CharacterController* characterController);
 
 	// 他オブジェクトとの当たり判定
 	void atariObject(Object* object);
@@ -186,6 +195,9 @@ public:
 	// 当たっているならキャラを操作する。
 	void atari(CharacterController* character);
 
+	// キャラがオブジェクトに入り込んでいるときの処理
+	void penetration(CharacterController* characterController) {};
+
 	// 他オブジェクトとの当たり判定
 	void atariObject(Object* object);
 
@@ -238,6 +250,9 @@ public:
 	// キャラとの当たり判定
 	// 当たっているならキャラを操作する。
 	void atari(CharacterController* character);
+
+	// キャラがオブジェクトに入り込んでいるときの処理
+	void penetration(CharacterController* characterController) {};
 
 	// 他オブジェクトとの当たり判定
 	void atariObject(Object* object);

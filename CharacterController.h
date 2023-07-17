@@ -177,6 +177,8 @@ public:
 
 	// aŒ‚UŒ‚
 	virtual Object* slashAttack() = 0;
+
+	virtual void damage(int vx, int vy, int damageValue, int soundHandle) = 0;
 };
 
 /*
@@ -201,6 +203,9 @@ public:
 
 	// aŒ‚UŒ‚
 	Object* slashAttack();
+
+	// ƒ_ƒ\ƒW
+	void damage(int vx, int vy, int damageValue, int soundHandle);
 };
 
 #endif

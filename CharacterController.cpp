@@ -172,7 +172,7 @@ int NormalAI::squatOrder() {
 }
 
 int NormalAI::slashOrder() {
-	return rightClick();
+	return 0;
 }
 
 int NormalAI::bulletOrder() {
@@ -323,7 +323,14 @@ Object* NormalController::bulletAttack() {
 Object* NormalController::slashAttack() {
 	// ‹ß‹——£UŒ‚‚Ì–½—ß‚ª‚³‚ê‚½‚©A‚µ‚½Œã‚Å¡‚ªUŒ‚ƒ^ƒCƒ~ƒ“ƒO‚È‚ç
 	if (m_brain->slashOrder() == 1 || m_characterAction->getSlashCnt() > 0) {
-		return m_characterAction->slashAttack();
+		// UŒ‚–Ú•W
+		int targetX, targetY;
+		m_brain->bulletTargetPoint(targetX, targetY);
+		return m_characterAction->slashAttack(targetX, targetY);
 	}
 	return NULL;
+}
+
+void NormalController::damage(int vx, int vy, int damageValue, int soundHandle) {
+	m_characterAction->damage(vx, vy, damageValue, soundHandle);
 }
