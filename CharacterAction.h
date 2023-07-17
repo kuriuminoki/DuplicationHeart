@@ -12,7 +12,6 @@ enum class CHARACTER_STATE {
 	BULLET,	// 射撃中
 	SLASH,	// 斬撃中
 	PREJUMP,	// ジャンプ前
-	SQUAT		// しゃがみ中
 };
 
 
@@ -102,7 +101,9 @@ public:
 	void setDownLock(bool lock);
 	inline void setBoost() { m_boostCnt = BOOST_TIME; }
 	inline const Character* getCharacter() const { return m_character; }
-	virtual void setState(CHARACTER_STATE state) = 0;
+
+	// squat==trueならしゃがむ、falseなら立つ
+	void setSquat(bool squat);
 
 	// キャラクターのセッタ
 	void setCharacterX(int x);
@@ -157,8 +158,6 @@ public:
 	StickAction(Character* character);
 
 	void debug(int x, int y, int color);
-
-	void setState(CHARACTER_STATE state);
 
 	//行動前の処理 毎フレーム行う
 	void init();

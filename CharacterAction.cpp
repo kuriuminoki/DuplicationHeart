@@ -92,15 +92,12 @@ void StickAction::init() {
 	m_grand = false;
 }
 
-void StickAction::setState(CHARACTER_STATE state) {
-	switch (state) {
-	// しゃがみ機能実装何気に厄介。しゃがみを解除する処理も必要。ControllerとActionのどちらで制御するか。
-	case CHARACTER_STATE::SQUAT:
-
-		break;
-	default:
-		m_state = state;
-		break;
+void CharacterAction::setSquat(bool squat) {
+	if (squat && m_grand && m_state != CHARACTER_STATE::DAMAGE && m_state != CHARACTER_STATE::SLASH && m_state != CHARACTER_STATE::PREJUMP) {
+		m_squat = true;
+	}
+	else {
+		m_squat = false;
 	}
 }
 
@@ -171,6 +168,9 @@ void StickAction::switchHandle() {
 			if (m_landCnt > 0) {
 				m_character->switchLand();
 			}
+			else if (m_squat) {
+				m_character->switchSquat();
+			}
 			else if (m_runCnt != -1) {
 				m_character->switchRun(m_runCnt);
 			}
@@ -180,9 +180,6 @@ void StickAction::switchHandle() {
 			break;
 		case CHARACTER_STATE::PREJUMP:
 			m_character->switchPreJump(m_preJumpCnt);
-			break;
-		case CHARACTER_STATE::SQUAT:
-			m_character->switchSquat();
 			break;
 		}
 	}
@@ -244,26 +241,27 @@ void CharacterAction::afterChangeGraph(int beforeWide, int beforeHeight, int aft
 	}
 }
 
-// 歩く ダメージ中は不可
+// 歩く ダメージ中、しゃがみ中、壁ぶつかり中は不可
 void StickAction::walk(bool right, bool left) {
-	if (m_moveRight && (!right || m_rightLock)) { // 右へ歩くのをやめる
+	if (m_moveRight && (!right || m_rightLock || m_squat)) { // 右へ歩くのをやめる
 		m_vx -= m_character->getMoveSpeed();
 		m_moveRight = false;
 		m_runCnt = -1;
 	}
-	if (m_moveLeft && (!left || m_leftLock)) { // 左へ歩くのをやめる
+	if (m_moveLeft && (!left || m_leftLock || m_squat)) { // 左へ歩くのをやめる
 		m_vx += m_character->getMoveSpeed();
 		m_moveLeft = false;
 		m_runCnt = -1;
 	}
-	if (!m_rightLock && !m_moveRight && !m_moveLeft && right) { // 右へ歩く
+	if (!m_rightLock && !m_moveRight && !m_moveLeft && right && !m_squat) { // 右へ歩く
 		m_vx += m_character->getMoveSpeed();
 		m_moveRight = true;
 	}
-	if (!m_leftLock && !m_moveRight && !m_moveLeft && left) { // 左へ歩く
+	if (!m_leftLock && !m_moveRight && !m_moveLeft && left && !m_squat) { // 左へ歩く
 		m_vx -= m_character->getMoveSpeed();
 		m_moveLeft = true;
 	}
+	// アニメーション用にカウント
 	if (m_moveLeft || m_moveRight) {
 		m_runCnt++;
 	}
