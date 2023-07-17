@@ -1,6 +1,7 @@
 #ifndef CHACACTER_CONTROLLER_H_INCLUDED
 #define CHACACTER_CONTROLLER_H_INCLUDED
 
+class Character;
 class CharacterAction;
 class Object;
 class Camera;
@@ -35,6 +36,9 @@ public:
 
 	// 遠距離攻撃
 	virtual int bulletOrder() = 0;
+
+	// 攻撃対象を決める(AIクラスでオーバライドする。)
+	void searchTarget(Character* character) {  }
 };
 
 /*
@@ -60,19 +64,24 @@ public:
 /*
 *  普通に敵と戦うよう命令するＡＩのクラス
 */
-//class NormalAI :
-//	public Brain
-//{
-//private:
-//
-//public:
-//	NormalAI(CharacterAction* characterAction);
-//	void moveOrder(int& right, int& left, int& up, int& down);
-//	int jumpOrder();
-//	int squatOrder();
-//	int slashOrder();
-//	int bulletOrder();
-//};
+class NormalAI :
+	public Brain
+{
+private:
+	// 攻撃対象
+	Character* m_target;
+public:
+	NormalAI();
+	void bulletTargetPoint(int& x, int& y);
+	void moveOrder(int& right, int& left, int& up, int& down);
+	int jumpOrder();
+	int squatOrder();
+	int slashOrder();
+	int bulletOrder();
+
+	// 攻撃対象を決める(targetのままか、characterに変更するか)
+	void searchTarget(Character* character);
+};
 
 
 
@@ -113,6 +122,9 @@ public:
 
 	// 行動前の処理 毎フレーム行う
 	void init();
+
+	// 攻撃対象を変更（するかも）
+	void searchTargetCandidate(Character* character);
 
 	// キャラの操作
 	virtual void control() = 0;

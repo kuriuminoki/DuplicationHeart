@@ -61,6 +61,52 @@ int KeyboardBrain::bulletOrder() {
 }
 
 
+NormalAI::NormalAI() {
+	m_target = NULL;
+}
+
+void NormalAI::bulletTargetPoint(int& x, int& y) {
+	if (m_target == NULL) {
+		x = 0;
+		y = 0;
+	}
+	else { // ターゲットに向かって射撃攻撃
+		x = m_target->getCenterX();
+		y = m_target->getCenterY();
+	}
+}
+
+void NormalAI::moveOrder(int& right, int& left, int& up, int& down) {
+	right = controlD();
+	left = controlA();
+	up = controlW();
+	down = controlS();
+}
+
+int NormalAI::jumpOrder() {
+	return controlSpace();
+}
+
+int NormalAI::squatOrder() {
+	return controlS();
+}
+
+int NormalAI::slashOrder() {
+	return rightClick();
+}
+
+int NormalAI::bulletOrder() {
+	return leftClick();
+}
+
+// 攻撃対象を決める(targetのままか、characterに変更するか)
+void NormalAI::searchTarget(Character* character) {
+	if (m_target == NULL || m_target->getHp() == 0) {
+		m_target = character;
+	}
+}
+
+
 /*
 * コントローラ
 */
@@ -84,6 +130,9 @@ CharacterController::CharacterController() :
 CharacterController::~CharacterController() {
 	if (m_characterAction != NULL) {
 		delete m_characterAction;
+	}
+	if (m_brain != NULL) {
+		delete m_brain;
 	}
 }
 
@@ -118,6 +167,11 @@ void CharacterController::setCharacterY(int y) {
 // 行動前の処理
 void CharacterController::init() {
 	m_characterAction->init();
+}
+
+// 攻撃対象を変更（するかも）
+void CharacterController::searchTargetCandidate(Character* character) {
+	m_brain->searchTarget(character);
 }
 
 // 行動の結果反映

@@ -85,7 +85,7 @@ World::World(int areaNum) {
 	Object* object5 = new BoxObject(2600, 600, 4000, 900, WHITE);
 	m_stageObjects.push(object5);
 
-	// 主人公をロード
+	// 主人公をロード キャラの削除はWorldがやる予定
 	Heart* heart = new Heart(100, 100, 0, 0);
 	m_characters.push(heart);
 
@@ -96,12 +96,16 @@ World::World(int areaNum) {
 	m_camera->setPoint(heart->getCenterX(), heart->getCenterY());
 	updateCamera();
 
-	// 主人公の動きを作成
-	StickAction* heartAction = new StickAction(heart);
-
-	//主人公のコントローラ作成
-	NormalController* heartController = new NormalController(new KeyboardBrain(m_camera), heartAction);
+	//主人公のコントローラ作成 BrainとActionの削除はControllerがやる。
+	NormalController* heartController = new NormalController(new KeyboardBrain(m_camera), new StickAction(heart));
 	m_characterControllers.push(heartController);
+
+	// CPUをロード
+	Heart* cp = new Heart(100, 100, 500, 0);
+	m_characters.push(cp);
+	//CPUのコントローラ作成 BrainとActionの削除はControllerがやる。
+	NormalController* cpController = new NormalController(new NormalAI(), new StickAction(cp));
+	m_characterControllers.push(cpController);
 }
 
 World::~World() {
@@ -160,6 +164,12 @@ queue<const Object*> World::getObjects() const {
 // 戦わせる
 void World::battle() {
 
+	// HP0のキャラ削除
+	cleanCharacter();
+
+	// キャラの更新（攻撃対象の変更）
+	updateCharacter();
+
 	// キャラクターの動き
 	controlCharacter();
 
@@ -169,6 +179,36 @@ void World::battle() {
 	// カメラの更新
 	updateCamera();
 
+}
+
+// ＨＰ０のキャラ削除
+void World::cleanCharacter() {
+	size_t characterSum = m_characters.size();
+	while (characterSum > 0) {
+		Character* character = m_characters.front();
+		m_characters.pop();
+		if (character->getHp() <= 0) {
+			delete character;
+		}
+		else {
+			m_characters.push(character);
+		}
+		characterSum--;
+	}
+}
+
+// キャラの更新（攻撃対象の変更）
+void World::updateCharacter() {
+	size_t characterSum = m_characters.size();
+	while (characterSum > 0) {
+		Character* character = m_characters.front();
+		m_characters.pop();
+		if (GetRand(99) == 0) { // 1%の確率で攻撃対象変更
+			
+		}
+		m_characters.push(character);
+		characterSum--;
+	}
 }
 
 // カメラの更新

@@ -53,6 +53,17 @@ public:
 	// キャラに戦わせる
 	void battle();
 
+	// キャラに会話させる
+	void talk();
+
+private:
+
+	// ＨＰ０のキャラ削除
+	void cleanCharacter();
+
+	// キャラの更新（攻撃対象の変更）
+	void updateCharacter();
+
 	// カメラの更新
 	void updateCamera();
 
@@ -64,9 +75,6 @@ public:
 
 	// 壁や床<->攻撃の当たり判定
 	void atariStageAndAttack();
-
-	// キャラに会話させる
-	void talk();
 
 };
 
