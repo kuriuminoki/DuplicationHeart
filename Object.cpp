@@ -222,8 +222,8 @@ void TriangleObject::atari(CharacterController* characterController) {
 	int characterHeight = characterController->getAction()->getCharacter()->getHeight();
 	int characterX2 = characterX1 + characterWide;
 	int characterY2 = characterY1 + characterHeight;
-	int characterX1_5 = characterX1 + (characterWide / 2);
-	int characterY1_5 = characterY1 + (characterHeight / 2);
+	int characterX1_5 = characterController->getAction()->getCharacter()->getCenterX();
+	int characterY1_5 = characterController->getAction()->getCharacter()->getCenterY();
 	int characterVx = characterController->getAction()->getVx();
 	int characterVy = characterController->getAction()->getVy();
 
@@ -233,6 +233,12 @@ void TriangleObject::atari(CharacterController* characterController) {
 		if (characterY2 == getY(characterX1_5 - characterVx)) {
 			// 前のフレームでは着地していたので、引き続き着地
 			characterController->setCharacterGrand(true);
+			if (m_leftDown) {
+				characterController->setCharacterGrandRightSlope(true);
+			}
+			else {
+				characterController->setCharacterGrandLeftSlope(true);
+			}
 			// キャラは下へ移動できない
 			characterController->setActionDownLock(true);
 			// 密着状態までは移動させる
@@ -242,6 +248,12 @@ void TriangleObject::atari(CharacterController* characterController) {
 		else if (characterY2 <= getY(characterX1_5) && characterY2 + characterVy >= getY(characterX1_5)) {
 			// 着地
 			characterController->setCharacterGrand(true);
+			if (m_leftDown) {
+				characterController->setCharacterGrandRightSlope(true);
+			}
+			else {
+				characterController->setCharacterGrandLeftSlope(true);
+			}
 			// キャラは下へ移動できない
 			characterController->setActionDownLock(true);
 			// 密着状態までは移動させる

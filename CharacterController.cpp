@@ -235,6 +235,12 @@ CharacterController::~CharacterController() {
 void CharacterController::setCharacterGrand(bool grand) {
 	m_characterAction->setGrand(grand);
 }
+void CharacterController::setCharacterGrandRightSlope(bool grand) {
+	m_characterAction->setGrandRightSlope(grand);
+}
+void CharacterController::setCharacterGrandLeftSlope(bool grand) {
+	m_characterAction->setGrandLeftSlope(grand);
+}
 void CharacterController::setActionRightLock(bool lock) {
 	m_characterAction->setRightLock(lock);
 }

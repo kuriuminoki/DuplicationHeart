@@ -148,6 +148,8 @@ public:
 
 	// アクションのセッタ
 	void setCharacterGrand(bool grand);
+	void setCharacterGrandRightSlope(bool grand);
+	void setCharacterGrandLeftSlope(bool grand);
 	void setActionRightLock(bool lock);
 	void setActionLeftLock(bool lock);
 	void setActionUpLock(bool lock);

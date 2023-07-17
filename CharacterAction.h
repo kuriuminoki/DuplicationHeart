@@ -30,6 +30,12 @@ protected:
 	// キャラが地面にいる
 	bool m_grand;
 
+	// 右肩下がりの坂にいる
+	bool m_grandRightSlope;
+	
+	// 左肩下がりの坂にいる
+	bool m_grandLeftSlope;
+
 	// キャラが走っていないなら-1 そうでないなら走ったフレーム数
 	int m_runCnt;
 
@@ -93,6 +99,10 @@ public:
 		}
 		m_grand = grand;
 	}
+	inline bool getGrandRightSlope() const { return m_grandRightSlope; }
+	inline void setGrandRightSlope(bool grand) { m_grandRightSlope = grand; }
+	inline bool getGrandLeftSlope() const { return m_grandLeftSlope; }
+	inline void setGrandLeftSlope(bool grand) { m_grandLeftSlope = grand; }
 	inline int getVx() const { return m_vx; }
 	inline int getVy() const { return m_vy; }
 	inline int getSlashCnt() { return m_slashCnt; }

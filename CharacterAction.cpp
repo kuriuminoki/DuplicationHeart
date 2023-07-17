@@ -13,6 +13,8 @@ CharacterAction::CharacterAction(Character* character) {
 	//初期状態
 	m_state = CHARACTER_STATE::STAND;
 	m_grand = false;
+	m_grandRightSlope = false;
+	m_grandRightSlope = false;
 	m_runCnt = -1;
 	m_squat = false;
 	m_preJumpCnt = -1;
@@ -90,6 +92,8 @@ void StickAction::init() {
 
 	// いったん宙に浮かせる
 	m_grand = false;
+	m_grandRightSlope = false;
+	m_grandRightSlope = false;
 }
 
 void CharacterAction::setSquat(bool squat) {
@@ -222,7 +226,18 @@ void CharacterAction::afterChangeGraph(int beforeWide, int beforeHeight, int aft
 	// 上下どっちにでも行ける
 	else {
 		// 両方に広げる
-		m_character->moveUp((afterHeight - beforeHeight) / 2);
+		int d = afterHeight - beforeHeight;
+		if (d % 2 == 1) {
+			if (d < 0) {
+				m_character->moveUp((d - 1) / 2);
+			}
+			else {
+				m_character->moveUp((d + 1) / 2);
+			}
+		}
+		else {
+			m_character->moveUp(d / 2);
+		}
 	}
 
 	// 右へ行けないなら
@@ -237,7 +252,18 @@ void CharacterAction::afterChangeGraph(int beforeWide, int beforeHeight, int aft
 	// 左右どっちにでも行ける、もしくはいけない
 	else {
 		// 両方に広げる
-		m_character->moveLeft((afterWide - beforeWide) / 2);
+		int d = afterWide - beforeWide;
+		if (d % 2 == 1) {
+			if (d < 0) {
+				m_character->moveLeft((d - 1) / 2);
+			}
+			else {
+				m_character->moveLeft((d + 1) / 2);
+			}
+		}
+		else {
+			m_character->moveLeft(d / 2);
+		}
 	}
 }
 
