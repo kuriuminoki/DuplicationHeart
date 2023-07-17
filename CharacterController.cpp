@@ -7,15 +7,75 @@
 #include "DxLib.h"
 
 
+// Brainクラス
+Brain::Brain() {
+	m_characterAction = NULL;
+}
+
+
+/*
+* キーボード
+*/
+KeyboardBrain::KeyboardBrain(const Camera* camera) {
+	m_camera = camera;
+}
+
+void KeyboardBrain::bulletTargetPoint(int& x, int& y) {
+	// マウスの位置
+	int mouseX, mouseY;
+	GetMousePoint(&mouseX, &mouseY);
+
+	// カメラで座標を補正
+	m_camera->getMouse(&mouseX, &mouseY);
+
+	x = mouseX;
+	y = mouseY;
+}
+
+// 移動（上下左右の入力）
+void KeyboardBrain::moveOrder(int& right, int& left, int& up, int& down) {
+	right = controlD();
+	left = controlA();
+	up = controlW();
+	down = controlS();
+}
+
+// ジャンプ
+int KeyboardBrain::jumpOrder() {
+	return controlSpace();
+}
+
+// しゃがみ
+int KeyboardBrain::squatOrder() {
+	return controlS();
+}
+
+// 近距離攻撃
+int KeyboardBrain::slashOrder() {
+	return rightClick();
+}
+
+// 遠距離攻撃
+int KeyboardBrain::bulletOrder() {
+	return leftClick();
+}
+
+
 /*
 * コントローラ
 */
-CharacterController::CharacterController(CharacterAction* characterAction) {
+CharacterController::CharacterController(Brain* brain, CharacterAction* characterAction) {
+
+	// 初期化
+	m_brain = brain;
 	m_characterAction = characterAction;
+
+	// BrainにActionを注入
+	m_brain->setCharacterAction(m_characterAction);
 }
 
 CharacterController::CharacterController() :
-	CharacterController(NULL)
+	CharacterController(NULL, NULL)
 {
 
 }
@@ -68,83 +128,46 @@ void CharacterController::action() {
 
 
 /*
-* キーボード
-*/
-CharacterKeyboard::CharacterKeyboard() {
-
-}
-// 上下左右のキー
-void CharacterKeyboard::controlStick(int& right, int& left, int& up, int& down) {
-	right = controlD();
-	left = controlA();
-	up = controlW();
-	down = controlS();
-}
-
-// スペースキー
-void CharacterKeyboard::controlJump(int& spaceKey) {
-	spaceKey = controlSpace();
-}
-
-// Sキー
-void CharacterKeyboard::controlSquat(int& sKey) {
-	sKey = controlS();
-}
-
-
-/*
 * キーボードによるキャラコントロール マウスも使うのでCameraが必要
 */
-CharacterKeyboardController::CharacterKeyboardController(CharacterAction* characterAction, const Camera* camera):
-	CharacterController(characterAction)
+NormalController::NormalController(Brain* brain, CharacterAction* characterAction):
+	CharacterController(brain, characterAction)
 {
-	m_camera = camera;
-	m_rightStick = 0;
-	m_leftStick = 0;
-	m_upStick = 0;
-	m_downStick = 0;
-	m_jumpKey = 0;
+
 }
 
-void CharacterKeyboardController::control() {
-	// キャラの向きを変える
-	// マウスの情報取得（カメラを使用）
-	int mouseX, mouseY;
-	m_camera->getMouse(&mouseX, &mouseY);
-	
-	// マウスとキャラの位置関係を見る
-	m_characterAction->setCharacterLeftDirection(mouseX < m_characterAction->getCharacter()->getX());
-
+void NormalController::control() {
 	// 移動 stickなどの入力状態を更新する
-	m_keyboard.controlStick(m_rightStick, m_leftStick, m_upStick, m_downStick);
+	int rightStick, leftStick, upStick, downStick;
+	m_brain->moveOrder(rightStick, leftStick, upStick, downStick);
 
 	// stickに応じて移動
-	m_characterAction->move(m_rightStick, m_leftStick, m_upStick, m_downStick);
+	m_characterAction->move(rightStick, leftStick, upStick, downStick);
 
 	// ジャンプ
-	m_keyboard.controlJump(m_jumpKey);
-	m_characterAction->jump(m_jumpKey);
+	int jump = m_brain->jumpOrder();
+	m_characterAction->jump(jump);
 
-	int sKey;
-	m_keyboard.controlSquat(sKey);
-	m_characterAction->setSquat(sKey);
+	// しゃがみ
+	int squat = m_brain->squatOrder();
+	m_characterAction->setSquat(squat);
 }
 
-Object* CharacterKeyboardController::bulletAttack() {
-	// 左クリックされているなら
-	if (leftClick() > 0) {
-		// マウスの情報取得
-		int mouseX, mouseY;
-		m_camera->getMouse(&mouseX, &mouseY);
-		// マウスの位置に向かって射撃
-		return m_characterAction->bulletAttack(mouseX, mouseY);
+Object* NormalController::bulletAttack() {
+	// 遠距離攻撃の命令がされているなら
+	if (m_brain->bulletOrder() > 0) {
+		// 攻撃目標
+		int targetX, targetY;
+		m_brain->bulletTargetPoint(targetX, targetY);
+		// 目標に向かって射撃
+		return m_characterAction->bulletAttack(targetX, targetY);
 	}
 	return NULL;
 }
 
-Object* CharacterKeyboardController::slashAttack() {
-	// 右クリックされたか、した後で今が攻撃タイミングなら
-	if (rightClick() == 1 || m_characterAction->getSlashCnt() > 0) {
+Object* NormalController::slashAttack() {
+	// 近距離攻撃の命令がされたか、した後で今が攻撃タイミングなら
+	if (m_brain->slashOrder() == 1 || m_characterAction->getSlashCnt() > 0) {
 		return m_characterAction->slashAttack();
 	}
 	return NULL;

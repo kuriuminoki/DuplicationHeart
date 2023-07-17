@@ -55,9 +55,8 @@ void CharacterController::debugController(int x, int y, int color) {
 }
 
 // CharacterKeyboardControllerクラスのデバッグ
-void CharacterKeyboardController::debug(int x, int y, int color) {
+void NormalController::debug(int x, int y, int color) {
 	DrawFormatString(x, y, color, "**CharacterKeyboardController**");
-	DrawFormatString(x, y + DRAW_FORMAT_STRING_SIZE, color, "(←, →, ↑, ↓)=(%d,%d,%d,%d), jump=%d", m_rightStick, m_leftStick, m_upStick, m_downStick, m_jumpKey);
 	debugController(x + DRAW_FORMAT_STRING_SIZE, y + DRAW_FORMAT_STRING_SIZE * 2, color);
 }
 

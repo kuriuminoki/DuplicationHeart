@@ -100,7 +100,7 @@ World::World(int areaNum) {
 	StickAction* heartAction = new StickAction(heart);
 
 	//主人公のコントローラ作成
-	CharacterKeyboardController* heartController = new CharacterKeyboardController(heartAction, m_camera);
+	NormalController* heartController = new NormalController(new KeyboardBrain(m_camera), heartAction);
 	m_characterControllers.push(heartController);
 }
 
