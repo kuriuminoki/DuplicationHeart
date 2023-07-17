@@ -61,8 +61,27 @@ int KeyboardBrain::bulletOrder() {
 }
 
 
+/*
+* Normal AI
+*/
 NormalAI::NormalAI() {
 	m_target = NULL;
+	m_gx = 0;
+	m_gy = 0;
+	m_rightKey = 0;
+	m_leftKey = 0;
+	m_upKey = 0;
+	m_downKey = 0;
+	m_jumpCnt = 0;
+	m_squatCnt = 0;
+	m_moveCnt = 0;
+}
+
+void NormalAI::setCharacterAction(const CharacterAction* characterAction) { 
+	m_characterAction = characterAction;
+	// 目標地点は現在地に設定
+	m_gx = m_characterAction->getCharacter()->getX();
+	m_gy = m_characterAction->getCharacter()->getY();
 }
 
 void NormalAI::bulletTargetPoint(int& x, int& y) {
@@ -71,24 +90,85 @@ void NormalAI::bulletTargetPoint(int& x, int& y) {
 		y = 0;
 	}
 	else { // ターゲットに向かって射撃攻撃
-		x = m_target->getCenterX();
-		y = m_target->getCenterY();
+		x = m_target->getCenterX() + (GetRand(BULLET_ERROR) - BULLET_ERROR / 2);
+		y = m_target->getCenterY() + (GetRand(BULLET_ERROR) - BULLET_ERROR / 2);
 	}
 }
 
 void NormalAI::moveOrder(int& right, int& left, int& up, int& down) {
-	right = controlD();
-	left = controlA();
-	up = controlW();
-	down = controlS();
+	// 現在地
+	int x = m_characterAction->getCharacter()->getX();
+	int y = m_characterAction->getCharacter()->getY();
+
+	// (壁につっかえるなどで)移動できてないから諦める
+	//DrawFormatString(800, 50, GetColor(255, 255, 255), "moveCnt = %d, x(%d) -> gx(%d)", m_moveCnt, x, m_gx);
+	if (m_moveCnt == GIVE_UP_MOVE_CNT) {
+		m_gx = x;
+		m_gy = y;
+	}
+
+	// 目標地点設定
+	if (m_gx > x - GX_ERROR && m_gx < x + GX_ERROR && GetRand(99) == 0) {
+		// targetについていく
+		m_gx = m_target->getCenterX() + GetRand(2000) - 1000;
+		// ランダムに設定
+		//m_gx = GetRand(200) + 100;
+		//if (GetRand(99) < GX_ERROR) { m_gx *= -1; }
+		//m_gx += x;
+	}
+
+	// 目標に向かって走る
+	if (m_gx > x + GX_ERROR) {
+		m_rightKey++;
+		m_leftKey = 0;
+		m_moveCnt++;
+	}
+	else if (m_gx < x - GX_ERROR) {
+		m_rightKey = 0;
+		m_leftKey++;
+		m_moveCnt++;
+	}
+	else {
+		m_rightKey = 0;
+		m_leftKey = 0;
+		m_moveCnt = 0;
+	}
+
+	// 反映
+	right = m_rightKey;
+	left = m_leftKey;
+	up = m_upKey;
+	down = m_downKey;
 }
 
 int NormalAI::jumpOrder() {
-	return controlSpace();
+	// ダメージを食らったらリセット
+	if (m_characterAction->getState() == CHARACTER_STATE::DAMAGE) {
+		m_jumpCnt = 0;
+	}
+
+	// ランダムでジャンプ
+	if (m_squatCnt == 0 && GetRand(99) == 0) { m_jumpCnt = GetRand(15) + 5; }
+
+	// 壁にぶつかったからジャンプ
+	if (m_rightKey > 0 && m_characterAction->getRightLock()) { m_jumpCnt = 20; }
+	else if (m_leftKey > 0 && m_characterAction->getLeftLock()) { m_jumpCnt = 20; }
+
+	if (m_jumpCnt > 0) { m_jumpCnt--; }
+	return m_jumpCnt;
 }
 
 int NormalAI::squatOrder() {
-	return controlS();
+	// ダメージを食らったらリセット
+	if (m_characterAction->getState() == CHARACTER_STATE::DAMAGE) {
+		m_squatCnt = 0;
+	}
+
+	// ランダムでしゃがむ
+	if (m_characterAction->getGrand() && GetRand(99) == 0) { m_squatCnt = GetRand(60) + 30; }
+
+	if (m_squatCnt > 0) { m_squatCnt--; }
+	return m_squatCnt;
 }
 
 int NormalAI::slashOrder() {
@@ -96,11 +176,15 @@ int NormalAI::slashOrder() {
 }
 
 int NormalAI::bulletOrder() {
-	return leftClick();
+	// ランダムで射撃
+	if (GetRand(50) == 0) { 
+		return 1;
+	}
+	return 0;
 }
 
 // 攻撃対象を決める(targetのままか、characterに変更するか)
-void NormalAI::searchTarget(Character* character) {
+void NormalAI::searchTarget(const Character* character) {
 	if (m_target == NULL || m_target->getHp() == 0) {
 		// 自分自身や味方じゃなければ
 		if (character->getId() != m_characterAction->getCharacter()->getId()) {

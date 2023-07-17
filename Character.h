@@ -157,7 +157,7 @@ public:
 
 	inline void setMaxHp(int maxHp) { m_maxHp = maxHp; }
 
-	inline int getHp() { return m_hp; }
+	inline int getHp() const { return m_hp; }
 
 	inline void setHp(int hp) {
 		m_hp = (hp > m_maxHp) ? m_maxHp : hp;

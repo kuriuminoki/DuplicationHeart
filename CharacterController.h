@@ -17,7 +17,7 @@ public:
 	Brain();
 
 	// セッタ
-	void setCharacterAction(const CharacterAction* characterAction) { m_characterAction = characterAction; }
+	virtual void setCharacterAction(const CharacterAction* characterAction) = 0;
 	
 	// 遠距離攻撃の目標座標
 	virtual void bulletTargetPoint(int& x, int& y) = 0;
@@ -38,7 +38,7 @@ public:
 	virtual int bulletOrder() = 0;
 
 	// 攻撃対象を決める(AIクラスでオーバライドする。)
-	virtual void searchTarget(Character* character) = 0;
+	virtual void searchTarget(const Character* character) = 0;
 
 	// 攻撃対象を変更する必要があるならtrueでアピールする(AIクラスでオーバライドする)。
 	virtual bool needSearchTarget() const = 0;
@@ -56,13 +56,14 @@ private:
 
 public:
 	KeyboardBrain(const Camera* camera);
+	void setCharacterAction(const CharacterAction* characterAction) { m_characterAction = characterAction; }
 	void bulletTargetPoint(int& x, int& y);
 	void moveOrder(int& right, int& left, int& up, int& down);
 	int jumpOrder();
 	int squatOrder();
 	int slashOrder();
 	int bulletOrder();
-	void searchTarget(Character* character) {  }
+	void searchTarget(const Character* character) {  }
 	bool needSearchTarget() const { return false; }
 };
 
@@ -74,9 +75,35 @@ class NormalAI :
 {
 private:
 	// 攻撃対象
-	Character* m_target;
+	const Character* m_target;
+
+	// 射撃の精度
+	const int BULLET_ERROR = 400;
+
+	// 移動目標
+	int m_gx, m_gy;
+
+	// 移動目標達成とみなす誤差 ±GX_ERROR
+	const int GX_ERROR = 100;
+
+	// 移動時間
+	int m_moveCnt;
+
+	// 移動を諦めるまでの時間
+	const int GIVE_UP_MOVE_CNT = 300;
+
+	// 移動用
+	int m_rightKey, m_leftKey, m_upKey, m_downKey;
+
+	// ジャンプの長さ
+	int m_jumpCnt;
+
+	// しゃがむ長さ
+	int m_squatCnt;
+
 public:
 	NormalAI();
+	void setCharacterAction(const CharacterAction* characterAction);
 	void bulletTargetPoint(int& x, int& y);
 	void moveOrder(int& right, int& left, int& up, int& down);
 	int jumpOrder();
@@ -85,7 +112,7 @@ public:
 	int bulletOrder();
 
 	// 攻撃対象を決める(targetのままか、characterに変更するか)
-	void searchTarget(Character* character);
+	void searchTarget(const Character* character);
 
 	// 攻撃対象を変更する必要があるならtrueでアピールする。
 	bool needSearchTarget() const;

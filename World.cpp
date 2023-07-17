@@ -62,7 +62,7 @@ World::World(int areaNum) {
 	m_areaNum = areaNum;
 
 	// エリアに存在するオブジェクトをロード
-	Object* object1 = new BoxObject(0, 900, 10000, 1080, WHITE);
+	Object* object1 = new BoxObject(-500, 900, 10000, 1080, WHITE);
 	m_stageObjects.push_back(object1);
 	Object* object2 = new TriangleObject(700, 600, 1300, 900, WHITE, false);
 	m_stageObjects.push_back(object2);
@@ -70,8 +70,14 @@ World::World(int areaNum) {
 	m_stageObjects.push_back(object3);
 	Object* object4 = new TriangleObject(2000, 600, 2600, 900, WHITE, true);
 	m_stageObjects.push_back(object4);
-	Object* object5 = new BoxObject(2600, 600, 4000, 900, WHITE);
+	Object* object5 = new BoxObject(2600, 600, 3100, 900, WHITE);
 	m_stageObjects.push_back(object5);
+	Object* object6 = new BoxObject(-500, -1000, -400, 1080, WHITE);
+	m_stageObjects.push_back(object6);
+	Object* object7 = new BoxObject(4000, -1000, 4100, 1080, WHITE);
+	m_stageObjects.push_back(object7);
+	Object* object8 = new BoxObject(3000, 400, 3300, 600, WHITE);
+	m_stageObjects.push_back(object8);
 
 	// 主人公をロード キャラの削除はWorldがやる予定
 	Heart* heart = new Heart(100, 100, 0, 0);
