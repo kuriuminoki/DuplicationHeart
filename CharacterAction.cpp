@@ -101,6 +101,7 @@ void StickAction::init() {
 void CharacterAction::setGrand(bool grand) {
 	if (m_vy > 0) { // 着地モーションになる
 		m_landCnt = LAND_TIME;
+		m_slashCnt = 0;
 	}
 	m_grand = grand;
 	if (m_state == CHARACTER_STATE::DAMAGE && m_damageCnt == 0) { 
@@ -120,6 +121,9 @@ void CharacterAction::setSquat(bool squat) {
 }
 
 void StickAction::action() {
+	// 状態(state)に応じて画像をセット
+	switchHandle();
+
 	// 射撃のインターバル処理
 	if (m_bulletCnt > 0) { m_bulletCnt--; }
 
@@ -173,9 +177,6 @@ void StickAction::action() {
 			m_character->moveDown(m_vy);
 		}
 	}
-
-	// 状態(state)に応じて画像をセット
-	switchHandle();
 }
 
 // 状態に応じて画像セット
@@ -188,6 +189,12 @@ void StickAction::switchHandle() {
 		case CHARACTER_STATE::STAND: //立ち状態
 			if (m_landCnt > 0) {
 				m_character->switchLand();
+			}
+			else if (m_slashCnt > 0) {
+				m_character->switchSlash();
+			}
+			else if (m_bulletCnt > 0) {
+				m_character->switchBullet();
 			}
 			else if (m_squat) {
 				m_character->switchSquat();
@@ -320,7 +327,7 @@ void StickAction::walk(bool right, bool left) {
 
 // 移動
 void StickAction::move(bool right, bool left, bool up, bool down) {
-	if (m_state == CHARACTER_STATE::STAND && m_grand && m_slashCnt == 0) {
+	if (m_state == CHARACTER_STATE::STAND && m_grand && m_slashCnt == 0 && m_bulletCnt == 0) {
 		// 移動方向へ向く
 		if(left){
 			m_character->setLeftDirection(true);
@@ -369,7 +376,7 @@ Object* StickAction::bulletAttack(int gx, int gy) {
 		return NULL;
 	}
 	// 射撃可能状態なら
-	if (m_bulletCnt == 0) {
+	if (m_bulletCnt == 0 && m_slashCnt == 0) {
 		// 射撃不可能状態にして
 		m_bulletCnt = m_character->getBulletRapid();
 		// 撃つ方向へ向く

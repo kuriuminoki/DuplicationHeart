@@ -153,7 +153,7 @@ Heart::Heart(int maxHp, int hp, int x, int y) :
 	// 各画像のロード
 	double ex = m_characterInfo->handleEx();
 	m_standHandle = new GraphHandle("picture/stick/stand.png", ex);
-	m_slashHandles = new GraphHandles("picture/stick/zangeki", 3, ex);
+	m_slashHandles = new GraphHandles("picture/stick/slashEffect", 3, ex);
 	m_squatHandle = new GraphHandle("picture/stick/squat.png", ex);
 	m_standBulletHandle = new GraphHandle("picture/stick/bullet.png", ex);
 	m_standSlashHandle = new GraphHandle("picture/stick/slash.png", ex);
@@ -224,6 +224,7 @@ Object* Heart::slashAttack(bool leftDirection, int cnt) {
 	int index = 0;
 	int slashCountSum = 5;
 	SlashObject* attackObject = NULL;
+	m_slashHandles->setReverseX(m_leftDirection);
 	// cntが攻撃のタイミングならオブジェクト生成
 	if (cnt == m_attackInfo->slashCountSum()) {
 		attackObject = new SlashObject(m_x, m_y, x2, y2,
