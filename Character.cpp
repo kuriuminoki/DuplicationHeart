@@ -125,6 +125,11 @@ void Character::setLeftDirection(bool leftDirection) {
 	m_graphHandle->setReverseX(m_leftDirection);
 }
 
+// HP減少
+void Character::damageHp(int value) {
+	m_hp = max(0, m_hp - value);
+}
+
 // 移動する（座標を動かす）
 void Character::moveRight(int d) {
 	m_x += d;
@@ -204,6 +209,7 @@ void Heart::switchPreJump(int cnt) {
 // 射撃攻撃をする(キャラごとに違う)
 Object* Heart::bulletAttack(int gx, int gy) {
 	BulletObject* attackObject = new BulletObject(m_x + m_wide / 2, m_y + m_height / 2, WHITE, gx, gy, m_attackInfo);
+	// 自滅防止
 	attackObject->setCharacterId(m_id);
 	return attackObject;
 }
@@ -224,6 +230,7 @@ Object* Heart::slashAttack(bool leftDirection, int cnt) {
 	int index = 0;
 	int slashCountSum = 5;
 	SlashObject* attackObject = NULL;
+	m_slashHandles->setReverseX(m_leftDirection);
 	// cntが攻撃のタイミングならオブジェクト生成
 	if (cnt == m_attackInfo->slashCountSum()) {
 		attackObject = new SlashObject(m_x, m_y, x2, y2,
@@ -236,6 +243,10 @@ Object* Heart::slashAttack(bool leftDirection, int cnt) {
 	else if (cnt == m_attackInfo->slashCountSum() / 3) {
 		attackObject = new SlashObject(m_x, m_y, x2, y2,
 			m_slashHandles->getGraphHandle(index), slashCountSum, m_attackInfo);
+	}
+	// 自滅防止
+	if (attackObject != NULL) {
+		attackObject->setCharacterId(m_id);
 	}
 	return attackObject;
 }

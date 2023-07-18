@@ -225,6 +225,9 @@ public:
 	// 空中斬撃画像をセット
 	virtual void switchAirSlash(int cnt = 0) = 0;
 
+	// HP減少
+	void damageHp(int value);
+
 
 	// 移動する（座標を動かす）
 	void moveRight(int d);

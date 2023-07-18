@@ -59,7 +59,7 @@ public:
 private:
 
 	// ＨＰ０のキャラ削除
-	void cleanCharacter();
+	void cleanCharacterController();
 
 	// キャラの更新（攻撃対象の変更）
 	void updateCharacter();

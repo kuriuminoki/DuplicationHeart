@@ -440,6 +440,7 @@ BulletObject::BulletObject(int x, int y, int color, int gx, int gy, AttackInfo* 
 // キャラとの当たり判定
 // 当たっているならキャラを操作する。
 void BulletObject::atari(CharacterController* characterController) {
+	// 自滅防止
 	if (m_characterId == characterController->getAction()->getCharacter()->getId()) {
 		return;
 	}
@@ -506,6 +507,11 @@ SlashObject::SlashObject(int x, int y, GraphHandle* handle, int slashCountSum, A
 // キャラとの当たり判定
 // 当たっているならキャラを操作する。
 void SlashObject::atari(CharacterController* characterController) {
+	// 自滅防止
+	if (m_characterId == characterController->getAction()->getCharacter()->getId()) {
+		return;
+	}
+
 	// キャラの情報　座標と移動スピード
 	int characterX1 = characterController->getAction()->getCharacter()->getX();
 	int characterY1 = characterController->getAction()->getCharacter()->getY();
@@ -515,7 +521,13 @@ void SlashObject::atari(CharacterController* characterController) {
 	// 当たり判定
 	if (characterX2 > m_x1 && characterX1 < m_x2 && characterY2 > m_y1 && characterY1 < m_y2) {
 		// 貫通弾じゃないなら消滅
-		// m_deleteFlag = true;
+		 // m_deleteFlag = true;
+		if (characterX1 + characterX2 < m_x1 + m_x2) {
+			characterController->damage(-m_damage * 3, -m_damage * 3, m_damage, -1);
+		}
+		else {
+			characterController->damage(m_damage * 3, -m_damage * 3, m_damage, -1);
+		}
 	}
 }
 
