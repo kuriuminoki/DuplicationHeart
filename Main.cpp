@@ -10,7 +10,7 @@ static int WINDOW = TRUE;
 ///////fps‚Ì’²®///////////////
 static int mStartTime;
 static int mCount;
-static int debug = TRUE;
+static int debug = FALSE;
 static float mFps;
 static const int N = 60;
 static const int FPS = 60;

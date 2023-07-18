@@ -12,10 +12,24 @@ using namespace std;
 
 
 // vectorに入った全オブジェクトを削除する
-void deleteObject(vector<Object*>& objects) {
+void deleteAllObject(vector<Object*>& objects) {
 	for (int i = (int)objects.size() - 1; i >= 0; i--) {
 		delete objects[i];
 		objects.pop_back();
+	}
+}
+
+// vectorに入ったdeleteFlagがtrueのオブジェクトを削除する
+void deleteObject(vector<Object*>& objects) {
+	for (unsigned int i = 0; i < objects.size(); i++) {
+		// deleteFlagがtrueなら削除する
+		if (objects[i]->getDeleteFlag()) {
+			delete objects[i];
+			// 末尾を削除する方が速い
+			objects[i] = objects.back();
+			objects.pop_back();
+			i--;
+		}
 	}
 }
 
@@ -116,8 +130,8 @@ World::~World() {
 	delete m_camera;
 
 	// 全オブジェクトを削除する。
-	deleteObject(m_stageObjects);
-	deleteObject(m_attackObjects);
+	deleteAllObject(m_stageObjects);
+	deleteAllObject(m_attackObjects);
 
 	// 全コントローラを削除する。
 	for (unsigned int i = 0; i < m_characterControllers.size(); i++) {
@@ -150,6 +164,10 @@ void World::battle() {
 
 	// HP0のキャラコントローラ削除
 	cleanCharacterController();
+
+	// deleteFlagがtrueのオブジェクトを削除する。
+	deleteObject(m_stageObjects);
+	deleteObject(m_attackObjects);
 
 	// キャラの更新（攻撃対象の変更）
 	// 上でキャラを削除したから更新したから必要

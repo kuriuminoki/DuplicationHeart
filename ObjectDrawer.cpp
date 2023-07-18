@@ -38,6 +38,5 @@ void ObjectDrawer::drawObject(const Camera* const camera) {
 		camera->setCamera(&x2, &y2, &ex);
 		// •`‰æ
 		graphHandle->extendDraw(x1, y1, x2, y2);
-		DrawBox(x1, y1, x2, y2, GetColor(255, 0, 0), FALSE);
 	}	
 }
