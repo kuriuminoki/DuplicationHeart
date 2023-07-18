@@ -172,7 +172,7 @@ int NormalAI::squatOrder() {
 }
 
 int NormalAI::slashOrder() {
-	return rightClick();
+	return 0;
 }
 
 int NormalAI::bulletOrder() {
@@ -234,6 +234,12 @@ CharacterController::~CharacterController() {
 // アクションのセッタ
 void CharacterController::setCharacterGrand(bool grand) {
 	m_characterAction->setGrand(grand);
+}
+void CharacterController::setCharacterGrandRightSlope(bool grand) {
+	m_characterAction->setGrandRightSlope(grand);
+}
+void CharacterController::setCharacterGrandLeftSlope(bool grand) {
+	m_characterAction->setGrandLeftSlope(grand);
 }
 void CharacterController::setActionRightLock(bool lock) {
 	m_characterAction->setRightLock(lock);
@@ -317,7 +323,14 @@ Object* NormalController::bulletAttack() {
 Object* NormalController::slashAttack() {
 	// 近距離攻撃の命令がされたか、した後で今が攻撃タイミングなら
 	if (m_brain->slashOrder() == 1 || m_characterAction->getSlashCnt() > 0) {
-		return m_characterAction->slashAttack();
+		// 攻撃目標
+		int targetX, targetY;
+		m_brain->bulletTargetPoint(targetX, targetY);
+		return m_characterAction->slashAttack(targetX, targetY);
 	}
 	return NULL;
+}
+
+void NormalController::damage(int vx, int vy, int damageValue, int soundHandle) {
+	m_characterAction->damage(vx, vy, damageValue, soundHandle);
 }

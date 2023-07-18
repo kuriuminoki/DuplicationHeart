@@ -30,6 +30,12 @@ protected:
 	// キャラが地面にいる
 	bool m_grand;
 
+	// 右肩下がりの坂にいる
+	bool m_grandRightSlope;
+	
+	// 左肩下がりの坂にいる
+	bool m_grandLeftSlope;
+
 	// キャラが走っていないなら-1 そうでないなら走ったフレーム数
 	int m_runCnt;
 
@@ -76,6 +82,8 @@ protected:
 	// 攻撃する方向
 	bool m_attackLeftDirection;
 
+	int m_damageCnt;
+
 public:
 	CharacterAction();
 	CharacterAction(Character* character);
@@ -87,12 +95,11 @@ public:
 	// ゲッタとセッタ
 	inline CHARACTER_STATE getState() const { return m_state; }
 	inline bool getGrand() const { return m_grand; }
-	inline void setGrand(bool grand) { 
-		if (m_vy > 0) { // 着地モーションになる
-			m_landCnt = LAND_TIME;
-		}
-		m_grand = grand;
-	}
+	void setGrand(bool grand);
+	inline bool getGrandRightSlope() const { return m_grandRightSlope; }
+	inline void setGrandRightSlope(bool grand) { m_grandRightSlope = grand; }
+	inline bool getGrandLeftSlope() const { return m_grandLeftSlope; }
+	inline void setGrandLeftSlope(bool grand) { m_grandLeftSlope = grand; }
 	inline int getVx() const { return m_vx; }
 	inline int getVy() const { return m_vy; }
 	inline int getSlashCnt() { return m_slashCnt; }
@@ -134,7 +141,10 @@ public:
 	virtual Object* bulletAttack(int gx, int gy) = 0;
 
 	// 斬撃攻撃
-	virtual Object* slashAttack() = 0;
+	virtual Object* slashAttack(int gx, int gy) = 0;
+
+	// ダメージ
+	virtual void damage(int vx, int vy, int damageValue, int soundHandle) = 0;
 
 protected:
 	// 画像のサイズ変更による位置調整
@@ -180,7 +190,10 @@ public:
 	Object* bulletAttack(int gx, int gy);
 
 	// 斬撃攻撃
-	Object* slashAttack();
+	Object* slashAttack(int gx, int gy);
+
+	// ダメージ
+	void damage(int vx, int vy, int damageValue, int soundHandle);
 };
 
 #endif

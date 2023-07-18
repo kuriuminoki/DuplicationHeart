@@ -148,6 +148,8 @@ public:
 
 	// アクションのセッタ
 	void setCharacterGrand(bool grand);
+	void setCharacterGrandRightSlope(bool grand);
+	void setCharacterGrandLeftSlope(bool grand);
 	void setActionRightLock(bool lock);
 	void setActionLeftLock(bool lock);
 	void setActionUpLock(bool lock);
@@ -175,6 +177,8 @@ public:
 
 	// 斬撃攻撃
 	virtual Object* slashAttack() = 0;
+
+	virtual void damage(int vx, int vy, int damageValue, int soundHandle) = 0;
 };
 
 /*
@@ -199,6 +203,9 @@ public:
 
 	// 斬撃攻撃
 	Object* slashAttack();
+
+	// ダメ―ジ
+	void damage(int vx, int vy, int damageValue, int soundHandle);
 };
 
 #endif
