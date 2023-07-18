@@ -2,6 +2,7 @@
 #include "DxLib.h"
 #include <string>
 #include <sstream>
+#include <algorithm>
 
 using namespace std;
 
@@ -23,6 +24,17 @@ GraphHandle::~GraphHandle() {
 // •`‰æ‚·‚é
 void GraphHandle::draw(int x, int y, double ex = 1.0) const {
 	DrawRotaGraph(x, y, ex, m_angle, m_handle, m_trans, m_reverseX, m_reverseY);
+}
+
+// ”ÍˆÍ‚ðŽw’è‚µ‚Ä•`‰æ‚·‚é
+void GraphHandle::extendDraw(int x1, int y1, int x2, int y2) const {
+	if (m_reverseX) {
+		swap(x1, x2);
+	}
+	if (m_reverseY) {
+		swap(y1, y2);
+	}
+	DrawExtendGraph(x1, y1, x2, y2, m_handle, m_trans);
 }
 
 

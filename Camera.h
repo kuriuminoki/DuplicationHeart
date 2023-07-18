@@ -35,7 +35,7 @@ public:
 	inline void setGx(int x) { m_gx = x; }
 	inline void setGy(int y) { m_gy = y; }
 	inline void setSpeed(int speed) { m_speed = speed; }
-	inline double getEx() { return m_ex; }
+	inline double getEx() const { return m_ex; }
 	inline void setEx(double ex) { m_ex = ex; }
 
 	// ƒJƒƒ‰‚Ì“®‚«
