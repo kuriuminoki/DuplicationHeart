@@ -153,7 +153,7 @@ public:
 	// ゲッタとセッタ
 	inline int getId() const { return m_id; }
 
-	inline int getMaxHp() { return m_maxHp; }
+	inline int getMaxHp() const { return m_maxHp; }
 
 	inline void setMaxHp(int maxHp) { m_maxHp = maxHp; }
 

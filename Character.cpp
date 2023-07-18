@@ -153,7 +153,7 @@ Heart::Heart(int maxHp, int hp, int x, int y) :
 	// Še‰æ‘œ‚Ìƒ[ƒh
 	double ex = m_characterInfo->handleEx();
 	m_standHandle = new GraphHandle("picture/stick/stand.png", ex);
-	m_slashHandles = new GraphHandles("picture/stick/zangeki", 3, ex);
+	m_slashHandles = new GraphHandles("picture/stick/slashEffect", 3, ex);
 	m_squatHandle = new GraphHandle("picture/stick/squat.png", ex);
 	m_standBulletHandle = new GraphHandle("picture/stick/bullet.png", ex);
 	m_standSlashHandle = new GraphHandle("picture/stick/slash.png", ex);
