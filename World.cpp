@@ -148,10 +148,11 @@ vector<const Object*> World::getObjects() const {
 // 戦わせる
 void World::battle() {
 
-	// HP0のキャラ削除
-	cleanCharacter();
+	// HP0のキャラコントローラ削除
+	cleanCharacterController();
 
 	// キャラの更新（攻撃対象の変更）
+	// 上でキャラを削除したから更新したから必要
 	updateCharacter();
 
 	// キャラクターの動き
@@ -165,13 +166,13 @@ void World::battle() {
 
 }
 
-// ＨＰ０のキャラ削除
-void World::cleanCharacter() {
-	for (unsigned int i = 0; i < m_characters.size(); i++) {
-		if (m_characters[i]->getHp() == 0) {
-			delete m_characters[i];
-			m_characters[i] = m_characters.back();
-			m_characters.pop_back();
+// ＨＰ０のキャラコントローラ削除
+void World::cleanCharacterController() {
+	for (unsigned int i = 0; i < m_characterControllers.size(); i++) {
+		if (m_characterControllers[i]->getAction()->getCharacter()->getHp() == 0) {
+			delete m_characterControllers[i];
+			m_characterControllers[i] = m_characterControllers.back();
+			m_characterControllers.pop_back();
 			i--;
 		}
 	}

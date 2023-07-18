@@ -125,6 +125,11 @@ void Character::setLeftDirection(bool leftDirection) {
 	m_graphHandle->setReverseX(m_leftDirection);
 }
 
+// HPŒ¸­
+void Character::damageHp(int value) {
+	m_hp = max(0, m_hp - value);
+}
+
 // ˆÚ“®‚·‚éiÀ•W‚ð“®‚©‚·j
 void Character::moveRight(int d) {
 	m_x += d;
@@ -204,6 +209,7 @@ void Heart::switchPreJump(int cnt) {
 // ŽËŒ‚UŒ‚‚ð‚·‚é(ƒLƒƒƒ‰‚²‚Æ‚Éˆá‚¤)
 Object* Heart::bulletAttack(int gx, int gy) {
 	BulletObject* attackObject = new BulletObject(m_x + m_wide / 2, m_y + m_height / 2, WHITE, gx, gy, m_attackInfo);
+	// Ž©–Å–hŽ~
 	attackObject->setCharacterId(m_id);
 	return attackObject;
 }
@@ -237,6 +243,10 @@ Object* Heart::slashAttack(bool leftDirection, int cnt) {
 	else if (cnt == m_attackInfo->slashCountSum() / 3) {
 		attackObject = new SlashObject(m_x, m_y, x2, y2,
 			m_slashHandles->getGraphHandle(index), slashCountSum, m_attackInfo);
+	}
+	// Ž©–Å–hŽ~
+	if (attackObject != NULL) {
+		attackObject->setCharacterId(m_id);
 	}
 	return attackObject;
 }

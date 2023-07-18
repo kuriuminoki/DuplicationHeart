@@ -172,6 +172,10 @@ int NormalAI::squatOrder() {
 }
 
 int NormalAI::slashOrder() {
+	// ƒ‰ƒ“ƒ_ƒ€‚ÅŽËŒ‚
+	if (GetRand(50) == 0) {
+		return 1;
+	}
 	return 0;
 }
 

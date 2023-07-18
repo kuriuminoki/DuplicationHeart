@@ -407,6 +407,8 @@ Object* StickAction::slashAttack(int gx, int gy) {
 }
 
 void StickAction::damage(int vx, int vy, int damageValue, int soundHandle) {
+	if (m_state == CHARACTER_STATE::DAMAGE) { return; }
+
 	m_state = CHARACTER_STATE::DAMAGE;
 	m_vx += vx;
 	m_vy += vy;
@@ -418,4 +420,6 @@ void StickAction::damage(int vx, int vy, int damageValue, int soundHandle) {
 	m_grand = false;
 	m_grandRightSlope = false;
 	m_grandLeftSlope = false;
+	// HPŒ»Û
+	m_character->damageHp(damageValue);
 }
