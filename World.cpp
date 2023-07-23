@@ -4,6 +4,7 @@
 #include "CharacterAction.h"
 #include "CharacterController.h"
 #include "Camera.h"
+#include "Animation.h"
 #include "Define.h"
 #include "DxLib.h"
 
@@ -39,23 +40,6 @@ void actionObject(vector<Object*>& objects) {
 	for (unsigned int i = 0; i < objects.size(); i++) {
 		// オブジェクトの動き
 		objects[i]->action();
-		// deleteFlagがtrueなら削除する
-		if (objects[i]->getDeleteFlag()) {
-			delete objects[i];
-			// 末尾を削除する方が速い
-			objects[i] = objects.back();
-			objects.pop_back();
-			i--;
-		}
-	}
-}
-
-// キャラクターとオブジェクトの当たり判定
-void atariCharacterAndObject(CharacterController* controller, vector<Object*>& objects) {
-	// 壁や床オブジェクトの処理 (当たり判定と動き)
-	for (unsigned int i = 0; i < objects.size(); i++) {
-		// 当たり判定をここで行う
-		objects[i]->atari(controller);
 		// deleteFlagがtrueなら削除する
 		if (objects[i]->getDeleteFlag()) {
 			delete objects[i];
@@ -182,6 +166,9 @@ void World::battle() {
 	// カメラの更新
 	updateCamera();
 
+	// アニメーションの更新
+	updateAnimation();
+
 }
 
 // ＨＰ０のキャラコントローラ削除
@@ -222,6 +209,39 @@ void World::updateCamera() {
 	}
 	// カメラはゆっくり動く
 	m_camera->move();
+}
+
+// アニメーションの更新
+void World::updateAnimation() {
+	for (unsigned int i = 0; i < m_animations.size(); i++) {
+		m_animations[i]->count();
+		if (m_animations[i]->getFinishFlag()) {
+			delete m_animations[i];
+			m_animations[i] = m_animations.back();
+			m_animations.pop_back();
+			i--;
+		}
+	}
+}
+
+// キャラクターとオブジェクトの当たり判定
+void World::atariCharacterAndObject(CharacterController* controller, vector<Object*>& objects) {
+	// 壁や床オブジェクトの処理 (当たり判定と動き)
+	for (unsigned int i = 0; i < objects.size(); i++) {
+		// 当たり判定をここで行う
+		if (objects[i]->atari(controller)) {
+			// 当たった場合 エフェクト作成
+			m_animations.push_back(objects[i]->createAnimation());
+		}
+		// deleteFlagがtrueなら削除する
+		if (objects[i]->getDeleteFlag()) {
+			delete objects[i];
+			// 末尾を削除する方が速い
+			objects[i] = objects.back();
+			objects.pop_back();
+			i--;
+		}
+	}
 }
 
 // キャラクターの動き

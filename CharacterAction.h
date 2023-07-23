@@ -89,8 +89,8 @@ public:
 	CharacterAction(Character* character);
 
 	// デバッグ
-	void debugAction(int x, int y, int color);
-	virtual void debug(int x, int y, int color) = 0;
+	void debugAction(int x, int y, int color) const;
+	virtual void debug(int x, int y, int color) const = 0;
 
 	// ゲッタとセッタ
 	inline CHARACTER_STATE getState() const { return m_state; }
@@ -146,6 +146,9 @@ public:
 	// ダメージ
 	virtual void damage(int vx, int vy, int damageValue, int soundHandle) = 0;
 
+	// 今無敵時間じゃない
+	bool ableDamage() const;
+
 protected:
 	// 画像のサイズ変更による位置調整
 	void afterChangeGraph(int beforeWide, int beforeHeight, int afterWide, int afterHeight);
@@ -172,7 +175,7 @@ private:
 public:
 	StickAction(Character* character);
 
-	void debug(int x, int y, int color);
+	void debug(int x, int y, int color) const;
 
 	//行動前の処理 毎フレーム行う
 	void init();

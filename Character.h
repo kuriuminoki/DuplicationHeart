@@ -147,8 +147,8 @@ public:
 	~Character();
 
 	// デバッグ
-	void debugCharacter(int x, int y, int color);
-	virtual void debug(int x, int y, int color) = 0;
+	void debugCharacter(int x, int y, int color) const;
+	virtual void debug(int x, int y, int color) const = 0;
 
 	// ゲッタとセッタ
 	inline int getId() const { return m_id; }
@@ -262,40 +262,46 @@ private:
 	// しゃがみ
 	GraphHandle* m_squatHandle;
 
-	// 立ち射撃
+	// 立ち射撃画像
 	GraphHandle* m_standBulletHandle;
 
-	// 立ち斬撃
+	// 立ち斬撃画像
 	GraphHandle* m_standSlashHandle;
 
-	// 走り
+	// 走り画像
 	const int RUN_ANIME_SPEED = 6;
 	GraphHandles* m_runHandles;
 
-	// 着地
+	// 着地画像
 	GraphHandle* m_landHandle;
 
-	// 上昇
+	// 上昇画像
 	GraphHandle* m_jumpHandle;
 
-	// 下降
+	// 下降画像
 	GraphHandle* m_downHandle;
 
-	// ジャンプ前
+	// ジャンプ前画像
 	const int RUN_PREJUMP_SPEED = 6;
 	GraphHandles* m_preJumpHandles;
 
-	// ダメージ
+	// ダメージ画像
 	GraphHandle* m_damageHandle;
 
-	// ブースト
+	// ブースト画像
 	GraphHandle* m_boostHandle;
 
-	// 空中射撃
+	// 空中射撃画像
 	GraphHandle* m_airBulletHandle;
 
-	// 空中斬撃
+	// 空中斬撃画像
 	GraphHandle* m_airSlashHandle;
+
+	// 射撃攻撃のエフェクト
+	GraphHandles* m_bulletEffectHandles;
+
+	// 斬撃攻撃のエフェクト
+	GraphHandles* m_slashEffectHandles;
 	
 public:
 	// コンストラクタ
@@ -305,7 +311,7 @@ public:
 	~Heart();
 
 	// デバッグ
-	void debug(int x, int y, int color);
+	void debug(int x, int y, int color) const;
 
 	// 立ち画像をセット
 	inline void switchStand(int cnt = 0) { setHandle(m_standHandle); }

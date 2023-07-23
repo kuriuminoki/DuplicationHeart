@@ -17,7 +17,7 @@ public:
 	World* getWorld() const { return m_world; }
 
 	// デバッグ
-	void debug(int x, int y, int color);
+	void debug(int x, int y, int color) const;
 
 	// ゲームをプレイする
 	void play();

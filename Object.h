@@ -5,6 +5,7 @@ class CharacterController;
 class AttackInfo;
 class GraphHandle;
 class GraphHandles;
+class Animation;
 
 
 /*
@@ -20,15 +21,19 @@ protected:
 
 	// 削除フラグ trueならWorldに消してもらう
 	bool m_deleteFlag;
+
 	// 攻撃で削除可能なオブジェクトならtrue
 	bool m_ableDelete;
+
+	// エフェクト
+	GraphHandles* m_effectHandles;
 
 public:
 	Object();
 	Object(int x1, int y1, int x2, int y2);
 
-	void debugObject(int x, int y, int color);
-	virtual void debug(int x, int y, int color) = 0;
+	void debugObject(int x, int y, int color) const;
+	virtual void debug(int x, int y, int color) const = 0;
 
 	// ゲッタ
 	inline bool getDeleteFlag() { return m_deleteFlag; }
@@ -48,7 +53,7 @@ public:
 	inline void setDeleteFlag(bool deleteFlag) { m_deleteFlag = deleteFlag; }
 
 	// キャラとの当たり判定
-	virtual void atari(CharacterController* character) = 0;
+	virtual bool atari(CharacterController* character) = 0;
 
 	// キャラがオブジェクトに入り込んでいるときの処理
 	virtual void penetration(CharacterController* characterController) = 0;
@@ -58,6 +63,9 @@ public:
 
 	// 動くオブジェクト用 毎フレーム行う
 	virtual void action() = 0;
+
+	// アニメーション作成
+	Animation* createAnimation();
 };
 
 
@@ -77,7 +85,7 @@ private:
 public:
 	BoxObject(int x1, int y1, int x2, int y2, int color);
 
-	void debug(int x, int y, int color);
+	void debug(int x, int y, int color) const;
 
 	// 画像を返す　ないならNULL
 	GraphHandle* getHandle() const { return nullptr; }
@@ -87,7 +95,7 @@ public:
 
 	// キャラとの当たり判定
 	// 当たっているならキャラを操作する。
-	void atari(CharacterController* character);
+	bool atari(CharacterController* character);
 
 	// キャラがオブジェクトに入り込んでいるときの処理
 	void penetration(CharacterController* characterController);
@@ -113,11 +121,11 @@ private:
 	bool m_leftDown;
 
 	// 座標XにおけるY座標（傾きから算出する）
-	int getY(int x);
+	int getY(int x) const;
 public:
 	TriangleObject(int x1, int y1, int x2, int y2, int color, bool leftDown);
 
-	void debug(int x, int y, int color);
+	void debug(int x, int y, int color) const;
 
 	// 画像を返す　ないならNULL
 	GraphHandle* getHandle() const { return nullptr; }
@@ -127,7 +135,7 @@ public:
 
 	// キャラとの当たり判定
 	// 当たっているならキャラを操作する。
-	void atari(CharacterController* character);
+	bool atari(CharacterController* character);
 
 	// キャラがオブジェクトに入り込んでいるときの処理
 	void penetration(CharacterController* characterController);
@@ -177,9 +185,9 @@ private:
 
 public:
 	// x, y, gx, gyは弾の中心座標
-	BulletObject(int x, int y, int color, int gx, int gy, AttackInfo* attackInfo);
+	BulletObject(int x, int y, int color, int gx, int gy, AttackInfo* attackInfo, GraphHandles* effectHandles);
 
-	void debug(int x, int y, int color);
+	void debug(int x, int y, int color) const;
 
 	// 画像を返す　ないならNULL
 	GraphHandle* getHandle() const { return nullptr; }
@@ -193,7 +201,7 @@ public:
 
 	// キャラとの当たり判定
 	// 当たっているならキャラを操作する。
-	void atari(CharacterController* character);
+	bool atari(CharacterController* character);
 
 	// キャラがオブジェクトに入り込んでいるときの処理
 	void penetration(CharacterController* characterController) {};
@@ -237,12 +245,12 @@ private:
 
 public:
 	// 座標、画像、生存時間、AttackInfo
-	SlashObject(int x1, int y1, int x2, int y2, GraphHandle* handle, int slashCountSum, AttackInfo* attackInfo);
+	SlashObject(int x1, int y1, int x2, int y2, GraphHandle* handle, int slashCountSum, AttackInfo* attackInfo, GraphHandles* effectHandles);
 
 	// 大きさを指定しない場合。画像からサイズ取得。生存時間、AttackInfo
-	SlashObject(int x, int y, GraphHandle* handle, int slashCountSum, AttackInfo* attackInfo);
+	SlashObject(int x, int y, GraphHandle* handle, int slashCountSum, AttackInfo* attackInfo, GraphHandles* effectHandles);
 
-	void debug(int x, int y, int color);
+	void debug(int x, int y, int color) const;
 
 	// 画像を返す　ないならNULL
 	GraphHandle* getHandle() const { return m_handle; }
@@ -255,7 +263,7 @@ public:
 
 	// キャラとの当たり判定
 	// 当たっているならキャラを操作する。
-	void atari(CharacterController* character);
+	bool atari(CharacterController* character);
 
 	// キャラがオブジェクトに入り込んでいるときの処理
 	void penetration(CharacterController* characterController) {};
