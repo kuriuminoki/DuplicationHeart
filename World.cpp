@@ -5,6 +5,7 @@
 #include "CharacterController.h"
 #include "Camera.h"
 #include "Animation.h"
+#include "Sound.h"
 #include "Define.h"
 #include "DxLib.h"
 
@@ -64,7 +65,10 @@ void penetrationCharacterAndObject(CharacterController* controller, vector<Objec
 /*
 * オブジェクトのロードなど
 */
-World::World(int areaNum) {
+World::World(int areaNum, SoundPlayer* soundPlayer) {
+	// サウンドプレイヤー
+	m_soundPlayer = soundPlayer;
+
 	// 主人公のスタート地点
 	m_areaNum = areaNum;
 
@@ -87,7 +91,7 @@ World::World(int areaNum) {
 	m_stageObjects.push_back(object8);
 
 	// 主人公をロード キャラの削除はWorldがやる予定
-	Heart* heart = new Heart(100, 100, 0, 0);
+	Heart* heart = new Heart(100, 100, 0, 0, 0);
 	m_characters.push_back(heart);
 
 	// カメラを主人公注目、倍率1.0で作成
@@ -102,11 +106,23 @@ World::World(int areaNum) {
 	m_characterControllers.push_back(heartController);
 
 	// CPUをロード
-	Heart* cp = new Heart(100, 100, 500, 0);
-	m_characters.push_back(cp);
+	Heart* cp1 = new Heart(100, 100, 2000, 0, 1);
+	m_characters.push_back(cp1);
 	//CPUのコントローラ作成 BrainとActionの削除はControllerがやる。
-	NormalController* cpController = new NormalController(new NormalAI(), new StickAction(cp));
-	m_characterControllers.push_back(cpController);
+	NormalController* cpController1 = new NormalController(new NormalAI(), new StickAction(cp1));
+	m_characterControllers.push_back(cpController1);
+	// CPUをロード
+	Heart* cp2 = new Heart(100, 100, 2200, 0, 1);
+	m_characters.push_back(cp2);
+	//CPUのコントローラ作成 BrainとActionの削除はControllerがやる。
+	NormalController* cpController2 = new NormalController(new NormalAI(), new StickAction(cp2));
+	m_characterControllers.push_back(cpController2);
+	// CPUをロード
+	Heart* cp3 = new Heart(100, 100, 200, 0, 0);
+	m_characters.push_back(cp3);
+	//CPUのコントローラ作成 BrainとActionの削除はControllerがやる。
+	NormalController* cpController3 = new NormalController(new NormalAI(), new StickAction(cp3));
+	m_characterControllers.push_back(cpController3);
 }
 
 World::~World() {
@@ -241,6 +257,7 @@ void World::atariCharacterAndObject(CharacterController* controller, vector<Obje
 		if (objects[i]->atari(controller)) {
 			// 当たった場合 エフェクト作成
 			m_animations.push_back(objects[i]->createAnimation(controller->getAction()->getCharacter()));
+			m_soundPlayer->pushSoundQueue(objects[i]->getSoundHandle());
 		}
 		// deleteFlagがtrueなら削除する
 		if (objects[i]->getDeleteFlag()) {

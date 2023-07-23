@@ -5,6 +5,7 @@
 #include "Control.h"
 #include "Define.h"
 #include "DxLib.h"
+#include <algorithm>
 
 
 // Brainクラス
@@ -172,7 +173,10 @@ int NormalAI::squatOrder() {
 }
 
 int NormalAI::slashOrder() {
-	// ランダムで射撃
+	if (m_target != NULL && abs(m_target->getCenterX() - m_characterAction->getCharacter()->getCenterX()) > 500) {
+		return 0;
+	}
+	// ランダムで斬撃
 	if (GetRand(50) == 0) {
 		return 1;
 	}
@@ -191,7 +195,7 @@ int NormalAI::bulletOrder() {
 void NormalAI::searchTarget(const Character* character) {
 	if (m_target == NULL || m_target->getHp() == 0) {
 		// 自分自身や味方じゃなければ
-		if (character->getId() != m_characterAction->getCharacter()->getId()) {
+		if (character->getId() != m_characterAction->getCharacter()->getId() && character->getGroupId() != m_characterAction->getCharacter()->getGroupId()) {
 			m_target = character;
 		}
 	}

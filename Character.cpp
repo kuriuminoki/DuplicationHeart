@@ -32,12 +32,12 @@ CharacterInfo::CharacterInfo(const char* characterName) {
 
 
 AttackInfo::AttackInfo():
-	AttackInfo("test")
+	AttackInfo("test", 1.0)
 {
 
 }
 // CSVファイルから読み込む
-AttackInfo::AttackInfo(const char* characterName) {
+AttackInfo::AttackInfo(const char* characterName, double drawEx) {
 	CsvReader reader("data/attackInfo.csv");
 
 	// キャラ名でデータを検索
@@ -58,23 +58,42 @@ AttackInfo::AttackInfo(const char* characterName) {
 	m_slashCountSum = stoi(data["slashCountSum"]);
 	m_slashImpactX = stoi(data["slashImpactX"]);
 	m_slashImpactY = stoi(data["slashImpactY"]);
+
+	// 攻撃のエフェクト
+	m_bulletEffectHandles = new GraphHandles("picture/effect/オレンジ", 4, drawEx, 0.0, true);
+	m_slashEffectHandles = m_bulletEffectHandles;
+	// サウンド
+	m_bulletSoundHandle = LoadSoundMem("sound/stick/bullet.wav");
+	m_slashSoundHandle = LoadSoundMem("sound/stick/slash.wav");
+}
+
+AttackInfo::~AttackInfo() {
+	// 画像を削除
+	delete m_bulletEffectHandles;
+	delete m_slashEffectHandles;
+	// サウンドを削除
+	DeleteSoundMem(m_bulletSoundHandle);
+	DeleteSoundMem(m_slashSoundHandle);
 }
 
 
+/*
+* Characterクラス
+*/
 int Character::characterId;
 
 Character::Character() :
-	Character(100, 100, 0, 0)
+	Character(100, 100, 0, 0, 0)
 {
 
 }
 
-Character::Character(int maxHp, int hp, int x, int y) {
+Character::Character(int maxHp, int hp, int x, int y, int groupId) {
 	// IDを振る
 	characterId++;
 	m_id = characterId;
 
-	m_groupId = 0;
+	m_groupId = groupId;
 
 	m_maxHp = maxHp;
 	m_hp = hp;
@@ -148,12 +167,12 @@ void Character::moveDown(int d) {
 /*
 * ハート
 */
-Heart::Heart(int maxHp, int hp, int x, int y) :
-	Character(maxHp, hp, x, y)
+Heart::Heart(int maxHp, int hp, int x, int y, int groupId) :
+	Character(maxHp, hp, x, y, groupId)
 {
 	// キャラ固有の情報設定
 	m_characterInfo = new CharacterInfo(NAME);
-	m_attackInfo = new AttackInfo(NAME);
+	m_attackInfo = new AttackInfo(NAME, m_characterInfo->handleEx());
 
 	// 各画像のロード
 	double ex = m_characterInfo->handleEx();
@@ -171,9 +190,6 @@ Heart::Heart(int maxHp, int hp, int x, int y) :
 	m_boostHandle = new GraphHandle("picture/stick/boost.png", ex);
 	m_airBulletHandle = new GraphHandle("picture/stick/airBullet.png", ex);
 	m_airSlashHandle = new GraphHandle("picture/stick/airSlash.png", ex);
-	// 攻撃のエフェクト
-	m_bulletEffectHandles = new GraphHandles("picture/effect/オレンジ", 4, ex, 0.0, true);
-	m_slashEffectHandles = m_bulletEffectHandles;
 
 	// とりあえず立ち画像でスタート
 	switchStand();
@@ -181,6 +197,9 @@ Heart::Heart(int maxHp, int hp, int x, int y) :
 
 // デストラクタ
 Heart::~Heart() {
+	// Infoを削除
+	delete m_characterInfo;
+	delete m_attackInfo;
 	// 画像を削除
 	delete m_standHandle;
 	delete m_slashHandles;
@@ -196,7 +215,6 @@ Heart::~Heart() {
 	delete m_boostHandle;
 	delete m_airBulletHandle;
 	delete m_airSlashHandle;
-	delete m_bulletEffectHandles;
 }
 
 // 走り画像をセット
@@ -212,9 +230,11 @@ void Heart::switchPreJump(int cnt) {
 
 // 射撃攻撃をする(キャラごとに違う)
 Object* Heart::bulletAttack(int gx, int gy) {
-	BulletObject* attackObject = new BulletObject(m_x + m_wide / 2, m_y + m_height / 2, WHITE, gx, gy, m_attackInfo, m_bulletEffectHandles);
+	BulletObject* attackObject = new BulletObject(m_x + m_wide / 2, m_y + m_height / 2, WHITE, gx, gy, m_attackInfo);
 	// 自滅防止
 	attackObject->setCharacterId(m_id);
+	// チームキル防止
+	attackObject->setGroupId(m_groupId);
 	return attackObject;
 }
 
@@ -241,21 +261,23 @@ Object* Heart::slashAttack(bool leftDirection, int cnt) {
 	if (cnt == m_attackInfo->slashCountSum()) {
 		index = 0;
 		attackObject = new SlashObject(centerX, centerY - height, x2, centerY + height,
-			m_slashHandles->getGraphHandle(index), slashCountSum, m_attackInfo, m_slashEffectHandles);
+			m_slashHandles->getGraphHandle(index), slashCountSum, m_attackInfo);
 	}
 	else if (cnt == m_attackInfo->slashCountSum() * 2 / 3) {
 		index = 1;
 		attackObject = new SlashObject(centerX, centerY - height, x2, centerY + height,
-			m_slashHandles->getGraphHandle(index), slashCountSum, m_attackInfo, m_slashEffectHandles);
+			m_slashHandles->getGraphHandle(index), slashCountSum, m_attackInfo);
 	}
 	else if (cnt == m_attackInfo->slashCountSum() / 3) {
 		index = 2;
 		attackObject = new SlashObject(centerX, centerY - height, x2, centerY + height,
-			m_slashHandles->getGraphHandle(index), slashCountSum, m_attackInfo, m_slashEffectHandles);
+			m_slashHandles->getGraphHandle(index), slashCountSum, m_attackInfo);
 	}
-	// 自滅防止
 	if (attackObject != NULL) {
+		// 自滅防止
 		attackObject->setCharacterId(m_id);
+		// チームキル防止
+		attackObject->setGroupId(m_groupId);
 	}
 	return attackObject;
 }

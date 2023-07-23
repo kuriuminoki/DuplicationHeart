@@ -29,6 +29,9 @@ protected:
 	// エフェクト
 	GraphHandles* m_effectHandles;
 
+	// サウンド
+	int m_soundHandle;
+
 public:
 	Object();
 	Object(int x1, int y1, int x2, int y2);
@@ -43,6 +46,7 @@ public:
 	inline int getX2() const { return m_x2; }
 	inline int getY1() const { return m_y1; }
 	inline int getY2() const { return m_y2; }
+	inline int getSoundHandle() const { return m_soundHandle; }
 
 	// 画像を返す　ないならNULL
 	virtual GraphHandle* getHandle() const = 0;
@@ -192,7 +196,7 @@ private:
 
 public:
 	// x, y, gx, gyは弾の中心座標
-	BulletObject(int x, int y, int color, int gx, int gy, AttackInfo* attackInfo, GraphHandles* effectHandles);
+	BulletObject(int x, int y, int color, int gx, int gy, AttackInfo* attackInfo);
 
 	void debug(int x, int y, int color) const;
 
@@ -203,8 +207,9 @@ public:
 	void drawObject(int x1, int y1, int x2, int y2) const;
 
 	// セッタ
-	// キャラクターIDを取得
+	// キャラクターIDをセット
 	inline void setCharacterId(int id) { m_characterId = id; }
+	inline void setGroupId(int id) { m_groupId = id; }
 
 	// キャラとの当たり判定
 	// 当たっているならキャラを操作する。
@@ -235,6 +240,9 @@ private:
 	// この攻撃を出したキャラのＩＤ 自滅やチームキル防止用
 	int m_characterId;
 
+	// この攻撃が当たらないグループのID チームキル防止用
+	int m_groupId;
+
 	// オブジェクトの画像
 	GraphHandle* m_handle;
 
@@ -255,10 +263,10 @@ private:
 
 public:
 	// 座標、画像、生存時間、AttackInfo
-	SlashObject(int x1, int y1, int x2, int y2, GraphHandle* handle, int slashCountSum, AttackInfo* attackInfo, GraphHandles* effectHandles);
+	SlashObject(int x1, int y1, int x2, int y2, GraphHandle* handle, int slashCountSum, AttackInfo* attackInfo);
 
 	// 大きさを指定しない場合。画像からサイズ取得。生存時間、AttackInfo
-	SlashObject(int x, int y, GraphHandle* handle, int slashCountSum, AttackInfo* attackInfo, GraphHandles* effectHandles);
+	SlashObject(int x, int y, GraphHandle* handle, int slashCountSum, AttackInfo* attackInfo);
 
 	void debug(int x, int y, int color) const;
 
@@ -270,6 +278,7 @@ public:
 
 	// セッタ
 	inline void setCharacterId(int id) { m_characterId = id; }
+	inline void setGroupId(int id) { m_groupId = id; }
 
 	// キャラとの当たり判定
 	// 当たっているならキャラを操作する。

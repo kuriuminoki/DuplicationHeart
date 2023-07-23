@@ -30,7 +30,7 @@ bool Update() {
 }
 
 void Draw(int x, int y, int color) {
-	DrawFormatString(0, 0, WHITE, "%.1f", mFps);
+	DrawFormatString(0, 0, WHITE, "デバッグモード：%.1f FPS", mFps);
 }
 
 void Wait() {
