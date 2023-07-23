@@ -221,7 +221,13 @@ void StickAction::switchHandle() {
 	else { // ’ˆ‚É‚¢‚é‚Æ‚«
 		switch (m_state) {
 		case CHARACTER_STATE::STAND: //—§‚¿ó‘Ô(‚È‚É‚à‚È‚µ‚Ìó‘Ô)
-			if (m_boostCnt > 0) {
+			if (m_slashCnt > 0) {
+				m_character->switchAirSlash();
+			}
+			else if (m_bulletCnt > 0) {
+				m_character->switchAirBullet();
+			}
+			else if (m_boostCnt > 0) {
 				m_character->switchBoost();
 			}
 			else if (m_vy < 0) {
