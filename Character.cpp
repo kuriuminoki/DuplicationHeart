@@ -158,7 +158,7 @@ Heart::Heart(int maxHp, int hp, int x, int y) :
 	// äeâÊëúÇÃÉçÅ[Éh
 	double ex = m_characterInfo->handleEx();
 	m_standHandle = new GraphHandle("picture/stick/stand.png", ex);
-	m_slashHandles = new GraphHandles("picture/stick/slashEffect", 3, ex);
+	m_slashHandles = new GraphHandles("picture/stick/slashEffect", 3, ex, 0.0, true);
 	m_squatHandle = new GraphHandle("picture/stick/squat.png", ex);
 	m_standBulletHandle = new GraphHandle("picture/stick/bullet.png", ex);
 	m_standSlashHandle = new GraphHandle("picture/stick/slash.png", ex);
@@ -217,8 +217,10 @@ Object* Heart::bulletAttack(int gx, int gy) {
 // éaåÇçUåÇÇÇ∑ÇÈ(ÉLÉÉÉâÇ≤Ç∆Ç…à·Ç§)
 Object* Heart::slashAttack(bool leftDirection, int cnt) {
 	// çUåÇîÕàÕÇåàíË
-	int x2 = m_x;
-	int y2 = m_y + m_attackInfo->slashLenY();
+	int centerX = m_x + m_wide / 2;
+	int height = m_attackInfo->slashLenY() / 2;
+	int centerY = m_y + m_height / 2;
+	int x2 = centerX;
 	if (leftDirection) { // ç∂å¸Ç´Ç…çUåÇ
 		x2 -= m_attackInfo->slashLenX();
 	}
@@ -228,20 +230,23 @@ Object* Heart::slashAttack(bool leftDirection, int cnt) {
 
 	// çUåÇÇÃâÊëúÇ∆éùë±éûä‘(cntÇçló∂ÇµÇƒåàíË)
 	int index = 0;
-	int slashCountSum = 5;
+	int slashCountSum = m_attackInfo->slashCountSum() / 3 + 1;
 	SlashObject* attackObject = NULL;
 	m_slashHandles->setReverseX(m_leftDirection);
 	// cntÇ™çUåÇÇÃÉ^ÉCÉ~ÉìÉOÇ»ÇÁÉIÉuÉWÉFÉNÉgê∂ê¨
 	if (cnt == m_attackInfo->slashCountSum()) {
-		attackObject = new SlashObject(m_x, m_y, x2, y2,
+		index = 0;
+		attackObject = new SlashObject(centerX, centerY - height, x2, centerY + height,
 			m_slashHandles->getGraphHandle(index), slashCountSum, m_attackInfo);
 	}
 	else if (cnt == m_attackInfo->slashCountSum() * 2 / 3) {
-		attackObject = new SlashObject(m_x, m_y, x2, y2,
+		index = 1;
+		attackObject = new SlashObject(centerX, centerY - height, x2, centerY + height,
 			m_slashHandles->getGraphHandle(index), slashCountSum, m_attackInfo);
 	}
 	else if (cnt == m_attackInfo->slashCountSum() / 3) {
-		attackObject = new SlashObject(m_x, m_y, x2, y2,
+		index = 2;
+		attackObject = new SlashObject(centerX, centerY - height, x2, centerY + height,
 			m_slashHandles->getGraphHandle(index), slashCountSum, m_attackInfo);
 	}
 	// é©ñ≈ñhé~
