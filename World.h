@@ -9,9 +9,13 @@ class Character;
 class Object;
 class Camera;
 class Animation;
+class SoundPlayer;
 
 class World {
 private:
+	// サウンドプレイヤー
+	SoundPlayer* m_soundPlayer;
+
 	// 描画用のカメラ
 	Camera* m_camera;
 
@@ -43,7 +47,7 @@ private:
 	int m_areaNum;
 
 public:
-	World(int areaNum);
+	World(int areaNum, SoundPlayer* soundPlayer);
 	~World();
 
 	// ゲッタとセッタ

@@ -29,6 +29,7 @@ Object::Object(int x1, int y1, int x2, int y2) {
 	m_ableDelete = false;
 
 	m_effectHandles = NULL;
+	m_soundHandle = -1;
 }
 
 // アニメーション作成
@@ -436,7 +437,7 @@ void TriangleObject::action() {
 }
 
 
-BulletObject::BulletObject(int x, int y, int color, int gx, int gy, AttackInfo* attackInfo, GraphHandles* effectHandles) :
+BulletObject::BulletObject(int x, int y, int color, int gx, int gy, AttackInfo* attackInfo) :
 	Object(x - attackInfo->bulletRx(), y - attackInfo->bulletRx(), x + attackInfo->bulletRx(), y + attackInfo->bulletRy())
 {
 	// 必要なら後からセッタで設定
@@ -462,7 +463,10 @@ BulletObject::BulletObject(int x, int y, int color, int gx, int gy, AttackInfo* 
 	m_vy = (int)(m_v * std::sin(r));
 
 	// エフェクトの画像
-	m_effectHandles = effectHandles;
+	m_effectHandles = attackInfo->bulletEffectHandle();
+
+	// サウンド
+	m_soundHandle = attackInfo->bulletSoundeHandle();
 }
 
 // キャラとの当たり判定
@@ -470,6 +474,10 @@ BulletObject::BulletObject(int x, int y, int color, int gx, int gy, AttackInfo* 
 bool BulletObject::atari(CharacterController* characterController) {
 	// 自滅防止
 	if (m_characterId == characterController->getAction()->getCharacter()->getId()) {
+		return false;
+	}
+	// チームキル防止
+	if (m_groupId == characterController->getAction()->getCharacter()->getGroupId()) {
 		return false;
 	}
 
@@ -507,11 +515,12 @@ void BulletObject::action() {
 }
 
 
-SlashObject::SlashObject(int x1, int y1, int x2, int y2, GraphHandle* handle, int slashCountSum, AttackInfo* attackInfo, GraphHandles* effectHandles) :
+SlashObject::SlashObject(int x1, int y1, int x2, int y2, GraphHandle* handle, int slashCountSum, AttackInfo* attackInfo) :
 	Object(x1, y1, x2, y2)
 {
 	// 必要なら後からセッタで設定
 	m_characterId = -1;
+	m_groupId = -1;
 
 	// 画像
 	m_handle = handle;
@@ -533,17 +542,20 @@ SlashObject::SlashObject(int x1, int y1, int x2, int y2, GraphHandle* handle, in
 
 
 	// エフェクトの画像
-	m_effectHandles = effectHandles;
+	m_effectHandles = attackInfo->slashEffectHandle();
+
+	// サウンド
+	m_soundHandle = attackInfo->slashSoundHandle();
 }
 
 // 大きさを指定しない場合。画像からサイズ取得。生存時間、AttackInfo
-SlashObject::SlashObject(int x, int y, GraphHandle* handle, int slashCountSum, AttackInfo* attackInfo, GraphHandles* effectHandles) {
+SlashObject::SlashObject(int x, int y, GraphHandle* handle, int slashCountSum, AttackInfo* attackInfo) {
 	int x2 = 0;
 	int y2 = 0;
 	GetGraphSize(handle->getHandle(), &x2, &y2);
 	x2 += x;
 	y2 = y;
-	SlashObject(x, y, x2, y2, handle, slashCountSum, attackInfo, effectHandles);
+	SlashObject(x, y, x2, y2, handle, slashCountSum, attackInfo);
 }
 
 // キャラとの当たり判定
@@ -551,6 +563,10 @@ SlashObject::SlashObject(int x, int y, GraphHandle* handle, int slashCountSum, A
 bool SlashObject::atari(CharacterController* characterController) {
 	// 自滅防止
 	if (m_characterId == characterController->getAction()->getCharacter()->getId()) {
+		return false;
+	}
+	// チームキル防止
+	if (m_groupId == characterController->getAction()->getCharacter()->getGroupId()) {
 		return false;
 	}
 

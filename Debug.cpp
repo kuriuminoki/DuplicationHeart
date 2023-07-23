@@ -32,13 +32,14 @@ void debugObjects(int x, int y, int color, std::vector<Object*> objects) {
 void World::debug(int x, int y, int color) const {
 	DrawFormatString(x, y, color, "**World**");
 	DrawFormatString(x, y + DRAW_FORMAT_STRING_SIZE, color, "CharacterSum=%d, ControllerSum=%d, anime=%d", m_characters.size(), m_characterControllers.size(), m_animations.size());
-	m_characterControllers.front()->debug(x + DRAW_FORMAT_STRING_SIZE, y + DRAW_FORMAT_STRING_SIZE * 2, color);
+	m_characterControllers[0]->debug(x + DRAW_FORMAT_STRING_SIZE, y + DRAW_FORMAT_STRING_SIZE * 2, color);
+	m_characterControllers[1]->debug(x + DRAW_FORMAT_STRING_SIZE + 600, y + DRAW_FORMAT_STRING_SIZE * 2, color);
 	// オブジェクト
-	debugObjects(x, y, color, m_stageObjects);
+	// debugObjects(x, y, color, m_stageObjects);
 	debugObjects(x + 500, y, RED, m_attackObjects);
-	for (unsigned int i = 0; i < m_animations.size(); i++) {
-		m_animations[i]->getHandle()->draw(GAME_WIDE - 200, 200, m_animations[i]->getHandle()->getEx());
-	}
+	//for (unsigned int i = 0; i < m_animations.size(); i++) {
+	//	m_animations[i]->getHandle()->draw(GAME_WIDE - 200, 200, m_animations[i]->getHandle()->getEx());
+	//}
 }
 
 
@@ -83,7 +84,7 @@ void StickAction::debug(int x, int y, int color) const {
 // Characterクラスのデバッグ
 void Character::debugCharacter(int x, int y, int color) const {
 	DrawFormatString(x, y, color, "**Character**");
-	DrawFormatString(x, y + DRAW_FORMAT_STRING_SIZE, color, "HP=%d/%d, (x,y)=(%d,%d), left=%d", m_hp, m_maxHp, m_x, m_y, m_leftDirection);
+	DrawFormatString(x, y + DRAW_FORMAT_STRING_SIZE, color, "HP=%d/%d, (x,y)=(%d,%d), left=%d, id=%d, groupId=%d", m_hp, m_maxHp, m_x, m_y, m_leftDirection, m_id, m_groupId);
 	DrawFormatString(x, y + DRAW_FORMAT_STRING_SIZE * 2, color, "(wide, height)=(%d,%d), handle=%d", m_wide, m_height, m_graphHandle->getHandle());
 	// 画像
 	// m_graphHandle->draw(GAME_WIDE - (m_wide / 2), (m_height / 2), m_graphHandle->getEx());
@@ -139,7 +140,7 @@ void TriangleObject::debug(int x, int y, int color) const {
 */
 void BulletObject::debug(int x, int y, int color) const {
 	DrawFormatString(x, y, color, "**BulletObject**");
-	DrawFormatString(x, y + DRAW_FORMAT_STRING_SIZE, color, "(gx,gy)=(%d,%d)", m_gx, m_gy);
+	DrawFormatString(x, y + DRAW_FORMAT_STRING_SIZE, color, "(gx,gy)=(%d,%d), groupId=%d", m_gx, m_gy, m_groupId);
 	debugObject(x + DRAW_FORMAT_STRING_SIZE, y + DRAW_FORMAT_STRING_SIZE * 2, color);
 	// DrawOval(m_x1 + m_rx, m_y1 + m_ry, m_rx, m_ry, m_color, TRUE);
 }

@@ -5,6 +5,7 @@
 #include "Control.h"
 #include "Define.h"
 #include "DxLib.h"
+#include <algorithm>
 
 
 // Brainクラス
@@ -109,12 +110,16 @@ void NormalAI::moveOrder(int& right, int& left, int& up, int& down) {
 
 	// 目標地点設定
 	if (m_gx > x - GX_ERROR && m_gx < x + GX_ERROR && GetRand(99) == 0) {
-		// targetについていく
-		m_gx = m_target->getCenterX() + GetRand(2000) - 1000;
-		// ランダムに設定
-		//m_gx = GetRand(200) + 100;
-		//if (GetRand(99) < GX_ERROR) { m_gx *= -1; }
-		//m_gx += x;
+		if (m_target != NULL) {
+			// targetについていく
+			m_gx = m_target->getCenterX() + GetRand(2000) - 1000;
+		}
+		else {
+			// ランダムに設定
+			m_gx = GetRand(200) + 100;
+			if (GetRand(99) < GX_ERROR) { m_gx *= -1; }
+			m_gx += x;
+		}
 	}
 
 	// 目標に向かって走る
@@ -172,7 +177,10 @@ int NormalAI::squatOrder() {
 }
 
 int NormalAI::slashOrder() {
-	// ランダムで射撃
+	if (m_target != NULL && abs(m_target->getCenterX() - m_characterAction->getCharacter()->getCenterX()) > 500) {
+		return 0;
+	}
+	// ランダムで斬撃
 	if (GetRand(50) == 0) {
 		return 1;
 	}
@@ -191,7 +199,7 @@ int NormalAI::bulletOrder() {
 void NormalAI::searchTarget(const Character* character) {
 	if (m_target == NULL || m_target->getHp() == 0) {
 		// 自分自身や味方じゃなければ
-		if (character->getId() != m_characterAction->getCharacter()->getId()) {
+		if (character->getId() != m_characterAction->getCharacter()->getId() && character->getGroupId() != m_characterAction->getCharacter()->getGroupId()) {
 			m_target = character;
 		}
 	}

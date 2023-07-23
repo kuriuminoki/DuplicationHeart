@@ -33,11 +33,11 @@ public:
 	CharacterInfo(const char* characterName);
 
 	// ゲッタのみを持つ
-	inline std::string name() { return m_name; }
-	inline int maxHp() { return m_maxHp; }
-	inline double handleEx() { return m_handleEx; }
-	inline int moveSpeed() { return m_moveSpeed; }
-	inline int jumpHeight() { return m_jumpHeight; }
+	inline std::string name() const { return m_name; }
+	inline int maxHp() const { return m_maxHp; }
+	inline double handleEx() const { return m_handleEx; }
+	inline int moveSpeed() const { return m_moveSpeed; }
+	inline int jumpHeight() const { return m_jumpHeight; }
 };
 
 
@@ -79,27 +79,45 @@ private:
 	// 斬撃の吹っ飛び(Y方向の初速)
 	int m_slashImpactY;
 
+	// 射撃攻撃のエフェクト
+	GraphHandles* m_bulletEffectHandles;
+
+	// 斬撃攻撃のエフェクト
+	GraphHandles* m_slashEffectHandles;
+
+	// 射撃攻撃が当たったときのサウンド
+	int m_bulletSoundHandle;
+
+	// 斬撃攻撃が当たったときのサウンド
+	int m_slashSoundHandle;
+
 public:
 	// デフォルト値で初期化
 	AttackInfo();
 	// csvファイルを読み込み、キャラ名で検索しパラメータ取得
-	AttackInfo(const char* characterName);
+	AttackInfo(const char* characterName, double drawEx);
+
+	~AttackInfo();
 	
 	// ゲッタのみを持つ
-	int bulletDamage() { return m_bulletDamage; }
-	int bulletRx() { return m_bulletRx; }
-	int bulletRy() { return m_bulletRy; }
-	int bulletSpeed() { return m_bulletSpeed; }
+	int bulletDamage() const { return m_bulletDamage; }
+	int bulletRx() const { return m_bulletRx; }
+	int bulletRy() const { return m_bulletRy; }
+	int bulletSpeed() const { return m_bulletSpeed; }
 	int bulletRapid() { return m_bulletRapid; }
-	int bulletDistance() { return m_bulletDistance; }
-	int bulletImpactX() { return m_bulletImpactX; }
-	int bulletImpactY() { return m_bulletImpactY; }
-	int slashDamage() { return m_slashDamage; }
-	int slashLenX() { return m_slashLenX; }
-	int slashLenY() { return m_slashLenY; }
-	int slashCountSum() { return m_slashCountSum; }
-	int slashImpactX() { return m_slashImpactX; }
-	int slashImpactY() { return m_slashImpactY; }
+	int bulletDistance() const { return m_bulletDistance; }
+	int bulletImpactX() const { return m_bulletImpactX; }
+	int bulletImpactY() const { return m_bulletImpactY; }
+	int slashDamage() const { return m_slashDamage; }
+	int slashLenX() const { return m_slashLenX; }
+	int slashLenY() const { return m_slashLenY; }
+	int slashCountSum() const { return m_slashCountSum; }
+	int slashImpactX() const { return m_slashImpactX; }
+	int slashImpactY() const { return m_slashImpactY; }
+	GraphHandles* bulletEffectHandle() const { return m_bulletEffectHandles; }
+	GraphHandles* slashEffectHandle() const { return m_slashEffectHandles; }
+	int bulletSoundeHandle() const { return m_bulletSoundHandle; }
+	int slashSoundHandle() const { return m_slashSoundHandle; }
 };
 
 
@@ -143,7 +161,7 @@ protected:
 public:
 	// コンストラクタ
 	Character();
-	Character(int maxHp, int hp, int x, int y);
+	Character(int maxHp, int hp, int x, int y, int groupId);
 	~Character();
 
 	// デバッグ
@@ -152,6 +170,8 @@ public:
 
 	// ゲッタとセッタ
 	inline int getId() const { return m_id; }
+
+	inline int getGroupId() const { return m_groupId; }
 
 	inline int getMaxHp() const { return m_maxHp; }
 
@@ -296,16 +316,10 @@ private:
 
 	// 空中斬撃画像
 	GraphHandle* m_airSlashHandle;
-
-	// 射撃攻撃のエフェクト
-	GraphHandles* m_bulletEffectHandles;
-
-	// 斬撃攻撃のエフェクト
-	GraphHandles* m_slashEffectHandles;
 	
 public:
 	// コンストラクタ
-	Heart(int maxHp, int hp, int x, int y);
+	Heart(int maxHp, int hp, int x, int y, int groupId);
 
 	// デストラクタ
 	~Heart();
