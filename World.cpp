@@ -21,7 +21,7 @@ void deleteAllObject(vector<Object*>& objects) {
 	}
 }
 
-// vectorに入ったdeleteFlagがtrueのオブジェクトを削除する
+// vectorに入ったdeleteFlagがtarueのオブジェクトを削除する
 void deleteObject(vector<Object*>& objects) {
 	for (unsigned int i = 0; i < objects.size(); i++) {
 		// deleteFlagがtrueなら削除する
@@ -106,23 +106,23 @@ World::World(int areaNum, SoundPlayer* soundPlayer) {
 	m_characterControllers.push_back(heartController);
 
 	// CPUをロード
-	Heart* cp1 = new Heart(100, 100, 2000, 0, 1);
-	m_characters.push_back(cp1);
-	//CPUのコントローラ作成 BrainとActionの削除はControllerがやる。
-	NormalController* cpController1 = new NormalController(new NormalAI(), new StickAction(cp1));
-	m_characterControllers.push_back(cpController1);
-	// CPUをロード
-	Heart* cp2 = new Heart(100, 100, 2200, 0, 1);
-	m_characters.push_back(cp2);
-	//CPUのコントローラ作成 BrainとActionの削除はControllerがやる。
-	NormalController* cpController2 = new NormalController(new NormalAI(), new StickAction(cp2));
-	m_characterControllers.push_back(cpController2);
-	// CPUをロード
-	Heart* cp3 = new Heart(100, 100, 200, 0, 0);
-	m_characters.push_back(cp3);
-	//CPUのコントローラ作成 BrainとActionの削除はControllerがやる。
-	NormalController* cpController3 = new NormalController(new NormalAI(), new StickAction(cp3));
-	m_characterControllers.push_back(cpController3);
+	for (int i = 0; i < 1; i++) {
+		// CPUをロード
+		Heart* cp = new Heart(100, 100, 2000 + 100*i, 0, 1);
+		m_characters.push_back(cp);
+		//CPUのコントローラ作成 BrainとActionの削除はControllerがやる。
+		NormalController* cpController = new NormalController(new NormalAI(), new StickAction(cp));
+		m_characterControllers.push_back(cpController);
+	}
+	for (int i = 0; i < 0; i++) {
+		// CPUをロード
+		Heart* cp = new Heart(100, 100, 2000 + 100 * i, 0, 0);
+		m_characters.push_back(cp);
+		//CPUのコントローラ作成 BrainとActionの削除はControllerがやる。
+		NormalController* cpController = new NormalController(new NormalAI(), new StickAction(cp));
+		m_characterControllers.push_back(cpController);
+	}
+	
 }
 
 World::~World() {
