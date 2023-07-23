@@ -32,13 +32,25 @@ Object::Object(int x1, int y1, int x2, int y2) {
 }
 
 // アニメーション作成
-Animation* Object::createAnimation() {
+Animation* BulletObject::createAnimation(const Character* character) {
 	if (m_effectHandles == NULL) {
 		return NULL;
 	}
 	return new Animation((m_x1 + m_x2) / 2, (m_y1 + m_y2) / 2, 3, m_effectHandles);
 }
 
+// アニメーション作成
+Animation* SlashObject::createAnimation(const Character* character) {
+	if (m_effectHandles == NULL) {
+		return NULL;
+	}
+	// キャラとの座標の平均をとる
+	int x = (m_x1 + m_x2) / 2;
+	int y = (m_y1 + m_y2) / 2;
+	x = (x + character->getCenterX()) / 2;
+	y = (y + character->getCenterY()) / 2;
+	return new Animation(x, y, 3, m_effectHandles);
+}
 
 /*
 * 四角形のオブジェクト

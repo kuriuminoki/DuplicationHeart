@@ -50,6 +50,7 @@ public:
 	inline const Camera* getCamera() const { return m_camera; }
 	std::vector<const CharacterAction*> getActions() const;
 	std::vector<const Object*> getObjects() const;
+	std::vector<const Animation*> getAnimations() const;
 
 	//デバッグ
 	void debug(int x, int y, int color) const;

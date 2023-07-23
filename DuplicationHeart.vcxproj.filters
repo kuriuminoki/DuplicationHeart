@@ -87,6 +87,9 @@
     <ClCompile Include="Sound.cpp">
       <Filter>ソース ファイル\Domain</Filter>
     </ClCompile>
+    <ClCompile Include="AnimationDrawer.cpp">
+      <Filter>ソース ファイル\ui</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Define.h">
@@ -139,6 +142,9 @@
     </ClInclude>
     <ClInclude Include="Sound.h">
       <Filter>ヘッダー ファイル\Domain</Filter>
+    </ClInclude>
+    <ClInclude Include="AnimationDrawer.h">
+      <Filter>ヘッダー ファイル\ui</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

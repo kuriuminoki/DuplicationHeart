@@ -4,6 +4,7 @@
 class World;
 class CharacterDrawer;
 class ObjectDrawer;
+class AnimationDrawer;
 
 // 世界を描画する
 class WorldDrawer {
@@ -17,6 +18,9 @@ private:
 
 	// オブジェクト描画用
 	ObjectDrawer* m_objectDrawer;
+
+	// アニメーション描画用
+	AnimationDrawer* m_animationDrawer;
 
 public:
 	WorldDrawer(const World* world);

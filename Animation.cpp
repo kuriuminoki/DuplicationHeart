@@ -27,6 +27,6 @@ void Animation::count() {
 };
 
 // •`‰æ—p
-GraphHandle* Animation::getHandle() {
+GraphHandle* Animation::getHandle() const {
 	return m_handles->getGraphHandle((m_cnt - 1) / m_flameCnt);
 }
