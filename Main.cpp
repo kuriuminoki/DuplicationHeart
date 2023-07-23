@@ -1,6 +1,8 @@
-#include"Control.h"
-#include"Define.h"
-#include"DxLib.h"
+#include "Control.h"
+#include "Define.h"
+#include "Game.h"
+#include "GameDrawer.h"
+#include "DxLib.h"
 
 
 static int WINDOW = TRUE;
@@ -27,8 +29,8 @@ bool Update() {
 	return true;
 }
 
-void Draw() {
-	DrawFormatString(0, 0, WHITE, "%.1f", mFps);
+void Draw(int x, int y, int color) {
+	DrawFormatString(0, 0, WHITE, "デバッグモード：%.1f FPS", mFps);
 }
 
 void Wait() {
@@ -53,7 +55,9 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 	//SetDrawMode(DX_DRAWMODE_BILINEAR);
 	SetDrawMode(DX_DRAWMODE_NEAREST);
 	//ゲーム本体
-	/*BattleField bf;*/
+	Game game;
+	// ゲーム描画用
+	GameDrawer gameDrawer(&game);
 	bool title_flag = false;//trueならタイトル画面終了
 	while (ScreenFlip() == 0 && ProcessMessage() == 0 && ClearDrawScreen() == 0)
 	{
@@ -61,9 +65,8 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 		mouseClick();
 
 		/////メイン////
-		/*bf.play();
-		bf.draw();*/
-
+		game.play();
+		gameDrawer.draw();
 		///////////////
 
 		//FPS操作
@@ -72,7 +75,11 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 			else { debug = FALSE; }
 		}
 		Update();
-		if (debug == TRUE) { Draw(); }
+		// デバッグ
+		if (debug == TRUE) {
+			Draw(0, 0, WHITE);
+			game.debug(0, DRAW_FORMAT_STRING_SIZE, WHITE);
+		}
 		Wait();
 		if (controlEsc() == TRUE) { DxLib_End(); }
 		//FPS操作ここまで

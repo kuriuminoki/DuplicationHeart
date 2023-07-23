@@ -1,19 +1,27 @@
 #ifndef CHARACTER_DRAWER_H_INCLUDED
 #define CHARACTER_DRAWER_H_INCLUDED
 
+class Camera;
+class CharacterAction;
+
+// CharacterActionを見てキャラを描画する
 class CharacterDrawer {
 private:
-	// 描画する画像
-	int m_handle;
+	// キャラの動きの情報 const関数しか呼ばない
+	const CharacterAction* m_characterAction;
 
-	// 描画する座標(画像の中心)
-	int m_x, m_y;
-
-	// 描画する倍率
-	int m_ex;
+	const int HP_BAR_WIDE = 200;
+	const int HP_BAR_HEIGHT = 50;
+	static int HP_COLOR;
+	static int DAMAGE_COLOR;
 
 public:
-	CharacterDrawer();
+	CharacterDrawer(const CharacterAction* const characterAction);
+
+	// セッタ
+	void setCharacterAction(const CharacterAction* action) { m_characterAction = action; }
+
+	void drawCharacter(const Camera* const camera);
 };
 
 #endif

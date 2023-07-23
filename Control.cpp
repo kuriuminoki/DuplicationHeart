@@ -49,25 +49,24 @@ int rightClick() {
 }
 
 
-//左右の移動
-int controlStick()
-{
-	//同時入力には短時間押している方を採用
-	if (Key[KEY_INPUT_D] >= 1 && Key[KEY_INPUT_A] >= 1) {
-		if (Key[KEY_INPUT_D] < Key[KEY_INPUT_A]) {
-			return RIGHT_KEY;
-		}
-		else {
-			return LEFT_KEY;
-		}
-	}
-	else if (Key[KEY_INPUT_D] >= 1) { // 右キーが押されていたら
-		return RIGHT_KEY;
-	}
-	else if (Key[KEY_INPUT_A] >= 1) { // 左キーが押されていたら
-		return LEFT_KEY;
-	}
-	return FALSE;
+// Wキー（上キー）
+int controlW() {
+	return Key[KEY_INPUT_W];
+}
+
+// Sキー（下キー）
+int controlS() {
+	return Key[KEY_INPUT_S];
+}
+
+// Aキー（左キー）
+int controlA() {
+	return Key[KEY_INPUT_A];
+}
+
+// Dキー（右キー）
+int controlD() {
+	return Key[KEY_INPUT_D];
 }
 
 //デバッグモード起動用
@@ -81,11 +80,7 @@ int controlDebug() {
 //spaceキー
 int controlSpace()
 {
-	// spaceキーが押された瞬間
-	if (Key[KEY_INPUT_SPACE] == 1) {
-		return TRUE;
-	}
-	return FALSE;
+	return Key[KEY_INPUT_SPACE];
 }
 
 //ゲーム終了用

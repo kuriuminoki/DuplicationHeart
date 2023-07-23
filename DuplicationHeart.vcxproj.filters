@@ -24,7 +24,7 @@
     </Filter>
     <Filter Include="ソース ファイル\ui">
       <UniqueIdentifier>{61fdfc5b-7eeb-40bd-a876-4a4ee95c01a5}</UniqueIdentifier>
-	</Filter>
+    </Filter>
     <Filter Include="ヘッダー ファイル\api">
       <UniqueIdentifier>{46b60107-7b6b-4f6b-826d-9863fc8197dd}</UniqueIdentifier>
     </Filter>
@@ -48,6 +48,48 @@
     <ClCompile Include="CharacterController.cpp">
       <Filter>ソース ファイル\api</Filter>
     </ClCompile>
+    <ClCompile Include="Camera.cpp">
+      <Filter>ソース ファイル\Domain</Filter>
+    </ClCompile>
+    <ClCompile Include="CharacterAction.cpp">
+      <Filter>ソース ファイル\api</Filter>
+    </ClCompile>
+    <ClCompile Include="World.cpp">
+      <Filter>ソース ファイル\api</Filter>
+    </ClCompile>
+    <ClCompile Include="Game.cpp">
+      <Filter>ソース ファイル\api</Filter>
+    </ClCompile>
+    <ClCompile Include="Debug.cpp">
+      <Filter>ソース ファイル\api</Filter>
+    </ClCompile>
+    <ClCompile Include="Object.cpp">
+      <Filter>ソース ファイル\api</Filter>
+    </ClCompile>
+    <ClCompile Include="CsvReader.cpp">
+      <Filter>ソース ファイル\api</Filter>
+    </ClCompile>
+    <ClCompile Include="GraphHandle.cpp">
+      <Filter>ソース ファイル\Domain</Filter>
+    </ClCompile>
+    <ClCompile Include="WorldDrawer.cpp">
+      <Filter>ソース ファイル\ui</Filter>
+    </ClCompile>
+    <ClCompile Include="GameDrawer.cpp">
+      <Filter>ソース ファイル\ui</Filter>
+    </ClCompile>
+    <ClCompile Include="ObjectDrawer.cpp">
+      <Filter>ソース ファイル\ui</Filter>
+    </ClCompile>
+    <ClCompile Include="Animation.cpp">
+      <Filter>ソース ファイル\Domain</Filter>
+    </ClCompile>
+    <ClCompile Include="Sound.cpp">
+      <Filter>ソース ファイル\Domain</Filter>
+    </ClCompile>
+    <ClCompile Include="AnimationDrawer.cpp">
+      <Filter>ソース ファイル\ui</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Define.h">
@@ -64,6 +106,45 @@
     </ClInclude>
     <ClInclude Include="CharacterController.h">
       <Filter>ヘッダー ファイル\api</Filter>
+    </ClInclude>
+    <ClInclude Include="Camera.h">
+      <Filter>ヘッダー ファイル\Domain</Filter>
+    </ClInclude>
+    <ClInclude Include="CharacterAction.h">
+      <Filter>ヘッダー ファイル\api</Filter>
+    </ClInclude>
+    <ClInclude Include="World.h">
+      <Filter>ヘッダー ファイル\api</Filter>
+    </ClInclude>
+    <ClInclude Include="Game.h">
+      <Filter>ヘッダー ファイル\api</Filter>
+    </ClInclude>
+    <ClInclude Include="Object.h">
+      <Filter>ヘッダー ファイル\api</Filter>
+    </ClInclude>
+    <ClInclude Include="CsvReader.h">
+      <Filter>ヘッダー ファイル\api</Filter>
+    </ClInclude>
+    <ClInclude Include="GraphHandle.h">
+      <Filter>ヘッダー ファイル\Domain</Filter>
+    </ClInclude>
+    <ClInclude Include="GameDrawer.h">
+      <Filter>ヘッダー ファイル\ui</Filter>
+    </ClInclude>
+    <ClInclude Include="WorldDrawer.h">
+      <Filter>ヘッダー ファイル\ui</Filter>
+    </ClInclude>
+    <ClInclude Include="ObjectDrawer.h">
+      <Filter>ヘッダー ファイル\ui</Filter>
+    </ClInclude>
+    <ClInclude Include="Animation.h">
+      <Filter>ヘッダー ファイル\Domain</Filter>
+    </ClInclude>
+    <ClInclude Include="Sound.h">
+      <Filter>ヘッダー ファイル\Domain</Filter>
+    </ClInclude>
+    <ClInclude Include="AnimationDrawer.h">
+      <Filter>ヘッダー ファイル\ui</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>
