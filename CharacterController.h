@@ -137,8 +137,8 @@ public:
 	~CharacterController();
 
 	// デバッグ
-	void debugController(int x, int y, int color);
-	virtual void debug(int x, int y, int color) = 0;
+	void debugController(int x, int y, int color) const;
+	virtual void debug(int x, int y, int color) const = 0;
 
 	// アクションの情報取得
 	inline const CharacterAction* getAction() const { return m_characterAction; }
@@ -193,7 +193,7 @@ private:
 public:
 	NormalController(Brain* brain, CharacterAction* characterAction);
 
-	void debug(int x, int y, int color);
+	void debug(int x, int y, int color) const;
 
 	// キャラの移動やしゃがみ(;攻撃以外の)操作 毎フレーム行う
 	void control();

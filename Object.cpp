@@ -4,6 +4,7 @@
 #include "CharacterController.h"
 #include "Define.h"
 #include "GraphHandle.h"
+#include "Animation.h"
 #include "DxLib.h"
 #include <algorithm>
 #include <cmath>
@@ -26,6 +27,16 @@ Object::Object(int x1, int y1, int x2, int y2) {
 
 	m_deleteFlag = false;
 	m_ableDelete = false;
+
+	m_effectHandles = NULL;
+}
+
+// アニメーション作成
+Animation* Object::createAnimation() {
+	if (m_effectHandles == NULL) {
+		return NULL;
+	}
+	return new Animation((m_x1 + m_x2) / 2, (m_y1 + m_y2) / 2, 3, m_effectHandles);
 }
 
 
@@ -39,7 +50,7 @@ BoxObject::BoxObject(int x1, int y1, int x2, int y2, int color) :
 }
 
 // キャラクターとの当たり判定
-void BoxObject::atari(CharacterController* characterController) {
+bool BoxObject::atari(CharacterController* characterController) {
 	// キャラの情報　座標と移動スピード
 	int characterX1 = characterController->getAction()->getCharacter()->getX();
 	int characterY1 = characterController->getAction()->getCharacter()->getY();
@@ -113,6 +124,7 @@ void BoxObject::atari(CharacterController* characterController) {
 			}
 		}
 	}
+	return false;
 }
 
 // キャラがオブジェクトに入り込んでいるときの処理
@@ -183,7 +195,7 @@ TriangleObject::TriangleObject(int x1, int y1, int x2, int y2, int color, bool l
 }
 
 // 座標XにおけるY座標（傾きから算出する）
-int TriangleObject::getY(int x) {
+int TriangleObject::getY(int x) const {
 	if (x < m_x1) {
 		if (m_leftDown) {
 			return m_y2;
@@ -225,7 +237,7 @@ int TriangleObject::getY(int x) {
 }
 
 // キャラクターとの当たり判定
-void TriangleObject::atari(CharacterController* characterController) {
+bool TriangleObject::atari(CharacterController* characterController) {
 	// キャラの情報　座標と移動スピード
 	int characterX1 = characterController->getAction()->getCharacter()->getX();
 	int characterY1 = characterController->getAction()->getCharacter()->getY();
@@ -338,6 +350,7 @@ void TriangleObject::atari(CharacterController* characterController) {
 			}
 		}
 	}
+	return false;
 }
 
 // キャラがオブジェクトに入り込んでいるときの処理
@@ -411,7 +424,7 @@ void TriangleObject::action() {
 }
 
 
-BulletObject::BulletObject(int x, int y, int color, int gx, int gy, AttackInfo* attackInfo) :
+BulletObject::BulletObject(int x, int y, int color, int gx, int gy, AttackInfo* attackInfo, GraphHandles* effectHandles) :
 	Object(x - attackInfo->bulletRx(), y - attackInfo->bulletRx(), x + attackInfo->bulletRx(), y + attackInfo->bulletRy())
 {
 	// 必要なら後からセッタで設定
@@ -435,14 +448,17 @@ BulletObject::BulletObject(int x, int y, int color, int gx, int gy, AttackInfo* 
 	m_v = attackInfo->bulletSpeed();
 	m_vx = (int)(m_v * std::cos(r));
 	m_vy = (int)(m_v * std::sin(r));
+
+	// エフェクトの画像
+	m_effectHandles = effectHandles;
 }
 
 // キャラとの当たり判定
 // 当たっているならキャラを操作する。
-void BulletObject::atari(CharacterController* characterController) {
+bool BulletObject::atari(CharacterController* characterController) {
 	// 自滅防止
 	if (m_characterId == characterController->getAction()->getCharacter()->getId()) {
-		return;
+		return false;
 	}
 
 	// キャラの情報　座標と移動スピード
@@ -452,11 +468,13 @@ void BulletObject::atari(CharacterController* characterController) {
 	int characterY2 = characterY1 + characterController->getAction()->getCharacter()->getHeight();
 
 	// 当たり判定
-	if (characterX2 > m_x1 && characterX1 < m_x2 && characterY2 > m_y1 && characterY1 < m_y2) {
+	if (characterX2 > m_x1 && characterX1 < m_x2 && characterY2 > m_y1 && characterY1 < m_y2 && characterController->getAction()->ableDamage()) {
 		// 貫通弾じゃないなら消滅
 		m_deleteFlag = true;
 		characterController->damage(m_vx / 2, m_vy / 2, m_damage, -1);
+		return true;
 	}
+	return false;
 }
 
 // 他オブジェクトとの当たり判定
@@ -477,7 +495,7 @@ void BulletObject::action() {
 }
 
 
-SlashObject::SlashObject(int x1, int y1, int x2, int y2, GraphHandle* handle, int slashCountSum, AttackInfo* attackInfo) :
+SlashObject::SlashObject(int x1, int y1, int x2, int y2, GraphHandle* handle, int slashCountSum, AttackInfo* attackInfo, GraphHandles* effectHandles) :
 	Object(x1, y1, x2, y2)
 {
 	// 必要なら後からセッタで設定
@@ -500,22 +518,28 @@ SlashObject::SlashObject(int x1, int y1, int x2, int y2, GraphHandle* handle, in
 
 	// 吹っ飛び(Y方向の初速)
 	m_slashImpactY = attackInfo->slashImpactY();
+
+
+	// エフェクトの画像
+	m_effectHandles = effectHandles;
 }
 
 // 大きさを指定しない場合。画像からサイズ取得。生存時間、AttackInfo
-SlashObject::SlashObject(int x, int y, GraphHandle* handle, int slashCountSum, AttackInfo* attackInfo) {
+SlashObject::SlashObject(int x, int y, GraphHandle* handle, int slashCountSum, AttackInfo* attackInfo, GraphHandles* effectHandles) {
 	int x2 = 0;
 	int y2 = 0;
 	GetGraphSize(handle->getHandle(), &x2, &y2);
-	SlashObject(x, y, x2, y2, handle, slashCountSum, attackInfo);
+	x2 += x;
+	y2 = y;
+	SlashObject(x, y, x2, y2, handle, slashCountSum, attackInfo, effectHandles);
 }
 
 // キャラとの当たり判定
 // 当たっているならキャラを操作する。
-void SlashObject::atari(CharacterController* characterController) {
+bool SlashObject::atari(CharacterController* characterController) {
 	// 自滅防止
 	if (m_characterId == characterController->getAction()->getCharacter()->getId()) {
-		return;
+		return false;
 	}
 
 	// キャラの情報　座標と移動スピード
@@ -525,7 +549,7 @@ void SlashObject::atari(CharacterController* characterController) {
 	int characterY2 = characterY1 + characterController->getAction()->getCharacter()->getHeight();
 
 	// 当たり判定
-	if (characterX2 > m_x1 && characterX1 < m_x2 && characterY2 > m_y1 && characterY1 < m_y2) {
+	if (characterX2 > m_x1 && characterX1 < m_x2 && characterY2 > m_y1 && characterY1 < m_y2 && characterController->getAction()->ableDamage()) {
 		// 貫通弾じゃないなら消滅
 		 // m_deleteFlag = true;
 		if (characterX1 + characterX2 < m_x1 + m_x2) {
@@ -534,7 +558,9 @@ void SlashObject::atari(CharacterController* characterController) {
 		else {
 			characterController->damage(m_slashImpactX, -m_slashImpactY, m_damage, -1);
 		}
+		return true;
 	}
+	return false;
 }
 
 // 他オブジェクトとの当たり判定
@@ -551,6 +577,7 @@ void SlashObject::action() {
 		m_deleteFlag = true;
 	}
 }
+
 
 // 描画用
 // オブジェクト描画（画像がないときに使う）

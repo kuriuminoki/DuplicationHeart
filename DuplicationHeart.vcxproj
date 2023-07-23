@@ -151,6 +151,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="Animation.cpp" />
     <ClCompile Include="Camera.cpp" />
     <ClCompile Include="Character.cpp" />
     <ClCompile Include="CharacterAction.cpp" />
@@ -165,10 +166,12 @@
     <ClCompile Include="Main.cpp" />
     <ClCompile Include="Object.cpp" />
     <ClCompile Include="ObjectDrawer.cpp" />
+    <ClCompile Include="Sound.cpp" />
     <ClCompile Include="World.cpp" />
     <ClCompile Include="WorldDrawer.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Animation.h" />
     <ClInclude Include="Camera.h" />
     <ClInclude Include="Character.h" />
     <ClInclude Include="CharacterAction.h" />
@@ -182,6 +185,7 @@
     <ClInclude Include="GraphHandle.h" />
     <ClInclude Include="Object.h" />
     <ClInclude Include="ObjectDrawer.h" />
+    <ClInclude Include="Sound.h" />
     <ClInclude Include="World.h" />
     <ClInclude Include="WorldDrawer.h" />
   </ItemGroup>

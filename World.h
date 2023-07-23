@@ -8,6 +8,7 @@ class CharacterAction;
 class Character;
 class Object;
 class Camera;
+class Animation;
 
 class World {
 private:
@@ -35,6 +36,9 @@ private:
 	// 攻撃のあたり判定のオブジェクト
 	std::vector<Object*> m_attackObjects;
 
+	// エフェクト等のアニメーション
+	std::vector<Animation*> m_animations;
+
 	// いま世界のどのエリアにいるか（メモリ節約のためプレイヤーの付近のみを読み込む）
 	int m_areaNum;
 
@@ -48,7 +52,7 @@ public:
 	std::vector<const Object*> getObjects() const;
 
 	//デバッグ
-	void debug(int x, int y, int color);
+	void debug(int x, int y, int color) const;
 
 	// キャラに戦わせる
 	void battle();
@@ -57,6 +61,11 @@ public:
 	void talk();
 
 private:
+	// キャラクターとオブジェクトの当たり判定
+	void atariCharacterAndObject(CharacterController* controller, std::vector<Object*>& objects);
+
+	// アニメーションの更新
+	void updateAnimation();
 
 	// ＨＰ０のキャラ削除
 	void cleanCharacterController();

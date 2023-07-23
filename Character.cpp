@@ -171,6 +171,9 @@ Heart::Heart(int maxHp, int hp, int x, int y) :
 	m_boostHandle = new GraphHandle("picture/stick/boost.png", ex);
 	m_airBulletHandle = new GraphHandle("picture/stick/airBullet.png", ex);
 	m_airSlashHandle = new GraphHandle("picture/stick/airSlash.png", ex);
+	// 攻撃のエフェクト
+	m_bulletEffectHandles = new GraphHandles("picture/effect/オレンジ", 4, ex, 0.0, true);
+	m_slashEffectHandles = m_bulletEffectHandles;
 
 	// とりあえず立ち画像でスタート
 	switchStand();
@@ -193,6 +196,7 @@ Heart::~Heart() {
 	delete m_boostHandle;
 	delete m_airBulletHandle;
 	delete m_airSlashHandle;
+	delete m_bulletEffectHandles;
 }
 
 // 走り画像をセット
@@ -208,7 +212,7 @@ void Heart::switchPreJump(int cnt) {
 
 // 射撃攻撃をする(キャラごとに違う)
 Object* Heart::bulletAttack(int gx, int gy) {
-	BulletObject* attackObject = new BulletObject(m_x + m_wide / 2, m_y + m_height / 2, WHITE, gx, gy, m_attackInfo);
+	BulletObject* attackObject = new BulletObject(m_x + m_wide / 2, m_y + m_height / 2, WHITE, gx, gy, m_attackInfo, m_bulletEffectHandles);
 	// 自滅防止
 	attackObject->setCharacterId(m_id);
 	return attackObject;
@@ -237,17 +241,17 @@ Object* Heart::slashAttack(bool leftDirection, int cnt) {
 	if (cnt == m_attackInfo->slashCountSum()) {
 		index = 0;
 		attackObject = new SlashObject(centerX, centerY - height, x2, centerY + height,
-			m_slashHandles->getGraphHandle(index), slashCountSum, m_attackInfo);
+			m_slashHandles->getGraphHandle(index), slashCountSum, m_attackInfo, m_slashEffectHandles);
 	}
 	else if (cnt == m_attackInfo->slashCountSum() * 2 / 3) {
 		index = 1;
 		attackObject = new SlashObject(centerX, centerY - height, x2, centerY + height,
-			m_slashHandles->getGraphHandle(index), slashCountSum, m_attackInfo);
+			m_slashHandles->getGraphHandle(index), slashCountSum, m_attackInfo, m_slashEffectHandles);
 	}
 	else if (cnt == m_attackInfo->slashCountSum() / 3) {
 		index = 2;
 		attackObject = new SlashObject(centerX, centerY - height, x2, centerY + height,
-			m_slashHandles->getGraphHandle(index), slashCountSum, m_attackInfo);
+			m_slashHandles->getGraphHandle(index), slashCountSum, m_attackInfo, m_slashEffectHandles);
 	}
 	// 自滅防止
 	if (attackObject != NULL) {

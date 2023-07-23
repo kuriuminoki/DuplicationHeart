@@ -75,6 +75,11 @@ void CharacterAction::setCharacterLeftDirection(bool leftDirection) {
 	m_character->setLeftDirection(leftDirection);
 }
 
+bool CharacterAction::ableDamage() const {
+	if (m_state == CHARACTER_STATE::DAMAGE) { return false; }
+	return true;
+}
+
 
 /*
 * ãÛÇîÚÇŒÇ»Ç¢ïÅí ÇÃñ_êlä‘
@@ -409,8 +414,6 @@ Object* StickAction::slashAttack(int gx, int gy) {
 }
 
 void StickAction::damage(int vx, int vy, int damageValue, int soundHandle) {
-	if (m_state == CHARACTER_STATE::DAMAGE) { return; }
-
 	m_state = CHARACTER_STATE::DAMAGE;
 	m_vx += vx;
 	m_vy += vy;
