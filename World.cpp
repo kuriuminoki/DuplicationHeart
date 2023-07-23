@@ -8,6 +8,7 @@
 #include "Sound.h"
 #include "Define.h"
 #include "DxLib.h"
+#include <algorithm>
 
 
 using namespace std;
@@ -106,7 +107,7 @@ World::World(int areaNum, SoundPlayer* soundPlayer) {
 	m_characterControllers.push_back(heartController);
 
 	// CPUをロード
-	for (int i = 0; i < 1; i++) {
+	for (int i = 0; i < 3; i++) {
 		// CPUをロード
 		Heart* cp = new Heart(100, 100, 2000 + 100*i, 0, 1);
 		m_characters.push_back(cp);
@@ -114,9 +115,9 @@ World::World(int areaNum, SoundPlayer* soundPlayer) {
 		NormalController* cpController = new NormalController(new NormalAI(), new StickAction(cp));
 		m_characterControllers.push_back(cpController);
 	}
-	for (int i = 0; i < 0; i++) {
+	for (int i = 0; i < 2; i++) {
 		// CPUをロード
-		Heart* cp = new Heart(100, 100, 2000 + 100 * i, 0, 0);
+		Heart* cp = new Heart(100, 100, 200 + 100 * i, 0, 0);
 		m_characters.push_back(cp);
 		//CPUのコントローラ作成 BrainとActionの削除はControllerがやる。
 		NormalController* cpController = new NormalController(new NormalAI(), new StickAction(cp));
@@ -224,6 +225,8 @@ void World::updateCharacter() {
 void World::updateCamera() {
 	size_t size = m_characters.size();
 	int x = 0, y = 0;
+	// キャラとカメラの距離の最大
+	int max_dx = 0, max_dy = 0;
 	for (unsigned int i = 0; i < size; i++) {
 		// 今フォーカスしているキャラの座標に合わせる
 		if (m_focusId == m_characters[i]->getId()) {
@@ -231,9 +234,27 @@ void World::updateCamera() {
 			y = m_characters[i]->getCenterY();
 			m_camera->setGPoint(x, y);
 		}
+		else if (m_characters[i]->getHp() > 0) {
+			max_dx = max(max_dx, abs(m_camera->getX() - m_characters[i]->getX()) + m_characters[i]->getWide());
+			max_dy = max(max_dy, abs(m_camera->getY() - m_characters[i]->getY()) + m_characters[i]->getHeight());
+		}
 	}
 	// カメラはゆっくり動く
 	m_camera->move();
+
+	// カメラの拡大・縮小
+	// 大きく変更する必要がある場合ほど、大きく拡大率を変更する。
+	double nowEx = m_camera->getEx();
+	int nowWide = (int)(GAME_WIDE / 2 / nowEx);
+	int nowHeight = (int)(GAME_HEIGHT / 2 / nowEx);
+	if (nowEx > 0.5 && (max_dx > nowWide || max_dy > nowHeight)) {
+		double d = double(max(max_dx - nowWide, max_dy - nowHeight));
+		m_camera->setEx(nowEx - min(0.05, d / 200000));
+	}
+	else if (nowEx < 1.5 && (max_dx < nowWide && max_dy < nowHeight)) {
+		double d = double(max(nowWide - max_dx, nowHeight - max_dy));
+		m_camera->setEx(nowEx + min(0.05, d / 200000));
+	}
 }
 
 // アニメーションの更新
