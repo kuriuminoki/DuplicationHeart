@@ -110,12 +110,16 @@ void NormalAI::moveOrder(int& right, int& left, int& up, int& down) {
 
 	// 目標地点設定
 	if (m_gx > x - GX_ERROR && m_gx < x + GX_ERROR && GetRand(99) == 0) {
-		// targetについていく
-		m_gx = m_target->getCenterX() + GetRand(2000) - 1000;
-		// ランダムに設定
-		//m_gx = GetRand(200) + 100;
-		//if (GetRand(99) < GX_ERROR) { m_gx *= -1; }
-		//m_gx += x;
+		if (m_target != NULL) {
+			// targetについていく
+			m_gx = m_target->getCenterX() + GetRand(2000) - 1000;
+		}
+		else {
+			// ランダムに設定
+			m_gx = GetRand(200) + 100;
+			if (GetRand(99) < GX_ERROR) { m_gx *= -1; }
+			m_gx += x;
+		}
 	}
 
 	// 目標に向かって走る
