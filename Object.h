@@ -1,6 +1,7 @@
 #ifndef OBJECT_H_INCLUDED
 #define OBJECT_H_INCLUDED
 
+class Character;
 class CharacterController;
 class AttackInfo;
 class GraphHandle;
@@ -65,7 +66,7 @@ public:
 	virtual void action() = 0;
 
 	// アニメーション作成
-	Animation* createAnimation();
+	virtual Animation* createAnimation(const Character* character) = 0;
 };
 
 
@@ -105,6 +106,9 @@ public:
 
 	// 動くオブジェクト用 毎フレーム行う
 	void action();
+
+	// アニメーション作成
+	Animation* createAnimation(const Character* character) { return nullptr; }
 };
 
 /*
@@ -145,6 +149,9 @@ public:
 
 	// 動くオブジェクト用 毎フレーム行う
 	void action();
+
+	// アニメーション作成
+	Animation* createAnimation(const Character* character) { return nullptr; }
 };
 
 /*
@@ -211,6 +218,9 @@ public:
 
 	// 動くオブジェクト用 毎フレーム行う
 	void action();
+
+	// アニメーション作成
+	Animation* createAnimation(const Character* character);
 };
 
 
@@ -273,6 +283,9 @@ public:
 
 	// 動くオブジェクト用 毎フレーム行う
 	void action();
+
+	// アニメーション作成
+	Animation* createAnimation(const Character* character);
 };
 
 #endif

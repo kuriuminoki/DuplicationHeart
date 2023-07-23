@@ -133,7 +133,7 @@ vector<const CharacterAction*> World::getActions() const {
 	return actions;
 }
 
-// Objectのキューを返す
+// Objectのvectorを返す
 vector<const Object*> World::getObjects() const {
 
 	vector<const Object*> allObjects;
@@ -141,6 +141,15 @@ vector<const Object*> World::getObjects() const {
 	allObjects.insert(allObjects.end(), m_attackObjects.begin(), m_attackObjects.end());
 
 	return allObjects;
+}
+
+// Animationのvectorを返す
+vector<const Animation*> World::getAnimations() const {
+
+	vector<const Animation*> allAnimations;
+	allAnimations.insert(allAnimations.end(), m_animations.begin(), m_animations.end());
+
+	return allAnimations;
 }
 
 // 戦わせる
@@ -231,7 +240,7 @@ void World::atariCharacterAndObject(CharacterController* controller, vector<Obje
 		// 当たり判定をここで行う
 		if (objects[i]->atari(controller)) {
 			// 当たった場合 エフェクト作成
-			m_animations.push_back(objects[i]->createAnimation());
+			m_animations.push_back(objects[i]->createAnimation(controller->getAction()->getCharacter()));
 		}
 		// deleteFlagがtrueなら削除する
 		if (objects[i]->getDeleteFlag()) {

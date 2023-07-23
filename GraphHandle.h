@@ -58,7 +58,7 @@ public:
 	~GraphHandles();
 
 	// ƒQƒbƒ^
-	inline GraphHandle* getGraphHandle(int i) { return m_handles[i]; }
+	inline GraphHandle* getGraphHandle(int i) const { return m_handles[i]; }
 	inline int getHandle(int i) { return m_handles[i]->getHandle(); }
 	inline int getSize() { return m_handleSum; }
 

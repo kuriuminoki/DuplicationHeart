@@ -29,13 +29,15 @@ public:
 	~Animation();
 
 	// ゲッタ
+	inline int getX() const { return m_x; }
+	inline int getY() const { return m_y; }
 	inline bool getFinishFlag() const { return m_finishFlag; }
 
 	// カウント
 	void count();
 
 	// 描画用
-	GraphHandle* getHandle();
+	GraphHandle* getHandle() const;
 };
 
 #endif
