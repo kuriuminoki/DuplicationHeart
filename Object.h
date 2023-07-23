@@ -229,6 +229,12 @@ private:
 	// 全体フレーム
 	int m_slashCountSum;
 
+	// 斬撃の吹っ飛び(X方向の初速)
+	int m_slashImpactX;
+
+	// 斬撃の吹っ飛び(Y方向の初速)
+	int m_slashImpactY;
+
 public:
 	// 座標、画像、生存時間、AttackInfo
 	SlashObject(int x1, int y1, int x2, int y2, GraphHandle* handle, int slashCountSum, AttackInfo* attackInfo);

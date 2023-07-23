@@ -22,6 +22,8 @@ CharacterAction::CharacterAction(Character* character) {
 	m_moveLeft = false;
 	m_moveUp = false;
 	m_moveDown = false;
+	m_grandLeftSlope = false;
+	m_grandRightSlope = false;
 	m_vx = 0;
 	m_vy = 0;
 

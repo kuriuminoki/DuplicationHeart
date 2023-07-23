@@ -494,6 +494,12 @@ SlashObject::SlashObject(int x1, int y1, int x2, int y2, GraphHandle* handle, in
 
 	// カウント
 	m_cnt = 0;
+
+	// 吹っ飛び(X方向の初速)
+	m_slashImpactX = attackInfo->slashImpactX();
+
+	// 吹っ飛び(Y方向の初速)
+	m_slashImpactY = attackInfo->slashImpactY();
 }
 
 // 大きさを指定しない場合。画像からサイズ取得。生存時間、AttackInfo
@@ -523,10 +529,10 @@ void SlashObject::atari(CharacterController* characterController) {
 		// 貫通弾じゃないなら消滅
 		 // m_deleteFlag = true;
 		if (characterX1 + characterX2 < m_x1 + m_x2) {
-			characterController->damage(-m_damage * 3, -m_damage * 3, m_damage, -1);
+			characterController->damage(-m_slashImpactX, -m_slashImpactY, m_damage, -1);
 		}
 		else {
-			characterController->damage(m_damage * 3, -m_damage * 3, m_damage, -1);
+			characterController->damage(m_slashImpactX, -m_slashImpactY, m_damage, -1);
 		}
 	}
 }

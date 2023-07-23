@@ -2,6 +2,7 @@
 #include "Camera.h"
 #include "Object.h"
 #include "GraphHandle.h"
+#include "DxLib.h"
 
 
 ObjectDrawer::ObjectDrawer(const Object* object) {
@@ -27,14 +28,15 @@ void ObjectDrawer::drawObject(const Camera* const camera) {
 		m_object->drawObject(x1, y1, x2, y2);
 	}
 	else {
-		// 画像の中心を座標とする
-		x1 = (x1 + x2) / 2;
-		y1 = (y1 + y2) / 2;
+		//// 画像の中心を座標とする
+		//x1 = (x1 + x2) / 2;
+		//y1 = (y1 + y2) / 2;
 		// 画像固有の拡大率取得
-		ex = graphHandle->getEx();
+		// ex = graphHandle->getEx();
 		// カメラで調整
 		camera->setCamera(&x1, &y1, &ex);
+		camera->setCamera(&x2, &y2, &ex);
 		// 描画
-		graphHandle->draw(x1, y1, ex);
+		graphHandle->extendDraw(x1, y1, x2, y2);
 	}	
 }
