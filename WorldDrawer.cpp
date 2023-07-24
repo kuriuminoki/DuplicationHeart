@@ -5,9 +5,41 @@
 #include "CharacterAction.h"
 #include "ObjectDrawer.h"
 #include "AnimationDrawer.h"
+#include "DxLib.h"
 #include <queue>
 
 using namespace std;
+
+
+TargetDrawer::TargetDrawer() {
+	m_ex = TARGET_EX;
+	m_targetHandle1 = LoadGraph("picture/battleMaterial/mouseTarget1.png");
+	m_targetAngle1 = 0.0;
+	m_targetHandle2 = LoadGraph("picture/battleMaterial/mouseTarget2.png");
+	m_targetAngle2 = 0.0;
+	m_targetHandle3 = LoadGraph("picture/battleMaterial/mouseTarget3.png");
+	m_targetAngle3 = 0.0;
+}
+
+TargetDrawer::~TargetDrawer() {
+	DeleteGraph(m_targetHandle1);
+	DeleteGraph(m_targetHandle2);
+	DeleteGraph(m_targetHandle3);
+}
+
+void TargetDrawer::draw() {
+	int mouseX, mouseY;
+	GetMousePoint(&mouseX, &mouseY);
+	DrawRotaGraph(mouseX, mouseY, m_ex, m_targetAngle1, m_targetHandle1, TRUE);
+	DrawRotaGraph(mouseX, mouseY, m_ex, m_targetAngle2, m_targetHandle2, TRUE);
+	DrawRotaGraph(mouseX, mouseY, m_ex, m_targetAngle3, m_targetHandle3, TRUE);
+	anime();
+}
+
+void TargetDrawer::anime() {
+	m_targetAngle2 += PI / 90;
+	m_targetAngle3 -= PI / 180;
+}
 
 
 WorldDrawer::WorldDrawer(const World* world) {
@@ -60,4 +92,7 @@ void WorldDrawer::draw() {
 		// ƒJƒƒ‰‚ðŽg‚Á‚ÄƒLƒƒƒ‰‚ð•`‰æ
 		m_animationDrawer->drawAnimation(camera);
 	}
+
+	m_targetDrawer.setEx(camera->getEx());
+	m_targetDrawer.draw();
 }
