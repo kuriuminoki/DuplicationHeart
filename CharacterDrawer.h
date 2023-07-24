@@ -11,7 +11,7 @@ private:
 	const CharacterAction* m_characterAction;
 
 	const int HP_BAR_WIDE = 200;
-	const int HP_BAR_HEIGHT = 50;
+	const int HP_BAR_HEIGHT = 20;
 	static int HP_COLOR;
 	static int DAMAGE_COLOR;
 
