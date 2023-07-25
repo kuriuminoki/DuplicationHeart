@@ -5,7 +5,10 @@
 #include "DxLib.h"
 
 
+// フルスクリーンならFALSE
 static int WINDOW = TRUE;
+// マウスを表示するならFALSE
+static int MOUSE_DISP = FALSE;
 
 ///////fpsの調整///////////////
 static int mStartTime;
@@ -50,7 +53,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 	//SetAlwaysRunFlag(TRUE);//画面を常にアクティブ
 	SetMainWindowText("複製のHeart");
 	////マウス関連////
-	SetMouseDispFlag(TRUE);//マウス表示
+	SetMouseDispFlag(MOUSE_DISP);//マウス表示
 	//SetMousePoint(320, 240);//マウスカーソルの初期位置
 	//SetDrawMode(DX_DRAWMODE_BILINEAR);
 	SetDrawMode(DX_DRAWMODE_NEAREST);

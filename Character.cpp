@@ -189,7 +189,7 @@ void Character::switchDamage(int cnt) { m_graphHandle->switchDamage(); }
 // ブースト画像をセット
 void Character::switchBoost(int cnt) { m_graphHandle->switchBoost(); }
 // 空中射撃画像をセット
-void Character::switchAirBullet(int cnt) { m_graphHandle->switchBullet(); }
+void Character::switchAirBullet(int cnt) { m_graphHandle->switchAirBullet(); }
 // 空中斬撃画像をセット
 void Character::switchAirSlash(int cnt) { m_graphHandle->switchAirSlash(); }
 
