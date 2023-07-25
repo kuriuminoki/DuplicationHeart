@@ -1,4 +1,5 @@
 #include "GraphHandle.h"
+#include "CsvReader.h"
 #include "DxLib.h"
 #include <string>
 #include <sstream>
@@ -44,10 +45,17 @@ void GraphHandle::extendDraw(int x1, int y1, int x2, int y2) const {
 GraphHandles::GraphHandles(const char* filePath, int handleSum, double ex, double angle, bool trans, bool reverseX, bool reverseY) {
 	m_handleSum = handleSum;
 	m_handles = new GraphHandle* [m_handleSum];
-	for (int i = 0; i < m_handleSum; i++) {
+	if (m_handleSum == 1) {
 		ostringstream oss;
-		oss << filePath << i + 1 << ".png";
-		m_handles[i] = new GraphHandle(oss.str().c_str(), ex, angle, trans, reverseX, reverseY);
+		oss << filePath << ".png";
+		m_handles[0] = new GraphHandle(oss.str().c_str(), ex, angle, trans, reverseX, reverseY);
+	}
+	else {
+		for (int i = 0; i < m_handleSum; i++) {
+			ostringstream oss;
+			oss << filePath << i + 1 << ".png";
+			m_handles[i] = new GraphHandle(oss.str().c_str(), ex, angle, trans, reverseX, reverseY);
+		}
 	}
 }
 
@@ -89,4 +97,139 @@ void GraphHandles::setReverseY(bool reverse) {
 // 描画する
 void GraphHandles::draw(int x, int y, int index) {
 	m_handles[index]->draw(x, y);
+}
+
+
+/*
+* キャラの画像
+*/
+// 画像ロード用
+void loadCharacterGraph(const char* characterName, GraphHandles*& handles, string stateName, map<string, string>& data, double ex) {
+	int n = stoi(data[stateName]);
+	if (n > 0) {
+		ostringstream oss;
+		oss << "picture/stick/" << characterName << "/" << stateName;
+		handles = new GraphHandles(oss.str().c_str(), n, ex, 0.0, true);
+	}
+	else {
+		handles = NULL;
+	}
+}
+// デフォルト値で初期化
+CharacterGraphHandle::CharacterGraphHandle() :
+	CharacterGraphHandle("test", 1.0)
+{
+
+}
+// csvファイルを読み込み、キャラ名で検索しパラメータ取得
+CharacterGraphHandle::CharacterGraphHandle(const char* characterName, double drawEx) {	
+	m_ex = drawEx;
+
+	CsvReader reader("data/characterGraph.csv");
+
+	// キャラ名でデータを検索
+	map<string, string> data = reader.findOne("name", characterName);
+
+	// ロード
+	loadCharacterGraph(characterName, m_standHandles, "stand", data, m_ex);
+	loadCharacterGraph(characterName, m_slashHandles, "slashEffect", data, m_ex);
+	loadCharacterGraph(characterName, m_squatHandles, "squat", data, m_ex);
+	loadCharacterGraph(characterName, m_standBulletHandles, "standBullet", data, m_ex);
+	loadCharacterGraph(characterName, m_standSlashHandles, "standSlash", data, m_ex);
+	loadCharacterGraph(characterName, m_runHandles, "run", data, m_ex);
+	loadCharacterGraph(characterName, m_landHandles, "land", data, m_ex);
+	loadCharacterGraph(characterName, m_jumpHandles, "jump", data, m_ex);
+	loadCharacterGraph(characterName, m_downHandles, "down", data, m_ex);
+	loadCharacterGraph(characterName, m_preJumpHandles, "preJump", data, m_ex);
+	loadCharacterGraph(characterName, m_damageHandles, "damage", data, m_ex);
+	loadCharacterGraph(characterName, m_boostHandles, "boost", data, m_ex);
+	loadCharacterGraph(characterName, m_airBulletHandles, "airBullet", data, m_ex);
+	loadCharacterGraph(characterName, m_airSlashHandles, "airSlash", data, m_ex);
+
+	switchStand();
+}
+// 画像を削除
+CharacterGraphHandle::~CharacterGraphHandle() {
+	delete m_standHandles;
+	delete m_slashHandles;
+	delete m_squatHandles;
+	delete m_standBulletHandles;
+	delete m_standSlashHandles;
+	delete m_runHandles;
+	delete m_landHandles;
+	delete m_jumpHandles;
+	delete m_downHandles;
+	delete m_preJumpHandles;
+	delete m_damageHandles;
+	delete m_boostHandles;
+	delete m_airBulletHandles;
+	delete m_airSlashHandles;
+}
+
+// 画像のサイズをセット
+void CharacterGraphHandle::setGraphSize() {
+	GetGraphSize(m_graphHandle->getHandle(), &m_wide, &m_height);
+	// 画像の拡大率も考慮してサイズを決定
+	m_wide = (int)(m_wide * m_ex);
+	m_height = (int)(m_height * m_ex);
+}
+
+// 画像をセットする 存在しないならそのまま
+void CharacterGraphHandle::setGraph(GraphHandles* graphHandles, int index) {
+	if (index >= graphHandles->getSize() || index < 0) { return; }
+	m_graphHandle = graphHandles == NULL ? m_graphHandle : graphHandles->getGraphHandle(index);
+	setGraphSize();
+}
+
+// 立ち画像をセット
+void CharacterGraphHandle::switchStand(int index){
+	setGraph(m_standHandles, index);
+}
+// 立ち射撃画像をセット
+void CharacterGraphHandle::switchBullet(int index){
+	setGraph(m_standBulletHandles, index);
+}
+// 立ち斬撃画像をセット
+void CharacterGraphHandle::switchSlash(int index){
+	setGraph(m_standSlashHandles, index);
+}
+// しゃがみ画像をセット
+void CharacterGraphHandle::switchSquat(int index){
+	setGraph(m_squatHandles, index);
+}
+// 走り画像をセット
+void CharacterGraphHandle::switchRun(int index){
+	setGraph(m_runHandles, index);
+}
+// 着地画像をセット
+void CharacterGraphHandle::switchLand(int index){
+	setGraph(m_landHandles, index);
+}
+// 上昇画像をセット
+void CharacterGraphHandle::switchJump(int index){
+	setGraph(m_jumpHandles, index);
+}
+// 降下画像をセット
+void CharacterGraphHandle::switchDown(int index){
+	setGraph(m_preJumpHandles, index);
+}
+// ジャンプ前画像をセット
+void CharacterGraphHandle::switchPreJump(int index){
+	setGraph(m_preJumpHandles, index);
+}
+// ダメージ画像をセット
+void CharacterGraphHandle::switchDamage(int index){
+	setGraph(m_damageHandles, index);
+}
+// ブースト画像をセット
+void CharacterGraphHandle::switchBoost(int index){
+	setGraph(m_boostHandles, index);
+}
+// 空中射撃画像をセット
+void CharacterGraphHandle::switchAirBullet(int index){
+	setGraph(m_airBulletHandles, index);
+}
+// 空中斬撃画像をセット
+void CharacterGraphHandle::switchAirSlash(int index){
+	setGraph(m_airSlashHandles, index);
 }
