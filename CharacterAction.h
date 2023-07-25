@@ -20,12 +20,12 @@ enum class CHARACTER_STATE {
 * Controllerが使用する。それ以外のインスタンスから使われることはない。
 */
 class CharacterAction {
+private:
+	// キャラの状態
+	CHARACTER_STATE m_state;
 protected:
 	// 動かすキャラクター
 	Character* m_character;
-
-	// キャラの状態
-	CHARACTER_STATE m_state;
 
 	// キャラが地面にいる
 	bool m_grand;
@@ -94,6 +94,7 @@ public:
 
 	// ゲッタとセッタ
 	inline CHARACTER_STATE getState() const { return m_state; }
+	void setState(CHARACTER_STATE state);
 	inline bool getGrand() const { return m_grand; }
 	void setGrand(bool grand);
 	inline bool getGrandRightSlope() const { return m_grandRightSlope; }
@@ -113,6 +114,9 @@ public:
 	void setDownLock(bool lock);
 	inline void setBoost() { m_boostCnt = BOOST_TIME; }
 	inline const Character* getCharacter() const { return m_character; }
+
+	// 今ダメージを受けていて動けない
+	inline bool damageFlag() const { return m_state == CHARACTER_STATE::DAMAGE; }
 
 	// squat==trueならしゃがむ、falseなら立つ
 	void setSquat(bool squat);
