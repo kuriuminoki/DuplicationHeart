@@ -28,21 +28,21 @@ Object::Object(int x1, int y1, int x2, int y2) {
 	m_deleteFlag = false;
 	m_ableDelete = false;
 
-	m_effectHandles = NULL;
-	m_soundHandle = -1;
+	m_effectHandles_p = NULL;
+	m_soundHandle_p = -1;
 }
 
 // アニメーション作成
 Animation* BulletObject::createAnimation(const Character* character) {
-	if (m_effectHandles == NULL) {
+	if (m_effectHandles_p == NULL) {
 		return NULL;
 	}
-	return new Animation((m_x1 + m_x2) / 2, (m_y1 + m_y2) / 2, 3, m_effectHandles);
+	return new Animation((m_x1 + m_x2) / 2, (m_y1 + m_y2) / 2, 3, m_effectHandles_p);
 }
 
 // アニメーション作成
 Animation* SlashObject::createAnimation(const Character* character) {
-	if (m_effectHandles == NULL) {
+	if (m_effectHandles_p == NULL) {
 		return NULL;
 	}
 	// キャラとの座標の平均をとる
@@ -50,7 +50,7 @@ Animation* SlashObject::createAnimation(const Character* character) {
 	int y = (m_y1 + m_y2) / 2;
 	x = (x + character->getCenterX()) / 2;
 	y = (y + character->getCenterY()) / 2;
-	return new Animation(x, y, 3, m_effectHandles);
+	return new Animation(x, y, 3, m_effectHandles_p);
 }
 
 /*
@@ -463,10 +463,10 @@ BulletObject::BulletObject(int x, int y, int color, int gx, int gy, AttackInfo* 
 	m_vy = (int)(m_v * std::sin(r));
 
 	// エフェクトの画像
-	m_effectHandles = attackInfo->bulletEffectHandle();
+	m_effectHandles_p = attackInfo->bulletEffectHandle();
 
 	// サウンド
-	m_soundHandle = attackInfo->bulletSoundeHandle();
+	m_soundHandle_p = attackInfo->bulletSoundeHandle();
 }
 
 // キャラとの当たり判定
@@ -542,10 +542,10 @@ SlashObject::SlashObject(int x1, int y1, int x2, int y2, GraphHandle* handle, in
 
 
 	// エフェクトの画像
-	m_effectHandles = attackInfo->slashEffectHandle();
+	m_effectHandles_p = attackInfo->slashEffectHandle();
 
 	// サウンド
-	m_soundHandle = attackInfo->slashSoundHandle();
+	m_soundHandle_p = attackInfo->slashSoundHandle();
 }
 
 // 大きさを指定しない場合。画像からサイズ取得。生存時間、AttackInfo

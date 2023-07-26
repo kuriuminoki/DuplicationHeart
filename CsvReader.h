@@ -31,7 +31,7 @@ public:
 	/*
 	* 全データを返す
 	*/
-	std::vector<std::map<std::string, std::string> > getData();
+	std::vector<std::map<std::string, std::string> > getData() const;
 };
 
 #endif

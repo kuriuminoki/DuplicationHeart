@@ -94,20 +94,16 @@ Character::Character(int maxHp, int hp, int x, int y, int groupId) {
 	m_id = characterId;
 
 	m_groupId = groupId;
-
 	m_maxHp = maxHp;
 	m_hp = hp;
 	m_x = x;
 	m_y = y;
 
-	m_wide = 0;
-	m_height = 0;
-	m_graphHandle = NULL;
+	m_leftDirection = true;
 
 	m_characterInfo = NULL;
 	m_attackInfo = NULL;
-
-	m_leftDirection = true;
+	m_graphHandle = NULL;
 }
 
 Character::~Character() {
@@ -119,29 +115,38 @@ Character::~Character() {
 	if (m_attackInfo != NULL) {
 		delete m_attackInfo;
 	}
+	// GraphHandleの削除
+	if (m_graphHandle != NULL) {
+		delete m_graphHandle;
+	}
 }
 
-void Character::setHandle(GraphHandle* handle) {
-
-	m_graphHandle = handle;
-
-	// 画像の縦幅と横幅を取得する。
-	GetGraphSize(m_graphHandle->getHandle(), &m_wide, &m_height);
-
-	// 画像の拡大率も考慮してサイズを決定
-	m_wide = (int)(m_wide * m_characterInfo->handleEx());
-	m_height = (int)(m_height * m_characterInfo->handleEx());
+const GraphHandle* Character::getGraphHandle() const {
+	return m_graphHandle->getHandle();
 }
 
-void Character::getHandleSize(int& wide, int& height) {
+void Character::getHandleSize(int& wide, int& height) const {
 	// 今セットしている画像の縦幅と横幅を取得する。
-	wide = m_wide;
-	height = m_height;
+	wide = getWide();
+	height = getHeight();
+}
+
+int Character::getCenterX() const { 
+	return m_x + (getWide() / 2);
+}
+int Character::getCenterY() const { 
+	return m_y + (getHeight() / 2);
+}
+int Character::getWide() const {
+	return m_graphHandle->getWide();
+}
+int Character::getHeight() const {
+	return m_graphHandle->getHeight();
 }
 
 void Character::setLeftDirection(bool leftDirection) { 
 	m_leftDirection = leftDirection;
-	m_graphHandle->setReverseX(m_leftDirection);
+	m_graphHandle->getHandle()->setReverseX(m_leftDirection);
 }
 
 // HP減少
@@ -163,6 +168,33 @@ void Character::moveDown(int d) {
 	m_y += d;
 }
 
+// 立ち画像をセット
+void Character::switchStand(int cnt) { m_graphHandle->switchStand(); }
+// 立ち射撃画像をセット
+void Character::switchBullet(int cnt) { m_graphHandle->switchBullet(); }
+// 立ち斬撃画像をセット
+void Character::switchSlash(int cnt) { m_graphHandle->switchSlash(); }
+// しゃがみ画像をセット
+void Character::switchSquat(int cnt) { m_graphHandle->switchSquat(); }
+// 走り画像をセット
+void Character::switchRun(int cnt) { m_graphHandle->switchRun(); }
+// 着地画像をセット
+void Character::switchLand(int cnt) { m_graphHandle->switchLand(); }
+// 上昇画像をセット
+void Character::switchJump(int cnt) { m_graphHandle->switchJump(); }
+// 降下画像をセット
+void Character::switchDown(int cnt) { m_graphHandle->switchDown(); }
+// ジャンプ前画像をセット
+void Character::switchPreJump(int cnt) { m_graphHandle->switchPreJump(); }
+// ダメージ画像をセット
+void Character::switchDamage(int cnt) { m_graphHandle->switchDamage(); }
+// ブースト画像をセット
+void Character::switchBoost(int cnt) { m_graphHandle->switchBoost(); }
+// 空中射撃画像をセット
+void Character::switchAirBullet(int cnt) { m_graphHandle->switchAirBullet(); }
+// 空中斬撃画像をセット
+void Character::switchAirSlash(int cnt) { m_graphHandle->switchAirSlash(); }
+
 
 /*
 * ハート
@@ -175,21 +207,7 @@ Heart::Heart(int maxHp, int hp, int x, int y, int groupId) :
 	m_attackInfo = new AttackInfo(NAME, m_characterInfo->handleEx());
 
 	// 各画像のロード
-	double ex = m_characterInfo->handleEx();
-	m_standHandle = new GraphHandle("picture/stick/stand.png", ex);
-	m_slashHandles = new GraphHandles("picture/stick/slashEffect", 3, ex, 0.0, true);
-	m_squatHandle = new GraphHandle("picture/stick/squat.png", ex);
-	m_standBulletHandle = new GraphHandle("picture/stick/bullet.png", ex);
-	m_standSlashHandle = new GraphHandle("picture/stick/slash.png", ex);
-	m_runHandles = new GraphHandles("picture/stick/run", 6, ex);
-	m_landHandle = new GraphHandle("picture/stick/land.png", ex);
-	m_jumpHandle = new GraphHandle("picture/stick/jump.png", ex);
-	m_downHandle = new GraphHandle("picture/stick/down.png", ex);
-	m_preJumpHandles = new GraphHandles("picture/stick/preJump", 2, ex);
-	m_damageHandle = new GraphHandle("picture/stick/damage.png", ex);
-	m_boostHandle = new GraphHandle("picture/stick/boost.png", ex);
-	m_airBulletHandle = new GraphHandle("picture/stick/airBullet.png", ex);
-	m_airSlashHandle = new GraphHandle("picture/stick/airSlash.png", ex);
+	m_graphHandle = new CharacterGraphHandle(NAME, m_characterInfo->handleEx());
 
 	// とりあえず立ち画像でスタート
 	switchStand();
@@ -197,40 +215,23 @@ Heart::Heart(int maxHp, int hp, int x, int y, int groupId) :
 
 // デストラクタ
 Heart::~Heart() {
-	// Infoを削除
-	delete m_characterInfo;
-	delete m_attackInfo;
-	// 画像を削除
-	delete m_standHandle;
-	delete m_slashHandles;
-	delete m_squatHandle;
-	delete m_standBulletHandle;
-	delete m_standSlashHandle;
-	delete m_runHandles;
-	delete m_landHandle;
-	delete m_jumpHandle;
-	delete m_downHandle;
-	delete m_preJumpHandles;
-	delete m_damageHandle;
-	delete m_boostHandle;
-	delete m_airBulletHandle;
-	delete m_airSlashHandle;
+
 }
 
 // 走り画像をセット
 void Heart::switchRun(int cnt) { 
-	int index = (cnt / RUN_ANIME_SPEED) % (m_runHandles->getSize());
-	setHandle(m_runHandles->getGraphHandle(index));
+	int index = (cnt / RUN_ANIME_SPEED) % (m_graphHandle->getRunHandle()->getSize());
+	m_graphHandle->switchRun(index);
 }
 // ジャンプ前画像をセット
 void Heart::switchPreJump(int cnt) { 
-	int index = (cnt / RUN_PREJUMP_SPEED) % (m_preJumpHandles->getSize());
-	setHandle(m_preJumpHandles->getGraphHandle(index));
+	int index = (cnt / RUN_PREJUMP_SPEED) % (m_graphHandle->getPreJumpHandle()->getSize());
+	m_graphHandle->switchPreJump(index);
 }
 
 // 射撃攻撃をする(キャラごとに違う)
 Object* Heart::bulletAttack(int gx, int gy) {
-	BulletObject* attackObject = new BulletObject(m_x + m_wide / 2, m_y + m_height / 2, WHITE, gx, gy, m_attackInfo);
+	BulletObject* attackObject = new BulletObject(getCenterX(), getCenterY(), WHITE, gx, gy, m_attackInfo);
 	// 自滅防止
 	attackObject->setCharacterId(m_id);
 	// チームキル防止
@@ -241,9 +242,9 @@ Object* Heart::bulletAttack(int gx, int gy) {
 // 斬撃攻撃をする(キャラごとに違う)
 Object* Heart::slashAttack(bool leftDirection, int cnt) {
 	// 攻撃範囲を決定
-	int centerX = m_x + m_wide / 2;
+	int centerX = getCenterX();
 	int height = m_attackInfo->slashLenY() / 2;
-	int centerY = m_y + m_height / 2;
+	int centerY = getCenterY();
 	int x2 = centerX;
 	if (leftDirection) { // 左向きに攻撃
 		x2 -= m_attackInfo->slashLenX();
@@ -256,22 +257,24 @@ Object* Heart::slashAttack(bool leftDirection, int cnt) {
 	int index = 0;
 	int slashCountSum = m_attackInfo->slashCountSum() / 3 + 1;
 	SlashObject* attackObject = NULL;
-	m_slashHandles->setReverseX(m_leftDirection);
+	GraphHandles* slashHandles = m_graphHandle->getSlashHandle();
+	// 攻撃の方向
+	slashHandles->setReverseX(m_leftDirection);
 	// cntが攻撃のタイミングならオブジェクト生成
 	if (cnt == m_attackInfo->slashCountSum()) {
 		index = 0;
 		attackObject = new SlashObject(centerX, centerY - height, x2, centerY + height,
-			m_slashHandles->getGraphHandle(index), slashCountSum, m_attackInfo);
+			slashHandles->getGraphHandle(index), slashCountSum, m_attackInfo);
 	}
 	else if (cnt == m_attackInfo->slashCountSum() * 2 / 3) {
 		index = 1;
 		attackObject = new SlashObject(centerX, centerY - height, x2, centerY + height,
-			m_slashHandles->getGraphHandle(index), slashCountSum, m_attackInfo);
+			slashHandles->getGraphHandle(index), slashCountSum, m_attackInfo);
 	}
 	else if (cnt == m_attackInfo->slashCountSum() / 3) {
 		index = 2;
 		attackObject = new SlashObject(centerX, centerY - height, x2, centerY + height,
-			m_slashHandles->getGraphHandle(index), slashCountSum, m_attackInfo);
+			slashHandles->getGraphHandle(index), slashCountSum, m_attackInfo);
 	}
 	if (attackObject != NULL) {
 		// 自滅防止

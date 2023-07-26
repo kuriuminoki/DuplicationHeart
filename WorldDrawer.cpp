@@ -5,6 +5,7 @@
 #include "CharacterAction.h"
 #include "ObjectDrawer.h"
 #include "AnimationDrawer.h"
+#include "Define.h"
 #include "DxLib.h"
 #include <queue>
 
@@ -57,6 +58,9 @@ WorldDrawer::~WorldDrawer() {
 
 // •`‰æ‚·‚é
 void WorldDrawer::draw() {
+	// ”wŒi
+	DrawBox(0, 0, GAME_WIDE, GAME_HEIGHT, GetColor(100, 100, 100), TRUE);
+
 	// ƒJƒƒ‰‚ðŽæ“¾
 	const Camera* camera = m_world->getCamera();
 

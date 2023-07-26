@@ -68,7 +68,7 @@ void CharacterAction::debugAction(int x, int y, int color) const {
 	DrawFormatString(x, y + DRAW_FORMAT_STRING_SIZE, color, "state=%d, grand=%d(%d%d), (vx,vy)=(%d,%d), runCnt=%d", (int)m_state, m_grand, m_grandLeftSlope, m_grandRightSlope, m_vx, m_vy, m_runCnt);
 	DrawFormatString(x, y + DRAW_FORMAT_STRING_SIZE * 2, color, "制限中：(←, →, ↑, ↓)=(%d,%d,%d,%d)", m_leftLock, m_rightLock, m_upLock, m_downLock);
 	DrawFormatString(x, y + DRAW_FORMAT_STRING_SIZE * 3, color, "移動中：(←, →, ↑, ↓)=(%d,%d,%d,%d)", m_moveLeft, m_moveRight, m_moveUp, m_moveDown);
-	m_character->debug(x + DRAW_FORMAT_STRING_SIZE, y + DRAW_FORMAT_STRING_SIZE * 4, color);
+	m_character_p->debug(x + DRAW_FORMAT_STRING_SIZE, y + DRAW_FORMAT_STRING_SIZE * 4, color);
 }
 
 // StickActionのデバッグ
@@ -85,7 +85,7 @@ void StickAction::debug(int x, int y, int color) const {
 void Character::debugCharacter(int x, int y, int color) const {
 	DrawFormatString(x, y, color, "**Character**");
 	DrawFormatString(x, y + DRAW_FORMAT_STRING_SIZE, color, "HP=%d/%d, (x,y)=(%d,%d), left=%d, id=%d, groupId=%d", m_hp, m_maxHp, m_x, m_y, m_leftDirection, m_id, m_groupId);
-	DrawFormatString(x, y + DRAW_FORMAT_STRING_SIZE * 2, color, "(wide, height)=(%d,%d), handle=%d", m_wide, m_height, m_graphHandle->getHandle());
+	// DrawFormatString(x, y + DRAW_FORMAT_STRING_SIZE * 2, color, "(wide, height)=(%d,%d), handle=%d", m_wide, m_height, m_graphHandle->getHandle());
 	// 画像
 	// m_graphHandle->draw(GAME_WIDE - (m_wide / 2), (m_height / 2), m_graphHandle->getEx());
 	// DrawBox(m_x, m_y, m_x + m_wide, m_y + m_height, color, TRUE);
@@ -96,7 +96,7 @@ void Character::debugCharacter(int x, int y, int color) const {
 // Heartクラスのデバッグ
 void Heart::debug(int x, int y, int color) const {
 	DrawFormatString(x, y, color, "**Heart**");
-	DrawFormatString(x, y + DRAW_FORMAT_STRING_SIZE, color, "standHandle=%d", m_standHandle);
+	// DrawFormatString(x, y + DRAW_FORMAT_STRING_SIZE, color, "standHandle=%d", m_standHandle);
 	debugCharacter(x + DRAW_FORMAT_STRING_SIZE, y + DRAW_FORMAT_STRING_SIZE * 2, color);
 }
 

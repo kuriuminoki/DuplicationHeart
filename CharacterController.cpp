@@ -10,7 +10,7 @@
 
 // Brainクラス
 Brain::Brain() {
-	m_characterAction = NULL;
+	m_characterAction_p = NULL;
 }
 
 
@@ -18,7 +18,7 @@ Brain::Brain() {
 * キーボード
 */
 KeyboardBrain::KeyboardBrain(const Camera* camera) {
-	m_camera = camera;
+	m_camera_p = camera;
 }
 
 void KeyboardBrain::bulletTargetPoint(int& x, int& y) {
@@ -27,7 +27,7 @@ void KeyboardBrain::bulletTargetPoint(int& x, int& y) {
 	GetMousePoint(&mouseX, &mouseY);
 
 	// カメラで座標を補正
-	m_camera->getMouse(&mouseX, &mouseY);
+	m_camera_p->getMouse(&mouseX, &mouseY);
 
 	x = mouseX;
 	y = mouseY;
@@ -66,7 +66,7 @@ int KeyboardBrain::bulletOrder() {
 * Normal AI
 */
 NormalAI::NormalAI() {
-	m_target = NULL;
+	m_target_p = NULL;
 	m_gx = 0;
 	m_gy = 0;
 	m_rightKey = 0;
@@ -79,27 +79,27 @@ NormalAI::NormalAI() {
 }
 
 void NormalAI::setCharacterAction(const CharacterAction* characterAction) { 
-	m_characterAction = characterAction;
+	m_characterAction_p = characterAction;
 	// 目標地点は現在地に設定
-	m_gx = m_characterAction->getCharacter()->getX();
-	m_gy = m_characterAction->getCharacter()->getY();
+	m_gx = m_characterAction_p->getCharacter()->getX();
+	m_gy = m_characterAction_p->getCharacter()->getY();
 }
 
 void NormalAI::bulletTargetPoint(int& x, int& y) {
-	if (m_target == NULL) {
+	if (m_target_p == NULL) {
 		x = 0;
 		y = 0;
 	}
 	else { // ターゲットに向かって射撃攻撃
-		x = m_target->getCenterX() + (GetRand(BULLET_ERROR) - BULLET_ERROR / 2);
-		y = m_target->getCenterY() + (GetRand(BULLET_ERROR) - BULLET_ERROR / 2);
+		x = m_target_p->getCenterX() + (GetRand(BULLET_ERROR) - BULLET_ERROR / 2);
+		y = m_target_p->getCenterY() + (GetRand(BULLET_ERROR) - BULLET_ERROR / 2);
 	}
 }
 
 void NormalAI::moveOrder(int& right, int& left, int& up, int& down) {
 	// 現在地
-	int x = m_characterAction->getCharacter()->getX();
-	int y = m_characterAction->getCharacter()->getY();
+	int x = m_characterAction_p->getCharacter()->getX();
+	int y = m_characterAction_p->getCharacter()->getY();
 
 	// (壁につっかえるなどで)移動できてないから諦める
 	//DrawFormatString(800, 50, GetColor(255, 255, 255), "moveCnt = %d, x(%d) -> gx(%d)", m_moveCnt, x, m_gx);
@@ -110,9 +110,9 @@ void NormalAI::moveOrder(int& right, int& left, int& up, int& down) {
 
 	// 目標地点設定
 	if (m_gx > x - GX_ERROR && m_gx < x + GX_ERROR && GetRand(99) == 0) {
-		if (m_target != NULL) {
+		if (m_target_p != NULL) {
 			// targetについていく
-			m_gx = m_target->getCenterX() + GetRand(2000) - 1000;
+			m_gx = m_target_p->getCenterX() + GetRand(2000) - 1000;
 		}
 		else {
 			// ランダムに設定
@@ -148,7 +148,7 @@ void NormalAI::moveOrder(int& right, int& left, int& up, int& down) {
 
 int NormalAI::jumpOrder() {
 	// ダメージを食らったらリセット
-	if (m_characterAction->getState() == CHARACTER_STATE::DAMAGE) {
+	if (m_characterAction_p->getState() == CHARACTER_STATE::DAMAGE) {
 		m_jumpCnt = 0;
 	}
 
@@ -156,8 +156,8 @@ int NormalAI::jumpOrder() {
 	if (m_squatCnt == 0 && GetRand(99) == 0) { m_jumpCnt = GetRand(15) + 5; }
 
 	// 壁にぶつかったからジャンプ
-	if (m_rightKey > 0 && m_characterAction->getRightLock()) { m_jumpCnt = 20; }
-	else if (m_leftKey > 0 && m_characterAction->getLeftLock()) { m_jumpCnt = 20; }
+	if (m_rightKey > 0 && m_characterAction_p->getRightLock()) { m_jumpCnt = 20; }
+	else if (m_leftKey > 0 && m_characterAction_p->getLeftLock()) { m_jumpCnt = 20; }
 
 	if (m_jumpCnt > 0) { m_jumpCnt--; }
 	return m_jumpCnt;
@@ -165,19 +165,19 @@ int NormalAI::jumpOrder() {
 
 int NormalAI::squatOrder() {
 	// ダメージを食らったらリセット
-	if (m_characterAction->getState() == CHARACTER_STATE::DAMAGE) {
+	if (m_characterAction_p->getState() == CHARACTER_STATE::DAMAGE) {
 		m_squatCnt = 0;
 	}
 
 	// ランダムでしゃがむ
-	if (m_characterAction->getGrand() && GetRand(99) == 0) { m_squatCnt = GetRand(60) + 30; }
+	if (m_characterAction_p->getGrand() && GetRand(99) == 0) { m_squatCnt = GetRand(60) + 30; }
 
 	if (m_squatCnt > 0) { m_squatCnt--; }
 	return m_squatCnt;
 }
 
 int NormalAI::slashOrder() {
-	if (m_target != NULL && abs(m_target->getCenterX() - m_characterAction->getCharacter()->getCenterX()) > 500) {
+	if (m_target_p != NULL && abs(m_target_p->getCenterX() - m_characterAction_p->getCharacter()->getCenterX()) > 500) {
 		return 0;
 	}
 	// ランダムで斬撃
@@ -197,17 +197,17 @@ int NormalAI::bulletOrder() {
 
 // 攻撃対象を決める(targetのままか、characterに変更するか)
 void NormalAI::searchTarget(const Character* character) {
-	if (m_target == NULL || m_target->getHp() == 0) {
+	if (m_target_p == NULL || m_target_p->getHp() == 0) {
 		// 自分自身や味方じゃなければ
-		if (character->getId() != m_characterAction->getCharacter()->getId() && character->getGroupId() != m_characterAction->getCharacter()->getGroupId()) {
-			m_target = character;
+		if (character->getId() != m_characterAction_p->getCharacter()->getId() && character->getGroupId() != m_characterAction_p->getCharacter()->getGroupId()) {
+			m_target_p = character;
 		}
 	}
 }
 
 // 攻撃対象を変更する必要があるならtrueでアピールする。
 bool NormalAI::needSearchTarget() const {
-	if (m_target == NULL || GetRand(99) == 0) {
+	if (m_target_p == NULL || GetRand(99) == 0) {
 		return true;
 	}
 	return false;

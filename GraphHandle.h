@@ -74,4 +74,123 @@ public:
 };
 
 
+/*
+* キャラの画像を管理するクラス
+*/
+class CharacterGraphHandle {
+private:
+	// 表示される画像
+	GraphHandle* m_graphHandle;
+
+	double m_ex;
+
+	int m_wide, m_height;
+
+	// キャラのパーツの画像
+	// 斬撃攻撃画像
+	GraphHandles* m_slashHandles;
+
+	// キャラ本体の画像
+	// 立ち画像
+	GraphHandles* m_standHandles;
+
+	// しゃがみ
+	GraphHandles* m_squatHandles;
+
+	// 立ち射撃画像
+	GraphHandles* m_standBulletHandles;
+
+	// 立ち斬撃画像
+	GraphHandles* m_standSlashHandles;
+
+	// 走り画像
+	GraphHandles* m_runHandles;
+
+	// 着地画像
+	GraphHandles* m_landHandles;
+
+	// 上昇画像
+	GraphHandles* m_jumpHandles;
+
+	// 下降画像
+	GraphHandles* m_downHandles;
+
+	// ジャンプ前画像
+	GraphHandles* m_preJumpHandles;
+
+	// ダメージ画像
+	GraphHandles* m_damageHandles;
+
+	// ブースト画像
+	GraphHandles* m_boostHandles;
+
+	// 空中射撃画像
+	GraphHandles* m_airBulletHandles;
+
+	// 空中斬撃画像
+	GraphHandles* m_airSlashHandles;
+public:
+	// デフォルト値で初期化
+	CharacterGraphHandle();
+	// csvファイルを読み込み、キャラ名で検索しパラメータ取得
+	CharacterGraphHandle(const char* characterName, double drawEx);
+	// 画像を削除
+	~CharacterGraphHandle();
+
+	// 表示する画像を返す
+	inline GraphHandle* getHandle() const { return m_graphHandle; }
+	inline int getWide() const { return m_wide; }
+	inline int getHeight() const { return m_height; }
+
+	// 画像のゲッタ
+	inline GraphHandles* getSlashHandle() { return m_slashHandles; }
+	inline GraphHandles* getStandHandle() { return m_standHandles; }
+	inline GraphHandles* getStandBulletHandle() { return m_standBulletHandles; }
+	inline GraphHandles* getStandSlashHandle() { return m_standSlashHandles; }
+	inline GraphHandles* getSquatHandle() { return m_squatHandles; }
+	inline GraphHandles* getRunHandle() { return m_runHandles; }
+	inline GraphHandles* getLandHandle() { return m_landHandles; }
+	inline GraphHandles* getJumpHandle() { return m_jumpHandles; }
+	inline GraphHandles* getDownHandle() { return m_downHandles; }
+	inline GraphHandles* getPreJumpHandle() { return m_preJumpHandles; }
+	inline GraphHandles* getDamageHandle() { return m_damageHandles; }
+	inline GraphHandles* getBoostHandle() { return m_boostHandles; }
+	inline GraphHandles* getAirBulletHandle() { return m_airBulletHandles; }
+	inline GraphHandles* getAirSlashHandle() { return m_airSlashHandles; }
+
+	// 画像サイズをセット
+	void setGraphSize();
+
+	// 画像をセット、存在しない画像ならそのまま　サイズも決定
+	void setGraph(GraphHandles* graphHandles, int index);
+
+	// 立ち画像をセット
+	void switchStand(int index = 0);
+	// 立ち射撃画像をセット
+	void switchBullet(int index = 0);
+	// 立ち斬撃画像をセット
+	void switchSlash(int index = 0);
+	// しゃがみ画像をセット
+	void switchSquat(int index = 0);
+	// 走り画像をセット
+	void switchRun(int index = 0);
+	// 着地画像をセット
+	void switchLand(int index = 0);
+	// 上昇画像をセット
+	void switchJump(int index = 0);
+	// 降下画像をセット
+	void switchDown(int index = 0);
+	// ジャンプ前画像をセット
+	void switchPreJump(int index = 0);
+	// ダメージ画像をセット
+	void switchDamage(int index = 0);
+	// ブースト画像をセット
+	void switchBoost(int index = 0);
+	// 空中射撃画像をセット
+	void switchAirBullet(int index = 0);
+	// 空中斬撃画像をセット
+	void switchAirSlash(int index = 0);
+};
+
+
 #endif
