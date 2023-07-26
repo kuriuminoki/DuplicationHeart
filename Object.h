@@ -27,10 +27,10 @@ protected:
 	bool m_ableDelete;
 
 	// エフェクト
-	GraphHandles* m_effectHandles;
+	GraphHandles* m_effectHandles_p;
 
 	// サウンド
-	int m_soundHandle;
+	int m_soundHandle_p;
 
 public:
 	Object();
@@ -46,7 +46,7 @@ public:
 	inline int getX2() const { return m_x2; }
 	inline int getY1() const { return m_y1; }
 	inline int getY2() const { return m_y2; }
-	inline int getSoundHandle() const { return m_soundHandle; }
+	inline int getSoundHandle() const { return m_soundHandle_p; }
 
 	// 画像を返す　ないならNULL
 	virtual GraphHandle* getHandle() const = 0;

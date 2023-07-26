@@ -94,18 +94,16 @@ Character::Character(int maxHp, int hp, int x, int y, int groupId) {
 	m_id = characterId;
 
 	m_groupId = groupId;
-
 	m_maxHp = maxHp;
 	m_hp = hp;
 	m_x = x;
 	m_y = y;
 
-	m_graphHandle = NULL;
+	m_leftDirection = true;
 
 	m_characterInfo = NULL;
 	m_attackInfo = NULL;
-
-	m_leftDirection = true;
+	m_graphHandle = NULL;
 }
 
 Character::~Character() {
@@ -116,6 +114,10 @@ Character::~Character() {
 	// AttackInfoの削除
 	if (m_attackInfo != NULL) {
 		delete m_attackInfo;
+	}
+	// GraphHandleの削除
+	if (m_graphHandle != NULL) {
+		delete m_graphHandle;
 	}
 }
 
@@ -213,11 +215,7 @@ Heart::Heart(int maxHp, int hp, int x, int y, int groupId) :
 
 // デストラクタ
 Heart::~Heart() {
-	// Infoを削除
-	delete m_characterInfo;
-	delete m_attackInfo;
-	// 画像を削除
-	delete m_graphHandle;
+
 }
 
 // 走り画像をセット

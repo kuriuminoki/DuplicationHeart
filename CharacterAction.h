@@ -25,7 +25,7 @@ private:
 	CHARACTER_STATE m_state;
 protected:
 	// 動かすキャラクター
-	Character* m_character;
+	Character* m_character_p;
 
 	// キャラが地面にいる
 	bool m_grand;
@@ -93,7 +93,7 @@ public:
 	virtual void debug(int x, int y, int color) const = 0;
 
 	// ゲッタ
-	inline const Character* getCharacter() const { return m_character; }
+	inline const Character* getCharacter() const { return m_character_p; }
 	inline CHARACTER_STATE getState() const { return m_state; }
 	inline bool getGrand() const { return m_grand; }
 	inline bool getGrandRightSlope() const { return m_grandRightSlope; }

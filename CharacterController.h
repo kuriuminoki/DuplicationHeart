@@ -11,7 +11,7 @@ class Camera;
 class Brain {
 protected:
 	// 今のキャラの状態を考慮して射撃の目標座標や次の行動を決めるため必要
-	const CharacterAction* m_characterAction;
+	const CharacterAction* m_characterAction_p;
 
 public:
 	Brain();
@@ -52,11 +52,11 @@ class KeyboardBrain :
 {
 private:
 	// カメラ
-	const Camera* m_camera;
+	const Camera* m_camera_p;
 
 public:
 	KeyboardBrain(const Camera* camera);
-	inline void setCharacterAction(const CharacterAction* characterAction) { m_characterAction = characterAction; }
+	inline void setCharacterAction(const CharacterAction* characterAction) { m_characterAction_p = characterAction; }
 	void bulletTargetPoint(int& x, int& y);
 	void moveOrder(int& right, int& left, int& up, int& down);
 	int jumpOrder();
@@ -75,7 +75,7 @@ class NormalAI :
 {
 private:
 	// 攻撃対象
-	const Character* m_target;
+	const Character* m_target_p;
 
 	// 射撃の精度
 	const int BULLET_ERROR = 400;
@@ -125,10 +125,10 @@ public:
 */
 class CharacterController {
 protected:
-	// こいつが操作を命令してくる
+	// こいつが操作を命令してくる Controllerがデリートする
 	Brain* m_brain;
 
-	// 操作対象
+	// 操作対象 Controllerがデリートする
 	CharacterAction* m_characterAction;
 
 public:

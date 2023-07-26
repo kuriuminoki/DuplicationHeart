@@ -8,7 +8,7 @@
 *  キャラクターの基底クラス
 */
 CharacterAction::CharacterAction(Character* character) {
-	m_character = character;
+	m_character_p = character;
 
 	//初期状態
 	m_state = CHARACTER_STATE::STAND;
@@ -71,13 +71,13 @@ void CharacterAction::setDownLock(bool lock) {
 
 // キャラクターのセッタ
 void CharacterAction::setCharacterX(int x) {
-	m_character->setX(x);
+	m_character_p->setX(x);
 }
 void CharacterAction::setCharacterY(int y) {
-	m_character->setY(y);
+	m_character_p->setY(y);
 }
 void CharacterAction::setCharacterLeftDirection(bool leftDirection) {
-	m_character->setLeftDirection(leftDirection);
+	m_character_p->setLeftDirection(leftDirection);
 }
 
 bool CharacterAction::ableDamage() const {
@@ -162,7 +162,7 @@ void StickAction::action() {
 			m_vx = 0;
 		}
 		else {
-			m_character->moveRight(m_vx);
+			m_character_p->moveRight(m_vx);
 		}
 	}
 	else if (m_vx < 0) { // 左
@@ -170,7 +170,7 @@ void StickAction::action() {
 			m_vx = 0;
 		}
 		else {
-			m_character->moveLeft(-m_vx);
+			m_character_p->moveLeft(-m_vx);
 		}
 	}
 	if (m_vy < 0) { // 上
@@ -178,7 +178,7 @@ void StickAction::action() {
 			m_vy = 0;
 		}
 		else {
-			m_character->moveUp(-m_vy);
+			m_character_p->moveUp(-m_vy);
 		}
 	}
 	else if (m_vy > 0) { // 下
@@ -186,7 +186,7 @@ void StickAction::action() {
 			m_vy = 0;
 		}
 		else {
-			m_character->moveDown(m_vy);
+			m_character_p->moveDown(m_vy);
 		}
 	}
 }
@@ -195,31 +195,31 @@ void StickAction::action() {
 void StickAction::switchHandle() {
 	// セット前の画像のサイズ
 	int wide, height;
-	m_character->getHandleSize(wide, height);
+	m_character_p->getHandleSize(wide, height);
 	if (m_grand) { // 地面にいるとき
 		switch (getState()) {
 		case CHARACTER_STATE::STAND: //立ち状態
 			if (m_landCnt > 0) {
-				m_character->switchLand();
+				m_character_p->switchLand();
 			}
 			else if (m_slashCnt > 0) {
-				m_character->switchSlash();
+				m_character_p->switchSlash();
 			}
 			else if (m_bulletCnt > 0) {
-				m_character->switchBullet();
+				m_character_p->switchBullet();
 			}
 			else if (m_squat) {
-				m_character->switchSquat();
+				m_character_p->switchSquat();
 			}
 			else if (m_runCnt != -1) {
-				m_character->switchRun(m_runCnt);
+				m_character_p->switchRun(m_runCnt);
 			}
 			else {
-				m_character->switchStand();
+				m_character_p->switchStand();
 			}
 			break;
 		case CHARACTER_STATE::PREJUMP:
-			m_character->switchPreJump(m_preJumpCnt);
+			m_character_p->switchPreJump(m_preJumpCnt);
 			break;
 		}
 	}
@@ -227,34 +227,34 @@ void StickAction::switchHandle() {
 		switch (getState()) {
 		case CHARACTER_STATE::STAND: //立ち状態(なにもなしの状態)
 			if (m_slashCnt > 0) {
-				m_character->switchAirSlash();
+				m_character_p->switchAirSlash();
 			}
 			else if (m_bulletCnt > 0) {
-				m_character->switchAirBullet();
+				m_character_p->switchAirBullet();
 			}
 			else if (m_boostCnt > 0) {
-				m_character->switchBoost();
+				m_character_p->switchBoost();
 			}
 			else if (m_vy < 0) {
-				m_character->switchJump();
+				m_character_p->switchJump();
 			}
 			else {
-				m_character->switchDown();
+				m_character_p->switchDown();
 			}
 			break;
 		case CHARACTER_STATE::DAMAGE:
-			m_character->switchDamage();
+			m_character_p->switchDamage();
 			break;
 		}
 	}
 	// セット後の画像のサイズ
 	int afterWide, afterHeight;
-	m_character->getHandleSize(afterWide, afterHeight);
+	m_character_p->getHandleSize(afterWide, afterHeight);
 
 	// サイズ変更による位置調整
 	afterChangeGraph(wide, height, afterWide, afterHeight);
 
-	m_character->setLeftDirection(m_character->getLeftDirection());
+	m_character_p->setLeftDirection(m_character_p->getLeftDirection());
 }
 
 // 画像のサイズ変更による位置調整 (座標は画像の左上であることに注意)
@@ -262,7 +262,7 @@ void CharacterAction::afterChangeGraph(int beforeWide, int beforeHeight, int aft
 	// 下へ行けないなら
 	if (m_downLock) {
 		// 上へ動かす
-		m_character->moveUp((afterHeight - beforeHeight));
+		m_character_p->moveUp((afterHeight - beforeHeight));
 	}
 	// 上へ行けないなら
 	else if (m_upLock) {
@@ -274,21 +274,21 @@ void CharacterAction::afterChangeGraph(int beforeWide, int beforeHeight, int aft
 		int d = afterHeight - beforeHeight;
 		if (d % 2 == 1) {
 			if (d < 0) {
-				m_character->moveUp((d - 1) / 2);
+				m_character_p->moveUp((d - 1) / 2);
 			}
 			else {
-				m_character->moveUp((d + 1) / 2);
+				m_character_p->moveUp((d + 1) / 2);
 			}
 		}
 		else {
-			m_character->moveUp(d / 2);
+			m_character_p->moveUp(d / 2);
 		}
 	}
 
 	// 右へ行けないなら
 	if (m_rightLock && !m_leftLock) {
 		// 左へ動かす
-		m_character->moveLeft((afterWide - beforeWide));
+		m_character_p->moveLeft((afterWide - beforeWide));
 	}
 	// 左へ行けないなら
 	else if (m_leftLock && !m_rightLock) {
@@ -300,14 +300,14 @@ void CharacterAction::afterChangeGraph(int beforeWide, int beforeHeight, int aft
 		int d = afterWide - beforeWide;
 		if (d % 2 == 1) {
 			if (d < 0) {
-				m_character->moveLeft((d - 1) / 2);
+				m_character_p->moveLeft((d - 1) / 2);
 			}
 			else {
-				m_character->moveLeft((d + 1) / 2);
+				m_character_p->moveLeft((d + 1) / 2);
 			}
 		}
 		else {
-			m_character->moveLeft(d / 2);
+			m_character_p->moveLeft(d / 2);
 		}
 	}
 }
@@ -316,13 +316,13 @@ void CharacterAction::afterChangeGraph(int beforeWide, int beforeHeight, int aft
 void StickAction::walk(bool right, bool left) {
 	// 右へ歩くのをやめる
 	if (m_moveRight && (!right || m_rightLock || m_squat || damageFlag())) {
-		m_vx -= m_character->getMoveSpeed();
+		m_vx -= m_character_p->getMoveSpeed();
 		m_moveRight = false;
 		m_runCnt = -1;
 	}
 	// 左へ歩くのをやめる
 	if (m_moveLeft && (!left || m_leftLock || m_squat || damageFlag())) {
-		m_vx += m_character->getMoveSpeed();
+		m_vx += m_character_p->getMoveSpeed();
 		m_moveLeft = false;
 		m_runCnt = -1;
 	}
@@ -330,11 +330,11 @@ void StickAction::walk(bool right, bool left) {
 		return;
 	}
 	if (!m_rightLock && !m_moveRight && !m_moveLeft && right && !m_squat) { // 右へ歩く
-		m_vx += m_character->getMoveSpeed();
+		m_vx += m_character_p->getMoveSpeed();
 		m_moveRight = true;
 	}
 	if (!m_leftLock && !m_moveRight && !m_moveLeft && left && !m_squat) { // 左へ歩く
-		m_vx -= m_character->getMoveSpeed();
+		m_vx -= m_character_p->getMoveSpeed();
 		m_moveLeft = true;
 	}
 	// アニメーション用にカウント
@@ -348,10 +348,10 @@ void StickAction::move(bool right, bool left, bool up, bool down) {
 	if (getState() == CHARACTER_STATE::STAND && m_grand && m_slashCnt == 0 && m_bulletCnt == 0) {
 		// 移動方向へ向く
 		if(left){
-			m_character->setLeftDirection(true);
+			m_character_p->setLeftDirection(true);
 		}
 		if (right) {
-			m_character->setLeftDirection(false);
+			m_character_p->setLeftDirection(false);
 		}
 	}
 	// 左右の移動
@@ -379,7 +379,7 @@ void StickAction::jump(int cnt) {
 	if (m_grand && m_preJumpCnt >= 0) {
 		if (cnt == 0 || m_preJumpCnt == PRE_JUMP_MAX) {
 			int rate = (100 * m_preJumpCnt) / PRE_JUMP_MAX;
-			int power = (m_character->getJumpHeight() * rate) / 100;
+			int power = (m_character_p->getJumpHeight() * rate) / 100;
 			m_vy -= power;
 			m_grand = false;
 			m_preJumpCnt = -1;
@@ -400,11 +400,11 @@ Object* StickAction::bulletAttack(int gx, int gy) {
 	// 射撃可能状態なら
 	if (m_bulletCnt == 0 && m_slashCnt == 0) {
 		// 射撃不可能状態にして
-		m_bulletCnt = m_character->getBulletRapid();
+		m_bulletCnt = m_character_p->getBulletRapid();
 		// 撃つ方向へ向く
-		m_character->setLeftDirection(m_character->getCenterX() > gx);
+		m_character_p->setLeftDirection(m_character_p->getCenterX() > gx);
 		// 攻撃を返す
-		return m_character->bulletAttack(gx, gy);
+		return m_character_p->bulletAttack(gx, gy);
 	}
 	return NULL;
 }
@@ -417,15 +417,15 @@ Object* StickAction::slashAttack(int gx, int gy) {
 	}
 	// 攻撃開始
 	if (m_slashCnt == 0) {
-		m_attackLeftDirection = m_character->getCenterX() > gx;
-		m_slashCnt = m_character->getSlashCountSum();
+		m_attackLeftDirection = m_character_p->getCenterX() > gx;
+		m_slashCnt = m_character_p->getSlashCountSum();
 	}
 	if (m_slashCnt > 0) {
 		// 攻撃の方向へ向く
-		m_character->setLeftDirection(m_attackLeftDirection);
+		m_character_p->setLeftDirection(m_attackLeftDirection);
 	}
 	// 攻撃のタイミングじゃないならNULLが返る
-	return m_character->slashAttack(m_attackLeftDirection, m_slashCnt);
+	return m_character_p->slashAttack(m_attackLeftDirection, m_slashCnt);
 }
 
 void StickAction::damage(int vx, int vy, int damageValue, int soundHandle) {
@@ -434,12 +434,12 @@ void StickAction::damage(int vx, int vy, int damageValue, int soundHandle) {
 	m_vy += vy;
 	// 地面についていても少しはダメージモーション
 	if(m_vy >= 0 && m_grand){ m_damageCnt = 20; }
-	m_character->setLeftDirection(m_vx > 0);
+	m_character_p->setLeftDirection(m_vx > 0);
 	m_grand = false;
 	// 宙に浮かせる
 	m_grand = false;
 	m_grandRightSlope = false;
 	m_grandLeftSlope = false;
 	// HP減少
-	m_character->damageHp(damageValue);
+	m_character_p->damageHp(damageValue);
 }

@@ -68,7 +68,7 @@ void penetrationCharacterAndObject(CharacterController* controller, vector<Objec
 */
 World::World(int areaNum, SoundPlayer* soundPlayer) {
 	// サウンドプレイヤー
-	m_soundPlayer = soundPlayer;
+	m_soundPlayer_p = soundPlayer;
 
 	// 主人公のスタート地点
 	m_areaNum = areaNum;
@@ -278,7 +278,7 @@ void World::atariCharacterAndObject(CharacterController* controller, vector<Obje
 		if (objects[i]->atari(controller)) {
 			// 当たった場合 エフェクト作成
 			m_animations.push_back(objects[i]->createAnimation(controller->getAction()->getCharacter()));
-			m_soundPlayer->pushSoundQueue(objects[i]->getSoundHandle());
+			m_soundPlayer_p->pushSoundQueue(objects[i]->getSoundHandle());
 		}
 		// deleteFlagがtrueなら削除する
 		if (objects[i]->getDeleteFlag()) {

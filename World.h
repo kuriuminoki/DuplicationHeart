@@ -14,10 +14,7 @@ class SoundPlayer;
 class World {
 private:
 	// サウンドプレイヤー
-	SoundPlayer* m_soundPlayer;
-
-	// 描画用のカメラ
-	Camera* m_camera;
+	SoundPlayer* m_soundPlayer_p;
 
 	// カメラの移動速度の初期値
 	const int CAMERA_SPEED_DEFAULT = 5;
@@ -28,23 +25,26 @@ private:
 	// プレイヤー（ハート）のID
 	int m_playerId;
 
-	// 世界に存在するキャラクター
-	std::vector<Character*> m_characters;
-
-	// 戦闘のためにキャラを動かすコントローラ
-	std::vector<CharacterController*> m_characterControllers;
-
-	// 壁や床のオブジェクト
-	std::vector<Object*> m_stageObjects;
-
-	// 攻撃のあたり判定のオブジェクト
-	std::vector<Object*> m_attackObjects;
-
-	// エフェクト等のアニメーション
-	std::vector<Animation*> m_animations;
-
 	// いま世界のどのエリアにいるか（メモリ節約のためプレイヤーの付近のみを読み込む）
 	int m_areaNum;
+
+	// 描画用のカメラ Worldがデリートする
+	Camera* m_camera;
+
+	// 世界に存在するキャラクター Worldがデリートする
+	std::vector<Character*> m_characters;
+
+	// 戦闘のためにキャラを動かすコントローラ Worldがデリートする
+	std::vector<CharacterController*> m_characterControllers;
+
+	// 壁や床のオブジェクト Worldがデリートする
+	std::vector<Object*> m_stageObjects;
+
+	// 攻撃のあたり判定のオブジェクト Worldがデリートする
+	std::vector<Object*> m_attackObjects;
+
+	// エフェクト等のアニメーション Worldがデリートする
+	std::vector<Animation*> m_animations;
 
 public:
 	World(int areaNum, SoundPlayer* soundPlayer);
