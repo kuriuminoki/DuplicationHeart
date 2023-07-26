@@ -199,7 +199,7 @@ public:
 	int getHeight() const;
 	// ¡•`‰æ‚·‚é‰æ‘œ‚ğæ“¾
 	const GraphHandle* getGraphHandle() const;
-	void getHandleSize(int& wide, int& height);
+	void getHandleSize(int& wide, int& height) const;
 
 	// —§‚¿‰æ‘œ‚ğƒZƒbƒg
 	virtual void switchStand(int cnt = 0);

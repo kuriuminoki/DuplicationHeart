@@ -102,6 +102,6 @@ map<string, string> CsvReader::findOne(const char* columnName, const char* value
 /*
 * 全データを返す
 */
-vector<map<string, string>> CsvReader::getData() {
+vector<map<string, string>> CsvReader::getData() const {
 	return m_data;
 }

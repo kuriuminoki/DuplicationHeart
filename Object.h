@@ -40,8 +40,8 @@ public:
 	virtual void debug(int x, int y, int color) const = 0;
 
 	// ƒQƒbƒ^
-	inline bool getDeleteFlag() { return m_deleteFlag; }
-	inline bool getAbleDelete() { return m_ableDelete; }
+	inline bool getDeleteFlag() const { return m_deleteFlag; }
+	inline bool getAbleDelete() const { return m_ableDelete; }
 	inline int getX1() const { return m_x1; }
 	inline int getX2() const { return m_x2; }
 	inline int getY1() const { return m_y1; }

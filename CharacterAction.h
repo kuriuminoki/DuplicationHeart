@@ -92,28 +92,30 @@ public:
 	void debugAction(int x, int y, int color) const;
 	virtual void debug(int x, int y, int color) const = 0;
 
-	// ゲッタとセッタ
+	// ゲッタ
+	inline const Character* getCharacter() const { return m_character; }
 	inline CHARACTER_STATE getState() const { return m_state; }
-	void setState(CHARACTER_STATE state);
 	inline bool getGrand() const { return m_grand; }
-	void setGrand(bool grand);
 	inline bool getGrandRightSlope() const { return m_grandRightSlope; }
-	inline void setGrandRightSlope(bool grand) { m_grandRightSlope = grand; }
 	inline bool getGrandLeftSlope() const { return m_grandLeftSlope; }
-	inline void setGrandLeftSlope(bool grand) { m_grandLeftSlope = grand; }
 	inline int getVx() const { return m_vx; }
 	inline int getVy() const { return m_vy; }
-	inline int getSlashCnt() { return m_slashCnt; }
+	inline int getSlashCnt() const { return m_slashCnt; }
 	bool getRightLock() const { return m_rightLock; }
 	bool getLeftLock() const { return m_leftLock; }
 	bool getUpLock() const { return m_upLock; }
 	bool getDownLock() const { return m_downLock; }
+
+	// セッタ
+	void setState(CHARACTER_STATE state);
+	void setGrand(bool grand);
 	void setRightLock(bool lock);
 	void setLeftLock(bool lock);
 	void setUpLock(bool lock);
 	void setDownLock(bool lock);
 	inline void setBoost() { m_boostCnt = BOOST_TIME; }
-	inline const Character* getCharacter() const { return m_character; }
+	inline void setGrandRightSlope(bool grand) { m_grandRightSlope = grand; }
+	inline void setGrandLeftSlope(bool grand) { m_grandLeftSlope = grand; }
 
 	// 今ダメージを受けていて動けない
 	inline bool damageFlag() const { return m_state == CHARACTER_STATE::DAMAGE; }

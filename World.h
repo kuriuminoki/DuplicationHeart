@@ -50,7 +50,7 @@ public:
 	World(int areaNum, SoundPlayer* soundPlayer);
 	~World();
 
-	// ゲッタとセッタ
+	// ゲッタ
 	inline const Camera* getCamera() const { return m_camera; }
 	std::vector<const CharacterAction*> getActions() const;
 	std::vector<const Object*> getObjects() const;

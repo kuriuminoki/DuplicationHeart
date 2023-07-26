@@ -123,7 +123,7 @@ const GraphHandle* Character::getGraphHandle() const {
 	return m_graphHandle->getHandle();
 }
 
-void Character::getHandleSize(int& wide, int& height) {
+void Character::getHandleSize(int& wide, int& height) const {
 	// 今セットしている画像の縦幅と横幅を取得する。
 	wide = getWide();
 	height = getHeight();
