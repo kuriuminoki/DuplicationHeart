@@ -329,11 +329,13 @@ void StickAction::walk(bool right, bool left) {
 	if (damageFlag()) {
 		return;
 	}
-	if (!m_rightLock && !m_moveRight && !m_moveLeft && right && !m_squat) { // 右へ歩く
+	// 右へ歩き始める
+	if (!m_rightLock && !m_moveRight && !m_moveLeft && right && (!left || !m_character_p->getLeftDirection()) && !m_squat) { // 右へ歩く
 		m_vx += m_character_p->getMoveSpeed();
 		m_moveRight = true;
 	}
-	if (!m_leftLock && !m_moveRight && !m_moveLeft && left && !m_squat) { // 左へ歩く
+	// 左へ歩き始める
+	if (!m_leftLock && !m_moveRight && !m_moveLeft && left && (!right || m_character_p->getLeftDirection()) && !m_squat) { // 左へ歩く
 		m_vx -= m_character_p->getMoveSpeed();
 		m_moveLeft = true;
 	}
@@ -347,10 +349,10 @@ void StickAction::walk(bool right, bool left) {
 void StickAction::move(bool right, bool left, bool up, bool down) {
 	if (getState() == CHARACTER_STATE::STAND && m_grand && m_slashCnt == 0 && m_bulletCnt == 0) {
 		// 移動方向へ向く
-		if(left){
+		if(left && !right){
 			m_character_p->setLeftDirection(true);
 		}
-		if (right) {
+		if (right && !left) {
 			m_character_p->setLeftDirection(false);
 		}
 	}
@@ -416,11 +418,9 @@ Object* StickAction::slashAttack(int gx, int gy) {
 		return NULL;
 	}
 	// 攻撃開始
-	if (m_slashCnt == 0) {
+	if (m_slashCnt == 0 && m_bulletCnt == 0) {
 		m_attackLeftDirection = m_character_p->getCenterX() > gx;
 		m_slashCnt = m_character_p->getSlashCountSum();
-	}
-	if (m_slashCnt > 0) {
 		// 攻撃の方向へ向く
 		m_character_p->setLeftDirection(m_attackLeftDirection);
 	}

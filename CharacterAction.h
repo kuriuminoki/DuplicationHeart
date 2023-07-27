@@ -101,6 +101,7 @@ public:
 	inline int getVx() const { return m_vx; }
 	inline int getVy() const { return m_vy; }
 	inline int getSlashCnt() const { return m_slashCnt; }
+	inline int getBulletCnt() const { return m_bulletCnt; }
 	bool getRightLock() const { return m_rightLock; }
 	bool getLeftLock() const { return m_leftLock; }
 	bool getUpLock() const { return m_upLock; }
