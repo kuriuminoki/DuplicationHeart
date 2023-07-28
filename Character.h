@@ -135,9 +135,6 @@ protected:
 	// グループID 味方識別用
 	int m_groupId;
 
-	// 最大体力
-	int m_maxHp;
-
 	// 残り体力
 	int m_hp;
 
@@ -159,7 +156,7 @@ protected:
 public:
 	// コンストラクタ
 	Character();
-	Character(int maxHp, int hp, int x, int y, int groupId);
+	Character(int hp, int x, int y, int groupId);
 	~Character();
 
 	// デバッグ
@@ -169,15 +166,15 @@ public:
 	// ゲッタ
 	inline int getId() const { return m_id; }
 	inline int getGroupId() const { return m_groupId; }
-	inline int getMaxHp() const { return m_maxHp; }
+	inline int getMaxHp() const { return m_characterInfo->maxHp(); }
 	inline int getHp() const { return m_hp; }
 	inline int getX() const { return m_x; }
 	inline int getY() const { return m_y; }
 	inline bool getLeftDirection() const { return m_leftDirection; }
 
 	// セッタ
-	inline void setMaxHp(int maxHp) { m_maxHp = maxHp; }
-	inline void setHp(int hp) { m_hp = (hp > m_maxHp) ? m_maxHp : hp; }
+	//inline void setMaxHp(int maxHp) { m_maxHp = maxHp; }
+	inline void setHp(int hp) { m_hp = (hp > m_characterInfo->maxHp()) ? m_characterInfo->maxHp() : hp; }
 	inline void setX(int x) { m_x = x; }
 	inline void setY(int y) { m_y = y; }
 	// キャラの向き変更は、画像の反転も行う
@@ -209,8 +206,12 @@ public:
 	virtual void switchSlash(int cnt = 0);
 	// しゃがみ画像をセット
 	virtual void switchSquat(int cnt = 0);
+	// しゃがみ射撃画像をセット
+	virtual void switchSquatBullet(int cnt = 0);
 	// 走り画像をセット
 	virtual void switchRun(int cnt = 0);
+	// 走り射撃画像をセット
+	virtual void switchRunBullet(int cnt = 0);
 	// 着地画像をセット
 	virtual void switchLand(int cnt = 0);
 	// 上昇画像をセット
@@ -263,7 +264,7 @@ private:
 	
 public:
 	// コンストラクタ
-	Heart(int maxHp, int hp, int x, int y, int groupId);
+	Heart(int hp, int x, int y, int groupId);
 
 	// デストラクタ
 	~Heart();
@@ -274,6 +275,10 @@ public:
 	// 画像変更関数のオーバーライド
 	// 走り画像をセット
 	void switchRun(int cnt = 0);
+
+	// 走り射撃画像をセット
+	void switchRunBullet(int cnt = 0);
+
 	// ジャンプ前画像をセット
 	void switchPreJump(int cnt = 0);
 

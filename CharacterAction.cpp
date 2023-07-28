@@ -85,6 +85,53 @@ bool CharacterAction::ableDamage() const {
 	return true;
 }
 
+bool CharacterAction::ableAttack() const {
+	if (m_bulletCnt > 0 || m_slashCnt > 0) {
+		return false;
+	}
+	return true;
+}
+
+// 着地
+void CharacterAction::setGrand(bool grand) {
+	if (m_vy > 0) { // 着地モーションになる
+		m_landCnt = LAND_TIME;
+		m_slashCnt = 0;
+	}
+	m_grand = grand;
+	if (m_state == CHARACTER_STATE::DAMAGE && m_damageCnt == 0) {
+		m_vx = 0;
+		m_vy = 0;
+		m_state = CHARACTER_STATE::STAND;
+	}
+}
+
+void CharacterAction::setSquat(bool squat) {
+	if (squat && m_grand && m_state != CHARACTER_STATE::DAMAGE && m_state != CHARACTER_STATE::SLASH && m_state != CHARACTER_STATE::PREJUMP) {
+		m_squat = true;
+	}
+	else {
+		m_squat = false;
+	}
+}
+
+// 歩くのをやめる
+void CharacterAction::stopMoveLeft() {
+	// 左へ歩くのをやめる
+	if (m_moveLeft) {
+		m_vx += m_character_p->getMoveSpeed();
+		m_moveLeft = false;
+		m_runCnt = -1;
+	}
+}
+void CharacterAction::stopMoveRight() {
+	// 右へ歩くのをやめる
+	if (m_moveRight) {
+		m_vx -= m_character_p->getMoveSpeed();
+		m_moveRight = false;
+		m_runCnt = -1;
+	}
+}
 
 /*
 * 空を飛ばない普通の棒人間
@@ -107,29 +154,6 @@ void StickAction::init() {
 	m_grand = false;
 	m_grandRightSlope = false;
 	m_grandLeftSlope = false;
-}
-
-// 着地
-void CharacterAction::setGrand(bool grand) {
-	if (m_vy > 0) { // 着地モーションになる
-		m_landCnt = LAND_TIME;
-		m_slashCnt = 0;
-	}
-	m_grand = grand;
-	if (m_state == CHARACTER_STATE::DAMAGE && m_damageCnt == 0) { 
-		m_vx = 0;
-		m_vy = 0;
-		m_state = CHARACTER_STATE::STAND;
-	}
-}
-
-void CharacterAction::setSquat(bool squat) {
-	if (squat && m_grand && m_state != CHARACTER_STATE::DAMAGE && m_state != CHARACTER_STATE::SLASH && m_state != CHARACTER_STATE::PREJUMP) {
-		m_squat = true;
-	}
-	else {
-		m_squat = false;
-	}
 }
 
 void StickAction::action() {
@@ -206,7 +230,15 @@ void StickAction::switchHandle() {
 				m_character_p->switchSlash();
 			}
 			else if (m_bulletCnt > 0) {
-				m_character_p->switchBullet();
+				if (m_runCnt != -1) {
+					m_character_p->switchRunBullet(m_runCnt);
+				}
+				else if (m_squat) {
+					m_character_p->switchSquatBullet();
+				}
+				else {
+					m_character_p->switchBullet();
+				}
 			}
 			else if (m_squat) {
 				m_character_p->switchSquat();
@@ -221,19 +253,43 @@ void StickAction::switchHandle() {
 		case CHARACTER_STATE::PREJUMP:
 			m_character_p->switchPreJump(m_preJumpCnt);
 			break;
+		case CHARACTER_STATE::DAMAGE:
+			if (m_boostCnt > 0) {
+				if (m_slashCnt > 0) {
+					m_character_p->switchSlash();
+				}
+				else if (m_bulletCnt > 0) {
+					if (m_runCnt != -1) {
+						m_character_p->switchRunBullet(m_runCnt);
+					}
+					else if (m_squat) {
+						m_character_p->switchSquatBullet();
+					}
+					else {
+						m_character_p->switchBullet();
+					}
+				}
+				else {
+					m_character_p->switchBoost();
+				}
+			}
+			else {
+				m_character_p->switchDamage();
+			}
+			break;
 		}
 	}
 	else { // 宙にいるとき
 		switch (getState()) {
 		case CHARACTER_STATE::STAND: //立ち状態(なにもなしの状態)
-			if (m_slashCnt > 0) {
+			if (m_boostCnt > 0) {
+				m_character_p->switchBoost();
+			}
+			else if (m_slashCnt > 0) {
 				m_character_p->switchAirSlash();
 			}
 			else if (m_bulletCnt > 0) {
 				m_character_p->switchAirBullet();
-			}
-			else if (m_boostCnt > 0) {
-				m_character_p->switchBoost();
 			}
 			else if (m_vy < 0) {
 				m_character_p->switchJump();
@@ -243,7 +299,20 @@ void StickAction::switchHandle() {
 			}
 			break;
 		case CHARACTER_STATE::DAMAGE:
-			m_character_p->switchDamage();
+			if (m_boostCnt > 0) {
+				if (m_slashCnt > 0) {
+					m_character_p->switchAirSlash();
+				}
+				else if (m_bulletCnt > 0) {
+					m_character_p->switchAirBullet();
+				}
+				else {
+					m_character_p->switchBoost();
+				}
+			}
+			else {
+				m_character_p->switchDamage();
+			}
 			break;
 		}
 	}
@@ -315,25 +384,23 @@ void CharacterAction::afterChangeGraph(int beforeWide, int beforeHeight, int aft
 // 歩く ダメージ中、しゃがみ中、壁ぶつかり中は不可
 void StickAction::walk(bool right, bool left) {
 	// 右へ歩くのをやめる
-	if (m_moveRight && (!right || m_rightLock || m_squat || damageFlag())) {
-		m_vx -= m_character_p->getMoveSpeed();
-		m_moveRight = false;
-		m_runCnt = -1;
+	if (!right || m_rightLock || m_squat || damageFlag()) {
+		stopMoveRight();
 	}
 	// 左へ歩くのをやめる
-	if (m_moveLeft && (!left || m_leftLock || m_squat || damageFlag())) {
-		m_vx += m_character_p->getMoveSpeed();
-		m_moveLeft = false;
-		m_runCnt = -1;
+	if (!left || m_leftLock || m_squat || damageFlag()) {
+		stopMoveLeft();
 	}
 	if (damageFlag()) {
 		return;
 	}
-	if (!m_rightLock && !m_moveRight && !m_moveLeft && right && !m_squat) { // 右へ歩く
+	// 右へ歩き始める
+	if (!m_rightLock && !m_moveRight && !m_moveLeft && right && (!left || !m_character_p->getLeftDirection()) && !m_squat) { // 右へ歩く
 		m_vx += m_character_p->getMoveSpeed();
 		m_moveRight = true;
 	}
-	if (!m_leftLock && !m_moveRight && !m_moveLeft && left && !m_squat) { // 左へ歩く
+	// 左へ歩き始める
+	if (!m_leftLock && !m_moveRight && !m_moveLeft && left && (!right || m_character_p->getLeftDirection()) && !m_squat) { // 左へ歩く
 		m_vx -= m_character_p->getMoveSpeed();
 		m_moveLeft = true;
 	}
@@ -347,10 +414,10 @@ void StickAction::walk(bool right, bool left) {
 void StickAction::move(bool right, bool left, bool up, bool down) {
 	if (getState() == CHARACTER_STATE::STAND && m_grand && m_slashCnt == 0 && m_bulletCnt == 0) {
 		// 移動方向へ向く
-		if(left){
+		if(left && !right){
 			m_character_p->setLeftDirection(true);
 		}
-		if (right) {
+		if (right && !left) {
 			m_character_p->setLeftDirection(false);
 		}
 	}
@@ -360,8 +427,21 @@ void StickAction::move(bool right, bool left, bool up, bool down) {
 
 // ジャンプ
 void StickAction::jump(int cnt) {
+	// ダメージ状態ならジャンプできないためreturn
 	if (damageFlag()) {
-		m_bulletCnt = 0;
+		// 受け身はできる
+		if (cnt == 1 || m_boostCnt > 0) {
+			if (m_boostCnt == 0) {
+				// 受け身をした瞬間
+				m_vy -= m_character_p->getJumpHeight() / 2;
+				m_grand = false;
+				m_preJumpCnt = -1;
+				stopMoveLeft();
+				stopMoveRight();
+			}
+			// ダメージ状態が解除されるまではずっとBoost
+			m_boostCnt = BOOST_TIME;
+		}
 		return;
 	}
 	// 宙に浮いたらジャンプ中止
@@ -371,13 +451,14 @@ void StickAction::jump(int cnt) {
 			setState(CHARACTER_STATE::STAND);
 		}
 	}
-	// ジャンプ前の状態なら
+	// ジャンプの準備開始
 	if (cnt > 0 && m_grand && m_preJumpCnt == -1) {
 		m_preJumpCnt = 0;
 		setState(CHARACTER_STATE::PREJUMP);
 	}
 	if (m_grand && m_preJumpCnt >= 0) {
 		if (cnt == 0 || m_preJumpCnt == PRE_JUMP_MAX) {
+			// ジャンプ
 			int rate = (100 * m_preJumpCnt) / PRE_JUMP_MAX;
 			int power = (m_character_p->getJumpHeight() * rate) / 100;
 			m_vy -= power;
@@ -386,6 +467,7 @@ void StickAction::jump(int cnt) {
 			setState(CHARACTER_STATE::STAND);
 		}
 		else {
+			// ジャンプ前の溜め中
 			m_preJumpCnt++;
 		}
 	}
@@ -393,12 +475,12 @@ void StickAction::jump(int cnt) {
 
 // 射撃攻撃
 Object* StickAction::bulletAttack(int gx, int gy) {
-	if (damageFlag()) {
+	if (damageFlag() && m_boostCnt == 0) {
 		m_bulletCnt = 0;
 		return NULL;
 	}
 	// 射撃可能状態なら
-	if (m_bulletCnt == 0 && m_slashCnt == 0) {
+	if (ableAttack()) {
 		// 射撃不可能状態にして
 		m_bulletCnt = m_character_p->getBulletRapid();
 		// 撃つ方向へ向く
@@ -411,16 +493,14 @@ Object* StickAction::bulletAttack(int gx, int gy) {
 
 // 斬撃攻撃
 Object* StickAction::slashAttack(int gx, int gy) {
-	if (damageFlag()) {
+	if (damageFlag() && m_boostCnt == 0) {
 		m_slashCnt = 0;
 		return NULL;
 	}
 	// 攻撃開始
-	if (m_slashCnt == 0) {
+	if (ableAttack()) {
 		m_attackLeftDirection = m_character_p->getCenterX() > gx;
 		m_slashCnt = m_character_p->getSlashCountSum();
-	}
-	if (m_slashCnt > 0) {
 		// 攻撃の方向へ向く
 		m_character_p->setLeftDirection(m_attackLeftDirection);
 	}
@@ -428,6 +508,7 @@ Object* StickAction::slashAttack(int gx, int gy) {
 	return m_character_p->slashAttack(m_attackLeftDirection, m_slashCnt);
 }
 
+// ダメージを受ける
 void StickAction::damage(int vx, int vy, int damageValue, int soundHandle) {
 	setState(CHARACTER_STATE::DAMAGE);
 	m_vx += vx;
@@ -442,4 +523,5 @@ void StickAction::damage(int vx, int vy, int damageValue, int soundHandle) {
 	m_grandLeftSlope = false;
 	// HP減少
 	m_character_p->damageHp(damageValue);
+	m_boostCnt = 0;
 }

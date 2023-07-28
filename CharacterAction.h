@@ -20,10 +20,10 @@ enum class CHARACTER_STATE {
 * Controllerが使用する。それ以外のインスタンスから使われることはない。
 */
 class CharacterAction {
-private:
+protected:
 	// キャラの状態
 	CHARACTER_STATE m_state;
-protected:
+
 	// 動かすキャラクター
 	Character* m_character_p;
 
@@ -54,6 +54,7 @@ protected:
 	// 着地モーションの総時間
 	const int LAND_TIME = 10;
 
+	// ブーストアニメの残り時間 または受け身状態
 	int m_boostCnt;
 	const int BOOST_TIME = 10;
 
@@ -101,6 +102,7 @@ public:
 	inline int getVx() const { return m_vx; }
 	inline int getVy() const { return m_vy; }
 	inline int getSlashCnt() const { return m_slashCnt; }
+	inline int getBulletCnt() const { return m_bulletCnt; }
 	bool getRightLock() const { return m_rightLock; }
 	bool getLeftLock() const { return m_leftLock; }
 	bool getUpLock() const { return m_upLock; }
@@ -154,6 +156,13 @@ public:
 
 	// 今無敵時間じゃない
 	bool ableDamage() const;
+
+	// 今攻撃可能状態
+	bool ableAttack() const;
+
+	// 歩くのをやめる
+	void stopMoveLeft();
+	void stopMoveRight();
 
 protected:
 	// 画像のサイズ変更による位置調整
