@@ -83,18 +83,18 @@ AttackInfo::~AttackInfo() {
 int Character::characterId;
 
 Character::Character() :
-	Character(100, 100, 0, 0, 0)
+	Character(100, 0, 0, 0)
 {
 
 }
 
-Character::Character(int maxHp, int hp, int x, int y, int groupId) {
+Character::Character(int hp, int x, int y, int groupId) {
 	// IDを振る
 	characterId++;
 	m_id = characterId;
 
 	m_groupId = groupId;
-	m_maxHp = maxHp;
+
 	m_hp = hp;
 	m_x = x;
 	m_y = y;
@@ -176,8 +176,12 @@ void Character::switchBullet(int cnt) { m_graphHandle->switchBullet(); }
 void Character::switchSlash(int cnt) { m_graphHandle->switchSlash(); }
 // しゃがみ画像をセット
 void Character::switchSquat(int cnt) { m_graphHandle->switchSquat(); }
+// しゃがみ画像をセット
+void Character::switchSquatBullet(int cnt) { m_graphHandle->switchSquatBullet(); }
 // 走り画像をセット
 void Character::switchRun(int cnt) { m_graphHandle->switchRun(); }
+// 走り射撃画像をセット
+void Character::switchRunBullet(int cnt) { m_graphHandle->switchRunBullet(); }
 // 着地画像をセット
 void Character::switchLand(int cnt) { m_graphHandle->switchLand(); }
 // 上昇画像をセット
@@ -199,12 +203,14 @@ void Character::switchAirSlash(int cnt) { m_graphHandle->switchAirSlash(); }
 /*
 * ハート
 */
-Heart::Heart(int maxHp, int hp, int x, int y, int groupId) :
-	Character(maxHp, hp, x, y, groupId)
+Heart::Heart(int hp, int x, int y, int groupId) :
+	Character(hp, x, y, groupId)
 {
 	// キャラ固有の情報設定
 	m_characterInfo = new CharacterInfo(NAME);
 	m_attackInfo = new AttackInfo(NAME, m_characterInfo->handleEx());
+
+	m_hp = m_characterInfo->maxHp();
 
 	// 各画像のロード
 	m_graphHandle = new CharacterGraphHandle(NAME, m_characterInfo->handleEx());
@@ -223,6 +229,13 @@ void Heart::switchRun(int cnt) {
 	int index = (cnt / RUN_ANIME_SPEED) % (m_graphHandle->getRunHandle()->getSize());
 	m_graphHandle->switchRun(index);
 }
+
+// 走り射撃画像をセット
+void Heart::switchRunBullet(int cnt) {
+	int index = (cnt / RUN_ANIME_SPEED) % (m_graphHandle->getRunBulletHandle()->getSize());
+	m_graphHandle->switchRunBullet(index);
+}
+
 // ジャンプ前画像をセット
 void Heart::switchPreJump(int cnt) { 
 	int index = (cnt / RUN_PREJUMP_SPEED) % (m_graphHandle->getPreJumpHandle()->getSize());

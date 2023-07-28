@@ -94,8 +94,11 @@ private:
 	// 立ち画像
 	GraphHandles* m_standHandles;
 
-	// しゃがみ
+	// しゃがみ画像
 	GraphHandles* m_squatHandles;
+
+	// しゃがみ射撃画像
+	GraphHandles* m_squatBulletHandles;
 
 	// 立ち射撃画像
 	GraphHandles* m_standBulletHandles;
@@ -105,6 +108,9 @@ private:
 
 	// 走り画像
 	GraphHandles* m_runHandles;
+
+	// 走り射撃画像
+	GraphHandles* m_runBulletHandles;
 
 	// 着地画像
 	GraphHandles* m_landHandles;
@@ -148,7 +154,9 @@ public:
 	inline GraphHandles* getStandBulletHandle() { return m_standBulletHandles; }
 	inline GraphHandles* getStandSlashHandle() { return m_standSlashHandles; }
 	inline GraphHandles* getSquatHandle() { return m_squatHandles; }
+	inline GraphHandles* getSquatBulletHandle() { return m_squatBulletHandles; }
 	inline GraphHandles* getRunHandle() { return m_runHandles; }
+	inline GraphHandles* getRunBulletHandle() { return m_runBulletHandles; }
 	inline GraphHandles* getLandHandle() { return m_landHandles; }
 	inline GraphHandles* getJumpHandle() { return m_jumpHandles; }
 	inline GraphHandles* getDownHandle() { return m_downHandles; }
@@ -172,8 +180,12 @@ public:
 	void switchSlash(int index = 0);
 	// しゃがみ画像をセット
 	void switchSquat(int index = 0);
+	// しゃがみ射撃画像をセット
+	void switchSquatBullet(int index = 0);
 	// 走り画像をセット
 	void switchRun(int index = 0);
+	// 走り射撃画像をセット
+	void switchRunBullet(int index = 0);
 	// 着地画像をセット
 	void switchLand(int index = 0);
 	// 上昇画像をセット

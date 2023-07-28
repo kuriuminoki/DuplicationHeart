@@ -134,9 +134,11 @@ CharacterGraphHandle::CharacterGraphHandle(const char* characterName, double dra
 	loadCharacterGraph(characterName, m_standHandles, "stand", data, m_ex);
 	loadCharacterGraph(characterName, m_slashHandles, "slashEffect", data, m_ex);
 	loadCharacterGraph(characterName, m_squatHandles, "squat", data, m_ex);
+	loadCharacterGraph(characterName, m_squatBulletHandles, "squatBullet", data, m_ex);
 	loadCharacterGraph(characterName, m_standBulletHandles, "standBullet", data, m_ex);
 	loadCharacterGraph(characterName, m_standSlashHandles, "standSlash", data, m_ex);
 	loadCharacterGraph(characterName, m_runHandles, "run", data, m_ex);
+	loadCharacterGraph(characterName, m_runBulletHandles, "runBullet", data, m_ex);
 	loadCharacterGraph(characterName, m_landHandles, "land", data, m_ex);
 	loadCharacterGraph(characterName, m_jumpHandles, "jump", data, m_ex);
 	loadCharacterGraph(characterName, m_downHandles, "down", data, m_ex);
@@ -153,9 +155,11 @@ CharacterGraphHandle::~CharacterGraphHandle() {
 	delete m_standHandles;
 	delete m_slashHandles;
 	delete m_squatHandles;
+	delete m_squatBulletHandles;
 	delete m_standBulletHandles;
 	delete m_standSlashHandles;
 	delete m_runHandles;
+	delete m_runBulletHandles;
 	delete m_landHandles;
 	delete m_jumpHandles;
 	delete m_downHandles;
@@ -197,9 +201,17 @@ void CharacterGraphHandle::switchSlash(int index){
 void CharacterGraphHandle::switchSquat(int index){
 	setGraph(m_squatHandles, index);
 }
+// しゃがみ射撃画像をセット
+void CharacterGraphHandle::switchSquatBullet(int index) {
+	setGraph(m_squatBulletHandles, index);
+}
 // 走り画像をセット
 void CharacterGraphHandle::switchRun(int index){
 	setGraph(m_runHandles, index);
+}
+// 走り射撃画像をセット
+void CharacterGraphHandle::switchRunBullet(int index) {
+	setGraph(m_runBulletHandles, index);
 }
 // 着地画像をセット
 void CharacterGraphHandle::switchLand(int index){

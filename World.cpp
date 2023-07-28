@@ -90,9 +90,11 @@ World::World(int areaNum, SoundPlayer* soundPlayer) {
 	m_stageObjects.push_back(object7);
 	Object* object8 = new BoxObject(3000, 400, 3300, 600, WHITE);
 	m_stageObjects.push_back(object8);
+	Object* object9 = new BoxObject(-500, -1000, 10000, -900, WHITE);
+	m_stageObjects.push_back(object9);
 
 	// 主人公をロード キャラの削除はWorldがやる予定
-	Heart* heart = new Heart(100, 100, 0, 0, 0);
+	Heart* heart = new Heart(100, 0, 0, 0);
 	m_characters.push_back(heart);
 
 	// カメラを主人公注目、倍率1.0で作成
@@ -109,7 +111,7 @@ World::World(int areaNum, SoundPlayer* soundPlayer) {
 	// CPUをロード
 	for (int i = 0; i < 3; i++) {
 		// CPUをロード
-		Heart* cp = new Heart(100, 100, 2000 + 100*i, 0, 1);
+		Heart* cp = new Heart(100, 2000 + 100*i, 0, 1);
 		m_characters.push_back(cp);
 		//CPUのコントローラ作成 BrainとActionの削除はControllerがやる。
 		NormalController* cpController = new NormalController(new NormalAI(), new StickAction(cp));
@@ -117,7 +119,7 @@ World::World(int areaNum, SoundPlayer* soundPlayer) {
 	}
 	for (int i = 0; i < 2; i++) {
 		// CPUをロード
-		Heart* cp = new Heart(100, 100, 200 + 100 * i, 0, 0);
+		Heart* cp = new Heart(100, 200 + 100 * i, 0, 0);
 		m_characters.push_back(cp);
 		//CPUのコントローラ作成 BrainとActionの削除はControllerがやる。
 		NormalController* cpController = new NormalController(new NormalAI(), new StickAction(cp));

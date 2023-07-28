@@ -6,9 +6,8 @@
 //画面の大きさ
 #define GAME_WIDE 1920
 #define GAME_HEIGHT 1080
-
-//キャラクターやオブジェクトの描画倍率
-const double EXTEND = 0.35;
+//#define GAME_WIDE 1240
+//#define GAME_HEIGHT 1024
 
 // DrawFormatString関数で表示される文字の大きさは20くらい
 #define DRAW_FORMAT_STRING_SIZE 20
