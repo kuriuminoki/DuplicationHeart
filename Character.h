@@ -44,6 +44,9 @@ public:
 
 class AttackInfo {
 private:
+	// 弾丸のHP
+	int m_bulletHp;
+
 	// 弾丸のダメージ
 	int m_bulletDamage;
 
@@ -65,6 +68,9 @@ private:
 	// 弾丸の吹っ飛び(Y方向の初速)
 	int m_bulletImpactY;
 
+	// 斬撃のHP
+	int m_slashHp;
+
 	// 斬撃のダメージ
 	int m_slashDamage;
 
@@ -73,6 +79,9 @@ private:
 
 	// 斬撃の全体フレーム
 	int m_slashCountSum;
+
+	// 斬撃の後隙
+	int m_slashInterval;
 
 	// 斬撃の吹っ飛び(X方向の初速)
 	int m_slashImpactX;
@@ -101,6 +110,7 @@ public:
 	~AttackInfo();
 	
 	// ゲッタのみを持つ
+	int bulletHp() const { return m_bulletHp; }
 	int bulletDamage() const { return m_bulletDamage; }
 	int bulletRx() const { return m_bulletRx; }
 	int bulletRy() const { return m_bulletRy; }
@@ -109,10 +119,12 @@ public:
 	int bulletDistance() const { return m_bulletDistance; }
 	int bulletImpactX() const { return m_bulletImpactX; }
 	int bulletImpactY() const { return m_bulletImpactY; }
+	int slashHp() const { return m_slashHp; }
 	int slashDamage() const { return m_slashDamage; }
 	int slashLenX() const { return m_slashLenX; }
 	int slashLenY() const { return m_slashLenY; }
 	int slashCountSum() const { return m_slashCountSum; }
+	int slashInterval() const { return m_slashInterval; }
 	int slashImpactX() const { return m_slashImpactX; }
 	int slashImpactY() const { return m_slashImpactY; }
 	GraphHandles* bulletEffectHandle() const { return m_bulletEffectHandles; }
@@ -188,6 +200,7 @@ public:
 	// AttackInfoから攻撃のスペックを取得
 	inline int getBulletRapid() const { return m_attackInfo->bulletRapid(); }
 	inline int getSlashCountSum() const { return m_attackInfo->slashCountSum(); }
+	inline int getSlashInterval() const { return m_attackInfo->slashInterval(); }
 
 	// 画像の情報を取得
 	int getCenterX() const;
