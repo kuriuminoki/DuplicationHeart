@@ -27,11 +27,22 @@ private:
 	// ジャンプ時のY方向の初速
 	int m_jumpHeight;
 
+	// ジャンプ時の音
+	int m_jumpSound;
+
+	// 受け身時の音
+	int m_passiveSound;
+
+	// 着地時の音
+	int m_landSound;
+
 public:
 	// デフォルト値で初期化
 	CharacterInfo();
 	// csvファイルを読み込み、キャラ名で検索しパラメータ取得
 	CharacterInfo(const char* characterName);
+
+	~CharacterInfo();
 
 	// ゲッタのみを持つ
 	inline std::string name() const { return m_name; }
@@ -39,6 +50,9 @@ public:
 	inline double handleEx() const { return m_handleEx; }
 	inline int moveSpeed() const { return m_moveSpeed; }
 	inline int jumpHeight() const { return m_jumpHeight; }
+	inline int jumpSound() const { return m_jumpSound; }
+	inline int passiveSound() const { return m_passiveSound; }
+	inline int landSound() const { return m_landSound; }
 };
 
 
@@ -196,6 +210,9 @@ public:
 	inline int getMoveSpeed() const { return m_characterInfo->moveSpeed(); }
 	inline int getJumpHeight() const { return m_characterInfo->jumpHeight(); }
 	inline std::string getName() const { return m_characterInfo->name(); }
+	inline int getJumpSound() const { return m_characterInfo->jumpSound(); }
+	inline int getPassiveSound() const { return m_characterInfo->passiveSound(); }
+	inline int getLandSound() const { return m_characterInfo->landSound(); }
 
 	// AttackInfoから攻撃のスペックを取得
 	inline int getBulletRapid() const { return m_attackInfo->bulletRapid(); }

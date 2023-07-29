@@ -105,24 +105,24 @@ World::World(int areaNum, SoundPlayer* soundPlayer) {
 	updateCamera();
 
 	//主人公のコントローラ作成 BrainとActionの削除はControllerがやる。
-	NormalController* heartController = new NormalController(new KeyboardBrain(m_camera), new StickAction(heart));
+	NormalController* heartController = new NormalController(new KeyboardBrain(m_camera), new StickAction(heart, m_soundPlayer_p));
 	m_characterControllers.push_back(heartController);
 
 	// CPUをロード
-	for (int i = 0; i < 1; i++) {
+	for (int i = 0; i < 3; i++) {
 		// CPUをロード
 		Heart* cp = new Heart(100, 2000 + 100*i, 0, 1);
 		m_characters.push_back(cp);
 		//CPUのコントローラ作成 BrainとActionの削除はControllerがやる。
-		NormalController* cpController = new NormalController(new NormalAI(), new StickAction(cp));
+		NormalController* cpController = new NormalController(new NormalAI(), new StickAction(cp, NULL));
 		m_characterControllers.push_back(cpController);
 	}
-	for (int i = 0; i < 0; i++) {
+	for (int i = 0; i < 2; i++) {
 		// CPUをロード
 		Heart* cp = new Heart(100, 200 + 100 * i, 0, 0);
 		m_characters.push_back(cp);
 		//CPUのコントローラ作成 BrainとActionの削除はControllerがやる。
-		NormalController* cpController = new NormalController(new NormalAI(), new StickAction(cp));
+		NormalController* cpController = new NormalController(new NormalAI(), new StickAction(cp, NULL));
 		m_characterControllers.push_back(cpController);
 	}
 	
@@ -193,6 +193,9 @@ void World::battle() {
 
 	// カメラの更新
 	updateCamera();
+
+	// サウンドプレイヤーのパン設定用
+	m_soundPlayer_p->setCameraX(m_camera->getX());
 
 	// アニメーションの更新
 	updateAnimation();
@@ -282,7 +285,9 @@ void World::atariCharacterAndObject(CharacterController* controller, vector<Obje
 			int x = controller->getAction()->getCharacter()->getCenterX();
 			int y = controller->getAction()->getCharacter()->getCenterY();
 			m_animations.push_back(objects[i]->createAnimation(x, y, 3));
-			m_soundPlayer_p->pushSoundQueue(objects[i]->getSoundHandle());
+			int soundHandle = objects[i]->getSoundHandle();
+			int panPal = adjustPanSound(x, m_camera->getX());
+			m_soundPlayer_p->pushSoundQueue(soundHandle, panPal);
 		}
 		// deleteFlagがtrueなら削除する
 		if (objects[i]->getDeleteFlag()) {
@@ -351,7 +356,9 @@ void World::atariStageAndAttack() {
 				int x = m_attackObjects[i]->getCenterX();
 				int y = m_attackObjects[i]->getCenterY();
 				m_animations.push_back(m_attackObjects[i]->createAnimation(x, y, 3));
-				m_soundPlayer_p->pushSoundQueue(m_attackObjects[i]->getSoundHandle());
+				int soundHandle = m_attackObjects[i]->getSoundHandle();
+				int panPal = adjustPanSound(x, m_camera->getX());
+				m_soundPlayer_p->pushSoundQueue(soundHandle, panPal);
 			}
 			// 壁床のdeleteFlagがtrueなら削除する
 			if (m_stageObjects[j]->getDeleteFlag()) {
@@ -382,7 +389,9 @@ void World::atariAttackAndAttack() {
 				int x = m_attackObjects[i]->getCenterX();
 				int y = m_attackObjects[i]->getCenterY();
 				m_animations.push_back(m_attackObjects[j]->createAnimation(x, y, 3));
-				m_soundPlayer_p->pushSoundQueue(m_attackObjects[i]->getSoundHandle());
+				int soundHandle = m_attackObjects[i]->getSoundHandle();
+				int panPal = adjustPanSound(x, m_camera->getX());
+				m_soundPlayer_p->pushSoundQueue(soundHandle, panPal);
 			}
 		}
 	}

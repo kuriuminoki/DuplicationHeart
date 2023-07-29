@@ -55,6 +55,7 @@ public:
 	inline int getSoundHandle() const { return m_soundHandle_p; }
 	inline int getHp() const { return m_hp; }
 	inline int getDamageCnt() const { return m_damageCnt; }
+	virtual inline int getGroupId() const { return -1; }
 
 	// 攻撃力 攻撃オブジェクト用
 	virtual inline int getDamage() const { return 0; }
@@ -205,6 +206,9 @@ public:
 	// オブジェクト描画（画像がないときに使う）
 	void drawObject(int x1, int y1, int x2, int y2) const;
 
+	// ゲッタ
+	inline int getGroupId() const { return m_groupId; }
+
 	// セッタ
 	// キャラクターIDをセット
 	inline void setCharacterId(int id) { m_characterId = id; }
@@ -271,6 +275,9 @@ public:
 
 	// 画像を返す　ないならNULL
 	GraphHandle* getHandle() const { return m_handle; }
+
+	// ゲッタ
+	inline int getGroupId() const { return m_groupId; }
 
 	// オブジェクト描画（画像がないときに使う）
 	void drawObject(int x1, int y1, int x2, int y2) const;

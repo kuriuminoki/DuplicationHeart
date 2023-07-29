@@ -4,8 +4,14 @@
 #include <queue>
 #include <string>
 
+// カメラのパンを調整する用
+int adjustPanSound(int x, int cameraX);
+
 class SoundPlayer {
 private:
+	// 座標 パンの設定に使う
+	int m_cameraX;
+
 	// 音量
 	int m_volume;
 
@@ -16,7 +22,7 @@ private:
 	int m_bgmHandle;
 
 	// 再生予定の効果音
-	std::queue<int> m_soundQueue;
+	std::queue<std::pair<int, int> > m_soundQueue;
 
 public:
 	SoundPlayer();
@@ -24,6 +30,8 @@ public:
 
 	void setVolume(int volume);
 	inline int getVolume() const { return m_volume; }
+	inline int getCameraX() const { return m_cameraX; }
+	inline void setCameraX(int cameraX) { m_cameraX = cameraX; }
 
 	// BGMをセット（変更）
 	void setBGM(std::string bgmName);
@@ -38,7 +46,7 @@ public:
 	void stopBGM();
 
 	// 効果音の再生待機列へプッシュ
-	void pushSoundQueue(int soundHandle);
+	void pushSoundQueue(int soundHandle, int panPal = 0);
 
 	// 効果音を鳴らす
 	void play();
