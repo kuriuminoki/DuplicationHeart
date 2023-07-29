@@ -25,7 +25,7 @@ protected:
 
 	// ダメージ状態（描画用）
 	int m_damageCnt;
-	const int DAMAGE_CNT_SUM = 30;
+	const int DAMAGE_CNT_SUM = 5;
 
 	// 削除フラグ trueならWorldに消してもらう
 	bool m_deleteFlag;
