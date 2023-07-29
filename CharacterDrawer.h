@@ -15,6 +15,9 @@ private:
 	static int HP_COLOR;
 	static int DAMAGE_COLOR;
 
+	// “_–Å—p
+	int m_cnt;
+
 public:
 	CharacterDrawer(const CharacterAction* const characterAction);
 

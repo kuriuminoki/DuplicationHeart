@@ -19,6 +19,7 @@ int CharacterDrawer::DAMAGE_COLOR = GetColor(255, 0, 0);
 
 CharacterDrawer::CharacterDrawer(const CharacterAction* const characterAction) {
 	m_characterAction = characterAction;
+	m_cnt = 0;
 }
 
 // キャラを描画する
@@ -42,7 +43,11 @@ void CharacterDrawer::drawCharacter(const Camera* const camera) {
 	camera->setCamera(&x, &y, &ex);
 
 	// 描画
+	if (m_characterAction->getState() == CHARACTER_STATE::DAMAGE && ++m_cnt / 2 % 2 == 1) {
+		SetDrawBright(100, 100, 100);
+	}
 	graphHandle->draw(x, y, ex);
+	SetDrawBright(255, 255, 255);
 
 	// 体力バーの座標をカメラで調整
 	x = character->getX() + (character->getWide() / 2);
