@@ -76,9 +76,9 @@ World::World(int areaNum, SoundPlayer* soundPlayer) {
 	// エリアに存在するオブジェクトをロード
 	Object* object1 = new BoxObject(-500, 900, 10000, 1080, WHITE);
 	m_stageObjects.push_back(object1);
-	Object* object2 = new TriangleObject(700, 600, 1300, 900, WHITE, false);
+	Object* object2 = new TriangleObject(700, 600, 1300, 900, WHITE, false, 100);
 	m_stageObjects.push_back(object2);
-	Object* object3 = new BoxObject(300, 600, 700, 900, WHITE);
+	Object* object3 = new BoxObject(300, 600, 700, 900, WHITE, 100);
 	m_stageObjects.push_back(object3);
 	Object* object4 = new TriangleObject(2000, 600, 2600, 900, WHITE, true);
 	m_stageObjects.push_back(object4);
@@ -109,7 +109,7 @@ World::World(int areaNum, SoundPlayer* soundPlayer) {
 	m_characterControllers.push_back(heartController);
 
 	// CPUをロード
-	for (int i = 0; i < 3; i++) {
+	for (int i = 0; i < 1; i++) {
 		// CPUをロード
 		Heart* cp = new Heart(100, 2000 + 100*i, 0, 1);
 		m_characters.push_back(cp);
@@ -117,7 +117,7 @@ World::World(int areaNum, SoundPlayer* soundPlayer) {
 		NormalController* cpController = new NormalController(new NormalAI(), new StickAction(cp));
 		m_characterControllers.push_back(cpController);
 	}
-	for (int i = 0; i < 2; i++) {
+	for (int i = 0; i < 0; i++) {
 		// CPUをロード
 		Heart* cp = new Heart(100, 200 + 100 * i, 0, 0);
 		m_characters.push_back(cp);
@@ -279,7 +279,9 @@ void World::atariCharacterAndObject(CharacterController* controller, vector<Obje
 		// 当たり判定をここで行う
 		if (objects[i]->atari(controller)) {
 			// 当たった場合 エフェクト作成
-			m_animations.push_back(objects[i]->createAnimation(controller->getAction()->getCharacter()));
+			int x = controller->getAction()->getCharacter()->getCenterX();
+			int y = controller->getAction()->getCharacter()->getCenterY();
+			m_animations.push_back(objects[i]->createAnimation(x, y, 3));
 			m_soundPlayer_p->pushSoundQueue(objects[i]->getSoundHandle());
 		}
 		// deleteFlagがtrueなら削除する
@@ -334,6 +336,9 @@ void World::controlObject() {
 
 	// 壁や床<->攻撃の当たり判定
 	atariStageAndAttack();
+
+	// 攻撃<->攻撃の当たり判定
+	atariAttackAndAttack();
 }
 
 // 壁や床<->攻撃の当たり判定
@@ -341,7 +346,13 @@ void World::atariStageAndAttack() {
 	for (unsigned int i = 0; i < m_attackObjects.size(); i++) {
 		for (unsigned int j = 0; j < m_stageObjects.size(); j++) {
 			// 攻撃が壁床に当たっているか判定
-			m_stageObjects[j]->atariObject(m_attackObjects[i]);
+			if (m_stageObjects[j]->atariObject(m_attackObjects[i])) {
+				// 当たった場合 エフェクト作成
+				int x = m_attackObjects[i]->getCenterX();
+				int y = m_attackObjects[i]->getCenterY();
+				m_animations.push_back(m_attackObjects[i]->createAnimation(x, y, 3));
+				m_soundPlayer_p->pushSoundQueue(m_attackObjects[i]->getSoundHandle());
+			}
 			// 壁床のdeleteFlagがtrueなら削除する
 			if (m_stageObjects[j]->getDeleteFlag()) {
 				delete m_stageObjects[j];
@@ -356,6 +367,23 @@ void World::atariStageAndAttack() {
 			m_attackObjects[i] = m_attackObjects.back();
 			m_attackObjects.pop_back();
 			i--;
+		}
+	}
+}
+
+// 攻撃<->攻撃の当たり判定
+void World::atariAttackAndAttack() {
+	if (m_attackObjects.size() == 0) { return; }
+	for (unsigned int i = 0; i < m_attackObjects.size() - 1; i++) {
+		for (unsigned int j = i + 1; j < m_attackObjects.size(); j++) {
+			// 攻撃が壁床に当たっているか判定
+			if (m_attackObjects[j]->atariObject(m_attackObjects[i])) {
+				// 当たった場合 エフェクト作成
+				int x = m_attackObjects[i]->getCenterX();
+				int y = m_attackObjects[i]->getCenterY();
+				m_animations.push_back(m_attackObjects[j]->createAnimation(x, y, 3));
+				m_soundPlayer_p->pushSoundQueue(m_attackObjects[i]->getSoundHandle());
+			}
 		}
 	}
 }

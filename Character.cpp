@@ -44,6 +44,7 @@ AttackInfo::AttackInfo(const char* characterName, double drawEx) {
 	map<string, string> data = reader.findOne("name", characterName);
 
 	// パラメータを設定
+	m_bulletHp = stoi(data["bulletHp"]);
 	m_bulletDamage = stoi(data["bulletDamage"]);
 	m_bulletRx = stoi(data["bulletRx"]);
 	m_bulletRy = stoi(data["bulletRy"]);
@@ -52,10 +53,12 @@ AttackInfo::AttackInfo(const char* characterName, double drawEx) {
 	m_bulletDistance = stoi(data["bulletDistance"]);
 	m_bulletImpactX = stoi(data["bulletImpactX"]);
 	m_bulletImpactY = stoi(data["bulletImpactY"]);
+	m_slashHp = stoi(data["slashHp"]);
 	m_slashDamage = stoi(data["slashDamage"]);
 	m_slashLenX = stoi(data["slashLenX"]);
 	m_slashLenY = stoi(data["slashLenY"]);
 	m_slashCountSum = stoi(data["slashCountSum"]);
+	m_slashInterval = stoi(data["slashInterval"]);
 	m_slashImpactX = stoi(data["slashImpactX"]);
 	m_slashImpactY = stoi(data["slashImpactY"]);
 
@@ -267,6 +270,7 @@ Object* Heart::slashAttack(bool leftDirection, int cnt) {
 	}
 
 	// 攻撃の画像と持続時間(cntを考慮して決定)
+	cnt -= m_attackInfo->slashInterval();
 	int index = 0;
 	int slashCountSum = m_attackInfo->slashCountSum() / 3 + 1;
 	SlashObject* attackObject = NULL;

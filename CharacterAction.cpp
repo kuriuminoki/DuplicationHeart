@@ -500,7 +500,7 @@ Object* StickAction::slashAttack(int gx, int gy) {
 	// UŒ‚ŠJŽn
 	if (ableAttack()) {
 		m_attackLeftDirection = m_character_p->getCenterX() > gx;
-		m_slashCnt = m_character_p->getSlashCountSum();
+		m_slashCnt = m_character_p->getSlashCountSum() + m_character_p->getSlashInterval();
 		// UŒ‚‚Ì•ûŒü‚ÖŒü‚­
 		m_character_p->setLeftDirection(m_attackLeftDirection);
 	}

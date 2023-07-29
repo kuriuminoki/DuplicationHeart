@@ -11,12 +11,12 @@
 
 
 Object::Object() :
-	Object(0, 0, 0, 0)
+	Object(0, 0, 0, 0, -1)
 {
 
 }
 
-Object::Object(int x1, int y1, int x2, int y2) {
+Object::Object(int x1, int y1, int x2, int y2, int hp) {
 	m_x1 = x1;
 	m_y1 = y1;
 	m_x2 = x2;
@@ -25,39 +25,47 @@ Object::Object(int x1, int y1, int x2, int y2) {
 	if (m_x1 > m_x2) { std::swap(m_x1, m_x2); }
 	if (m_y1 > m_y2) { std::swap(m_y1, m_y2); }
 
+	m_hp = hp;
+	m_damageCnt = 0;
+
 	m_deleteFlag = false;
-	m_ableDelete = false;
 
 	m_effectHandles_p = NULL;
 	m_soundHandle_p = -1;
 }
 
+// HPを減らす
+void Object::decreaseHp(int damageValue) {
+	m_hp = max(0, m_hp - damageValue);
+	if (m_hp == 0) { setDeleteFlag(true); }
+	m_damageCnt = DAMAGE_CNT_SUM;
+}
+
 // アニメーション作成
-Animation* BulletObject::createAnimation(const Character* character) {
+Animation* BulletObject::createAnimation(int x, int y, int flameCnt) {
 	if (m_effectHandles_p == NULL) {
 		return NULL;
 	}
 	return new Animation((m_x1 + m_x2) / 2, (m_y1 + m_y2) / 2, 3, m_effectHandles_p);
+	return new Animation(x, y, flameCnt, m_effectHandles_p);
 }
 
 // アニメーション作成
-Animation* SlashObject::createAnimation(const Character* character) {
+Animation* SlashObject::createAnimation(int x, int y, int flameCnt) {
 	if (m_effectHandles_p == NULL) {
 		return NULL;
 	}
-	// キャラとの座標の平均をとる
-	int x = (m_x1 + m_x2) / 2;
-	int y = (m_y1 + m_y2) / 2;
-	x = (x + character->getCenterX()) / 2;
-	y = (y + character->getCenterY()) / 2;
-	return new Animation(x, y, 3, m_effectHandles_p);
+	// 座標の平均をとる
+	x = (x + (m_x1 + m_x2) / 2) / 2;
+	y = (y + (m_y1 + m_y2) / 2) / 2;
+	return new Animation(x, y, flameCnt, m_effectHandles_p);
 }
 
 /*
 * 四角形のオブジェクト
 */
-BoxObject::BoxObject(int x1, int y1, int x2, int y2, int color) :
-	Object(x1, y1, x2, y2)
+BoxObject::BoxObject(int x1, int y1, int x2, int y2, int color, int hp) :
+	Object(x1, y1, x2, y2, hp)
 {
 	m_color = color;
 }
@@ -186,22 +194,28 @@ void BoxObject::penetration(CharacterController* characterController) {
 	}
 }
 
-// 他オブジェクトとの当たり判定
-void BoxObject::atariObject(Object* object) {
+// 攻撃オブジェクトとの当たり判定
+bool BoxObject::atariObject(Object* object) {
 	// 破壊不能オブジェクト
-	if (!object->getAbleDelete()) { return; }
+	if (!object->getAbleDelete()) { return false; }
 	// 当たっているなら
 	if (m_x2 > object->getX1() && m_x1 < object->getX2() && m_y2 > object->getY1() && m_y1 < object->getY2()) {
 		object->setDeleteFlag(true);
+		// 自分の体力を減らす
+		if (getAbleDelete()) {
+			decreaseHp(object->getDamage());
+			return true;
+		}
 	}
+	return false;
 }
 
 void BoxObject::action() {
-
+	if (m_damageCnt > 0) { m_damageCnt--; }
 }
 
-TriangleObject::TriangleObject(int x1, int y1, int x2, int y2, int color, bool leftDown):
-	Object(x1, y1, x2, y2)
+TriangleObject::TriangleObject(int x1, int y1, int x2, int y2, int color, bool leftDown, int hp):
+	Object(x1, y1, x2, y2, hp)
 {
 	m_color = color;
 	m_leftDown = leftDown;
@@ -415,9 +429,9 @@ void TriangleObject::penetration(CharacterController* characterController) {
 }
 
 // 他オブジェクトとの当たり判定
-void TriangleObject::atariObject(Object* object) {
+bool TriangleObject::atariObject(Object* object) {
 	// 破壊不能オブジェクト
-	if (!object->getAbleDelete()) { return; }
+	if (!object->getAbleDelete()) { return false; }
 	// 斜辺を考慮して当たり判定を計算
 	int y = object->getY1();
 	if (m_leftDown) {
@@ -429,11 +443,17 @@ void TriangleObject::atariObject(Object* object) {
 	// 当たっているなら
 	if (m_x2 > object->getX1() && m_x1 < object->getX2() && m_y2 > object->getY1() && y < object->getY2()) {
 		object->setDeleteFlag(true);
+		// 自分の体力を減らす
+		if (getAbleDelete()) {
+			decreaseHp(object->getDamage());
+			return true;
+		}
 	}
+	return false;
 }
 
 void TriangleObject::action() {
-
+	if (m_damageCnt > 0) { m_damageCnt--; }
 }
 
 
@@ -452,7 +472,7 @@ BulletObject::BulletObject(int x, int y, int color, int gx, int gy, AttackInfo* 
 	m_ry = attackInfo->bulletRy();
 	m_damage = attackInfo->bulletDamage();
 	m_d = attackInfo->bulletDistance();
-	m_ableDelete = true;
+	m_hp = attackInfo->bulletHp();
 
 	// 角度を計算し、VXとVYを決定
 	int dx = gx - x;
@@ -497,12 +517,21 @@ bool BulletObject::atari(CharacterController* characterController) {
 	return false;
 }
 
-// 他オブジェクトとの当たり判定
-void BulletObject::atariObject(Object* object) {
-
+// 他攻撃オブジェクトとの当たり判定
+bool BulletObject::atariObject(Object* object) {
+	// どちらかが破壊不能オブジェクト
+	if (!object->getAbleDelete() || !getAbleDelete()) { return false; }
+	// 当たっているなら
+	if (m_x2 > object->getX1() && m_x1 < object->getX2() && m_y2 > object->getY1() && m_y1 < object->getY2()) {
+		object->decreaseHp(m_damage);
+		decreaseHp(object->getDamage());
+		return true;
+	}
+	return false;
 }
 
 void BulletObject::action() {
+	if (m_damageCnt > 0) { m_damageCnt--; }
 	m_x1 += m_vx;
 	m_x2 += m_vx;
 	m_y1 += m_vy;
@@ -516,7 +545,7 @@ void BulletObject::action() {
 
 
 SlashObject::SlashObject(int x1, int y1, int x2, int y2, GraphHandle* handle, int slashCountSum, AttackInfo* attackInfo) :
-	Object(x1, y1, x2, y2)
+	Object(x1, y1, x2, y2, attackInfo->slashHp())
 {
 	// 必要なら後からセッタで設定
 	m_characterId = -1;
@@ -555,6 +584,7 @@ SlashObject::SlashObject(int x, int y, GraphHandle* handle, int slashCountSum, A
 	GetGraphSize(handle->getHandle(), &x2, &y2);
 	x2 += x;
 	y2 = y;
+	m_hp = attackInfo->slashHp();
 	SlashObject(x, y, x2, y2, handle, slashCountSum, attackInfo);
 }
 
@@ -591,12 +621,21 @@ bool SlashObject::atari(CharacterController* characterController) {
 	return false;
 }
 
-// 他オブジェクトとの当たり判定
-void SlashObject::atariObject(Object* object) {
-
+// 他攻撃オブジェクトとの当たり判定
+bool SlashObject::atariObject(Object* object) {
+	// どちらかが破壊不能オブジェクト
+	if (!object->getAbleDelete() || !getAbleDelete()) { return false; }
+	// 当たっているなら
+	if (m_x2 > object->getX1() && m_x1 < object->getX2() && m_y2 > object->getY1() && m_y1 < object->getY2()) {
+		object->decreaseHp(m_damage);
+		decreaseHp(object->getDamage());
+		return true;
+	}
+	return false;
 }
 
 void SlashObject::action() {
+	if (m_damageCnt > 0) { m_damageCnt--; }
 	// 時間経過
 	m_cnt++;
 

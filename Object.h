@@ -20,11 +20,15 @@ protected:
 	// 右下の座標+1
 	int m_x2, m_y2;
 
+	// HP -1なら無敵
+	int m_hp;
+
+	// ダメージ状態（描画用）
+	int m_damageCnt;
+	const int DAMAGE_CNT_SUM = 30;
+
 	// 削除フラグ trueならWorldに消してもらう
 	bool m_deleteFlag;
-
-	// 攻撃で削除可能なオブジェクトならtrue
-	bool m_ableDelete;
 
 	// エフェクト
 	GraphHandles* m_effectHandles_p;
@@ -34,22 +38,29 @@ protected:
 
 public:
 	Object();
-	Object(int x1, int y1, int x2, int y2);
+	Object(int x1, int y1, int x2, int y2, int hp = -1);
 
 	void debugObject(int x, int y, int color) const;
 	virtual void debug(int x, int y, int color) const = 0;
 
 	// ゲッタ
 	inline bool getDeleteFlag() const { return m_deleteFlag; }
-	inline bool getAbleDelete() const { return m_ableDelete; }
+	inline bool getAbleDelete() const { return m_hp != -1 ? true : false; }
 	inline int getX1() const { return m_x1; }
 	inline int getX2() const { return m_x2; }
 	inline int getY1() const { return m_y1; }
 	inline int getY2() const { return m_y2; }
+	inline int getCenterX() const { return (m_x1 + m_x2) / 2; }
+	inline int getCenterY() const { return (m_y1 + m_y2) / 2; }
 	inline int getSoundHandle() const { return m_soundHandle_p; }
+	inline int getHp() const { return m_hp; }
+	inline int getDamageCnt() const { return m_damageCnt; }
+
+	// 攻撃力 攻撃オブジェクト用
+	virtual inline int getDamage() const { return 0; }
 
 	// 画像を返す　ないならNULL
-	virtual GraphHandle* getHandle() const = 0;
+	virtual GraphHandle* getHandle() const { return nullptr; }
 
 	// オブジェクト描画（画像がないときに使う）
 	virtual void drawObject(int x1, int y1, int x2, int y2) const = 0;
@@ -57,20 +68,23 @@ public:
 	// セッタ
 	inline void setDeleteFlag(bool deleteFlag) { m_deleteFlag = deleteFlag; }
 
+	// HPを減らす
+	void decreaseHp(int damageValue);
+
 	// キャラとの当たり判定
 	virtual bool atari(CharacterController* character) = 0;
 
 	// キャラがオブジェクトに入り込んでいるときの処理
-	virtual void penetration(CharacterController* characterController) = 0;
+	virtual void penetration(CharacterController* characterController) {};
 
-	// 他オブジェクトとの当たり判定
-	virtual void atariObject(Object* object) = 0;
+	// 攻撃オブジェクトとの当たり判定
+	virtual bool atariObject(Object* object) = 0;
 
 	// 動くオブジェクト用 毎フレーム行う
 	virtual void action() = 0;
 
 	// アニメーション作成
-	virtual Animation* createAnimation(const Character* character) = 0;
+	virtual Animation* createAnimation(int x, int y, int flameCnt) { return nullptr; };
 };
 
 
@@ -88,12 +102,9 @@ private:
 	int m_color;
 
 public:
-	BoxObject(int x1, int y1, int x2, int y2, int color);
+	BoxObject(int x1, int y1, int x2, int y2, int color, int hp = -1);
 
 	void debug(int x, int y, int color) const;
-
-	// 画像を返す　ないならNULL
-	GraphHandle* getHandle() const { return nullptr; }
 
 	// オブジェクト描画（画像がないときに使う）
 	void drawObject(int x1, int y1, int x2, int y2) const;
@@ -105,14 +116,11 @@ public:
 	// キャラがオブジェクトに入り込んでいるときの処理
 	void penetration(CharacterController* characterController);
 
-	// 他オブジェクトとの当たり判定
-	void atariObject(Object* object);
+	// 攻撃オブジェクトとの当たり判定
+	bool atariObject(Object* object);
 
 	// 動くオブジェクト用 毎フレーム行う
 	void action();
-
-	// アニメーション作成
-	Animation* createAnimation(const Character* character) { return nullptr; }
 };
 
 /*
@@ -131,12 +139,9 @@ private:
 	// 座標XにおけるY座標（傾きから算出する）
 	int getY(int x) const;
 public:
-	TriangleObject(int x1, int y1, int x2, int y2, int color, bool leftDown);
+	TriangleObject(int x1, int y1, int x2, int y2, int color, bool leftDown, int hp = -1);
 
 	void debug(int x, int y, int color) const;
-
-	// 画像を返す　ないならNULL
-	GraphHandle* getHandle() const { return nullptr; }
 
 	// オブジェクト描画（画像がないときに使う）
 	void drawObject(int x1, int y1, int x2, int y2) const;
@@ -148,14 +153,11 @@ public:
 	// キャラがオブジェクトに入り込んでいるときの処理
 	void penetration(CharacterController* characterController);
 
-	// 他オブジェクトとの当たり判定
-	void atariObject(Object* object);
+	// 攻撃オブジェクトとの当たり判定
+	bool atariObject(Object* object);
 
 	// 動くオブジェクト用 毎フレーム行う
 	void action();
-
-	// アニメーション作成
-	Animation* createAnimation(const Character* character) { return nullptr; }
 };
 
 /*
@@ -200,9 +202,6 @@ public:
 
 	void debug(int x, int y, int color) const;
 
-	// 画像を返す　ないならNULL
-	GraphHandle* getHandle() const { return nullptr; }
-
 	// オブジェクト描画（画像がないときに使う）
 	void drawObject(int x1, int y1, int x2, int y2) const;
 
@@ -211,21 +210,21 @@ public:
 	inline void setCharacterId(int id) { m_characterId = id; }
 	inline void setGroupId(int id) { m_groupId = id; }
 
+	// 攻撃力 攻撃オブジェクト用
+	inline int getDamage() const { return m_damage; }
+
 	// キャラとの当たり判定
 	// 当たっているならキャラを操作する。
 	bool atari(CharacterController* character);
 
-	// キャラがオブジェクトに入り込んでいるときの処理
-	void penetration(CharacterController* characterController) {};
-
-	// 他オブジェクトとの当たり判定
-	void atariObject(Object* object);
+	// 攻撃オブジェクトとの当たり判定
+	bool atariObject(Object* object);
 
 	// 動くオブジェクト用 毎フレーム行う
 	void action();
 
 	// アニメーション作成
-	Animation* createAnimation(const Character* character);
+	Animation* createAnimation(int x, int y, int flameCnt);
 };
 
 
@@ -280,21 +279,21 @@ public:
 	inline void setCharacterId(int id) { m_characterId = id; }
 	inline void setGroupId(int id) { m_groupId = id; }
 
+	// 攻撃力 攻撃オブジェクト用
+	inline int getDamage() const { return m_damage; }
+
 	// キャラとの当たり判定
 	// 当たっているならキャラを操作する。
 	bool atari(CharacterController* character);
 
-	// キャラがオブジェクトに入り込んでいるときの処理
-	void penetration(CharacterController* characterController) {};
-
-	// 他オブジェクトとの当たり判定
-	void atariObject(Object* object);
+	// 攻撃オブジェクトとの当たり判定
+	bool atariObject(Object* object);
 
 	// 動くオブジェクト用 毎フレーム行う
 	void action();
 
 	// アニメーション作成
-	Animation* createAnimation(const Character* character);
+	Animation* createAnimation(int x, int y, int flameCnt);
 };
 
 #endif

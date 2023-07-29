@@ -90,6 +90,8 @@ private:
 	// •Ç‚â°<->UŒ‚‚Ì“–‚½‚è”»’è
 	void atariStageAndAttack();
 
+	// UŒ‚<->UŒ‚‚Ì“–‚½‚è”»’è
+	void atariAttackAndAttack();
 };
 
 #endif
