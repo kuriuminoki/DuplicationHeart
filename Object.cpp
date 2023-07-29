@@ -511,7 +511,7 @@ bool BulletObject::atari(CharacterController* characterController) {
 	if (characterX2 > m_x1 && characterX1 < m_x2 && characterY2 > m_y1 && characterY1 < m_y2 && characterController->getAction()->ableDamage()) {
 		// 貫通弾じゃないなら消滅
 		m_deleteFlag = true;
-		characterController->damage(m_vx / 2, m_vy / 2, m_damage, -1);
+		characterController->damage(m_vx / 2, m_vy / 2, m_damage);
 		return true;
 	}
 	return false;
@@ -520,7 +520,9 @@ bool BulletObject::atari(CharacterController* characterController) {
 // 他攻撃オブジェクトとの当たり判定
 bool BulletObject::atariObject(Object* object) {
 	// どちらかが破壊不能オブジェクト
-	if (!object->getAbleDelete() || !getAbleDelete()) { return false; }
+	if (!object->getAbleDelete() || !getAbleDelete() || m_groupId == object->getGroupId()) { 
+		return false;
+	}
 	// 当たっているなら
 	if (m_x2 > object->getX1() && m_x1 < object->getX2() && m_y2 > object->getY1() && m_y1 < object->getY2()) {
 		object->decreaseHp(m_damage);
@@ -611,10 +613,10 @@ bool SlashObject::atari(CharacterController* characterController) {
 		// 貫通弾じゃないなら消滅
 		 // m_deleteFlag = true;
 		if (characterX1 + characterX2 < m_x1 + m_x2) {
-			characterController->damage(-m_slashImpactX, -m_slashImpactY, m_damage, -1);
+			characterController->damage(-m_slashImpactX, -m_slashImpactY, m_damage);
 		}
 		else {
-			characterController->damage(m_slashImpactX, -m_slashImpactY, m_damage, -1);
+			characterController->damage(m_slashImpactX, -m_slashImpactY, m_damage);
 		}
 		return true;
 	}
@@ -624,7 +626,9 @@ bool SlashObject::atari(CharacterController* characterController) {
 // 他攻撃オブジェクトとの当たり判定
 bool SlashObject::atariObject(Object* object) {
 	// どちらかが破壊不能オブジェクト
-	if (!object->getAbleDelete() || !getAbleDelete()) { return false; }
+	if (!object->getAbleDelete() || !getAbleDelete() || m_groupId == object->getGroupId()) {
+		return false;
+	}
 	// 当たっているなら
 	if (m_x2 > object->getX1() && m_x1 < object->getX2() && m_y2 > object->getY1() && m_y1 < object->getY2()) {
 		object->decreaseHp(m_damage);

@@ -3,6 +3,7 @@
 
 class Character;
 class Object;
+class SoundPlayer;
 
 
 // キャラクターの状態
@@ -21,6 +22,9 @@ enum class CHARACTER_STATE {
 */
 class CharacterAction {
 protected:
+	// サウンドプレイヤー
+	SoundPlayer* m_soundPlayer_p;
+
 	// キャラの状態
 	CHARACTER_STATE m_state;
 
@@ -87,7 +91,7 @@ protected:
 
 public:
 	CharacterAction();
-	CharacterAction(Character* character);
+	CharacterAction(Character* character, SoundPlayer* soundPlayer_p);
 
 	// デバッグ
 	void debugAction(int x, int y, int color) const;
@@ -152,7 +156,7 @@ public:
 	virtual Object* slashAttack(int gx, int gy) = 0;
 
 	// ダメージ
-	virtual void damage(int vx, int vy, int damageValue, int soundHandle) = 0;
+	virtual void damage(int vx, int vy, int damageValue) = 0;
 
 	// 今無敵時間じゃない
 	bool ableDamage() const;
@@ -188,7 +192,7 @@ private:
 	void switchHandle();
 
 public:
-	StickAction(Character* character);
+	StickAction(Character* character, SoundPlayer* soundPlayer_p);
 
 	void debug(int x, int y, int color) const;
 
@@ -211,7 +215,7 @@ public:
 	Object* slashAttack(int gx, int gy);
 
 	// ダメージ
-	void damage(int vx, int vy, int damageValue, int soundHandle);
+	void damage(int vx, int vy, int damageValue);
 };
 
 #endif

@@ -1,5 +1,6 @@
 #include "CharacterAction.h"
 #include "Character.h"
+#include "Sound.h"
 #include "Define.h"
 #include "DxLib.h"
 
@@ -7,8 +8,9 @@
 /*
 *  キャラクターの基底クラス
 */
-CharacterAction::CharacterAction(Character* character) {
+CharacterAction::CharacterAction(Character* character, SoundPlayer* soundPlayer_p) {
 	m_character_p = character;
+	m_soundPlayer_p = soundPlayer_p;
 
 	//初期状態
 	m_state = CHARACTER_STATE::STAND;
@@ -44,7 +46,7 @@ CharacterAction::CharacterAction(Character* character) {
 }
 
 CharacterAction::CharacterAction() :
-	CharacterAction(NULL)
+	CharacterAction(NULL, NULL)
 {
 
 }
@@ -97,6 +99,12 @@ void CharacterAction::setGrand(bool grand) {
 	if (m_vy > 0) { // 着地モーションになる
 		m_landCnt = LAND_TIME;
 		m_slashCnt = 0;
+		// 効果音
+		if (m_soundPlayer_p != NULL) {
+			m_soundPlayer_p->pushSoundQueue(m_character_p->getLandSound(),
+				adjustPanSound(m_character_p->getCenterX(),
+					m_soundPlayer_p->getCameraX()));
+		}
 	}
 	m_grand = grand;
 	if (m_state == CHARACTER_STATE::DAMAGE && m_damageCnt == 0) {
@@ -136,8 +144,8 @@ void CharacterAction::stopMoveRight() {
 /*
 * 空を飛ばない普通の棒人間
 */
-StickAction::StickAction(Character* character):
-	CharacterAction(character)
+StickAction::StickAction(Character* character, SoundPlayer* soundPlayer_p):
+	CharacterAction(character, soundPlayer_p)
 {
 
 }
@@ -394,15 +402,18 @@ void StickAction::walk(bool right, bool left) {
 	if (damageFlag()) {
 		return;
 	}
+	bool walkStart = false;
 	// 右へ歩き始める
 	if (!m_rightLock && !m_moveRight && !m_moveLeft && right && (!left || !m_character_p->getLeftDirection()) && !m_squat) { // 右へ歩く
 		m_vx += m_character_p->getMoveSpeed();
 		m_moveRight = true;
+		walkStart = true;
 	}
 	// 左へ歩き始める
 	if (!m_leftLock && !m_moveRight && !m_moveLeft && left && (!right || m_character_p->getLeftDirection()) && !m_squat) { // 左へ歩く
 		m_vx -= m_character_p->getMoveSpeed();
 		m_moveLeft = true;
+		walkStart = true;
 	}
 	// アニメーション用にカウント
 	if (m_moveLeft || m_moveRight) {
@@ -438,6 +449,12 @@ void StickAction::jump(int cnt) {
 				m_preJumpCnt = -1;
 				stopMoveLeft();
 				stopMoveRight();
+				// 効果音
+				if (m_soundPlayer_p != NULL) {
+					m_soundPlayer_p->pushSoundQueue(m_character_p->getPassiveSound(),
+						adjustPanSound(m_character_p->getCenterX(),
+							m_soundPlayer_p->getCameraX()));
+				}
 			}
 			// ダメージ状態が解除されるまではずっとBoost
 			m_boostCnt = BOOST_TIME;
@@ -465,6 +482,12 @@ void StickAction::jump(int cnt) {
 			m_grand = false;
 			m_preJumpCnt = -1;
 			setState(CHARACTER_STATE::STAND);
+			// 効果音
+			if (m_soundPlayer_p != NULL) {
+				m_soundPlayer_p->pushSoundQueue(m_character_p->getJumpSound(),
+					adjustPanSound(m_character_p->getCenterX(),
+						m_soundPlayer_p->getCameraX()));
+			}
 		}
 		else {
 			// ジャンプ前の溜め中
@@ -509,7 +532,7 @@ Object* StickAction::slashAttack(int gx, int gy) {
 }
 
 // ダメージを受ける
-void StickAction::damage(int vx, int vy, int damageValue, int soundHandle) {
+void StickAction::damage(int vx, int vy, int damageValue) {
 	setState(CHARACTER_STATE::DAMAGE);
 	m_vx += vx;
 	m_vy += vy;

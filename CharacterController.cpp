@@ -177,6 +177,8 @@ int NormalAI::squatOrder() {
 }
 
 int NormalAI::slashOrder() {
+	if (m_target_p == NULL) { return 0; }
+	// ‰“‹——£‚Ì“G‚É‚ÍŽaŒ‚‚µ‚È‚¢
 	if (m_target_p != NULL && abs(m_target_p->getCenterX() - m_characterAction_p->getCharacter()->getCenterX()) > 500) {
 		return 0;
 	}
@@ -188,6 +190,7 @@ int NormalAI::slashOrder() {
 }
 
 int NormalAI::bulletOrder() {
+	if (m_target_p == NULL) { return 0; }
 	// ƒ‰ƒ“ƒ_ƒ€‚ÅŽËŒ‚
 	if (GetRand(50) == 0) { 
 		return 1;
@@ -343,6 +346,6 @@ Object* NormalController::slashAttack() {
 	return NULL;
 }
 
-void NormalController::damage(int vx, int vy, int damageValue, int soundHandle) {
-	m_characterAction->damage(vx, vy, damageValue, soundHandle);
+void NormalController::damage(int vx, int vy, int damageValue) {
+	m_characterAction->damage(vx, vy, damageValue);
 }

@@ -177,7 +177,7 @@ public:
 	virtual Object* slashAttack() = 0;
 
 	// ダメージ
-	virtual void damage(int vx, int vy, int damageValue, int soundHandle) = 0;
+	virtual void damage(int vx, int vy, int damageValue) = 0;
 };
 
 /*
@@ -204,7 +204,7 @@ public:
 	Object* slashAttack();
 
 	// ダメ―ジ
-	void damage(int vx, int vy, int damageValue, int soundHandle);
+	void damage(int vx, int vy, int damageValue);
 };
 
 #endif

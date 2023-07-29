@@ -28,6 +28,24 @@ CharacterInfo::CharacterInfo(const char* characterName) {
 	m_handleEx = stod(data["handleEx"]);
 	m_moveSpeed = stoi(data["moveSpeed"]);
 	m_jumpHeight = stoi(data["jumpHeight"]);
+
+	// 効果音をロード
+	string filePath = "sound/stick/";
+	string fileName;
+	fileName = filePath + data["jumpSound"];
+	m_jumpSound = LoadSoundMem(fileName.c_str());
+	fileName = filePath + data["passiveSound"];
+	m_passiveSound = LoadSoundMem(fileName.c_str());
+	fileName = filePath + data["landSound"];
+	m_landSound = LoadSoundMem(fileName.c_str());
+	fileName = filePath + data["runSound"];
+}
+
+CharacterInfo::~CharacterInfo() {
+	// サウンドを削除
+	DeleteSoundMem(m_jumpSound);
+	DeleteSoundMem(m_passiveSound);
+	DeleteSoundMem(m_landSound);
 }
 
 
