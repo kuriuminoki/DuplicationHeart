@@ -54,6 +54,7 @@ void SoundPlayer::setBGM(std::string bgmName, int volume) {
 	m_bgmHandle = LoadSoundMem(bgmName.c_str());
 	// ‰¹—Ê’²®
 	changeSoundVolume(m_volume * volume / 100, m_bgmHandle);
+	playBGM();
 }
 
 // BGM‚ğÄ¶

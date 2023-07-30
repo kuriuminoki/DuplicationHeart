@@ -8,6 +8,9 @@
 #include "DxLib.h"
 #include <algorithm>
 #include <cmath>
+#include <sstream>
+
+using namespace std;
 
 
 Object::Object() :
@@ -649,6 +652,33 @@ void SlashObject::action() {
 	}
 }
 
+DoorObject::DoorObject(int x1, int y1, int x2, int y2, const char* fileName, int areaNum) :
+	Object(x1, y1, x2, y2)
+{
+	m_graph = new GraphHandle(fileName);
+	m_areaNum = areaNum;
+	m_text = nullptr;
+}
+DoorObject::~DoorObject() {
+	delete m_graph;
+}
+bool DoorObject::atari(CharacterController* characterController) {
+	// キャラの情報　座標と移動スピード
+	int characterX1 = characterController->getAction()->getCharacter()->getX();
+	int characterY1 = characterController->getAction()->getCharacter()->getY();
+	int characterX2 = characterX1 + characterController->getAction()->getCharacter()->getWide();
+	int characterY2 = characterY1 + characterController->getAction()->getCharacter()->getHeight();
+
+	// 当たり判定
+	if (characterX2 > m_x1 && characterX1 < m_x2 && characterY2 > m_y1 && characterY1 < m_y2 && characterController->getAction()->ableDamage()) {
+		ostringstream text;
+		text << "Ｗキーで入る";
+		m_text = text.str().c_str();
+		return true;
+	}
+	m_text = nullptr;
+	return false;
+}
 
 // 描画用
 // オブジェクト描画（画像がないときに使う）
@@ -689,8 +719,4 @@ void BulletObject::drawObject(int x1, int y1, int x2, int y2) const {
 	else {
 		DrawOval(x1 + rx, y1 + ry, rx, ry, m_color, TRUE);
 	}
-}
-// オブジェクト描画（画像がないときに使う）
-void SlashObject::drawObject(int x1, int y1, int x2, int y2) const {
-	
 }

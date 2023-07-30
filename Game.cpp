@@ -44,7 +44,12 @@ void GameData::asignWorld(World* world) {
 }
 
 void GameData::asignedWorld(World* world) {
-
+	size_t size = m_characterData.size();
+	for (unsigned int i = 0; i < size; i++) {
+		int hp = 0;
+		world->asignCharacterData(m_characterData[i].name(), hp);
+		m_characterData[i].setHp(hp);
+	}
 }
 
 
@@ -78,4 +83,13 @@ void Game::play() {
 
 	// ‰¹
 	m_soundPlayer->play();
+
+	// ƒGƒŠƒAˆÚ“®
+	if (m_world->getBrightValue() == 0) {
+		int nextAreaNum = m_world->getAreaNum();
+		m_gameData->asignedWorld(m_world);
+		delete m_world;
+		m_world = new World(nextAreaNum, m_soundPlayer);
+		m_gameData->asignWorld(m_world);
+	}
 }

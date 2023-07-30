@@ -39,6 +39,7 @@ public:
 class Character;
 class CharacterController;
 class Object;
+class DoorObject;
 class SoundPlayer;
 class Camera;
 
@@ -69,6 +70,9 @@ private:
 	// オブジェクト
 	std::vector<Object*> m_objects;
 
+	// 扉オブジェクト
+	std::vector<DoorObject*> m_doorObjects;
+
 	// 背景画像と色
 	int m_backGroundGraph, m_backGroundColor;
 
@@ -97,6 +101,8 @@ public:
 	inline std::vector<CharacterController*> getCharacterControllers() const { return m_characterControllers; }
 
 	inline std::vector<Object*> getObjects() const { return m_objects; }
+
+	inline std::vector<DoorObject*> getDoorObjects() const { return m_doorObjects; }
 
 	inline void getBackGround(int& graphHandle, int& colorHandle) const {
 		graphHandle = m_backGroundGraph;

@@ -16,6 +16,9 @@ protected:
 public:
 	Brain();
 
+	// 話しかけたり扉入ったり
+	virtual bool actionOrder() { return false; }
+
 	// セッタ
 	virtual void setCharacterAction(const CharacterAction* characterAction) = 0;
 	
@@ -58,6 +61,7 @@ public:
 	KeyboardBrain(const Camera* camera);
 	inline void setCharacterAction(const CharacterAction* characterAction) { m_characterAction_p = characterAction; }
 	void bulletTargetPoint(int& x, int& y);
+	bool actionOrder();
 	void moveOrder(int& right, int& left, int& up, int& down);
 	int jumpOrder();
 	int squatOrder();
@@ -143,6 +147,9 @@ public:
 	// ゲッタ
 	inline const CharacterAction* getAction() const { return m_characterAction; }
 	inline const Brain* getBrain() const { return m_brain; }
+
+	// 話しかけたり扉に入ったりするボタンがtrueか
+	virtual bool getActionKey() const { return m_brain->actionOrder(); }
 
 	// アクションのセッタ
 	void setCharacterGrand(bool grand);

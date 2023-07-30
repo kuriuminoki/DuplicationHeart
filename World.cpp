@@ -68,6 +68,8 @@ void penetrationCharacterAndObject(CharacterController* controller, vector<Objec
 * オブジェクトのロードなど
 */
 World::World(int areaNum, SoundPlayer* soundPlayer) {
+	m_brightValue = 255;
+
 	// サウンドプレイヤー
 	m_soundPlayer_p = soundPlayer;
 
@@ -83,10 +85,8 @@ World::World(int areaNum, SoundPlayer* soundPlayer) {
 	m_characters = data.getCharacters();
 	m_characterControllers = data.getCharacterControllers();
 	m_stageObjects = data.getObjects();
+	m_doorObjects = data.getDoorObjects();
 	data.getBackGround(m_backGroundGraph, m_backGroundColor);
-	
-	// BGM再生
-	m_soundPlayer_p->playBGM();
 }
 
 World::~World() {
@@ -155,6 +155,11 @@ vector<const Animation*> World::getAnimations() const {
 
 // 戦わせる
 void World::battle() {
+	// 画面暗転中
+	if (m_brightValue != 255) {
+		m_brightValue--;
+		return;
+	}
 
 	// HP0のキャラコントローラ削除
 	cleanCharacterController();
@@ -282,6 +287,20 @@ void World::atariCharacterAndObject(CharacterController* controller, vector<Obje
 	}
 }
 
+// キャラクターとオブジェクトの当たり判定
+void World::atariCharacterAndDoor(CharacterController* controller, vector<DoorObject*>& objects) {
+	// 壁や床オブジェクトの処理 (当たり判定と動き)
+	for (unsigned int i = 0; i < objects.size(); i++) {
+		// 当たり判定をここで行う
+		if (objects[i]->atari(controller) && controller->getActionKey()) {
+			// 当たった場合 エリア移動が発生
+			m_areaNum = objects[i]->getAreaNum();
+			// 画面を暗転
+			m_brightValue--;
+		}
+	}
+}
+
 // キャラクターの動き
 void World::controlCharacter() {
 	size_t size = m_characterControllers.size();
@@ -293,6 +312,7 @@ void World::controlCharacter() {
 		// オブジェクトとの当たり判定
 		atariCharacterAndObject(controller, m_stageObjects);
 		atariCharacterAndObject(controller, m_attackObjects);
+		atariCharacterAndDoor(controller, m_doorObjects);
 
 		// 操作
 		controller->control();

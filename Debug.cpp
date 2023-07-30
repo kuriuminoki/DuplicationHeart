@@ -35,7 +35,8 @@ void World::debug(int x, int y, int color) const {
 	m_characterControllers[0]->debug(x + DRAW_FORMAT_STRING_SIZE, y + DRAW_FORMAT_STRING_SIZE * 2, color);
 	//m_characterControllers[1]->debug(x + DRAW_FORMAT_STRING_SIZE + 600, y + DRAW_FORMAT_STRING_SIZE * 2, color);
 	// オブジェクト
-	// debugObjects(x, y, color, m_stageObjects);
+	//debugObjects(x, y, color, m_stageObjects);
+	m_doorObjects[0]->debug(x + 500, y, RED);
 	debugObjects(x + 500, y, RED, m_attackObjects);
 	//for (unsigned int i = 0; i < m_animations.size(); i++) {
 	//	m_animations[i]->getHandle()->draw(GAME_WIDE - 200, 200, m_animations[i]->getHandle()->getEx());
@@ -155,4 +156,15 @@ void SlashObject::debug(int x, int y, int color) const {
 	DrawFormatString(x, y + DRAW_FORMAT_STRING_SIZE, color, "cnt=%d", m_cnt);
 	debugObject(x + DRAW_FORMAT_STRING_SIZE, y + DRAW_FORMAT_STRING_SIZE * 2, color);
 	// DrawBox(m_x1, m_y1, m_x2, m_y2, color, FALSE);
+}
+
+
+/*
+* 扉オブジェクトのデバッグ
+*/
+void DoorObject::debug(int x, int y, int color) const {
+	DrawFormatString(x, y, color, "**DoorObject**");
+	DrawFormatString(x, y + DRAW_FORMAT_STRING_SIZE, color, "GoTo=%d, text=%s", m_areaNum, m_text == nullptr ? "" : m_text);
+	debugObject(x + DRAW_FORMAT_STRING_SIZE, y + DRAW_FORMAT_STRING_SIZE * 2, color);
+	DrawBox(m_x1, m_y1, m_x2, m_y2, color, FALSE);
 }

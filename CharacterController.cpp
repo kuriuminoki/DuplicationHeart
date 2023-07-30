@@ -33,6 +33,11 @@ void KeyboardBrain::bulletTargetPoint(int& x, int& y) {
 	y = mouseY;
 }
 
+// 話しかけたり扉入ったり
+bool KeyboardBrain::actionOrder() {
+	return controlW() > 0;
+}
+
 // 移動（上下左右の入力）
 void KeyboardBrain::moveOrder(int& right, int& left, int& up, int& down) {
 	right = controlD();
