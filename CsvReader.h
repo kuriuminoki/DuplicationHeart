@@ -45,6 +45,9 @@ class Camera;
 
 class AreaReader {
 private:
+	// 移動元
+	int m_fromAreaNum;
+
 	// アクション作成する用
 	SoundPlayer* m_soundPlayer_p;
 
@@ -84,7 +87,7 @@ private:
 	};
 
 public:
-	AreaReader(int m_areaNum, SoundPlayer* soundPlayer);
+	AreaReader(int fromAreaNum, int toAreaNum, SoundPlayer* soundPlayer);
 
 	inline Camera* getCamera() const { return m_camera_p; }
 
@@ -115,6 +118,7 @@ private:
 	void loadCharacter(std::map<std::string, std::string> dataMap);
 	void loadObject(std::map<std::string, std::string> dataMap);
 	void loadBackGround(std::map<std::string, std::string> dataMap);
+	void setPlayer();
 };
 
 #endif

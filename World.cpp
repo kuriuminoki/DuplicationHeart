@@ -67,17 +67,17 @@ void penetrationCharacterAndObject(CharacterController* controller, vector<Objec
 /*
 * オブジェクトのロードなど
 */
-World::World(int areaNum, SoundPlayer* soundPlayer) {
+World::World(int fromAreaNum, int toAreaNum, SoundPlayer* soundPlayer) {
 	m_brightValue = 255;
 
 	// サウンドプレイヤー
 	m_soundPlayer_p = soundPlayer;
 
 	// 主人公のスタート地点
-	m_areaNum = areaNum;
+	m_areaNum = toAreaNum;
 
 	// エリアをロード
-	const AreaReader data(areaNum, m_soundPlayer_p);
+	const AreaReader data(fromAreaNum, toAreaNum, m_soundPlayer_p);
 	m_camera = data.getCamera();
 	m_focusId = data.getFocusId();
 	m_playerId = data.getPlayerId();
