@@ -58,6 +58,8 @@ WorldDrawer::~WorldDrawer() {
 
 // •`‰æ‚·‚é
 void WorldDrawer::draw() {
+	int bright = m_world->getBrightValue();
+	SetDrawBright(bright, bright, bright);
 	// ”wŒi
 	int groundGraph = m_world->getBackGroundGraph();
 	if (groundGraph != -1) {
@@ -89,7 +91,7 @@ void WorldDrawer::draw() {
 		m_characterDrawer->setCharacterAction(actions[i]);
 
 		// ƒJƒƒ‰‚ðŽg‚Á‚ÄƒLƒƒƒ‰‚ð•`‰æ
-		m_characterDrawer->drawCharacter(camera);
+		m_characterDrawer->drawCharacter(camera, bright);
 	}
 
 	// ŠeObject‚ð•`‰æ
@@ -116,4 +118,5 @@ void WorldDrawer::draw() {
 
 	m_targetDrawer.setEx(camera->getEx());
 	m_targetDrawer.draw();
+	SetDrawBright(0, 0, 0);
 }

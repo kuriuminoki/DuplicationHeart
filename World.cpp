@@ -166,7 +166,7 @@ vector<const Animation*> World::getAnimations() const {
 void World::battle() {
 	// ‰æ–ÊˆÃ“]’†
 	if (m_brightValue != 255) {
-		m_brightValue--;
+		m_brightValue = max(0, m_brightValue - 10);
 		return;
 	}
 

@@ -24,7 +24,7 @@ public:
 	// ƒZƒbƒ^
 	void setCharacterAction(const CharacterAction* action) { m_characterAction = action; }
 
-	void drawCharacter(const Camera* const camera);
+	void drawCharacter(const Camera* const camera, int bright = 255);
 };
 
 #endif
