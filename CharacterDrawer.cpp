@@ -23,7 +23,7 @@ CharacterDrawer::CharacterDrawer(const CharacterAction* const characterAction) {
 }
 
 // キャラを描画する
-void CharacterDrawer::drawCharacter(const Camera* const camera) {
+void CharacterDrawer::drawCharacter(const Camera* const camera, int bright) {
 	// 描画するキャラクター
 	const Character* character = m_characterAction->getCharacter();
 
@@ -44,10 +44,14 @@ void CharacterDrawer::drawCharacter(const Camera* const camera) {
 
 	// 描画
 	if (m_characterAction->getState() == CHARACTER_STATE::DAMAGE && ++m_cnt / 2 % 2 == 1) {
-		SetDrawBright(100, 100, 100);
+		int dark = max(0, bright - 100);
+		SetDrawBright(dark, dark, dark);
+		graphHandle->draw(x, y, ex);
+		SetDrawBright(bright, bright, bright);
 	}
-	graphHandle->draw(x, y, ex);
-	SetDrawBright(255, 255, 255);
+	else {
+		graphHandle->draw(x, y, ex);
+	}
 
 	// 体力バーの座標をカメラで調整
 	x = character->getX() + (character->getWide() / 2);

@@ -33,9 +33,18 @@ private:
 	// キャラのデータ
 	std::vector<CharacterData> m_characterData;
 
+	// 今いるエリア
+	int m_areaNum;
+
 public:
 	GameData();
 	GameData(const char* saveFilePath);
+
+	// ゲッタ
+	inline int getAreaNum() const { return m_areaNum; }
+
+	// セッタ
+	inline void setAreaNum(int areaNum) { m_areaNum = areaNum; }
 
 	// 自身のデータをWorldにデータ反映させる
 	void asignWorld(World* world);

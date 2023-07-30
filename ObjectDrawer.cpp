@@ -36,6 +36,6 @@ void ObjectDrawer::drawObject(const Camera* const camera) {
 	}
 	if (m_object->getText() != "") {
 		DrawBox(x1, y1 - 50, x2, y1 - 10, WHITE, TRUE);
-		DrawFormatString(x1, y1 - 40, BLACK, "%s", m_object->getText());
+		DrawFormatString(x1, y1 - 40, BLACK, "%s", m_object->getText().c_str());
 	}
 }

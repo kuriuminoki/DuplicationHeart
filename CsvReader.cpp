@@ -126,7 +126,8 @@ int str2color(string colorName) {
 * Character等をnewするため、このクラスをnewした後はgetして削除すること。
 * このクラスでnewされたCharacter等はこのクラスで削除しない。
 */
-AreaReader::AreaReader(int m_areaNum, SoundPlayer* soundPlayer) {
+AreaReader::AreaReader(int fromAreaNum, int toAreaNum, SoundPlayer* soundPlayer) {
+	m_fromAreaNum = fromAreaNum;
 	m_soundPlayer_p = soundPlayer;
 
 	m_camera_p = NULL;
@@ -144,7 +145,7 @@ AreaReader::AreaReader(int m_areaNum, SoundPlayer* soundPlayer) {
 
 	// ファイルを開く
 	ostringstream fileName;
-	fileName << "data/area/area" << m_areaNum << ".csv";
+	fileName << "data/area/area" << toAreaNum << ".csv";
 	fp = FileRead_open(fileName.str().c_str());
 
 	LOAD_AREA now = LOAD_AREA::BGM;
@@ -186,6 +187,8 @@ AreaReader::AreaReader(int m_areaNum, SoundPlayer* soundPlayer) {
 
 	// ファイルを閉じる
 	FileRead_close(fp);
+
+	setPlayer();
 }
 
 void AreaReader::map2instance(map<string, string> dataMap, LOAD_AREA now) {
@@ -236,14 +239,14 @@ void AreaReader::loadCharacter(std::map<std::string, std::string> dataMap) {
 	}
 
 	// カメラをセット
-	if (cameraFlag&& m_camera_p == NULL) {
+	if (cameraFlag && m_camera_p == NULL && character != NULL) {
 		m_camera_p = new Camera(0, 0, 1.0);
 		m_camera_p->setPoint(character->getCenterX(), character->getCenterY());
 		m_focusId = character->getId();
 	}
 
 	// プレイヤーが操作中のキャラとしてセット
-	if (playerFlag && m_playerId == -1) {
+	if (playerFlag && m_playerId == -1 && character != NULL) {
 		m_playerId = character->getId();
 	}
 
@@ -326,4 +329,19 @@ void AreaReader::loadBackGround(std::map<std::string, std::string> dataMap) {
 	}
 	// 背景色
 	m_backGroundColor = str2color(color);
+}
+
+// プレイヤーの初期位置を、前いたエリアを元に設定
+void AreaReader::setPlayer() {
+	for (int i = 0; i < m_characters.size(); i++) {
+		if (m_playerId == m_characters[i]->getId()) {
+			for (int j = 0; j < m_doorObjects.size(); j++) {
+				if (m_doorObjects[j]->getAreaNum() == m_fromAreaNum) {
+					m_characters[i]->setX(m_doorObjects[j]->getX1());
+					m_characters[i]->setY(m_doorObjects[j]->getY1());
+				}
+			}
+			break;
+		}
+	}
 }

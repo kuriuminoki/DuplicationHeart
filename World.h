@@ -55,7 +55,7 @@ private:
 	int m_backGroundColor;
 
 public:
-	World(int areaNum, SoundPlayer* soundPlayer);
+	World(int fromAreaNum, int toAreaNum, SoundPlayer* soundPlayer);
 	~World();
 
 	// ƒQƒbƒ^

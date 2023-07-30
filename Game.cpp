@@ -20,6 +20,8 @@ CharacterData::CharacterData(const char* name) {
 GameData::GameData() {
 	m_saveFilePath = "data/save/savedata1.dat";
 
+	m_areaNum = 0;
+
 	// 主要キャラを設定
 	m_characterData.push_back("ハート");
 
@@ -65,8 +67,8 @@ Game::Game() {
 	m_soundPlayer->setVolume(50);
 
 	// 世界
-	int startAreaNum = 0;
-	m_world = new World(startAreaNum, m_soundPlayer);
+	int startAreaNum = 1;
+	m_world = new World(-1, startAreaNum, m_soundPlayer);
 
 	// データを世界に反映
 	m_gameData->asignWorld(m_world);
@@ -89,7 +91,8 @@ void Game::play() {
 		int nextAreaNum = m_world->getAreaNum();
 		m_gameData->asignedWorld(m_world);
 		delete m_world;
-		m_world = new World(nextAreaNum, m_soundPlayer);
+		m_world = new World(m_gameData->getAreaNum(), nextAreaNum, m_soundPlayer);
 		m_gameData->asignWorld(m_world);
+		m_gameData->setAreaNum(nextAreaNum);
 	}
 }
