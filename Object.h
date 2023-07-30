@@ -55,6 +55,14 @@ public:
 	inline int getSoundHandle() const { return m_soundHandle_p; }
 	inline int getHp() const { return m_hp; }
 	inline int getDamageCnt() const { return m_damageCnt; }
+
+	// セッタ
+	inline void setDeleteFlag(bool deleteFlag) { m_deleteFlag = deleteFlag; }
+
+	// HPを減らす
+	void decreaseHp(int damageValue);
+
+	// グループIDのゲッタ
 	virtual inline int getGroupId() const { return -1; }
 
 	// 攻撃力 攻撃オブジェクト用
@@ -63,26 +71,23 @@ public:
 	// 画像を返す　ないならNULL
 	virtual GraphHandle* getHandle() const { return nullptr; }
 
+	// テキストを返す ないならNULL
+	virtual inline const char* getText() { return nullptr; }
+
 	// オブジェクト描画（画像がないときに使う）
-	virtual void drawObject(int x1, int y1, int x2, int y2) const = 0;
-
-	// セッタ
-	inline void setDeleteFlag(bool deleteFlag) { m_deleteFlag = deleteFlag; }
-
-	// HPを減らす
-	void decreaseHp(int damageValue);
+	virtual void drawObject(int x1, int y1, int x2, int y2) const {};
 
 	// キャラとの当たり判定
-	virtual bool atari(CharacterController* character) = 0;
+	virtual bool atari(CharacterController* characterController) = 0;
 
 	// キャラがオブジェクトに入り込んでいるときの処理
 	virtual void penetration(CharacterController* characterController) {};
 
 	// 攻撃オブジェクトとの当たり判定
-	virtual bool atariObject(Object* object) = 0;
+	virtual bool atariObject(Object* object) { return false; }
 
 	// 動くオブジェクト用 毎フレーム行う
-	virtual void action() = 0;
+	virtual void action() {};
 
 	// アニメーション作成
 	virtual Animation* createAnimation(int x, int y, int flameCnt) { return nullptr; };
@@ -112,7 +117,7 @@ public:
 
 	// キャラとの当たり判定
 	// 当たっているならキャラを操作する。
-	bool atari(CharacterController* character);
+	bool atari(CharacterController* characterController);
 
 	// キャラがオブジェクトに入り込んでいるときの処理
 	void penetration(CharacterController* characterController);
@@ -149,7 +154,7 @@ public:
 
 	// キャラとの当たり判定
 	// 当たっているならキャラを操作する。
-	bool atari(CharacterController* character);
+	bool atari(CharacterController* characterController);
 
 	// キャラがオブジェクトに入り込んでいるときの処理
 	void penetration(CharacterController* characterController);
@@ -219,7 +224,7 @@ public:
 
 	// キャラとの当たり判定
 	// 当たっているならキャラを操作する。
-	bool atari(CharacterController* character);
+	bool atari(CharacterController* characterController);
 
 	// 攻撃オブジェクトとの当たり判定
 	bool atariObject(Object* object);
@@ -279,9 +284,6 @@ public:
 	// ゲッタ
 	inline int getGroupId() const { return m_groupId; }
 
-	// オブジェクト描画（画像がないときに使う）
-	void drawObject(int x1, int y1, int x2, int y2) const;
-
 	// セッタ
 	inline void setCharacterId(int id) { m_characterId = id; }
 	inline void setGroupId(int id) { m_groupId = id; }
@@ -291,7 +293,7 @@ public:
 
 	// キャラとの当たり判定
 	// 当たっているならキャラを操作する。
-	bool atari(CharacterController* character);
+	bool atari(CharacterController* characterController);
 
 	// 攻撃オブジェクトとの当たり判定
 	bool atariObject(Object* object);
@@ -301,6 +303,36 @@ public:
 
 	// アニメーション作成
 	Animation* createAnimation(int x, int y, int flameCnt);
+};
+
+
+// 扉オブジェクト
+class DoorObject :
+	public Object 
+{
+private:
+	// 画像
+	GraphHandle* m_graph;
+
+	// 行先のエリア番号
+	int m_areaNum;
+
+	// チュートリアルのテキスト
+	const char* m_text;
+
+public:
+	DoorObject(int x1, int y1, int x2, int y2, const char* fileName, int areaNum);
+	~DoorObject();
+
+	void debug(int x, int y, int color) const;
+
+	// ゲッタ
+	GraphHandle* getHandle() const { return m_graph; }
+	inline int getAreaNum() { return m_areaNum; }
+	inline const char* getText() { return m_text; }
+
+	// キャラとの当たり判定
+	virtual bool atari(CharacterController* characterController);
 };
 
 #endif

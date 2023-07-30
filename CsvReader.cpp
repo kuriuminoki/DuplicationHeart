@@ -301,8 +301,13 @@ void AreaReader::loadObject(std::map<std::string, std::string> dataMap) {
 		if (other == "leftDown") { leftDown = true; }
 		object = new TriangleObject(x1, y1, x2, y2, colorHandle, leftDown, hp);
 	}
-
 	if (object != NULL) { m_objects.push_back(object); }
+
+	// 扉オブジェクトは別に分ける
+	if (name == "Door") {
+		graph = "picture/stageMaterial/" + graph;
+		m_doorObjects.push_back(new DoorObject(x1, y1, x2, y2, graph.c_str(), stoi(other)));
+	}
 }
 
 // 背景のロード

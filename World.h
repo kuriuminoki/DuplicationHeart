@@ -7,6 +7,7 @@ class CharacterController;
 class CharacterAction;
 class Character;
 class Object;
+class DoorObject;
 class Camera;
 class Animation;
 class SoundPlayer;
@@ -15,6 +16,9 @@ class World {
 private:
 	// サウンドプレイヤー
 	SoundPlayer* m_soundPlayer_p;
+
+	// 画面の明るさ
+	int m_brightValue;
 
 	// カメラで見ているキャラのID
 	int m_focusId;
@@ -37,6 +41,9 @@ private:
 	// 壁や床のオブジェクト Worldがデリートする
 	std::vector<Object*> m_stageObjects;
 
+	// エリア間をつなげる扉 Worldがデリートする
+	std::vector<DoorObject*> m_doorObjects;
+
 	// 攻撃のあたり判定のオブジェクト Worldがデリートする
 	std::vector<Object*> m_attackObjects;
 
@@ -52,6 +59,8 @@ public:
 	~World();
 
 	// ゲッタ
+	inline int getBrightValue() const { return m_brightValue; }
+	inline int getAreaNum() const { return m_areaNum; }
 	inline const Camera* getCamera() const { return m_camera; }
 	std::vector<const CharacterAction*> getActions() const;
 	std::vector<const Object*> getObjects() const;
@@ -77,6 +86,9 @@ public:
 private:
 	// キャラクターとオブジェクトの当たり判定
 	void atariCharacterAndObject(CharacterController* controller, std::vector<Object*>& objects);
+
+	// キャラクターと扉の当たり判定
+	void atariCharacterAndDoor(CharacterController* controller, std::vector<DoorObject*>& objects);
 
 	// アニメーションの更新
 	void updateAnimation();
