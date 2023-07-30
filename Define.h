@@ -18,5 +18,6 @@ const int GRAY = GetColor(100, 100, 100);
 const int GRAY2 = GetColor(200, 200, 200);
 const int WHITE = GetColor(255, 255, 255);
 const int RED = GetColor(255, 0, 0);
+const int LIGHT_BLUE = GetColor(100, 100, 255);
 
 #endif

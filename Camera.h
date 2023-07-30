@@ -4,6 +4,9 @@
 
 class Camera {
 private:
+	// カメラの移動速度の初期値
+	const int CAMERA_SPEED_DEFAULT = 5;
+
 	// カメラの座標(画面の中心)
 	int m_x, m_y;
 
@@ -22,7 +25,7 @@ private:
 
 public:
 	Camera();
-	Camera(int x, int y, double ex, int speed);
+	Camera(int x, int y, double ex, int speed=0);
 
 	// ゲッタとセッタ
 	inline void getPoint(int* x, int* y) { *x = m_x; *y = m_y; }

@@ -224,20 +224,21 @@ void Character::switchAirSlash(int cnt) { m_graphHandle->switchAirSlash(); }
 /*
 * ハート
 */
-Heart::Heart(int hp, int x, int y, int groupId) :
+Heart::Heart(const char* name, int hp, int x, int y, int groupId) :
 	Character(hp, x, y, groupId)
 {
 	// キャラ固有の情報設定
-	m_characterInfo = new CharacterInfo(NAME);
-	m_attackInfo = new AttackInfo(NAME, m_characterInfo->handleEx());
+	m_characterInfo = new CharacterInfo(name);
+	m_attackInfo = new AttackInfo(name, m_characterInfo->handleEx());
 
 	m_hp = m_characterInfo->maxHp();
 
 	// 各画像のロード
-	m_graphHandle = new CharacterGraphHandle(NAME, m_characterInfo->handleEx());
+	m_graphHandle = new CharacterGraphHandle(name, m_characterInfo->handleEx());
 
 	// とりあえず立ち画像でスタート
 	switchStand();
+	m_y -= getHeight();
 }
 
 // デストラクタ
