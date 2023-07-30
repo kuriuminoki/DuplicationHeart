@@ -164,7 +164,7 @@ void SlashObject::debug(int x, int y, int color) const {
 */
 void DoorObject::debug(int x, int y, int color) const {
 	DrawFormatString(x, y, color, "**DoorObject**");
-	DrawFormatString(x, y + DRAW_FORMAT_STRING_SIZE, color, "GoTo=%d, text=%s", m_areaNum, m_text == nullptr ? "" : m_text);
+	DrawFormatString(x, y + DRAW_FORMAT_STRING_SIZE, color, "GoTo=%d, text=%s", m_areaNum, m_text == "" ? "" : m_text);
 	debugObject(x + DRAW_FORMAT_STRING_SIZE, y + DRAW_FORMAT_STRING_SIZE * 2, color);
 	DrawBox(m_x1, m_y1, m_x2, m_y2, color, FALSE);
 }

@@ -1,6 +1,8 @@
 #ifndef OBJECT_H_INCLUDED
 #define OBJECT_H_INCLUDED
 
+#include <string>
+
 class Character;
 class CharacterController;
 class AttackInfo;
@@ -72,7 +74,7 @@ public:
 	virtual GraphHandle* getHandle() const { return nullptr; }
 
 	// テキストを返す ないならNULL
-	virtual inline const char* getText() { return nullptr; }
+	virtual inline std::string getText() const { return ""; }
 
 	// オブジェクト描画（画像がないときに使う）
 	virtual void drawObject(int x1, int y1, int x2, int y2) const {};
@@ -318,7 +320,7 @@ private:
 	int m_areaNum;
 
 	// チュートリアルのテキスト
-	const char* m_text;
+	std::string m_text;
 
 public:
 	DoorObject(int x1, int y1, int x2, int y2, const char* fileName, int areaNum);
@@ -329,7 +331,7 @@ public:
 	// ゲッタ
 	GraphHandle* getHandle() const { return m_graph; }
 	inline int getAreaNum() { return m_areaNum; }
-	inline const char* getText() { return m_text; }
+	inline std::string getText() const { return m_text; }
 
 	// キャラとの当たり判定
 	virtual bool atari(CharacterController* characterController);

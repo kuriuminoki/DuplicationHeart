@@ -135,11 +135,20 @@ vector<const CharacterAction*> World::getActions() const {
 }
 
 // Objectのvectorを返す
-vector<const Object*> World::getObjects() const {
+vector<const Object*> World::getFrontObjects() const {
 
 	vector<const Object*> allObjects;
 	allObjects.insert(allObjects.end(), m_stageObjects.begin(), m_stageObjects.end());
 	allObjects.insert(allObjects.end(), m_attackObjects.begin(), m_attackObjects.end());
+
+	return allObjects;
+}
+
+// キャラより後ろに描画するObjectのvectorを返す
+vector<const Object*> World::getBackObjects() const {
+
+	vector<const Object*> allObjects;
+	allObjects.insert(allObjects.end(), m_doorObjects.begin(), m_doorObjects.end());
 
 	return allObjects;
 }
@@ -287,7 +296,7 @@ void World::atariCharacterAndObject(CharacterController* controller, vector<Obje
 	}
 }
 
-// キャラクターとオブジェクトの当たり判定
+// キャラクターと扉オブジェクトの当たり判定
 void World::atariCharacterAndDoor(CharacterController* controller, vector<DoorObject*>& objects) {
 	// 壁や床オブジェクトの処理 (当たり判定と動き)
 	for (unsigned int i = 0; i < objects.size(); i++) {
@@ -312,7 +321,9 @@ void World::controlCharacter() {
 		// オブジェクトとの当たり判定
 		atariCharacterAndObject(controller, m_stageObjects);
 		atariCharacterAndObject(controller, m_attackObjects);
-		atariCharacterAndDoor(controller, m_doorObjects);
+		if (controller->getAction()->getCharacter()->getId() == m_playerId) {
+			atariCharacterAndDoor(controller, m_doorObjects);
+		}
 
 		// 操作
 		controller->control();
