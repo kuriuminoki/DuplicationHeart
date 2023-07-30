@@ -85,6 +85,7 @@ World::World(int areaNum, SoundPlayer* soundPlayer) {
 	m_stageObjects = data.getObjects();
 	data.getBackGround(m_backGroundGraph, m_backGroundColor);
 	
+	// BGM再生
 	m_soundPlayer_p->playBGM();
 }
 
@@ -99,6 +100,27 @@ World::~World() {
 	// 全コントローラを削除する。
 	for (unsigned int i = 0; i < m_characterControllers.size(); i++) {
 		delete m_characterControllers[i];
+	}
+}
+
+// キャラの状態を変更する
+void World::asignedCharacterData(const char* name, int hp) {
+	size_t size = m_characters.size();
+	for (unsigned i = 0; i < size; i++) {
+		if (name == m_characters[i]->getName()) {
+			m_characters[i]->setHp(hp);
+		}
+	}
+}
+
+// キャラの状態を教える
+void World::asignCharacterData(const char* name, int& hp) {
+	size_t size = m_characters.size();
+	for (unsigned i = 0; i < size; i++) {
+		if (name == m_characters[i]->getName()) {
+			hp = m_characters[i]->getHp();
+			return;
+		}
 	}
 }
 

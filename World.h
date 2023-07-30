@@ -1,7 +1,7 @@
 #ifndef WORLD_H_INCLUDED
 #define WORLD_H_INCLUDE
 
-#include<vector>
+#include <vector>
 
 class CharacterController;
 class CharacterAction;
@@ -67,6 +67,12 @@ public:
 
 	// キャラに会話させる
 	void talk();
+
+	// キャラの状態を変更
+	void asignedCharacterData(const char* name, int hp);
+
+	// キャラの状態を教える
+	void asignCharacterData(const char* name, int& hp);
 
 private:
 	// キャラクターとオブジェクトの当たり判定
