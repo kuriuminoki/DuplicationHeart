@@ -1,7 +1,7 @@
 #ifndef WORLD_H_INCLUDED
 #define WORLD_H_INCLUDE
 
-#include<vector>
+#include <vector>
 
 class CharacterController;
 class CharacterAction;
@@ -15,9 +15,6 @@ class World {
 private:
 	// サウンドプレイヤー
 	SoundPlayer* m_soundPlayer_p;
-
-	// カメラの移動速度の初期値
-	const int CAMERA_SPEED_DEFAULT = 5;
 
 	// カメラで見ているキャラのID
 	int m_focusId;
@@ -46,6 +43,10 @@ private:
 	// エフェクト等のアニメーション Worldがデリートする
 	std::vector<Animation*> m_animations;
 
+	// 背景
+	int m_backGroundGraph;
+	int m_backGroundColor;
+
 public:
 	World(int areaNum, SoundPlayer* soundPlayer);
 	~World();
@@ -55,6 +56,8 @@ public:
 	std::vector<const CharacterAction*> getActions() const;
 	std::vector<const Object*> getObjects() const;
 	std::vector<const Animation*> getAnimations() const;
+	inline const int getBackGroundGraph() const { return m_backGroundGraph; }
+	inline const int getBackGroundColor() const { return m_backGroundColor; }
 
 	//デバッグ
 	void debug(int x, int y, int color) const;
@@ -64,6 +67,12 @@ public:
 
 	// キャラに会話させる
 	void talk();
+
+	// キャラの状態を変更
+	void asignedCharacterData(const char* name, int hp);
+
+	// キャラの状態を教える
+	void asignCharacterData(const char* name, int& hp);
 
 private:
 	// キャラクターとオブジェクトの当たり判定

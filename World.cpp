@@ -6,6 +6,7 @@
 #include "Camera.h"
 #include "Animation.h"
 #include "Sound.h"
+#include "CsvReader.h"
 #include "Define.h"
 #include "DxLib.h"
 #include <algorithm>
@@ -73,59 +74,19 @@ World::World(int areaNum, SoundPlayer* soundPlayer) {
 	// 主人公のスタート地点
 	m_areaNum = areaNum;
 
-	// エリアに存在するオブジェクトをロード
-	Object* object1 = new BoxObject(-500, 900, 10000, 1080, WHITE);
-	m_stageObjects.push_back(object1);
-	Object* object2 = new TriangleObject(700, 600, 1300, 900, WHITE, false, 100);
-	m_stageObjects.push_back(object2);
-	Object* object3 = new BoxObject(300, 600, 700, 900, WHITE, 100);
-	m_stageObjects.push_back(object3);
-	Object* object4 = new TriangleObject(2000, 600, 2600, 900, WHITE, true);
-	m_stageObjects.push_back(object4);
-	Object* object5 = new BoxObject(2600, 600, 4000, 900, WHITE);
-	m_stageObjects.push_back(object5);
-	Object* object6 = new BoxObject(-500, -1000, -400, 1080, WHITE);
-	m_stageObjects.push_back(object6);
-	Object* object7 = new BoxObject(5000, -1000, 5100, 1080, WHITE);
-	m_stageObjects.push_back(object7);
-	Object* object8 = new BoxObject(3000, 400, 3300, 600, WHITE);
-	m_stageObjects.push_back(object8);
-	Object* object9 = new BoxObject(-500, -1000, 10000, -900, WHITE);
-	m_stageObjects.push_back(object9);
-
-	// 主人公をロード キャラの削除はWorldがやる予定
-	Heart* heart = new Heart(100, 0, 0, 0);
-	m_characters.push_back(heart);
-
-	// カメラを主人公注目、倍率1.0で作成
-	m_playerId = heart->getId();
-	m_focusId = m_playerId;
-	m_camera = new Camera(0, 0, 1.0, CAMERA_SPEED_DEFAULT);
-	m_camera->setPoint(heart->getCenterX(), heart->getCenterY());
-	updateCamera();
-
-	//主人公のコントローラ作成 BrainとActionの削除はControllerがやる。
-	NormalController* heartController = new NormalController(new KeyboardBrain(m_camera), new StickAction(heart, m_soundPlayer_p));
-	m_characterControllers.push_back(heartController);
-
-	// CPUをロード
-	for (int i = 0; i < 3; i++) {
-		// CPUをロード
-		Heart* cp = new Heart(100, 2000 + 100*i, 0, 1);
-		m_characters.push_back(cp);
-		//CPUのコントローラ作成 BrainとActionの削除はControllerがやる。
-		NormalController* cpController = new NormalController(new NormalAI(), new StickAction(cp, NULL));
-		m_characterControllers.push_back(cpController);
-	}
-	for (int i = 0; i < 2; i++) {
-		// CPUをロード
-		Heart* cp = new Heart(100, 200 + 100 * i, 0, 0);
-		m_characters.push_back(cp);
-		//CPUのコントローラ作成 BrainとActionの削除はControllerがやる。
-		NormalController* cpController = new NormalController(new NormalAI(), new StickAction(cp, NULL));
-		m_characterControllers.push_back(cpController);
-	}
+	// エリアをロード
+	const AreaReader data(areaNum, m_soundPlayer_p);
+	m_camera = data.getCamera();
+	m_focusId = data.getFocusId();
+	m_playerId = data.getPlayerId();
+	m_soundPlayer_p->setBGM(data.getBgm(), data.getBgmVolume());
+	m_characters = data.getCharacters();
+	m_characterControllers = data.getCharacterControllers();
+	m_stageObjects = data.getObjects();
+	data.getBackGround(m_backGroundGraph, m_backGroundColor);
 	
+	// BGM再生
+	m_soundPlayer_p->playBGM();
 }
 
 World::~World() {
@@ -139,6 +100,27 @@ World::~World() {
 	// 全コントローラを削除する。
 	for (unsigned int i = 0; i < m_characterControllers.size(); i++) {
 		delete m_characterControllers[i];
+	}
+}
+
+// キャラの状態を変更する
+void World::asignedCharacterData(const char* name, int hp) {
+	size_t size = m_characters.size();
+	for (unsigned i = 0; i < size; i++) {
+		if (name == m_characters[i]->getName()) {
+			m_characters[i]->setHp(hp);
+		}
+	}
+}
+
+// キャラの状態を教える
+void World::asignCharacterData(const char* name, int& hp) {
+	size_t size = m_characters.size();
+	for (unsigned i = 0; i < size; i++) {
+		if (name == m_characters[i]->getName()) {
+			hp = m_characters[i]->getHp();
+			return;
+		}
 	}
 }
 

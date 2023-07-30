@@ -15,7 +15,7 @@ Camera::Camera(int x, int y, double ex, int speed) {
 	m_gy = y;
 	m_ex = ex;
 	m_speed = 1;
-	m_maxSpeed = speed;
+	m_maxSpeed = speed == 0 ? CAMERA_SPEED_DEFAULT : speed;
 	m_centerX = GAME_WIDE / 2;
 	m_centerY = GAME_HEIGHT / 2;
 }

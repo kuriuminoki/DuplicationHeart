@@ -177,7 +177,9 @@ int NormalAI::squatOrder() {
 }
 
 int NormalAI::slashOrder() {
-	if (m_target_p == NULL) { return 0; }
+	if (m_target_p == NULL || m_target_p->getHp() == 0) {
+		return 0;
+	}
 	// ‰“‹——£‚Ì“G‚É‚ÍŽaŒ‚‚µ‚È‚¢
 	if (m_target_p != NULL && abs(m_target_p->getCenterX() - m_characterAction_p->getCharacter()->getCenterX()) > 500) {
 		return 0;
@@ -190,7 +192,9 @@ int NormalAI::slashOrder() {
 }
 
 int NormalAI::bulletOrder() {
-	if (m_target_p == NULL) { return 0; }
+	if (m_target_p == NULL || m_target_p->getHp() == 0) { 
+		return 0;
+	}
 	// ƒ‰ƒ“ƒ_ƒ€‚ÅŽËŒ‚
 	if (GetRand(50) == 0) { 
 		return 1;

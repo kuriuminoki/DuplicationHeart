@@ -192,14 +192,12 @@ public:
 	// ゲッタ
 	inline int getId() const { return m_id; }
 	inline int getGroupId() const { return m_groupId; }
-	inline int getMaxHp() const { return m_characterInfo->maxHp(); }
 	inline int getHp() const { return m_hp; }
 	inline int getX() const { return m_x; }
 	inline int getY() const { return m_y; }
 	inline bool getLeftDirection() const { return m_leftDirection; }
 
 	// セッタ
-	//inline void setMaxHp(int maxHp) { m_maxHp = maxHp; }
 	inline void setHp(int hp) { m_hp = (hp > m_characterInfo->maxHp()) ? m_characterInfo->maxHp() : hp; }
 	inline void setX(int x) { m_x = x; }
 	inline void setY(int y) { m_y = y; }
@@ -207,9 +205,10 @@ public:
 	void setLeftDirection(bool leftDirection);
 
 	// CharacterInfoからキャラのスペックを取得
+	inline std::string getName() const { return m_characterInfo->name(); }
+	inline int getMaxHp() const { return m_characterInfo->maxHp(); }
 	inline int getMoveSpeed() const { return m_characterInfo->moveSpeed(); }
 	inline int getJumpHeight() const { return m_characterInfo->jumpHeight(); }
-	inline std::string getName() const { return m_characterInfo->name(); }
 	inline int getJumpSound() const { return m_characterInfo->jumpSound(); }
 	inline int getPassiveSound() const { return m_characterInfo->passiveSound(); }
 	inline int getLandSound() const { return m_characterInfo->landSound(); }
@@ -283,9 +282,6 @@ class Heart :
 	public Character
 {
 private:
-	// キャラの名前
-	const char* const NAME = "ハート";
-
 	//// 走りアニメのスピード
 	const int RUN_ANIME_SPEED = 6;
 	
@@ -294,7 +290,7 @@ private:
 	
 public:
 	// コンストラクタ
-	Heart(int hp, int x, int y, int groupId);
+	Heart(const char* name, int hp, int x, int y, int groupId);
 
 	// デストラクタ
 	~Heart();

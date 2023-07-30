@@ -1,4 +1,10 @@
 #include "CsvReader.h"
+#include "Character.h"
+#include "CharacterAction.h"
+#include "CharacterController.h"
+#include "Object.h"
+#include "Camera.h"
+#include "Define.h"
 #include "DxLib.h"
 
 
@@ -104,4 +110,215 @@ map<string, string> CsvReader::findOne(const char* columnName, const char* value
 */
 vector<map<string, string>> CsvReader::getData() const {
 	return m_data;
+}
+
+
+// 色の名前から色ハンドルを取得
+int str2color(string colorName) {
+	if (colorName == "white") { return WHITE; }
+	else if (colorName == "gray") { return GRAY; }
+	else if (colorName == "lightBlue") { return LIGHT_BLUE; }
+	return -1;
+}
+
+/*
+* area/area?.csvからキャラクターやオブジェクトをロードする
+* Character等をnewするため、このクラスをnewした後はgetして削除すること。
+* このクラスでnewされたCharacter等はこのクラスで削除しない。
+*/
+AreaReader::AreaReader(int m_areaNum, SoundPlayer* soundPlayer) {
+	m_soundPlayer_p = soundPlayer;
+
+	m_camera_p = NULL;
+	m_focusId = -1;
+	m_playerId = -1;
+	m_backGroundGraph = -1;
+	m_backGroundColor = -1;
+	m_bgmName = "";
+
+	// ファイルポインタ
+	int fp;
+
+	// バッファ
+	char buff[256];
+
+	// ファイルを開く
+	ostringstream fileName;
+	fileName << "data/area/area" << m_areaNum << ".csv";
+	fp = FileRead_open(fileName.str().c_str());
+
+	LOAD_AREA now = LOAD_AREA::BGM;
+	vector<string> columnNames;
+
+	while (FileRead_eof(fp) == 0) {
+		FileRead_gets(buff, 256, fp);
+		vector<string> oneData = csv2vector(buff);
+
+		if (oneData[0] == "BGM:") {
+			now = LOAD_AREA::BGM;
+			FileRead_gets(buff, 256, fp);
+			columnNames = csv2vector(buff);
+		}
+		else if (oneData[0] == "CHARACTER:") {
+			now = LOAD_AREA::CHARACTER;
+			FileRead_gets(buff, 256, fp);
+			columnNames = csv2vector(buff);
+		}
+		else if (oneData[0] == "OBJECT:") {
+			now = LOAD_AREA::OBJECT;
+			FileRead_gets(buff, 256, fp);
+			columnNames = csv2vector(buff);
+		}
+		else if (oneData[0] == "BACKGROUND:") {
+			now = LOAD_AREA::BACKGROUND;
+			FileRead_gets(buff, 256, fp);
+			columnNames = csv2vector(buff);
+		}
+		else {
+			// データを1行分読み込んだ場合
+			map<string, string> dataMap;
+			for (int i = 0; i < oneData.size(); i++) {
+				dataMap[columnNames[i]] = oneData[i];
+			}
+			map2instance(dataMap, now);
+		}
+	}
+
+	// ファイルを閉じる
+	FileRead_close(fp);
+}
+
+void AreaReader::map2instance(map<string, string> dataMap, LOAD_AREA now) {
+	switch (now) {
+	case LOAD_AREA::BGM:
+		loadBGM(dataMap);
+		break;
+	case LOAD_AREA::CHARACTER:
+		loadCharacter(dataMap);
+		break;
+	case LOAD_AREA::OBJECT:
+		loadObject(dataMap);
+		break;
+	case LOAD_AREA::BACKGROUND:
+		loadBackGround(dataMap);
+		break;
+	}
+}
+
+// BGMのロード
+void AreaReader::loadBGM(std::map<std::string, std::string> dataMap) {
+	ostringstream filePath;
+	filePath << "sound/bgm/" << dataMap["name"];
+	m_bgmName = filePath.str().c_str();
+	m_bgmVolume = stoi(dataMap["volume"]);
+}
+
+// キャラクターのロード
+void AreaReader::loadCharacter(std::map<std::string, std::string> dataMap) {
+	string name = dataMap["name"];
+	int x = stoi(dataMap["x"]);
+	int y = stoi(dataMap["y"]);
+	bool sound = (bool)stoi(dataMap["sound"]);
+	int groupId = stoi(dataMap["groupId"]);
+	string actionName = dataMap["action"];
+	string brainName = dataMap["brain"];
+	string controllerName = dataMap["controller"];
+	bool cameraFlag = (bool)stoi(dataMap["camera"]);
+	bool playerFlag = (bool)stoi(dataMap["player"]);
+
+	// キャラを作成
+	Character* character = NULL;
+	if (name == "テスト") {
+		character = new Heart(name.c_str(), 100, x, y, groupId);
+	}
+	else if (name == "ハート") {
+		character = new Heart(name.c_str(), 100, x, y, groupId);
+	}
+
+	// カメラをセット
+	if (cameraFlag&& m_camera_p == NULL) {
+		m_camera_p = new Camera(0, 0, 1.0);
+		m_camera_p->setPoint(character->getCenterX(), character->getCenterY());
+		m_focusId = character->getId();
+	}
+
+	// プレイヤーが操作中のキャラとしてセット
+	if (playerFlag && m_playerId == -1) {
+		m_playerId = character->getId();
+	}
+
+	// アクションを作成
+	CharacterAction* action = NULL;
+	SoundPlayer* soundPlayer = sound ? m_soundPlayer_p : NULL;
+	if (actionName == "stick") {
+		action = new StickAction(character, soundPlayer);
+	}
+
+	if (action == NULL) { return; }
+
+	// Brainを作成
+	Brain* brain = NULL;
+	if (brainName == "keyboard") {
+		brain = new KeyboardBrain(m_camera_p);
+	}
+	else if (brainName == "normalAI") {
+		brain = new NormalAI();
+	}
+
+	if (brain == NULL) { return; }
+
+	// コントローラを作成
+	CharacterController* controller = NULL;
+	if (controllerName == "normal") {
+		controller = new NormalController(brain, action);
+	}
+
+	if (character != NULL && controller != NULL) { 
+		m_characters.push_back(character);
+		m_characterControllers.push_back(controller);
+	}
+}
+
+// オブジェクトのロード
+void AreaReader::loadObject(std::map<std::string, std::string> dataMap) {
+	string name = dataMap["name"];
+	int x1 = stoi(dataMap["x1"]);
+	int y1 = stoi(dataMap["y1"]);
+	int x2 = stoi(dataMap["x2"]);
+	int y2 = stoi(dataMap["y2"]);
+	string graph = dataMap["graph"];
+	string color = dataMap["color"];
+	int hp = stoi(dataMap["hp"]);
+	string other = dataMap["other"];
+
+	int colorHandle = str2color(color);
+	Object* object = NULL;
+	if (name == "Box") {
+		object = new BoxObject(x1, y1, x2, y2, colorHandle, hp);
+	}
+	else if (name == "Triangle") {
+		bool leftDown = false;
+		if (other == "leftDown") { leftDown = true; }
+		object = new TriangleObject(x1, y1, x2, y2, colorHandle, leftDown, hp);
+	}
+
+	if (object != NULL) { m_objects.push_back(object); }
+}
+
+// 背景のロード
+void AreaReader::loadBackGround(std::map<std::string, std::string> dataMap) {
+	string graphName = dataMap["graph"];
+	string color = dataMap["color"];
+
+	// 背景画像
+	if (graphName != "null") {
+		ostringstream filePath;
+		filePath << "picture/backGround/" << graphName;
+		m_backGroundGraph = LoadGraph(filePath.str().c_str());
+	}
+	else {
+		m_backGroundGraph = -1;
+	}
+	// 背景色
+	m_backGroundColor = str2color(color);
 }

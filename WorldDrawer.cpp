@@ -59,7 +59,13 @@ WorldDrawer::~WorldDrawer() {
 // •`‰æ‚·‚é
 void WorldDrawer::draw() {
 	// ”wŒi
-	DrawBox(0, 0, GAME_WIDE, GAME_HEIGHT, GetColor(100, 100, 100), TRUE);
+	int groundGraph = m_world->getBackGroundGraph();
+	if (groundGraph != -1) {
+
+	}
+	else {
+		DrawBox(0, 0, GAME_WIDE, GAME_HEIGHT, m_world->getBackGroundColor(), TRUE);
+	}
 
 	// ƒJƒƒ‰‚ðŽæ“¾
 	const Camera* camera = m_world->getCamera();
