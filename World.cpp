@@ -135,11 +135,20 @@ vector<const CharacterAction*> World::getActions() const {
 }
 
 // Object‚Ìvector‚ð•Ô‚·
-vector<const Object*> World::getObjects() const {
+vector<const Object*> World::getFrontObjects() const {
 
 	vector<const Object*> allObjects;
 	allObjects.insert(allObjects.end(), m_stageObjects.begin(), m_stageObjects.end());
 	allObjects.insert(allObjects.end(), m_attackObjects.begin(), m_attackObjects.end());
+
+	return allObjects;
+}
+
+// ƒLƒƒƒ‰‚æ‚èŒã‚ë‚É•`‰æ‚·‚éObject‚Ìvector‚ð•Ô‚·
+vector<const Object*> World::getBackObjects() const {
+
+	vector<const Object*> allObjects;
+	allObjects.insert(allObjects.end(), m_doorObjects.begin(), m_doorObjects.end());
 
 	return allObjects;
 }

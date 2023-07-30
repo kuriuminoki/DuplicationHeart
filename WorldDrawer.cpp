@@ -70,9 +70,20 @@ void WorldDrawer::draw() {
 	// カメラを取得
 	const Camera* camera = m_world->getCamera();
 
+	// 各Objectを描画
+	vector<const Object*> objects = m_world->getBackObjects();
+	size_t size = objects.size();
+	for (unsigned int i = 0; i < size; i++) {
+		// ObjectをDrawerにセット
+		m_objectDrawer->setObject(objects[i]);
+
+		// カメラを使ってObjectを描画
+		m_objectDrawer->drawObject(camera);
+	}
+
 	// 各Actionを描画
 	vector<const CharacterAction*> actions = m_world->getActions();
-	size_t size = actions.size();
+	size = actions.size();
 	for (unsigned int i = 0; i < size; i++) {
 		// キャラをDrawerにセット
 		m_characterDrawer->setCharacterAction(actions[i]);
@@ -82,7 +93,7 @@ void WorldDrawer::draw() {
 	}
 
 	// 各Objectを描画
-	vector<const Object*> objects = m_world->getObjects();
+	objects = m_world->getFrontObjects();
 	size = objects.size();
 	for (unsigned int i = 0; i < size; i++) {
 		// ObjectをDrawerにセット

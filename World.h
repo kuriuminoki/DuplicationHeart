@@ -63,7 +63,8 @@ public:
 	inline int getAreaNum() const { return m_areaNum; }
 	inline const Camera* getCamera() const { return m_camera; }
 	std::vector<const CharacterAction*> getActions() const;
-	std::vector<const Object*> getObjects() const;
+	std::vector<const Object*> getFrontObjects() const;
+	std::vector<const Object*> getBackObjects() const;
 	std::vector<const Animation*> getAnimations() const;
 	inline const int getBackGroundGraph() const { return m_backGroundGraph; }
 	inline const int getBackGroundColor() const { return m_backGroundColor; }

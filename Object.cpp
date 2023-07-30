@@ -655,7 +655,7 @@ void SlashObject::action() {
 DoorObject::DoorObject(int x1, int y1, int x2, int y2, const char* fileName, int areaNum) :
 	Object(x1, y1, x2, y2)
 {
-	m_graph = new GraphHandle(fileName);
+	m_graph = new GraphHandle(fileName, 1.0, 0.0, true);
 	m_areaNum = areaNum;
 	m_text = nullptr;
 }
