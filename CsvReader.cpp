@@ -41,13 +41,14 @@ CsvReader::CsvReader(const char* fileName) {
 	int fp;
 
 	// バッファ
-	char buff[256];
+	const int size = 512;
+	char buff[size];
 
 	// ファイルを開く
 	fp = FileRead_open(fileName);
 
 	// バッファに一行目（カラム名）のテキストを入れる
-	FileRead_gets(buff, 256, fp);
+	FileRead_gets(buff, size, fp);
 
 	// カラム名のリストを取得
 	m_columnNames = csv2vector(buff);
@@ -55,7 +56,7 @@ CsvReader::CsvReader(const char* fileName) {
 	// ファイルの終端までループ
 	while (FileRead_eof(fp) == 0) {
 		// いったんバッファに一行分のテキストを入れる
-		FileRead_gets(buff, 256, fp);
+		FileRead_gets(buff, size, fp);
 
 		// 一行分のテキストをデータにしてVectorに変換
 		vector<string> oneDataVector;
@@ -154,6 +155,7 @@ AreaReader::AreaReader(int fromAreaNum, int toAreaNum, SoundPlayer* soundPlayer)
 	while (FileRead_eof(fp) == 0) {
 		FileRead_gets(buff, 256, fp);
 		vector<string> oneData = csv2vector(buff);
+		if (oneData[0] == "") { break; }
 
 		if (oneData[0] == "BGM:") {
 			now = LOAD_AREA::BGM;
@@ -235,6 +237,9 @@ void AreaReader::loadCharacter(std::map<std::string, std::string> dataMap) {
 		character = new Heart(name.c_str(), 100, x, y, groupId);
 	}
 	else if (name == "ハート") {
+		character = new Heart(name.c_str(), 100, x, y, groupId);
+	}
+	else {
 		character = new Heart(name.c_str(), 100, x, y, groupId);
 	}
 

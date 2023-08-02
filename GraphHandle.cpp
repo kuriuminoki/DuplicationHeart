@@ -129,6 +129,7 @@ CharacterGraphHandle::CharacterGraphHandle(const char* characterName, double dra
 
 	// キャラ名でデータを検索
 	map<string, string> data = reader.findOne("name", characterName);
+	if (data.size() == 0) { data = reader.findOne("name", "テスト"); }
 
 	// ロード
 	loadCharacterGraph(characterName, m_standHandles, "stand", data, m_ex);

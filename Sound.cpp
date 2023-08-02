@@ -49,7 +49,7 @@ void SoundPlayer::setVolume(int volume) {
 // BGMをセット（変更）
 void SoundPlayer::setBGM(std::string bgmName, int volume) {
 	if (bgmName == m_bgmName) { return; }
-	if (m_bgmHandle != -1) { DeleteSoundMem(m_bgmHandle); }
+	DeleteSoundMem(m_bgmHandle);
 	m_bgmName = bgmName;
 	m_bgmHandle = LoadSoundMem(bgmName.c_str());
 	// 音量調整

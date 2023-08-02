@@ -42,7 +42,7 @@ private:
 	std::vector<Object*> m_stageObjects;
 
 	// エリア間をつなげる扉 Worldがデリートする
-	std::vector<DoorObject*> m_doorObjects;
+	std::vector<Object*> m_doorObjects;
 
 	// 攻撃のあたり判定のオブジェクト Worldがデリートする
 	std::vector<Object*> m_attackObjects;
@@ -89,7 +89,7 @@ private:
 	void atariCharacterAndObject(CharacterController* controller, std::vector<Object*>& objects);
 
 	// キャラクターと扉の当たり判定
-	void atariCharacterAndDoor(CharacterController* controller, std::vector<DoorObject*>& objects);
+	void atariCharacterAndDoor(CharacterController* controller, std::vector<Object*>& objects);
 
 	// アニメーションの更新
 	void updateAnimation();

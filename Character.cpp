@@ -3,6 +3,7 @@
 #include "CsvReader.h"
 #include "GraphHandle.h"
 #include "Define.h"
+#include "Sound.h"
 #include "DxLib.h"
 #include <cstdlib>
 
@@ -21,6 +22,7 @@ CharacterInfo::CharacterInfo(const char* characterName) {
 
 	// キャラ名でデータを検索
 	map<string, string> data = reader.findOne("name", characterName);
+	if (data.size() == 0) { data = reader.findOne("name", "テスト"); }
 
 	// パラメータを設定
 	m_name = data["name"];
@@ -60,6 +62,7 @@ AttackInfo::AttackInfo(const char* characterName, double drawEx) {
 
 	// キャラ名でデータを検索
 	map<string, string> data = reader.findOne("name", characterName);
+	if (data.size() == 0) { data = reader.findOne("name", "テスト"); }
 
 	// パラメータを設定
 	m_bulletHp = stoi(data["bulletHp"]);
@@ -81,11 +84,15 @@ AttackInfo::AttackInfo(const char* characterName, double drawEx) {
 	m_slashImpactY = stoi(data["slashImpactY"]);
 
 	// 攻撃のエフェクト
-	m_bulletEffectHandles = new GraphHandles("picture/effect/オレンジ", 4, drawEx, 0.0, true);
-	m_slashEffectHandles = m_bulletEffectHandles;
+	string path = "picture/effect/";
+	m_bulletEffectHandles = new GraphHandles((path + data["bulletEffect"]).c_str(), 4, drawEx, 0.0, true);
+	m_slashEffectHandles = new GraphHandles((path + data["slashEffect"]).c_str(), 4, drawEx, 0.0, true);
 	// サウンド
-	m_bulletSoundHandle = LoadSoundMem("sound/stick/bullet.wav");
-	m_slashSoundHandle = LoadSoundMem("sound/stick/slash.wav");
+	path = "sound/stick/";
+	m_bulletSoundHandle = LoadSoundMem((path + data["bulletSound"]).c_str());
+	m_slashSoundHandle = LoadSoundMem((path + data["slashSound"]).c_str());
+	m_bulletStartSoundHandle = LoadSoundMem((path + data["bulletStartSound"]).c_str());
+	m_slashStartSoundHandle = LoadSoundMem((path + data["slashStartSound"]).c_str());
 }
 
 AttackInfo::~AttackInfo() {
@@ -95,6 +102,8 @@ AttackInfo::~AttackInfo() {
 	// サウンドを削除
 	DeleteSoundMem(m_bulletSoundHandle);
 	DeleteSoundMem(m_slashSoundHandle);
+	DeleteSoundMem(m_bulletStartSoundHandle);
+	DeleteSoundMem(m_slashStartSoundHandle);
 }
 
 
@@ -265,17 +274,23 @@ void Heart::switchPreJump(int cnt) {
 }
 
 // 射撃攻撃をする(キャラごとに違う)
-Object* Heart::bulletAttack(int gx, int gy) {
+Object* Heart::bulletAttack(int gx, int gy, SoundPlayer* soundPlayer) {
 	BulletObject* attackObject = new BulletObject(getCenterX(), getCenterY(), WHITE, gx, gy, m_attackInfo);
 	// 自滅防止
 	attackObject->setCharacterId(m_id);
 	// チームキル防止
 	attackObject->setGroupId(m_groupId);
+	// 効果音
+	if (soundPlayer != NULL) {
+		soundPlayer->pushSoundQueue(m_attackInfo->bulletStartSoundeHandle(),
+			adjustPanSound(getCenterX(),
+				soundPlayer->getCameraX()));
+	}
 	return attackObject;
 }
 
 // 斬撃攻撃をする(キャラごとに違う)
-Object* Heart::slashAttack(bool leftDirection, int cnt) {
+Object* Heart::slashAttack(bool leftDirection, int cnt, SoundPlayer* soundPlayer) {
 	// 攻撃範囲を決定
 	int centerX = getCenterX();
 	int height = m_attackInfo->slashLenY() / 2;
@@ -301,6 +316,12 @@ Object* Heart::slashAttack(bool leftDirection, int cnt) {
 		index = 0;
 		attackObject = new SlashObject(centerX, centerY - height, x2, centerY + height,
 			slashHandles->getGraphHandle(index), slashCountSum, m_attackInfo);
+		// 効果音
+		if (soundPlayer != NULL) {
+			soundPlayer->pushSoundQueue(m_attackInfo->slashStartSoundHandle(),
+				adjustPanSound(getCenterX(),
+					soundPlayer->getCameraX()));
+		}
 	}
 	else if (cnt == m_attackInfo->slashCountSum() * 2 / 3) {
 		index = 1;

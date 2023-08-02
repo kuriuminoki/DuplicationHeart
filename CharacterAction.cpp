@@ -509,7 +509,7 @@ Object* StickAction::bulletAttack(int gx, int gy) {
 		// 撃つ方向へ向く
 		m_character_p->setLeftDirection(m_character_p->getCenterX() > gx);
 		// 攻撃を返す
-		return m_character_p->bulletAttack(gx, gy);
+		return m_character_p->bulletAttack(gx, gy, m_soundPlayer_p);
 	}
 	return NULL;
 }
@@ -528,7 +528,7 @@ Object* StickAction::slashAttack(int gx, int gy) {
 		m_character_p->setLeftDirection(m_attackLeftDirection);
 	}
 	// 攻撃のタイミングじゃないならNULLが返る
-	return m_character_p->slashAttack(m_attackLeftDirection, m_slashCnt);
+	return m_character_p->slashAttack(m_attackLeftDirection, m_slashCnt, m_soundPlayer_p);
 }
 
 // ダメージを受ける

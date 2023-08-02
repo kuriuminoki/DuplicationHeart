@@ -50,7 +50,6 @@ Animation* BulletObject::createAnimation(int x, int y, int flameCnt) {
 		return NULL;
 	}
 	return new Animation((m_x1 + m_x2) / 2, (m_y1 + m_y2) / 2, 3, m_effectHandles_p);
-	return new Animation(x, y, flameCnt, m_effectHandles_p);
 }
 
 // アニメーション作成

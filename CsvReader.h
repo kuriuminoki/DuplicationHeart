@@ -74,7 +74,7 @@ private:
 	std::vector<Object*> m_objects;
 
 	// 扉オブジェクト
-	std::vector<DoorObject*> m_doorObjects;
+	std::vector<Object*> m_doorObjects;
 
 	// 背景画像と色
 	int m_backGroundGraph, m_backGroundColor;
@@ -105,7 +105,7 @@ public:
 
 	inline std::vector<Object*> getObjects() const { return m_objects; }
 
-	inline std::vector<DoorObject*> getDoorObjects() const { return m_doorObjects; }
+	inline std::vector<Object*> getDoorObjects() const { return m_doorObjects; }
 
 	inline void getBackGround(int& graphHandle, int& colorHandle) const {
 		graphHandle = m_backGroundGraph;

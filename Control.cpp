@@ -83,6 +83,12 @@ int controlSpace()
 	return Key[KEY_INPUT_SPACE];
 }
 
+//左Shiftキー
+int controlLeftShift()
+{
+	return Key[KEY_INPUT_LSHIFT];
+}
+
 //ゲーム終了用
 int controlEsc() {
 	if (Key[KEY_INPUT_ESCAPE] == 1) { //ESCキーが1カウント押されていたら
