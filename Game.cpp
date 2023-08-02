@@ -75,11 +75,12 @@ Game::Game() {
 }
 
 Game::~Game() {
+	delete m_gameData;
 	delete m_soundPlayer;
 	delete m_world;
 }
 
-void Game::play() {
+bool Game::play() {
 	// í‚í‚¹‚é
 	m_world->battle();
 
@@ -91,8 +92,11 @@ void Game::play() {
 		int nextAreaNum = m_world->getAreaNum();
 		m_gameData->asignedWorld(m_world);
 		delete m_world;
+		InitGraph();
 		m_world = new World(m_gameData->getAreaNum(), nextAreaNum, m_soundPlayer);
 		m_gameData->asignWorld(m_world);
 		m_gameData->setAreaNum(nextAreaNum);
+		return true;
 	}
+	return false;
 }

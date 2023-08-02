@@ -70,6 +70,9 @@ public:
 	// 攻撃力 攻撃オブジェクト用
 	virtual inline int getDamage() const { return 0; }
 
+	// 扉用
+	virtual inline int getAreaNum() const { return -1; }
+
 	// 画像を返す　ないならNULL
 	virtual GraphHandle* getHandle() const { return nullptr; }
 
@@ -330,7 +333,7 @@ public:
 
 	// ゲッタ
 	GraphHandle* getHandle() const { return m_graph; }
-	inline int getAreaNum() { return m_areaNum; }
+	inline int getAreaNum() const { return m_areaNum; }
 	inline std::string getText() const { return m_text; }
 
 	// キャラとの当たり判定

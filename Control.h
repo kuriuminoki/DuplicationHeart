@@ -28,6 +28,9 @@ int controlDebug();
 //スペースキー
 int controlSpace();
 
+// 左Shiftキー
+int controlLeftShift();
+
 //ESCキー：ゲーム終了
 int controlEsc();
 

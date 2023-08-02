@@ -8,6 +8,7 @@ class Object;
 class GraphHandle;
 class GraphHandles;
 class CharacterGraphHandle;
+class SoundPlayer;
 
 
 class CharacterInfo {
@@ -112,8 +113,14 @@ private:
 	// 射撃攻撃が当たったときのサウンド
 	int m_bulletSoundHandle;
 
+	// 弾発射音
+	int m_bulletStartSoundHandle;
+
 	// 斬撃攻撃が当たったときのサウンド
 	int m_slashSoundHandle;
+
+	// 斬撃開始サウンド
+	int m_slashStartSoundHandle;
 
 public:
 	// デフォルト値で初期化
@@ -145,6 +152,8 @@ public:
 	GraphHandles* slashEffectHandle() const { return m_slashEffectHandles; }
 	int bulletSoundeHandle() const { return m_bulletSoundHandle; }
 	int slashSoundHandle() const { return m_slashSoundHandle; }
+	int bulletStartSoundeHandle() const { return m_bulletStartSoundHandle; }
+	int slashStartSoundHandle() const { return m_slashStartSoundHandle; }
 };
 
 
@@ -268,10 +277,10 @@ public:
 	void moveDown(int d);
 
 	// 射撃攻撃をする(キャラごとに違う)
-	virtual Object* bulletAttack(int gx, int gy) = 0;
+	virtual Object* bulletAttack(int gx, int gy, SoundPlayer* soundPlayer) { return NULL; }
 
 	// 斬撃攻撃をする(キャラごとに違う) 左を向いているか、今何カウントか
-	virtual Object* slashAttack(bool leftDirection, int cnt) = 0;
+	virtual Object* slashAttack(bool leftDirection, int cnt, SoundPlayer* soundPlayer) { return NULL; }
 };
 
 
@@ -309,10 +318,10 @@ public:
 	void switchPreJump(int cnt = 0);
 
 	// 射撃攻撃をする(キャラごとに違う)
-	Object* bulletAttack(int gx, int gy);
+	Object* bulletAttack(int gx, int gy, SoundPlayer* soundPlayer);
 
 	// 斬撃攻撃をする(キャラごとに違う)
-	Object* slashAttack(bool leftDirection, int cnt);
+	Object* slashAttack(bool leftDirection, int cnt, SoundPlayer* soundPlayer);
 };
 
 

@@ -75,7 +75,7 @@ public:
 	void debug(int x, int y, int color) const;
 
 	// ƒQ[ƒ€‚ğƒvƒŒƒC‚·‚é
-	void play();
+	bool play();
 };
 
 #endif

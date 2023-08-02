@@ -7,6 +7,7 @@
 #include "Animation.h"
 #include "Sound.h"
 #include "CsvReader.h"
+#include "Control.h"
 #include "Define.h"
 #include "DxLib.h"
 #include <algorithm>
@@ -96,11 +97,25 @@ World::~World() {
 	// 全オブジェクトを削除する。
 	deleteAllObject(m_stageObjects);
 	deleteAllObject(m_attackObjects);
+	deleteAllObject(m_doorObjects);
+
+	// 攻撃エフェクト削除
+	for (unsigned i = 0; i < m_animations.size(); i++) {
+		delete m_animations[i];
+	}
 
 	// 全コントローラを削除する。
 	for (unsigned int i = 0; i < m_characterControllers.size(); i++) {
 		delete m_characterControllers[i];
 	}
+
+	// 全キャラクターを削除する。
+	for (unsigned int i = 0; i < m_characters.size(); i++) {
+		delete m_characters[i];
+	}
+
+	// 背景
+	DeleteGraph(m_backGroundGraph);
 }
 
 // キャラの状態を変更する
@@ -246,15 +261,23 @@ void World::updateCamera() {
 	// カメラの拡大・縮小
 	// 大きく変更する必要がある場合ほど、大きく拡大率を変更する。
 	double nowEx = m_camera->getEx();
-	int nowWide = (int)(GAME_WIDE / 2 / nowEx);
-	int nowHeight = (int)(GAME_HEIGHT / 2 / nowEx);
-	if (nowEx > 0.5 && (max_dx > nowWide || max_dy > nowHeight)) {
-		double d = double(max(max_dx - nowWide, max_dy - nowHeight));
-		m_camera->setEx(nowEx - min(0.05, d / 200000));
+	int leftShift = controlLeftShift();
+	if (leftShift > 0) {
+		m_camera->setEx(max(nowEx - 0.01, 0.1));
 	}
-	else if (nowEx < 1.5 && (max_dx < nowWide && max_dy < nowHeight)) {
-		double d = double(max(nowWide - max_dx, nowHeight - max_dy));
-		m_camera->setEx(nowEx + min(0.05, d / 200000));
+	else {
+		int nowWide = (int)(GAME_WIDE / 2 / nowEx);
+		int nowHeight = (int)(GAME_HEIGHT / 2 / nowEx);
+		max_dx = (int)(max_dx * nowEx);
+		max_dy = (int)(max_dy + nowEx);
+		if (nowEx > 0.5 && (max_dx > nowWide || max_dy > nowHeight)) {
+			double d = double(max(max_dx - nowWide, max_dy - nowHeight));
+			m_camera->setEx(nowEx - min(0.05, d / 200000));
+		}
+		else if (nowEx < 1.5 && (max_dx < nowWide && max_dy < nowHeight)) {
+			double d = double(max(nowWide - max_dx, nowHeight - max_dy));
+			m_camera->setEx(nowEx + min(0.05, d / 200000));
+		}
 	}
 }
 
@@ -297,7 +320,7 @@ void World::atariCharacterAndObject(CharacterController* controller, vector<Obje
 }
 
 // キャラクターと扉オブジェクトの当たり判定
-void World::atariCharacterAndDoor(CharacterController* controller, vector<DoorObject*>& objects) {
+void World::atariCharacterAndDoor(CharacterController* controller, vector<Object*>& objects) {
 	// 壁や床オブジェクトの処理 (当たり判定と動き)
 	for (unsigned int i = 0; i < objects.size(); i++) {
 		// 当たり判定をここで行う

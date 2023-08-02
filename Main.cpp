@@ -55,12 +55,12 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 	////マウス関連////
 	SetMouseDispFlag(MOUSE_DISP);//マウス表示
 	//SetMousePoint(320, 240);//マウスカーソルの初期位置
-	//SetDrawMode(DX_DRAWMODE_BILINEAR);
-	SetDrawMode(DX_DRAWMODE_NEAREST);
+	SetDrawMode(DX_DRAWMODE_BILINEAR);
+	//SetDrawMode(DX_DRAWMODE_NEAREST);
 	//ゲーム本体
 	Game game;
 	// ゲーム描画用
-	GameDrawer gameDrawer(&game);
+	GameDrawer* gameDrawer = new GameDrawer(&game);
 	bool title_flag = false;//trueならタイトル画面終了
 	while (ScreenFlip() == 0 && ProcessMessage() == 0 && ClearDrawScreen() == 0)
 	{
@@ -68,8 +68,11 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 		mouseClick();
 
 		/////メイン////
-		game.play();
-		gameDrawer.draw();
+		if (game.play()) {
+			delete gameDrawer;
+			gameDrawer = new GameDrawer(&game);
+		}
+		gameDrawer->draw();
 		///////////////
 
 		//FPS操作
