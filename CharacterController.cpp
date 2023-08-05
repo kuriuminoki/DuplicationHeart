@@ -108,7 +108,7 @@ void NormalAI::moveOrder(int& right, int& left, int& up, int& down) {
 
 	// (•Ç‚É‚Â‚Á‚©‚¦‚é‚È‚Ç‚Å)ˆÚ“®‚Å‚«‚Ä‚È‚¢‚©‚ç’ú‚ß‚é
 	//DrawFormatString(800, 50, GetColor(255, 255, 255), "moveCnt = %d, x(%d) -> gx(%d)", m_moveCnt, x, m_gx);
-	if (m_moveCnt == GIVE_UP_MOVE_CNT) {
+	if (m_moveCnt >= GIVE_UP_MOVE_CNT) {
 		m_gx = x;
 		m_gy = y;
 	}

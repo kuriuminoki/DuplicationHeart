@@ -224,7 +224,7 @@ void CharacterGraphHandle::switchJump(int index){
 }
 // 降下画像をセット
 void CharacterGraphHandle::switchDown(int index){
-	setGraph(m_preJumpHandles, index);
+	setGraph(m_downHandles, index);
 }
 // ジャンプ前画像をセット
 void CharacterGraphHandle::switchPreJump(int index){

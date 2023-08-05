@@ -461,6 +461,8 @@ void StickAction::jump(int cnt) {
 		}
 		return;
 	}
+	// 斬撃中はジャンプ不可
+	if (m_slashCnt > 0) { return; }
 	// 宙に浮いたらジャンプ中止
 	if (!m_grand) {
 		m_preJumpCnt = -1;
@@ -522,6 +524,11 @@ Object* StickAction::slashAttack(int gx, int gy) {
 	}
 	// 攻撃開始
 	if (ableAttack()) {
+		// ジャンプはキャンセル
+		m_preJumpCnt = -1;
+		if (getState() == CHARACTER_STATE::PREJUMP) {
+			setState(CHARACTER_STATE::STAND);
+		}
 		m_attackLeftDirection = m_character_p->getCenterX() > gx;
 		m_slashCnt = m_character_p->getSlashCountSum() + m_character_p->getSlashInterval();
 		// 攻撃の方向へ向く
