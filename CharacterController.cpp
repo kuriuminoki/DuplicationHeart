@@ -114,8 +114,9 @@ void NormalAI::moveOrder(int& right, int& left, int& up, int& down) {
 	}
 
 	// 目標地点設定
-	if (m_gx > x - GX_ERROR && m_gx < x + GX_ERROR && GetRand(99) == 0) {
-		if (m_target_p != NULL) {
+	bool alreadyGoal = m_gx > x - GX_ERROR && m_gx < x + GX_ERROR;
+	if (alreadyGoal && GetRand(MOVE_RAND) == 0) {
+		if (m_target_p != NULL && abs(x - m_target_p->getCenterX()) < TARGET_DISTANCE) {
 			// targetについていく
 			m_gx = m_target_p->getCenterX() + GetRand(2000) - 1000;
 		}
@@ -182,8 +183,15 @@ int NormalAI::squatOrder() {
 		m_squatCnt = 0;
 	}
 
+	// 目標地点にいないならしゃがまない
+	int x = m_characterAction_p->getCharacter()->getX();
+	bool alreadyGoal = m_gx > x - GX_ERROR && m_gx < x + GX_ERROR;
+	if (!alreadyGoal) { m_squatCnt = 0; }
+
 	// ランダムでしゃがむ
-	if (m_characterAction_p->getGrand() && GetRand(99) == 0) { m_squatCnt = GetRand(60) + 30; }
+	if (alreadyGoal && m_characterAction_p->getGrand() && GetRand(99) == 0) { 
+		m_squatCnt = GetRand(60) + 30;
+	}
 
 	if (m_squatCnt > 0) { m_squatCnt--; }
 	return m_squatCnt;
@@ -206,6 +214,10 @@ int NormalAI::slashOrder() {
 
 int NormalAI::bulletOrder() {
 	if (m_target_p == NULL || m_target_p->getHp() == 0) { 
+		return 0;
+	}
+	int x = m_characterAction_p->getCharacter()->getX();
+	if (abs(x - m_target_p->getCenterX()) < TARGET_DISTANCE) {
 		return 0;
 	}
 	// ランダムで射撃
@@ -259,11 +271,16 @@ void FollowNormalAI::moveOrder(int& right, int& left, int& up, int& down) {
 		m_gy = y;
 	}
 
+	// 目標地点設定用パラメータ
+	int followX = m_follow_p->getCenterX();
+	bool alreadyGoal = m_gx > x - GX_ERROR && m_gx < x + GX_ERROR;
+	bool alreadyFollow = m_gx < followX + FOLLOW_X_ERROR && m_gx > followX - FOLLOW_X_ERROR;
+
 	// 目標地点設定
-	if (m_gx > x - GX_ERROR && m_gx < x + GX_ERROR && GetRand(99) == 0) {
+	if ((alreadyGoal && GetRand(MOVE_RAND) == 0) || !alreadyFollow) {
 		if (m_follow_p != NULL) {
 			// followについていく
-			m_gx = m_follow_p->getCenterX() + GetRand(2000) - 1000;
+			m_gx = m_follow_p->getCenterX() + GetRand(FOLLOW_X_ERROR * 2) - FOLLOW_X_ERROR;
 		}
 		else {
 			// ランダムに設定

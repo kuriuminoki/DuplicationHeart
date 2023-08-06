@@ -88,6 +88,9 @@ private:
 	// 攻撃対象
 	const Character* m_target_p;
 
+	// 攻撃対象を認知する距離
+	const int TARGET_DISTANCE = 2000;
+
 	// 移動用
 	int m_rightKey, m_leftKey, m_upKey, m_downKey;
 
@@ -100,6 +103,9 @@ private:
 protected:
 	// 射撃の精度
 	const int BULLET_ERROR = 400;
+
+	// 特に意味のない移動をする確率
+	const int MOVE_RAND = 59;
 
 	// 移動目標
 	int m_gx, m_gy;
@@ -142,6 +148,10 @@ class FollowNormalAI :
 private:
 	// ついていくキャラ
 	const Character* m_follow_p;
+
+	// 追跡対象の近くにいるとみなす誤差 ±GX_ERROR
+	const int FOLLOW_X_ERROR = 500;
+
 public:
 	FollowNormalAI();
 
