@@ -67,7 +67,7 @@ Game::Game() {
 	m_soundPlayer->setVolume(50);
 
 	// ¢ŠE
-	int startAreaNum = 1;
+	int startAreaNum = 0;
 	m_world = new World(-1, startAreaNum, m_soundPlayer);
 
 	// ƒf[ƒ^‚ğ¢ŠE‚É”½‰f

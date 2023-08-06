@@ -239,6 +239,9 @@ void AreaReader::loadCharacter(std::map<std::string, std::string> dataMap) {
 	else if (name == "ハート") {
 		character = new Heart(name.c_str(), 100, x, y, groupId);
 	}
+	else if (name == "シエスタ") {
+		character = new Siesta(name.c_str(), 100, x, y, groupId);
+	}
 	else {
 		character = new Heart(name.c_str(), 100, x, y, groupId);
 	}
