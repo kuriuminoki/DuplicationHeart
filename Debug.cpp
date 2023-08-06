@@ -32,15 +32,7 @@ void debugObjects(int x, int y, int color, std::vector<Object*> objects) {
 void World::debug(int x, int y, int color) const {
 	DrawFormatString(x, y, color, "**World**");
 	DrawFormatString(x, y + DRAW_FORMAT_STRING_SIZE, color, "CharacterSum=%d, ControllerSum=%d, anime=%d", m_characters.size(), m_characterControllers.size(), m_animations.size());
-	m_characterControllers[0]->debug(x + DRAW_FORMAT_STRING_SIZE, y + DRAW_FORMAT_STRING_SIZE * 2, color);
-	//m_characterControllers[1]->debug(x + DRAW_FORMAT_STRING_SIZE + 600, y + DRAW_FORMAT_STRING_SIZE * 2, color);
-	// オブジェクト
-	//debugObjects(x, y, color, m_stageObjects);
-	m_doorObjects[0]->debug(x + 500, y, RED);
-	debugObjects(x + 500, y, RED, m_attackObjects);
-	//for (unsigned int i = 0; i < m_animations.size(); i++) {
-	//	m_animations[i]->getHandle()->draw(GAME_WIDE - 200, 200, m_animations[i]->getHandle()->getEx());
-	//}
+	m_characterControllers[1]->debug(x + DRAW_FORMAT_STRING_SIZE, y + DRAW_FORMAT_STRING_SIZE * 2, color);
 }
 
 
@@ -51,13 +43,27 @@ void World::debug(int x, int y, int color) const {
 void CharacterController::debugController(int x, int y, int color) const {
 	DrawFormatString(x, y, color, "**CharacterController**");
 	DrawFormatString(x, y + DRAW_FORMAT_STRING_SIZE, color, "slashOrder=%d, slashCnt=%d, bulletOrder=%d, bulletCnt=%d", m_brain->slashOrder(), m_characterAction->getSlashCnt(), m_brain->bulletOrder(), m_characterAction->getBulletCnt());
-	m_characterAction->debug(x + DRAW_FORMAT_STRING_SIZE, y + DRAW_FORMAT_STRING_SIZE * 2, color);
+	m_brain->debug(x + DRAW_FORMAT_STRING_SIZE, y + DRAW_FORMAT_STRING_SIZE * 2, color);
+	m_characterAction->debug(x + DRAW_FORMAT_STRING_SIZE, y + DRAW_FORMAT_STRING_SIZE * 4, color);
 }
 
-// CharacterKeyboardControllerクラスのデバッグ
+// NormalControllerクラスのデバッグ
 void NormalController::debug(int x, int y, int color) const {
 	DrawFormatString(x, y, color, "**CharacterKeyboardController**");
 	debugController(x + DRAW_FORMAT_STRING_SIZE, y + DRAW_FORMAT_STRING_SIZE * 2, color);
+}
+
+void KeyboardBrain::debug(int x, int y, int color) const {
+	DrawFormatString(x, y, color, "**KeyboardBrain**");
+}
+
+void NormalAI::debug(int x, int y, int color) const {
+	DrawFormatString(x, y, color, "**NormalAI**");
+}
+
+void FollowNormalAI::debug(int x, int y, int color) const {
+	DrawFormatString(x, y, color, "**FollowNormalAI**");
+	DrawFormatString(x, y + DRAW_FORMAT_STRING_SIZE, color, "follow=%d, gx,gy=%d,%d", getFollowId(), m_gx, m_gy);
 }
 
 
@@ -87,15 +93,6 @@ void StickAction::debug(int x, int y, int color) const {
 void Character::debugCharacter(int x, int y, int color) const {
 	DrawFormatString(x, y, color, "**Character**");
 	DrawFormatString(x, y + DRAW_FORMAT_STRING_SIZE, color, "(x,y)=(%d,%d), left=%d, id=%d, groupId=%d, m_handle=%d", m_x, m_y, m_leftDirection, m_id, m_groupId, m_graphHandle->getHandle());
-	bool flag = false;
-	for (int i = 0; i < m_graphHandle->getRunHandle()->getSize(); i++) {
-		if (m_graphHandle->getHandle()->getHandle() == m_graphHandle->getRunHandle()->getHandle(i)) {
-			flag = true;
-		}
-	}
-	if (!flag) {
-		DrawFormatString(x, y + DRAW_FORMAT_STRING_SIZE * 2, color, "!!!!!!!!!!!!!!!!!!!!!!!!!!");
-	}
 	// DrawFormatString(x, y + DRAW_FORMAT_STRING_SIZE * 2, color, "(wide, height)=(%d,%d), handle=%d", m_wide, m_height, m_graphHandle->getHandle());
 	// 画像
 	// m_graphHandle->draw(GAME_WIDE - (m_wide / 2), (m_height / 2), m_graphHandle->getEx());

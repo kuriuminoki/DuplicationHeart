@@ -16,6 +16,8 @@ protected:
 public:
 	Brain();
 
+	virtual void debug(int x, int y, int color) const = 0;
+
 	// 話しかけたり扉入ったり
 	virtual bool actionOrder() { return false; }
 
@@ -41,10 +43,16 @@ public:
 	virtual int bulletOrder() = 0;
 
 	// 攻撃対象を決める(AIクラスでオーバライドする。)
-	virtual void searchTarget(const Character* character) = 0;
+	virtual void searchTarget(const Character* character) { };
 
 	// 攻撃対象を変更する必要があるならtrueでアピールする(AIクラスでオーバライドする)。
-	virtual bool needSearchTarget() const = 0;
+	virtual bool needSearchTarget() const { return false; }
+
+	// 追跡対象を決める(AIクラスでオーバライドする。)
+	virtual void searchFollow(const Character* character) { };
+
+	// 追跡対象を変更する必要があるならtrueでアピールする(AIクラスでオーバライドする)。
+	virtual bool needSearchFollow() const { return false; }
 };
 
 /*
@@ -59,6 +67,7 @@ private:
 
 public:
 	KeyboardBrain(const Camera* camera);
+	void debug(int x, int y, int color) const;
 	inline void setCharacterAction(const CharacterAction* characterAction) { m_characterAction_p = characterAction; }
 	void bulletTargetPoint(int& x, int& y);
 	bool actionOrder();
@@ -67,8 +76,6 @@ public:
 	int squatOrder();
 	int slashOrder();
 	int bulletOrder();
-	void searchTarget(const Character* character) {  }
-	bool needSearchTarget() const { return false; }
 };
 
 /*
@@ -81,6 +88,16 @@ private:
 	// 攻撃対象
 	const Character* m_target_p;
 
+	// 移動用
+	int m_rightKey, m_leftKey, m_upKey, m_downKey;
+
+	// ジャンプの長さ
+	int m_jumpCnt;
+
+	// しゃがむ長さ
+	int m_squatCnt;
+
+protected:
 	// 射撃の精度
 	const int BULLET_ERROR = 400;
 
@@ -96,17 +113,9 @@ private:
 	// 移動を諦めるまでの時間
 	const int GIVE_UP_MOVE_CNT = 300;
 
-	// 移動用
-	int m_rightKey, m_leftKey, m_upKey, m_downKey;
-
-	// ジャンプの長さ
-	int m_jumpCnt;
-
-	// しゃがむ長さ
-	int m_squatCnt;
-
 public:
 	NormalAI();
+	void debug(int x, int y, int color) const;
 	void setCharacterAction(const CharacterAction* characterAction);
 	void bulletTargetPoint(int& x, int& y);
 	void moveOrder(int& right, int& left, int& up, int& down);
@@ -120,6 +129,34 @@ public:
 
 	// 攻撃対象を変更する必要があるならtrueでアピールする。
 	bool needSearchTarget() const;
+
+protected:
+	// スティック操作
+	void stickOrder(int& right, int& left, int& up, int& down);
+};
+
+
+class FollowNormalAI :
+	public NormalAI 
+{
+private:
+	// ついていくキャラ
+	const Character* m_follow_p;
+public:
+	FollowNormalAI();
+
+	void debug(int x, int y, int color) const;
+
+	int getFollowId() const;
+
+	// 移動の目標地点設定
+	void moveOrder(int& right, int& left, int& up, int& down);
+
+	// 追跡対象を決める(AIクラスでオーバライドする。)
+	void searchFollow(const Character* character);
+
+	// 追跡対象を変更する必要があるならtrueでアピールする(AIクラスでオーバライドする)。
+	bool needSearchFollow() const;
 };
 
 
@@ -168,8 +205,11 @@ public:
 	// 行動前の処理 毎フレーム行う
 	void init();
 
-	// 攻撃対象を変更（するかも）
+	// 攻撃対象を変更
 	void searchTargetCandidate(Character* character);
+
+	// 追跡対象を変更
+	void searchFollowCandidate(Character* character);
 
 	// 操作や当たり判定の結果を反映（実際にキャラを動かす）毎フレーム行う
 	void action();

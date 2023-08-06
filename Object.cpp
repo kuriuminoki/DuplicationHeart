@@ -551,12 +551,12 @@ ParabolaBullet::ParabolaBullet(int x, int y, GraphHandle* handle, int gx, int gy
 	BulletObject(x, y, -1, gx, gy, attackInfo)
 {
 	m_handle = handle;
+	// UŒ‚”ÍˆÍ‚É‡‚í‚¹‚Ä‰æ‘œ‚ÌŠg‘å—¦‚ðÝ’è
 	int attackSize = max(attackInfo->bulletRx(), attackInfo->bulletRy());
 	int graphX = 0, graphY = 0;
 	GetGraphSize(handle->getHandle(), &graphX, &graphY);
 	int graphSize = min(graphX, graphY);
 	m_handle->setEx((double)attackSize / (double)graphSize);
-	//m_handle->setEx((double)graphSize / (double)attackSize);
 }
 
 void ParabolaBullet::action() {

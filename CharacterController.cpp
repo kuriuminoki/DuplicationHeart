@@ -126,6 +126,14 @@ void NormalAI::moveOrder(int& right, int& left, int& up, int& down) {
 			m_gx += x;
 		}
 	}
+	stickOrder(right, left, up, down);
+}
+
+// スティック操作
+void NormalAI::stickOrder(int& right, int& left, int& up, int& down) {
+	// 現在地
+	int x = m_characterAction_p->getCharacter()->getX();
+	int y = m_characterAction_p->getCharacter()->getY();
 
 	// 目標に向かって走る
 	if (m_gx > x + GX_ERROR) {
@@ -209,7 +217,7 @@ int NormalAI::bulletOrder() {
 
 // 攻撃対象を決める(targetのままか、characterに変更するか)
 void NormalAI::searchTarget(const Character* character) {
-	if (m_target_p == NULL || m_target_p->getHp() == 0) {
+	if (GetRand(99) < 50) {
 		// 自分自身や味方じゃなければ
 		if (character->getId() != m_characterAction_p->getCharacter()->getId() && character->getGroupId() != m_characterAction_p->getCharacter()->getGroupId()) {
 			m_target_p = character;
@@ -219,7 +227,66 @@ void NormalAI::searchTarget(const Character* character) {
 
 // 攻撃対象を変更する必要があるならtrueでアピールする。
 bool NormalAI::needSearchTarget() const {
-	if (m_target_p == NULL || GetRand(99) == 0) {
+	if (m_target_p == NULL || m_target_p->getHp() == 0 || GetRand(99) == 0) {
+		return true;
+	}
+	return false;
+}
+
+
+/*
+* キャラについていくNormalAI
+*/
+FollowNormalAI::FollowNormalAI() :
+	NormalAI()
+{
+	m_follow_p = NULL;
+}
+
+int FollowNormalAI::getFollowId() const {
+	if (m_follow_p == nullptr) { return -1; }
+	return m_follow_p->getId();
+}
+
+void FollowNormalAI::moveOrder(int& right, int& left, int& up, int& down) {
+	// 現在地
+	int x = m_characterAction_p->getCharacter()->getX();
+	int y = m_characterAction_p->getCharacter()->getY();
+
+	// (壁につっかえるなどで)移動できてないから諦める
+	if (m_moveCnt >= GIVE_UP_MOVE_CNT) {
+		m_gx = x;
+		m_gy = y;
+	}
+
+	// 目標地点設定
+	if (m_gx > x - GX_ERROR && m_gx < x + GX_ERROR && GetRand(99) == 0) {
+		if (m_follow_p != NULL) {
+			// followについていく
+			m_gx = m_follow_p->getCenterX() + GetRand(2000) - 1000;
+		}
+		else {
+			// ランダムに設定
+			m_gx = GetRand(200) + 100;
+			if (GetRand(99) < GX_ERROR) { m_gx *= -1; }
+			m_gx += x;
+		}
+	}
+
+	stickOrder(right, left, up, down);
+}
+
+// 追跡対象を決める(AIクラスでオーバライドする。)
+void FollowNormalAI::searchFollow(const Character* character) {
+	// 味方のみ
+	if (character->getId() != m_characterAction_p->getCharacter()->getId() && character->getGroupId() == m_characterAction_p->getCharacter()->getGroupId()) {
+		m_follow_p = character;
+	}
+}
+
+// 追跡対象を変更する必要があるならtrueでアピールする(AIクラスでオーバライドする)。
+bool FollowNormalAI::needSearchFollow() const {
+	if (m_follow_p == NULL || m_follow_p->getHp() == 0) {
 		return true;
 	}
 	return false;
@@ -294,9 +361,14 @@ void CharacterController::init() {
 	m_characterAction->init();
 }
 
-// 攻撃対象を変更（するかも）
+// 攻撃対象を変更
 void CharacterController::searchTargetCandidate(Character* character) {
 	m_brain->searchTarget(character);
+}
+
+// 追跡対象を変更
+void CharacterController::searchFollowCandidate(Character* character) {
+	m_brain->searchFollow(character);
 }
 
 // 行動の結果反映

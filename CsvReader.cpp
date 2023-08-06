@@ -191,6 +191,7 @@ AreaReader::AreaReader(int fromAreaNum, int toAreaNum, SoundPlayer* soundPlayer)
 	FileRead_close(fp);
 
 	setPlayer();
+	setFollow();
 }
 
 void AreaReader::map2instance(map<string, string> dataMap, LOAD_AREA now) {
@@ -256,6 +257,7 @@ void AreaReader::loadCharacter(std::map<std::string, std::string> dataMap) {
 	// プレイヤーが操作中のキャラとしてセット
 	if (playerFlag && m_playerId == -1 && character != NULL) {
 		m_playerId = character->getId();
+		m_playerCharacter_p = character;
 	}
 
 	// アクションを作成
@@ -274,6 +276,9 @@ void AreaReader::loadCharacter(std::map<std::string, std::string> dataMap) {
 	}
 	else if (brainName == "normalAI") {
 		brain = new NormalAI();
+	}
+	else if (brainName == "followNormalAI") {
+		brain = new FollowNormalAI();
 	}
 
 	if (brain == NULL) { return; }
@@ -350,6 +355,15 @@ void AreaReader::setPlayer() {
 				}
 			}
 			break;
+		}
+	}
+}
+
+// follow対象をプレイヤーにする
+void AreaReader::setFollow() {
+	for (int i = 0; i < m_characterControllers.size(); i++) {
+		if (m_characterControllers[i]->getBrain()->needSearchFollow()) {
+			m_characterControllers[i]->searchFollowCandidate(m_playerCharacter_p);
 		}
 	}
 }

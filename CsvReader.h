@@ -79,6 +79,9 @@ private:
 	// 背景画像と色
 	int m_backGroundGraph, m_backGroundColor;
 
+	// プレイヤーのキャラのポインタ
+	Character* m_playerCharacter_p;
+
 	enum class LOAD_AREA {
 		BGM,
 		CHARACTER,
@@ -119,6 +122,7 @@ private:
 	void loadObject(std::map<std::string, std::string> dataMap);
 	void loadBackGround(std::map<std::string, std::string> dataMap);
 	void setPlayer();
+	void setFollow();
 };
 
 #endif
