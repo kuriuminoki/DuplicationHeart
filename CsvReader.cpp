@@ -343,7 +343,7 @@ void AreaReader::setPlayer() {
 			for (int j = 0; j < m_doorObjects.size(); j++) {
 				if (m_doorObjects[j]->getAreaNum() == m_fromAreaNum) {
 					m_characters[i]->setX(m_doorObjects[j]->getX1());
-					m_characters[i]->setY(m_doorObjects[j]->getY1());
+					m_characters[i]->setY(m_doorObjects[j]->getY2() - m_characters[i]->getHeight());
 				}
 			}
 			break;

@@ -86,7 +86,16 @@ void StickAction::debug(int x, int y, int color) const {
 // Characterクラスのデバッグ
 void Character::debugCharacter(int x, int y, int color) const {
 	DrawFormatString(x, y, color, "**Character**");
-	DrawFormatString(x, y + DRAW_FORMAT_STRING_SIZE, color, "(x,y)=(%d,%d), left=%d, id=%d, groupId=%d", m_x, m_y, m_leftDirection, m_id, m_groupId);
+	DrawFormatString(x, y + DRAW_FORMAT_STRING_SIZE, color, "(x,y)=(%d,%d), left=%d, id=%d, groupId=%d, m_handle=%d", m_x, m_y, m_leftDirection, m_id, m_groupId, m_graphHandle->getHandle());
+	bool flag = false;
+	for (int i = 0; i < m_graphHandle->getRunHandle()->getSize(); i++) {
+		if (m_graphHandle->getHandle()->getHandle() == m_graphHandle->getRunHandle()->getHandle(i)) {
+			flag = true;
+		}
+	}
+	if (!flag) {
+		DrawFormatString(x, y + DRAW_FORMAT_STRING_SIZE * 2, color, "!!!!!!!!!!!!!!!!!!!!!!!!!!");
+	}
 	// DrawFormatString(x, y + DRAW_FORMAT_STRING_SIZE * 2, color, "(wide, height)=(%d,%d), handle=%d", m_wide, m_height, m_graphHandle->getHandle());
 	// 画像
 	// m_graphHandle->draw(GAME_WIDE - (m_wide / 2), (m_height / 2), m_graphHandle->getEx());

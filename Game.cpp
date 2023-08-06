@@ -20,7 +20,7 @@ CharacterData::CharacterData(const char* name) {
 GameData::GameData() {
 	m_saveFilePath = "data/save/savedata1.dat";
 
-	m_areaNum = 0;
+	m_areaNum = 1;
 
 	// 主要キャラを設定
 	m_characterData.push_back("ハート");

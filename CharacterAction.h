@@ -119,7 +119,7 @@ public:
 	void setLeftLock(bool lock);
 	void setUpLock(bool lock);
 	void setDownLock(bool lock);
-	inline void setBoost() { m_boostCnt = BOOST_TIME; }
+	inline void setBoost() { if(!m_grand) m_boostCnt = BOOST_TIME; }
 	inline void setGrandRightSlope(bool grand) { m_grandRightSlope = grand; }
 	inline void setGrandLeftSlope(bool grand) { m_grandLeftSlope = grand; }
 

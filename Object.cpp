@@ -109,9 +109,9 @@ bool BoxObject::atari(CharacterController* characterController) {
 		// 右に移動中のキャラが左から当たっているか判定
 		if (characterX2 <= m_x1 && characterX2 + characterVx >= m_x1) {
 			// 段差とみなして乗り越える
-			if (characterY2 - STAIR_HEIGHT <= m_y1 && characterX2 == m_x1) {
+			if (characterY2 - STAIR_HEIGHT <= m_y1) {
 				// 適切な座標へ
-				characterController->setCharacterX(characterX1 + characterWide / 2);
+				characterController->setCharacterX(m_x1 - characterWide / 2 - characterVx);
 				characterController->setCharacterY(m_y1 - characterHeight);
 				// 着地
 				characterController->setCharacterGrand(true);
@@ -128,10 +128,9 @@ bool BoxObject::atari(CharacterController* characterController) {
 		}
 		// 左に移動中のキャラが右から当たっているか判定
 		else if (characterX1 >= m_x2 && characterX1 + characterVx <= m_x2) {
-			// 段差とみなして乗り越える
-			if (characterY2 - STAIR_HEIGHT <= m_y1 && characterX1 == m_x2) {
+			if (characterY2 - STAIR_HEIGHT <= m_y1) {
 				// 適切な座標へ
-				characterController->setCharacterX(characterX1 - characterWide / 2);
+				characterController->setCharacterX(m_x2 - characterWide / 2 + characterVx);
 				characterController->setCharacterY(m_y1 - characterHeight);
 				// 着地
 				characterController->setCharacterGrand(true);
