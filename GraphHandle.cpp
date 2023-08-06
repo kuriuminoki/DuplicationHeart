@@ -23,7 +23,7 @@ GraphHandle::~GraphHandle() {
 }
 
 // ï`âÊÇ∑ÇÈ
-void GraphHandle::draw(int x, int y, double ex = 1.0) const {
+void GraphHandle::draw(int x, int y, double ex) const {
 	DrawRotaGraph(x, y, ex, m_angle, m_handle, m_trans, m_reverseX, m_reverseY);
 }
 
@@ -133,7 +133,8 @@ CharacterGraphHandle::CharacterGraphHandle(const char* characterName, double dra
 
 	// ÉçÅ[Éh
 	loadCharacterGraph(characterName, m_standHandles, "stand", data, m_ex);
-	loadCharacterGraph(characterName, m_slashHandles, "slashEffect", data, m_ex);
+	loadCharacterGraph(characterName, m_slashHandles, "slash", data, m_ex);
+	loadCharacterGraph(characterName, m_bulletHandles, "bullet", data, m_ex);
 	loadCharacterGraph(characterName, m_squatHandles, "squat", data, m_ex);
 	loadCharacterGraph(characterName, m_squatBulletHandles, "squatBullet", data, m_ex);
 	loadCharacterGraph(characterName, m_standBulletHandles, "standBullet", data, m_ex);
@@ -155,6 +156,7 @@ CharacterGraphHandle::CharacterGraphHandle(const char* characterName, double dra
 CharacterGraphHandle::~CharacterGraphHandle() {
 	delete m_standHandles;
 	delete m_slashHandles;
+	delete m_bulletHandles;
 	delete m_squatHandles;
 	delete m_squatBulletHandles;
 	delete m_standBulletHandles;

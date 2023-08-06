@@ -76,6 +76,9 @@ public:
 	// 画像を返す　ないならNULL
 	virtual GraphHandle* getHandle() const { return nullptr; }
 
+	// 画像の大きさを自動調節する
+	virtual bool extendGraph() const { return true; }
+
 	// テキストを返す ないならNULL
 	virtual inline std::string getText() const { return ""; }
 
@@ -178,7 +181,7 @@ public:
 class BulletObject :
 	public Object
 {
-private:
+protected:
 	// この攻撃を出したキャラのＩＤ 自滅防止用
 	int m_characterId;
 
@@ -241,6 +244,27 @@ public:
 	Animation* createAnimation(int x, int y, int flameCnt);
 };
 
+/*
+* 放物線を描く弾
+*/
+class ParabolaBullet :
+	public BulletObject
+{
+private:
+	GraphHandle* m_handle;
+	const int G = 2;
+public:
+	ParabolaBullet(int x, int y, GraphHandle* handle, int gx, int gy, AttackInfo* attackInfo);
+
+	// 動くオブジェクト用 毎フレーム行う
+	void action();
+
+	// 画像ハンドルを返す
+	GraphHandle* getHandle() const { return m_handle; }
+
+	// 画像の大きさを自動調節する
+	bool extendGraph() const { return false; }
+};
 
 /*
 * 近距離攻撃のオブジェクト
