@@ -325,4 +325,22 @@ public:
 };
 
 
+/*
+* シエスタ
+*/
+class Siesta :
+	public Heart
+{
+public:
+	// コンストラクタ
+	Siesta(const char* name, int hp, int x, int y, int groupId);
+
+	// 射撃攻撃をする(キャラごとに違う)
+	Object* bulletAttack(int gx, int gy, SoundPlayer* soundPlayer);
+
+	// 斬撃攻撃をする(キャラごとに違う)
+	Object* slashAttack(bool leftDirection, int cnt, SoundPlayer* soundPlayer);
+};
+
+
 #endif

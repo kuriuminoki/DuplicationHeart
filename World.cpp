@@ -243,6 +243,8 @@ void World::updateCamera() {
 	int x = 0, y = 0;
 	// キャラとカメラの距離の最大
 	int max_dx = 0, max_dy = 0;
+	// 画面内に入れようとする距離の最大　これより離れたキャラは無視
+	const int MAX_DISABLE = 2000;
 	for (unsigned int i = 0; i < size; i++) {
 		// 今フォーカスしているキャラの座標に合わせる
 		if (m_focusId == m_characters[i]->getId()) {
@@ -251,8 +253,11 @@ void World::updateCamera() {
 			m_camera->setGPoint(x, y);
 		}
 		else if (m_characters[i]->getHp() > 0) {
-			max_dx = max(max_dx, abs(m_camera->getX() - m_characters[i]->getX()) + m_characters[i]->getWide());
-			max_dy = max(max_dy, abs(m_camera->getY() - m_characters[i]->getY()) + m_characters[i]->getHeight());
+			int dx = abs(m_camera->getX() - m_characters[i]->getX()) + m_characters[i]->getWide();
+			if (dx < MAX_DISABLE) {
+				max_dx = max(max_dx, dx);
+				max_dy = max(max_dy, abs(m_camera->getY() - m_characters[i]->getY()) + m_characters[i]->getHeight());
+			}
 		}
 	}
 	// カメラはゆっくり動く

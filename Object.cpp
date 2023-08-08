@@ -547,6 +547,30 @@ void BulletObject::action() {
 }
 
 
+ParabolaBullet::ParabolaBullet(int x, int y, GraphHandle* handle, int gx, int gy, AttackInfo* attackInfo):
+	BulletObject(x, y, -1, gx, gy, attackInfo)
+{
+	m_handle = handle;
+	// UŒ‚”ÍˆÍ‚É‡‚í‚¹‚Ä‰æ‘œ‚ÌŠg‘å—¦‚ðÝ’è
+	int attackSize = max(attackInfo->bulletRx(), attackInfo->bulletRy());
+	int graphX = 0, graphY = 0;
+	GetGraphSize(handle->getHandle(), &graphX, &graphY);
+	int graphSize = min(graphX, graphY);
+	m_handle->setEx((double)attackSize / (double)graphSize);
+}
+
+void ParabolaBullet::action() {
+	if (m_damageCnt > 0) { m_damageCnt--; }
+	m_x1 += m_vx;
+	m_x2 += m_vx;
+	m_vy += G;
+	m_y1 += m_vy;
+	m_y2 += m_vy;
+	double r = std::atan2((double)m_vy, (double)m_vx);
+	m_handle->setAngle(r);
+}
+
+
 SlashObject::SlashObject(int x1, int y1, int x2, int y2, GraphHandle* handle, int slashCountSum, AttackInfo* attackInfo) :
 	Object(x1, y1, x2, y2, attackInfo->slashHp())
 {

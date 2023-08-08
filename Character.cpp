@@ -341,3 +341,84 @@ Object* Heart::slashAttack(bool leftDirection, int cnt, SoundPlayer* soundPlayer
 	}
 	return attackObject;
 }
+
+
+/*
+* ƒVƒGƒXƒ^
+*/
+Siesta::Siesta(const char* name, int hp, int x, int y, int groupId) :
+	Heart(name, hp, x, y, groupId)
+{
+
+}
+
+// ŽËŒ‚UŒ‚‚ð‚·‚é(ƒLƒƒƒ‰‚²‚Æ‚Éˆá‚¤)
+Object* Siesta::bulletAttack(int gx, int gy, SoundPlayer* soundPlayer) {
+	ParabolaBullet *attackObject = new ParabolaBullet(getCenterX(), getCenterY(), m_graphHandle->getBulletHandle()->getGraphHandle(), gx, gy, m_attackInfo);
+	// Ž©–Å–hŽ~
+	attackObject->setCharacterId(m_id);
+	// ƒ`[ƒ€ƒLƒ‹–hŽ~
+	attackObject->setGroupId(m_groupId);
+	// Œø‰Ê‰¹
+	if (soundPlayer != NULL) {
+		soundPlayer->pushSoundQueue(m_attackInfo->bulletStartSoundeHandle(),
+			adjustPanSound(getCenterX(),
+				soundPlayer->getCameraX()));
+	}
+	return attackObject;
+}
+
+// ŽaŒ‚UŒ‚‚ð‚·‚é(ƒLƒƒƒ‰‚²‚Æ‚Éˆá‚¤)
+Object* Siesta::slashAttack(bool leftDirection, int cnt, SoundPlayer* soundPlayer) {
+	// UŒ‚”ÍˆÍ‚ðŒˆ’è
+	int centerX = getCenterX();
+	int height = getHeight();
+	int x1 = centerX;
+	int x2 = centerX;
+	if (leftDirection) { // ¶Œü‚«‚ÉUŒ‚
+		x1 += 50;
+		x2 -= m_attackInfo->slashLenX();
+	}
+	else { // ‰EŒü‚«‚ÉUŒ‚
+		x1 -= 50;
+		x2 += m_attackInfo->slashLenX();
+	}
+
+	// UŒ‚‚Ì‰æ‘œ‚ÆŽ‘±ŽžŠÔ(cnt‚ðl—¶‚µ‚ÄŒˆ’è)
+	cnt -= m_attackInfo->slashInterval();
+	int index = 0;
+	int slashCountSum = m_attackInfo->slashCountSum() / 3 + 1;
+	SlashObject* attackObject = NULL;
+	GraphHandles* slashHandles = m_graphHandle->getSlashHandle();
+	// UŒ‚‚Ì•ûŒü
+	slashHandles->setReverseX(m_leftDirection);
+	// cnt‚ªUŒ‚‚Ìƒ^ƒCƒ~ƒ“ƒO‚È‚çƒIƒuƒWƒFƒNƒg¶¬
+	if (cnt == m_attackInfo->slashCountSum()) {
+		index = 0;
+		attackObject = new SlashObject(x1, m_y, x2, m_y + height,
+			slashHandles->getGraphHandle(index), slashCountSum, m_attackInfo);
+		// Œø‰Ê‰¹
+		if (soundPlayer != NULL) {
+			soundPlayer->pushSoundQueue(m_attackInfo->slashStartSoundHandle(),
+				adjustPanSound(getCenterX(),
+					soundPlayer->getCameraX()));
+		}
+	}
+	else if (cnt == m_attackInfo->slashCountSum() * 2 / 3) {
+		index = 1;
+		attackObject = new SlashObject(x1, m_y, x2, m_y + height,
+			slashHandles->getGraphHandle(index), slashCountSum, m_attackInfo);
+	}
+	else if (cnt == m_attackInfo->slashCountSum() / 3) {
+		index = 2;
+		attackObject = new SlashObject(x1, m_y, x2, m_y + height,
+			slashHandles->getGraphHandle(index), slashCountSum, m_attackInfo);
+	}
+	if (attackObject != NULL) {
+		// Ž©–Å–hŽ~
+		attackObject->setCharacterId(m_id);
+		// ƒ`[ƒ€ƒLƒ‹–hŽ~
+		attackObject->setGroupId(m_groupId);
+	}
+	return attackObject;
+}

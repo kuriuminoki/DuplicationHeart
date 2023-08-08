@@ -38,7 +38,7 @@ public:
 	inline void setReverseY(bool reverse) { m_reverseY = reverse; }
 
 	// •`‰æ‚·‚é
-	void draw(int x, int y, double ex) const;
+	void draw(int x, int y, double ex = 1.0) const;
 
 	void extendDraw(int x1, int y1, int x2, int y2) const ;
 };
@@ -58,7 +58,7 @@ public:
 	~GraphHandles();
 
 	// ƒQƒbƒ^
-	inline GraphHandle* getGraphHandle(int i) const { return m_handles[i]; }
+	inline GraphHandle* getGraphHandle(int i = 0) const { return m_handles[i]; }
 	inline int getHandle(int i) { return m_handles[i]->getHandle(); }
 	inline int getSize() { return m_handleSum; }
 
@@ -89,6 +89,9 @@ private:
 	// ƒLƒƒƒ‰‚Ìƒp[ƒc‚Ì‰æ‘œ
 	// aŒ‚UŒ‚‰æ‘œ
 	GraphHandles* m_slashHandles;
+
+	// ËŒ‚UŒ‚‰æ‘œ
+	GraphHandles* m_bulletHandles;
 
 	// ƒLƒƒƒ‰–{‘Ì‚Ì‰æ‘œ
 	// —§‚¿‰æ‘œ
@@ -150,6 +153,7 @@ public:
 
 	// ‰æ‘œ‚ÌƒQƒbƒ^
 	inline GraphHandles* getSlashHandle() { return m_slashHandles; }
+	inline GraphHandles* getBulletHandle() { return m_bulletHandles; }
 	inline GraphHandles* getStandHandle() { return m_standHandles; }
 	inline GraphHandles* getStandBulletHandle() { return m_standBulletHandles; }
 	inline GraphHandles* getStandSlashHandle() { return m_standSlashHandles; }

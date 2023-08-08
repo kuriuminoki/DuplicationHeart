@@ -32,7 +32,12 @@ void ObjectDrawer::drawObject(const Camera* const camera) {
 		camera->setCamera(&x1, &y1, &ex);
 		camera->setCamera(&x2, &y2, &ex);
 		// •`‰æ
-		graphHandle->extendDraw(x1, y1, x2, y2);
+		if (m_object->extendGraph()) {
+			graphHandle->extendDraw(x1, y1, x2, y2);
+		}
+		else {
+			graphHandle->draw((x1 + x2) / 2, (y1 + y2) / 2, ex * graphHandle->getEx());
+		}
 	}
 	if (m_object->getText() != "") {
 		DrawBox(x1, y1 - 50, x2, y1 - 10, WHITE, TRUE);
