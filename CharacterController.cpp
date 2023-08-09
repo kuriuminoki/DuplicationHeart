@@ -115,7 +115,11 @@ void NormalAI::moveOrder(int& right, int& left, int& up, int& down) {
 
 	// 目標地点設定
 	bool alreadyGoal = m_gx > x - GX_ERROR && m_gx < x + GX_ERROR;
-	if (alreadyGoal && GetRand(MOVE_RAND) == 0) {
+	// ダメージを受けたらリセット
+	if (m_characterAction_p->getState() == CHARACTER_STATE::DAMAGE) {
+		m_gx = x, m_gy = y;
+	}
+	else if (alreadyGoal && GetRand(MOVE_RAND) == 0) {
 		if (m_target_p != NULL && abs(x - m_target_p->getCenterX()) < TARGET_DISTANCE) {
 			// targetについていく
 			m_gx = m_target_p->getCenterX() + GetRand(2000) - 1000;
@@ -164,6 +168,7 @@ int NormalAI::jumpOrder() {
 	// ダメージを食らったらリセット
 	if (m_characterAction_p->getState() == CHARACTER_STATE::DAMAGE) {
 		m_jumpCnt = 0;
+		if (GetRand(120) == 0) { return 1; }
 	}
 
 	// ランダムでジャンプ
@@ -174,7 +179,7 @@ int NormalAI::jumpOrder() {
 	else if (m_leftKey > 0 && m_characterAction_p->getLeftLock()) { m_jumpCnt = 20; }
 
 	if (m_jumpCnt > 0) { m_jumpCnt--; }
-	return m_jumpCnt;
+	return m_jumpCnt == 0 ? 0 : 20 - m_jumpCnt;
 }
 
 int NormalAI::squatOrder() {
@@ -190,7 +195,7 @@ int NormalAI::squatOrder() {
 
 	// ランダムでしゃがむ
 	if (alreadyGoal && m_characterAction_p->getGrand() && GetRand(99) == 0) { 
-		m_squatCnt = GetRand(60) + 30;
+		m_squatCnt = GetRand(120) + 60;
 	}
 
 	if (m_squatCnt > 0) { m_squatCnt--; }
@@ -217,7 +222,7 @@ int NormalAI::bulletOrder() {
 		return 0;
 	}
 	int x = m_characterAction_p->getCharacter()->getX();
-	if (abs(x - m_target_p->getCenterX()) < TARGET_DISTANCE) {
+	if (abs(x - m_target_p->getCenterX()) > TARGET_DISTANCE) {
 		return 0;
 	}
 	// ランダムで射撃
@@ -230,6 +235,11 @@ int NormalAI::bulletOrder() {
 // 攻撃対象を決める(targetのままか、characterに変更するか)
 void NormalAI::searchTarget(const Character* character) {
 	if (GetRand(99) < 50) {
+		int x = m_characterAction_p->getCharacter()->getX();
+		// 距離が遠い
+		if (abs(x - character->getCenterX()) > TARGET_DISTANCE) {
+			return;
+		}
 		// 自分自身や味方じゃなければ
 		if (character->getId() != m_characterAction_p->getCharacter()->getId() && character->getGroupId() != m_characterAction_p->getCharacter()->getGroupId()) {
 			m_target_p = character;
