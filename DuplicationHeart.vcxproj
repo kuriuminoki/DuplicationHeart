@@ -161,6 +161,7 @@
     <ClCompile Include="Control.cpp" />
     <ClCompile Include="CsvReader.cpp" />
     <ClCompile Include="Debug.cpp" />
+    <ClCompile Include="Event.cpp" />
     <ClCompile Include="Game.cpp" />
     <ClCompile Include="GameDrawer.cpp" />
     <ClCompile Include="GraphHandle.cpp" />
@@ -168,6 +169,7 @@
     <ClCompile Include="Object.cpp" />
     <ClCompile Include="ObjectDrawer.cpp" />
     <ClCompile Include="Sound.cpp" />
+    <ClCompile Include="Story.cpp" />
     <ClCompile Include="World.cpp" />
     <ClCompile Include="WorldDrawer.cpp" />
   </ItemGroup>
@@ -182,12 +184,14 @@
     <ClInclude Include="Control.h" />
     <ClInclude Include="CsvReader.h" />
     <ClInclude Include="Define.h" />
+    <ClInclude Include="Event.h" />
     <ClInclude Include="Game.h" />
     <ClInclude Include="GameDrawer.h" />
     <ClInclude Include="GraphHandle.h" />
     <ClInclude Include="Object.h" />
     <ClInclude Include="ObjectDrawer.h" />
     <ClInclude Include="Sound.h" />
+    <ClInclude Include="Story.h" />
     <ClInclude Include="World.h" />
     <ClInclude Include="WorldDrawer.h" />
   </ItemGroup>

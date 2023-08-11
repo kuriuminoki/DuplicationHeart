@@ -5,6 +5,7 @@
 
 class SoundPlayer;
 class World;
+class Story;
 
 
 // キャラのセーブデータ
@@ -36,15 +37,20 @@ private:
 	// 今いるエリア
 	int m_areaNum;
 
+	// 今やっているストーリー
+	int m_storyNum;
+
 public:
 	GameData();
 	GameData(const char* saveFilePath);
 
 	// ゲッタ
 	inline int getAreaNum() const { return m_areaNum; }
+	inline int getStoryNum() const { return m_storyNum; }
 
 	// セッタ
 	inline void setAreaNum(int areaNum) { m_areaNum = areaNum; }
+	inline void setStoryNum(int storyNum) { m_storyNum = storyNum; }
 
 	// 自身のデータをWorldにデータ反映させる
 	void asignWorld(World* world);
@@ -63,6 +69,9 @@ private:
 
 	// 世界
 	World* m_world;
+
+	// ストーリー
+	Story* m_story;
 
 public:
 	Game();
