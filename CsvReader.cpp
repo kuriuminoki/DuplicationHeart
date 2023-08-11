@@ -313,6 +313,9 @@ void AreaReader::loadCharacter(std::map<std::string, std::string> dataMap) {
 	else if (brainName == "followNormalAI") {
 		brain = new FollowNormalAI();
 	}
+	else if (brainName == "freeze") {
+		brain = new Freeze();
+	}
 
 	if (brain == NULL) { return; }
 

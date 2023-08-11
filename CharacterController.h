@@ -79,6 +79,25 @@ public:
 };
 
 /*
+* 全く動かないAI
+*/
+class Freeze :
+	public Brain
+{
+public:
+	Freeze(){ }
+	void debug(int x, int y, int color) const { }
+	bool actionOrder() { return false; }
+	void setCharacterAction(const CharacterAction* characterAction) {  }
+	void bulletTargetPoint(int& x, int& y) {  }
+	void moveOrder(int& right, int& left, int& up, int& down) { right = 0; left = 0; up = 0; down = 0; }
+	int jumpOrder() { return 0; }
+	int squatOrder() { return 0; }
+	int slashOrder() { return 0; }
+	int bulletOrder() { return 0; }
+};
+
+/*
 *  普通に敵と戦うよう命令するＡＩのクラス
 */
 class NormalAI :
@@ -194,6 +213,10 @@ public:
 	// ゲッタ
 	inline const CharacterAction* getAction() const { return m_characterAction; }
 	inline const Brain* getBrain() const { return m_brain; }
+
+	// セッタ
+	void setAction(CharacterAction* action);
+	void setBrain(Brain* brain);
 
 	// 話しかけたり扉に入ったりするボタンがtrueか
 	virtual bool getActionKey() const { return m_brain->actionOrder(); }

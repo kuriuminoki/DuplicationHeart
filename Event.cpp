@@ -2,6 +2,8 @@
 #include "World.h"
 #include "Sound.h"
 #include "CsvReader.h"
+#include "CharacterController.h"
+#include "Character.h"
 #include <sstream>
 
 using namespace std;
@@ -41,13 +43,13 @@ Event::Event(int eventNum, World* world, SoundPlayer* soundPlayer) {
 	// 発火条件
 	vector<map<string, string> > fireData = csvReader2.getDomainData("FIRE:");
 	for (unsigned int i = 0; i < fireData.size(); i++) {
-		m_eventFire.push_back(new CharacterPointFire(world, mapParam2vector(fireData[i])));
+		createFire(mapParam2vector(fireData[i]), world, soundPlayer);
 	}
 
 	// イベントの内容
 	vector<map<string, string> > elementsData = csvReader2.getDomainData("ELEMENT:");
 	for (unsigned int i = 0; i < elementsData.size(); i++) {
-		m_eventElement.push_back(new ChangeBrainEvent(world, mapParam2vector(elementsData[i])));
+		createElement(mapParam2vector(elementsData[i]), world, soundPlayer);
 	}
 
 }
@@ -71,6 +73,9 @@ void Event::createElement(vector<string> param, World* world, SoundPlayer* sound
 
 	if (param0 == "ChangeBrain") {
 		element = new ChangeBrainEvent(world, param);
+	}
+	else if (param0 == "DeadCharacter") {
+		element = new DeadCharacterEvent(world, param);
 	}
 
 	if (element != NULL) { m_eventElement.push_back(element); }
@@ -128,7 +133,7 @@ EventFire::EventFire(World* world) {
 CharacterPointFire::CharacterPointFire(World* world, std::vector<std::string> param) :
 	EventFire(world)
 {
-	m_characterName = param[1];
+	m_character_p = m_world_p->getCharacterWithName(param[1]);
 	m_areaNum = stoi(param[2]);
 	m_x = stoi(param[3]);
 	m_y = stoi(param[4]);
@@ -137,6 +142,12 @@ CharacterPointFire::CharacterPointFire(World* world, std::vector<std::string> pa
 }
 bool CharacterPointFire::fire() {
 	// 特定のキャラが指定した場所にいるか判定
+	if (m_world_p->getAreaNum() != m_areaNum) { return false; }
+	int x = m_character_p->getCenterX();
+	int y = m_character_p->getY() + m_character_p->getHeight();
+	if (x > m_x - m_dx && x < m_x + m_dx && y > m_y - m_dy && y < m_y + m_dy) {
+		return true;
+	}
 	return false;
 }
 
@@ -155,10 +166,12 @@ ChangeBrainEvent::ChangeBrainEvent(World* world, std::vector<string> param) :
 	EventElement(world)
 {
 	m_brainName = param[1];
-	m_characterName = param[2];
+	m_controller_p = m_world_p->getControllerWithName(param[2]);
 }
 EVENT_RESULT ChangeBrainEvent::play() {
 	// 対象のキャラのBrainを変更する
+	Brain* brain = new NormalAI();
+	m_controller_p->setBrain(brain);
 	return EVENT_RESULT::SUCCESS;
 }
 
@@ -166,10 +179,13 @@ EVENT_RESULT ChangeBrainEvent::play() {
 DeadCharacterEvent::DeadCharacterEvent(World* world, std::vector<std::string> param) :
 	EventElement(world)
 {
-	m_characterName = param[0];
+	m_character_p = m_world_p->getCharacterWithName(param[1]);
 }
 EVENT_RESULT DeadCharacterEvent::play() {
 	m_world_p->battle();
 	// 対象のキャラのHPをチェックする
-	return EVENT_RESULT::SUCCESS;
+	if (m_character_p->getHp() == 0) {
+		return EVENT_RESULT::SUCCESS;
+	}
+	return EVENT_RESULT::NOW;
 }

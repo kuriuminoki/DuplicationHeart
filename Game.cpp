@@ -21,8 +21,8 @@ CharacterData::CharacterData(const char* name) {
 GameData::GameData() {
 	m_saveFilePath = "data/save/savedata1.dat";
 
-	m_areaNum = 1;
-	m_storyNum = 1;
+	m_areaNum = 0;
+	m_storyNum = 0;
 
 	// 主要キャラを設定
 	m_characterData.push_back("ハート");
@@ -86,8 +86,8 @@ Game::~Game() {
 }
 
 bool Game::play() {
-	// 戦わせる
-	// m_world->battle();
+	 // 戦わせる
+	 // m_world->battle();
 	
 	// ストーリー進行
 	if (m_story->play()) {

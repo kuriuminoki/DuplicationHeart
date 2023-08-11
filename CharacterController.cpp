@@ -349,6 +349,17 @@ CharacterController::~CharacterController() {
 	}
 }
 
+void CharacterController::setAction(CharacterAction* action) {
+	delete m_characterAction;
+	m_characterAction = action;
+	m_brain->setCharacterAction(m_characterAction);
+}
+void CharacterController::setBrain(Brain* brain) {
+	delete m_brain;
+	m_brain = brain;
+	m_brain->setCharacterAction(m_characterAction);
+}
+
 // アクションのセッタ
 void CharacterController::setCharacterGrand(bool grand) {
 	m_characterAction->setGrand(grand);

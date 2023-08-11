@@ -7,6 +7,8 @@
 
 class World;
 class SoundPlayer;
+class CharacterController;
+class Character;
 
 
 enum class EVENT_RESULT {
@@ -91,7 +93,7 @@ class CharacterPointFire :
 {
 private:
 	// キャラの名前
-	std::string m_characterName;
+	Character* m_character_p;
 
 	// エリア番号
 	int m_areaNum;
@@ -122,7 +124,7 @@ private:
 	std::string m_brainName;
 
 	// 対象のキャラ
-	std::string m_characterName;
+	CharacterController* m_controller_p;
 
 public:
 	ChangeBrainEvent(World* world, std::vector<std::string> param);
@@ -137,7 +139,7 @@ class DeadCharacterEvent :
 private:
 
 	// 対象のキャラ
-	std::string m_characterName;
+	Character* m_character_p;
 
 public:
 	DeadCharacterEvent(World* world, std::vector<std::string> param);
