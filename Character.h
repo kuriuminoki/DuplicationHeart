@@ -8,6 +8,7 @@ class Object;
 class GraphHandle;
 class GraphHandles;
 class CharacterGraphHandle;
+class FaceGraphHandle;
 class SoundPlayer;
 
 
@@ -185,8 +186,11 @@ protected:
 	// 攻撃の情報
 	AttackInfo* m_attackInfo;
 
-	// 画像
+	// キャラ画像
 	CharacterGraphHandle* m_graphHandle;
+
+	// 顔画像
+	FaceGraphHandle* m_faceHandle;
 
 public:
 	// コンストラクタ
@@ -205,6 +209,7 @@ public:
 	inline int getX() const { return m_x; }
 	inline int getY() const { return m_y; }
 	inline bool getLeftDirection() const { return m_leftDirection; }
+	FaceGraphHandle* getFaceHandle() const { return m_faceHandle; }
 
 	// セッタ
 	inline void setHp(int hp) { m_hp = (hp > m_characterInfo->maxHp()) ? m_characterInfo->maxHp() : hp; }

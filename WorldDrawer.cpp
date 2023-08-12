@@ -118,5 +118,5 @@ void WorldDrawer::draw() {
 
 	m_targetDrawer.setEx(camera->getEx());
 	m_targetDrawer.draw();
-	SetDrawBright(0, 0, 0);
+	SetDrawBright(255, 255, 255);
 }

@@ -170,6 +170,7 @@
     <ClCompile Include="ObjectDrawer.cpp" />
     <ClCompile Include="Sound.cpp" />
     <ClCompile Include="Story.cpp" />
+    <ClCompile Include="Text.cpp" />
     <ClCompile Include="World.cpp" />
     <ClCompile Include="WorldDrawer.cpp" />
   </ItemGroup>
@@ -192,6 +193,7 @@
     <ClInclude Include="ObjectDrawer.h" />
     <ClInclude Include="Sound.h" />
     <ClInclude Include="Story.h" />
+    <ClInclude Include="Text.h" />
     <ClInclude Include="World.h" />
     <ClInclude Include="WorldDrawer.h" />
   </ItemGroup>

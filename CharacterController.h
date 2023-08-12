@@ -104,8 +104,6 @@ class NormalAI :
 	public Brain
 {
 private:
-	// 攻撃対象
-	const Character* m_target_p;
 
 	// 攻撃対象を認知する距離
 	const int TARGET_DISTANCE = 2000;
@@ -120,6 +118,9 @@ private:
 	int m_squatCnt;
 
 protected:
+	// 攻撃対象
+	const Character* m_target_p;
+
 	// 射撃の精度
 	const int BULLET_ERROR = 400;
 
@@ -158,6 +159,13 @@ public:
 protected:
 	// スティック操作
 	void stickOrder(int& right, int& left, int& up, int& down);
+};
+
+
+class ParabolaAI :
+	public NormalAI
+{
+	void bulletTargetPoint(int& x, int& y);
 };
 
 

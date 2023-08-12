@@ -83,8 +83,8 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 		Update();
 		// デバッグ
 		if (debug == TRUE) {
-			Draw(0, 0, WHITE);
-			game.debug(0, DRAW_FORMAT_STRING_SIZE, WHITE);
+			Draw(0, 0, BLACK);
+			game.debug(0, DRAW_FORMAT_STRING_SIZE, BLACK);
 		}
 		Wait();
 		if (controlEsc() == TRUE) { DxLib_End(); }

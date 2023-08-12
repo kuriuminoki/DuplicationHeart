@@ -12,11 +12,15 @@ class DoorObject;
 class Camera;
 class Animation;
 class SoundPlayer;
+class Conversation;
 
 class World {
 private:
 	// サウンドプレイヤー
 	SoundPlayer* m_soundPlayer_p;
+
+	// 会話イベント EventElementクラスからもらう
+	Conversation* m_conversation_p;
 
 	// 画面の明るさ
 	int m_brightValue;
@@ -90,6 +94,7 @@ public:
 	*/
 	Character* getCharacterWithName(std::string characterName) const;
 	CharacterController* getControllerWithName(std::string characterName) const;
+	inline void setConversation(Conversation* conversation){ m_conversation_p = conversation; }
 
 private:
 	// キャラクターとオブジェクトの当たり判定

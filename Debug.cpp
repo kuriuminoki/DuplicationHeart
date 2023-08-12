@@ -7,6 +7,9 @@
 #include "GraphHandle.h"
 #include "Animation.h"
 #include "Define.h"
+#include "Text.h"
+#include "Event.h"
+#include "Story.h"
 #include "DxLib.h"
 
 /*
@@ -16,7 +19,8 @@
 void Game::debug(int x, int y, int color) const {
 	DrawFormatString(x, y, color, "**GAME**");
 	DrawFormatString(x, y + DRAW_FORMAT_STRING_SIZE, color, "StoryNum=%d", m_gameData->getStoryNum());
-	m_world->debug(x + DRAW_FORMAT_STRING_SIZE, y + DRAW_FORMAT_STRING_SIZE * 2, color);
+	//m_story->debug(x + DRAW_FORMAT_STRING_SIZE, y + DRAW_FORMAT_STRING_SIZE * 2, color);
+	m_world->debug(x + DRAW_FORMAT_STRING_SIZE, y + DRAW_FORMAT_STRING_SIZE * 3, color);
 }
 
 
@@ -33,7 +37,20 @@ void debugObjects(int x, int y, int color, std::vector<Object*> objects) {
 void World::debug(int x, int y, int color) const {
 	DrawFormatString(x, y, color, "**World**");
 	DrawFormatString(x, y + DRAW_FORMAT_STRING_SIZE, color, "CharacterSum=%d, ControllerSum=%d, anime=%d", m_characters.size(), m_characterControllers.size(), m_animations.size());
+	if (m_conversation_p != NULL) {
+		DrawFormatString(x, y + DRAW_FORMAT_STRING_SIZE * 2, color, "cnt=%d, now=%d, text:%s", m_conversation_p->getCnt(), m_conversation_p->getTextNow(), m_conversation_p->getText().c_str());
+		DrawFormatString(x, y + DRAW_FORMAT_STRING_SIZE * 3, color, "size=%d, fullText:%s", m_conversation_p->getTextSize(), m_conversation_p->getFullText().c_str());
+		m_conversation_p->getGraph()->draw(GAME_WIDE-500, 500, 1.0);
+	}
 	//m_characterControllers[1]->debug(x + DRAW_FORMAT_STRING_SIZE, y + DRAW_FORMAT_STRING_SIZE * 2, color);
+}
+
+
+/*
+* Story
+*/
+void Story::debug(int x, int y, int color) {
+	DrawFormatString(x, y + DRAW_FORMAT_STRING_SIZE, color, "**Story**");
 }
 
 
