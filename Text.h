@@ -20,6 +20,7 @@ private:
 
 	// 文字表示の速さ 1が最速
 	const unsigned int TEXT_SPEED = 5;
+	unsigned int m_textSpeed;
 
 	// テキストを飛ばせるようになるまでの時間
 	const unsigned int MOVE_FINAL_ABLE = 30;
