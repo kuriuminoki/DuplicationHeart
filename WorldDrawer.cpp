@@ -5,6 +5,8 @@
 #include "CharacterAction.h"
 #include "ObjectDrawer.h"
 #include "AnimationDrawer.h"
+#include "TextDrawer.h"
+#include "Text.h"
 #include "Define.h"
 #include "DxLib.h"
 #include <queue>
@@ -48,12 +50,14 @@ WorldDrawer::WorldDrawer(const World* world) {
 	m_characterDrawer = new CharacterDrawer(NULL);
 	m_objectDrawer = new ObjectDrawer(NULL);
 	m_animationDrawer = new AnimationDrawer(NULL);
+	m_conversationDrawer = new ConversationDrawer(NULL);
 }
 
 WorldDrawer::~WorldDrawer() {
 	delete m_characterDrawer;
 	delete m_objectDrawer;
 	delete m_animationDrawer;
+	delete m_conversationDrawer;
 }
 
 // 描画する
@@ -119,4 +123,11 @@ void WorldDrawer::draw() {
 	m_targetDrawer.setEx(camera->getEx());
 	m_targetDrawer.draw();
 	SetDrawBright(255, 255, 255);
+
+	// テキストイベント
+	const Conversation* conversation = m_world->getConversation();
+	if (conversation != NULL) {
+		m_conversationDrawer->setConversation(conversation);
+		m_conversationDrawer->draw();
+	}
 }

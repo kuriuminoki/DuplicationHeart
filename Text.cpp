@@ -23,6 +23,7 @@ Conversation::Conversation(int textNum, World* world, SoundPlayer* soundPlayer) 
 	m_text = "";
 	m_textNow = 0;
 	m_cnt = 0;
+	m_textSpeed = TEXT_SPEED;
 
 	// 効果音
 	m_displaySound = LoadSoundMem("sound/text/display.wav");
@@ -50,9 +51,10 @@ std::string Conversation::getText() const {
 }
 
 // 画像を返す（描画用）
-GraphHandle* Conversation::getGraph() {
+GraphHandle* Conversation::getGraph() const {
 	int size = (int)m_speakerGraph->getSize();
 	int index = size - (m_textNow / 2 % size) - 1;
+	index = m_textNow == (unsigned int)m_text.size() ? 0 : index;
 	return m_speakerGraph->getGraphHandle(index);
 }
 
@@ -83,7 +85,7 @@ bool Conversation::play() {
 
 	// 表示文字を増やす
 	m_cnt++;
-	if (m_cnt % TEXT_SPEED == 0 && m_textNow < m_text.size()) {
+	if (m_cnt % m_textSpeed == 0 && m_textNow < m_text.size()) {
 		// 日本語表示は１文字がサイズ２分
 		m_textNow = min(m_textNow + 2, (unsigned int)m_text.size());
 		// 効果音
@@ -111,6 +113,17 @@ void Conversation::setNextText() {
 
 	if (FileRead_eof(m_fp) == 0) {
 		FileRead_gets(buff, size, m_fp);
+		string s = buff;
+		if (s == "") {
+			m_textSpeed = TEXT_SPEED;
+		}
+		else {
+			m_textSpeed = stoi(s);
+			FileRead_gets(buff, size, m_fp);
+		}
+	}
+	else {
+		m_textSpeed = TEXT_SPEED;
 	}
 }
 

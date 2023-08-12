@@ -20,6 +20,7 @@ private:
 
 	// 文字表示の速さ 1が最速
 	const unsigned int TEXT_SPEED = 5;
+	unsigned int m_textSpeed;
 
 	// テキストを飛ばせるようになるまでの時間
 	const unsigned int MOVE_FINAL_ABLE = 30;
@@ -60,7 +61,7 @@ public:
 	std::string getText() const;
 	inline std::string getFullText() const { return m_text; }
 	int getTextSize() const;
-	GraphHandle* getGraph();
+	GraphHandle* getGraph() const;
 	inline 	std::string getSpeakerName() const { return m_speakerName; }
 	inline bool getFinishFlag() const { return m_finishFlag; }
 	inline int getTextNow() const { return m_textNow; }

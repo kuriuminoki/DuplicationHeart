@@ -5,6 +5,7 @@ class World;
 class CharacterDrawer;
 class ObjectDrawer;
 class AnimationDrawer;
+class ConversationDrawer;
 
 
 class TargetDrawer {
@@ -49,6 +50,9 @@ private:
 
 	// マウスカーソル代わり
 	TargetDrawer m_targetDrawer;
+
+	// 会話イベント
+	ConversationDrawer* m_conversationDrawer;
 
 public:
 	WorldDrawer(const World* world);

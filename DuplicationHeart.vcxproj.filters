@@ -99,6 +99,9 @@
     <ClCompile Include="Text.cpp">
       <Filter>ソース ファイル\api</Filter>
     </ClCompile>
+    <ClCompile Include="TextDrawer.cpp">
+      <Filter>ソース ファイル\ui</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Define.h">
@@ -163,6 +166,9 @@
     </ClInclude>
     <ClInclude Include="Text.h">
       <Filter>ヘッダー ファイル\api</Filter>
+    </ClInclude>
+    <ClInclude Include="TextDrawer.h">
+      <Filter>ヘッダー ファイル\ui</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>
