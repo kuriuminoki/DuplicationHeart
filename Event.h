@@ -9,6 +9,7 @@ class World;
 class SoundPlayer;
 class CharacterController;
 class Character;
+class Conversation;
 
 
 enum class EVENT_RESULT {
@@ -143,6 +144,21 @@ private:
 
 public:
 	DeadCharacterEvent(World* world, std::vector<std::string> param);
+
+	EVENT_RESULT play();
+};
+
+// 会話イベント
+class TalkEvent :
+	public EventElement
+{
+private:
+
+	Conversation* m_conversation;
+
+public:
+	TalkEvent(World* world, SoundPlayer* soundPlayer, std::vector<std::string> param);
+	~TalkEvent();
 
 	EVENT_RESULT play();
 };

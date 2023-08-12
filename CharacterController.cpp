@@ -226,7 +226,7 @@ int NormalAI::bulletOrder() {
 		return 0;
 	}
 	// ランダムで射撃
-	if (GetRand(50) == 0) { 
+	if (GetRand(30) == 0) { 
 		return 1;
 	}
 	return 0;
@@ -253,6 +253,18 @@ bool NormalAI::needSearchTarget() const {
 		return true;
 	}
 	return false;
+}
+
+
+void ParabolaAI::bulletTargetPoint(int& x, int& y) {
+	if (m_target_p == NULL) {
+		x = 0;
+		y = 0;
+	}
+	else { // ターゲットに向かって射撃攻撃
+		x = m_target_p->getCenterX() + (GetRand(BULLET_ERROR) - BULLET_ERROR / 2);
+		y = m_target_p->getCenterY() + (GetRand(BULLET_ERROR) - BULLET_ERROR / 2) - 200;
+	}
 }
 
 

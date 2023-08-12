@@ -104,11 +104,11 @@ void GraphHandles::draw(int x, int y, int index) {
 * キャラの画像
 */
 // 画像ロード用
-void loadCharacterGraph(const char* characterName, GraphHandles*& handles, string stateName, map<string, string>& data, double ex) {
+void loadCharacterGraph(const char* dir, const char* characterName, GraphHandles*& handles, string stateName, map<string, string>& data, double ex) {
 	int n = stoi(data[stateName]);
 	if (n > 0) {
 		ostringstream oss;
-		oss << "picture/stick/" << characterName << "/" << stateName;
+		oss << dir << characterName << "/" << stateName;
 		handles = new GraphHandles(oss.str().c_str(), n, ex, 0.0, true);
 	}
 	else {
@@ -132,23 +132,24 @@ CharacterGraphHandle::CharacterGraphHandle(const char* characterName, double dra
 	if (data.size() == 0) { data = reader.findOne("name", "テスト"); }
 
 	// ロード
-	loadCharacterGraph(characterName, m_standHandles, "stand", data, m_ex);
-	loadCharacterGraph(characterName, m_slashHandles, "slash", data, m_ex);
-	loadCharacterGraph(characterName, m_bulletHandles, "bullet", data, m_ex);
-	loadCharacterGraph(characterName, m_squatHandles, "squat", data, m_ex);
-	loadCharacterGraph(characterName, m_squatBulletHandles, "squatBullet", data, m_ex);
-	loadCharacterGraph(characterName, m_standBulletHandles, "standBullet", data, m_ex);
-	loadCharacterGraph(characterName, m_standSlashHandles, "standSlash", data, m_ex);
-	loadCharacterGraph(characterName, m_runHandles, "run", data, m_ex);
-	loadCharacterGraph(characterName, m_runBulletHandles, "runBullet", data, m_ex);
-	loadCharacterGraph(characterName, m_landHandles, "land", data, m_ex);
-	loadCharacterGraph(characterName, m_jumpHandles, "jump", data, m_ex);
-	loadCharacterGraph(characterName, m_downHandles, "down", data, m_ex);
-	loadCharacterGraph(characterName, m_preJumpHandles, "preJump", data, m_ex);
-	loadCharacterGraph(characterName, m_damageHandles, "damage", data, m_ex);
-	loadCharacterGraph(characterName, m_boostHandles, "boost", data, m_ex);
-	loadCharacterGraph(characterName, m_airBulletHandles, "airBullet", data, m_ex);
-	loadCharacterGraph(characterName, m_airSlashHandles, "airSlash", data, m_ex);
+	const char* dir = "picture/stick/";
+	loadCharacterGraph(dir, characterName, m_standHandles, "stand", data, m_ex);
+	loadCharacterGraph(dir, characterName, m_slashHandles, "slash", data, m_ex);
+	loadCharacterGraph(dir, characterName, m_bulletHandles, "bullet", data, m_ex);
+	loadCharacterGraph(dir, characterName, m_squatHandles, "squat", data, m_ex);
+	loadCharacterGraph(dir, characterName, m_squatBulletHandles, "squatBullet", data, m_ex);
+	loadCharacterGraph(dir, characterName, m_standBulletHandles, "standBullet", data, m_ex);
+	loadCharacterGraph(dir, characterName, m_standSlashHandles, "standSlash", data, m_ex);
+	loadCharacterGraph(dir, characterName, m_runHandles, "run", data, m_ex);
+	loadCharacterGraph(dir, characterName, m_runBulletHandles, "runBullet", data, m_ex);
+	loadCharacterGraph(dir, characterName, m_landHandles, "land", data, m_ex);
+	loadCharacterGraph(dir, characterName, m_jumpHandles, "jump", data, m_ex);
+	loadCharacterGraph(dir, characterName, m_downHandles, "down", data, m_ex);
+	loadCharacterGraph(dir, characterName, m_preJumpHandles, "preJump", data, m_ex);
+	loadCharacterGraph(dir, characterName, m_damageHandles, "damage", data, m_ex);
+	loadCharacterGraph(dir, characterName, m_boostHandles, "boost", data, m_ex);
+	loadCharacterGraph(dir, characterName, m_airBulletHandles, "airBullet", data, m_ex);
+	loadCharacterGraph(dir, characterName, m_airSlashHandles, "airSlash", data, m_ex);
 
 	switchStand();
 }
@@ -247,4 +248,31 @@ void CharacterGraphHandle::switchAirBullet(int index){
 // 空中斬撃画像をセット
 void CharacterGraphHandle::switchAirSlash(int index){
 	setGraph(m_airSlashHandles, index);
+}
+
+
+
+FaceGraphHandle::FaceGraphHandle():
+	FaceGraphHandle("テスト", 1.0)
+{
+
+}
+FaceGraphHandle::FaceGraphHandle(const char* characterName, double drawEx) {
+	m_ex = drawEx;
+	
+	CsvReader reader("data/faceGraph.csv");
+	// キャラ名でデータを検索
+	map<string, string> data = reader.findOne("name", characterName);
+	if (data.size() == 0) { data = reader.findOne("name", "テスト"); }
+
+	// ロード
+	const char* dir = "picture/face/";
+	loadCharacterGraph(dir, characterName, m_normalHandles, "通常", data, m_ex);
+
+}
+FaceGraphHandle::~FaceGraphHandle() {
+	delete m_normalHandles;
+}
+GraphHandles* FaceGraphHandle::getGraphHandle(const char* faceName) {
+	return m_normalHandles;
 }

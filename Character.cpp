@@ -134,6 +134,7 @@ Character::Character(int hp, int x, int y, int groupId) {
 	m_characterInfo = NULL;
 	m_attackInfo = NULL;
 	m_graphHandle = NULL;
+	m_faceHandle = NULL;
 }
 
 Character::~Character() {
@@ -148,6 +149,10 @@ Character::~Character() {
 	// GraphHandleの削除
 	if (m_graphHandle != NULL) {
 		delete m_graphHandle;
+	}
+	// FaceHandleの削除
+	if (m_faceHandle != NULL) {
+		delete m_faceHandle;
 	}
 }
 
@@ -244,6 +249,7 @@ Heart::Heart(const char* name, int hp, int x, int y, int groupId) :
 
 	// 各画像のロード
 	m_graphHandle = new CharacterGraphHandle(name, m_characterInfo->handleEx());
+	m_faceHandle = new FaceGraphHandle(name, 1.0);
 
 	// とりあえず立ち画像でスタート
 	switchStand();

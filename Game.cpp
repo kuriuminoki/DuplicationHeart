@@ -88,6 +88,11 @@ Game::~Game() {
 bool Game::play() {
 	 // 戦わせる
 	 // m_world->battle();
+
+	// これ以上ストーリーを進ませない（テスト用）
+	if (m_gameData->getStoryNum() == 1) {
+		return false;
+	}
 	
 	// ストーリー進行
 	if (m_story->play()) {

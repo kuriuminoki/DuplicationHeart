@@ -9,6 +9,7 @@
 #include "CsvReader.h"
 #include "Control.h"
 #include "Define.h"
+#include "Text.h"
 #include "DxLib.h"
 #include <algorithm>
 
@@ -73,6 +74,9 @@ World::World(int fromAreaNum, int toAreaNum, SoundPlayer* soundPlayer) {
 
 	// サウンドプレイヤー
 	m_soundPlayer_p = soundPlayer;
+
+	// 会話イベント
+	m_conversation_p = NULL;
 
 	// 主人公のスタート地点
 	m_areaNum = toAreaNum;
@@ -440,7 +444,12 @@ void World::atariAttackAndAttack() {
 
 // 会話させる
 void World::talk() {
-
+	if (m_conversation_p != NULL) {
+		// 会話終了
+		if (m_conversation_p->play()) {
+			m_conversation_p = NULL;
+		}
+	}
 }
 
 

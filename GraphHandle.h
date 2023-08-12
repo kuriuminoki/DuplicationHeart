@@ -209,4 +209,22 @@ public:
 };
 
 
+/*
+* ƒLƒƒƒ‰‚ÌŠç‰æ‘œ
+*/
+class FaceGraphHandle {
+private:
+	double m_ex;
+	// ’Êí
+	GraphHandles* m_normalHandles;
+
+public:
+	FaceGraphHandle();
+	FaceGraphHandle(const char* characterName, double drawEx);
+	~FaceGraphHandle();
+
+	GraphHandles* getGraphHandle(const char* faceName);
+};
+
+
 #endif

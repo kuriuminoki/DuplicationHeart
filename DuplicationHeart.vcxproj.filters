@@ -96,6 +96,9 @@
     <ClCompile Include="Event.cpp">
       <Filter>ソース ファイル\api</Filter>
     </ClCompile>
+    <ClCompile Include="Text.cpp">
+      <Filter>ソース ファイル\api</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Define.h">
@@ -156,6 +159,9 @@
       <Filter>ヘッダー ファイル\api</Filter>
     </ClInclude>
     <ClInclude Include="Event.h">
+      <Filter>ヘッダー ファイル\api</Filter>
+    </ClInclude>
+    <ClInclude Include="Text.h">
       <Filter>ヘッダー ファイル\api</Filter>
     </ClInclude>
   </ItemGroup>

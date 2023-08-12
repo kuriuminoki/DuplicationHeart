@@ -30,6 +30,8 @@ public:
 	Story(int storyNum, World* world, SoundPlayer* soundPlayer);
 	~Story();
 
+	void debug(int x, int y, int color);
+
 	bool play();
 };
 

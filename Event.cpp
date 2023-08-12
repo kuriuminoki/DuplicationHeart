@@ -4,6 +4,7 @@
 #include "CsvReader.h"
 #include "CharacterController.h"
 #include "Character.h"
+#include "Text.h"
 #include <sstream>
 
 using namespace std;
@@ -76,6 +77,9 @@ void Event::createElement(vector<string> param, World* world, SoundPlayer* sound
 	}
 	else if (param0 == "DeadCharacter") {
 		element = new DeadCharacterEvent(world, param);
+	}
+	else if (param0 == "Talk") {
+		element = new TalkEvent(world, soundPlayer, param);
 	}
 
 	if (element != NULL) { m_eventElement.push_back(element); }
@@ -170,8 +174,16 @@ ChangeBrainEvent::ChangeBrainEvent(World* world, std::vector<string> param) :
 }
 EVENT_RESULT ChangeBrainEvent::play() {
 	// 対象のキャラのBrainを変更する
-	Brain* brain = new NormalAI();
-	m_controller_p->setBrain(brain);
+	Brain* brain = NULL;
+	if (m_brainName == "NormalAI") {
+		brain = new NormalAI();
+	}
+	else if (m_brainName == "ParabolaAI") {
+		brain = new ParabolaAI();
+	}
+	if (brain != NULL) {
+		m_controller_p->setBrain(brain);
+	}
 	return EVENT_RESULT::SUCCESS;
 }
 
@@ -185,6 +197,27 @@ EVENT_RESULT DeadCharacterEvent::play() {
 	m_world_p->battle();
 	// 対象のキャラのHPをチェックする
 	if (m_character_p->getHp() == 0) {
+		return EVENT_RESULT::SUCCESS;
+	}
+	return EVENT_RESULT::NOW;
+}
+
+
+TalkEvent::TalkEvent(World* world, SoundPlayer* soundPlayer, std::vector<std::string> param):
+	EventElement(world)
+{
+	int textNum = stoi(param[1]);
+	m_conversation = new Conversation(textNum, world, soundPlayer);
+}
+
+TalkEvent::~TalkEvent() {
+	delete m_conversation;
+}
+
+EVENT_RESULT TalkEvent::play() {
+	m_world_p->setConversation(m_conversation);
+	m_world_p->talk();
+	if (m_conversation->getFinishFlag()) {
 		return EVENT_RESULT::SUCCESS;
 	}
 	return EVENT_RESULT::NOW;
