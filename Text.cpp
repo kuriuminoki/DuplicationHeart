@@ -51,9 +51,9 @@ std::string Conversation::getText() const {
 
 // ‰æ‘œ‚ð•Ô‚·i•`‰æ—pj
 GraphHandle* Conversation::getGraph() {
-	//int size = (int)m_speakerGraph->getSize();
-	//int index = m_textNow / 2 % size;
-	return m_speakerGraph->getGraphHandle(0);
+	int size = (int)m_speakerGraph->getSize();
+	int index = size - (m_textNow / 2 % size) - 1;
+	return m_speakerGraph->getGraphHandle(index);
 }
 
 int Conversation::getTextSize() const {
