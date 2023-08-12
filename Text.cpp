@@ -50,9 +50,10 @@ std::string Conversation::getText() const {
 }
 
 // ‰æ‘œ‚ð•Ô‚·i•`‰æ—pj
-GraphHandle* Conversation::getGraph() {
+GraphHandle* Conversation::getGraph() const {
 	int size = (int)m_speakerGraph->getSize();
 	int index = size - (m_textNow / 2 % size) - 1;
+	index = m_textNow == (unsigned int)m_text.size() ? 0 : index;
 	return m_speakerGraph->getGraphHandle(index);
 }
 

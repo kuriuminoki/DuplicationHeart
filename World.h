@@ -73,6 +73,7 @@ public:
 	std::vector<const Animation*> getAnimations() const;
 	inline const int getBackGroundGraph() const { return m_backGroundGraph; }
 	inline const int getBackGroundColor() const { return m_backGroundColor; }
+	inline const Conversation* getConversation() const { return m_conversation_p; }
 
 	//デバッグ
 	void debug(int x, int y, int color) const;
