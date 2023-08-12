@@ -114,6 +114,80 @@ vector<map<string, string>> CsvReader::getData() const {
 }
 
 
+// ファイル名を指定してCSVファイルを読み込む
+CsvReader2::CsvReader2(const char* fileName) {
+
+	// ファイルポインタ
+	int fp;
+
+	// バッファ
+	const int size = 512;
+	char buff[size];
+
+	// ファイルを開く
+	fp = FileRead_open(fileName);
+
+	string domainName = "";
+	// ファイルの終端までループ
+	while (FileRead_eof(fp) == 0) {
+		// いったんバッファに一行分のテキストを入れる
+		FileRead_gets(buff, size, fp);
+
+		// 一行分のテキストをデータにしてVectorに変換
+		vector<string> oneDataVector = csv2vector(buff);
+
+		if (oneDataVector[1] == "") {
+			domainName = oneDataVector[0];
+			FileRead_gets(buff, size, fp);
+			m_columnNames[domainName] = csv2vector(buff);
+		}
+		else {
+			// vectorとカラム名を使ってmapを生成
+			map<string, string> oneData;
+			for (int i = 0; i < oneDataVector.size(); i++) {
+				oneData[m_columnNames[domainName][i]] = oneDataVector[i];
+			}
+
+			// 一行分のmapデータをpush_back
+			m_data[domainName].push_back(oneData);
+		}
+	}
+
+	// ファイルを閉じる
+	FileRead_close(fp);
+}
+
+
+/*
+* ドメイン名がdomainNameのデータから、
+* カラム名がvalueのデータを取得
+* 例：findOne("name", "キャラ名");
+* 見つからなかったら空のデータを返す
+*/
+map<string, string> CsvReader2::findOne(const char* domainName, const char* columnName, const char* value) {
+
+	// m_data[i][columnName] == valueとなるiを調べる
+	map<string, string>::iterator ite;
+	for (int i = 0; i < m_data.size(); i++) {
+
+		// カラム名に対応する値を取得
+		ite = m_data[domainName][i].find(columnName);
+
+		// そのカラム名が存在しない
+		if (ite == m_data[domainName][i].end()) { continue; }
+
+		// 条件に一致
+		if (ite->second == value) {
+			return m_data[domainName][i];
+		}
+	}
+
+	// 空のデータを返す
+	map<string, string> res;
+	return res;
+}
+
+
 // 色の名前から色ハンドルを取得
 int str2color(string colorName) {
 	if (colorName == "white") { return WHITE; }
@@ -138,77 +212,36 @@ AreaReader::AreaReader(int fromAreaNum, int toAreaNum, SoundPlayer* soundPlayer)
 	m_backGroundColor = -1;
 	m_bgmName = "";
 
-	// ファイルポインタ
-	int fp;
-
-	// バッファ
-	char buff[256];
-
 	// ファイルを開く
 	ostringstream fileName;
 	fileName << "data/area/area" << toAreaNum << ".csv";
-	fp = FileRead_open(fileName.str().c_str());
 
-	LOAD_AREA now = LOAD_AREA::BGM;
-	vector<string> columnNames;
+	CsvReader2 csvReader2(fileName.str().c_str());
 
-	while (FileRead_eof(fp) == 0) {
-		FileRead_gets(buff, 256, fp);
-		vector<string> oneData = csv2vector(buff);
-		if (oneData[0] == "") { break; }
-
-		if (oneData[0] == "BGM:") {
-			now = LOAD_AREA::BGM;
-			FileRead_gets(buff, 256, fp);
-			columnNames = csv2vector(buff);
-		}
-		else if (oneData[0] == "CHARACTER:") {
-			now = LOAD_AREA::CHARACTER;
-			FileRead_gets(buff, 256, fp);
-			columnNames = csv2vector(buff);
-		}
-		else if (oneData[0] == "OBJECT:") {
-			now = LOAD_AREA::OBJECT;
-			FileRead_gets(buff, 256, fp);
-			columnNames = csv2vector(buff);
-		}
-		else if (oneData[0] == "BACKGROUND:") {
-			now = LOAD_AREA::BACKGROUND;
-			FileRead_gets(buff, 256, fp);
-			columnNames = csv2vector(buff);
-		}
-		else {
-			// データを1行分読み込んだ場合
-			map<string, string> dataMap;
-			for (int i = 0; i < oneData.size(); i++) {
-				dataMap[columnNames[i]] = oneData[i];
-			}
-			map2instance(dataMap, now);
-		}
+	vector<map<string, string> > data;
+	// BGM
+	data = csvReader2.getDomainData("BGM:");
+	for (unsigned int i = 0; i < data.size(); i++) {
+		loadBGM(data[i]);
 	}
-
-	// ファイルを閉じる
-	FileRead_close(fp);
+	// CHARACTER
+	data = csvReader2.getDomainData("CHARACTER:");
+	for (unsigned int i = 0; i < data.size(); i++) {
+		loadCharacter(data[i]);
+	}
+	// OBJECT
+	data = csvReader2.getDomainData("OBJECT:");
+	for (unsigned int i = 0; i < data.size(); i++) {
+		loadObject(data[i]);
+	}
+	// BACKGROUND
+	data = csvReader2.getDomainData("BACKGROUND:");
+	for (unsigned int i = 0; i < data.size(); i++) {
+		loadBackGround(data[i]);
+	}
 
 	setPlayer();
 	setFollow();
-}
-
-void AreaReader::map2instance(map<string, string> dataMap, LOAD_AREA now) {
-	switch (now) {
-	case LOAD_AREA::BGM:
-		loadBGM(dataMap);
-		break;
-	case LOAD_AREA::CHARACTER:
-		loadCharacter(dataMap);
-		break;
-	case LOAD_AREA::OBJECT:
-		loadObject(dataMap);
-		break;
-	case LOAD_AREA::BACKGROUND:
-		loadBackGround(dataMap);
-		break;
-	}
 }
 
 // BGMのロード
@@ -279,6 +312,9 @@ void AreaReader::loadCharacter(std::map<std::string, std::string> dataMap) {
 	}
 	else if (brainName == "followNormalAI") {
 		brain = new FollowNormalAI();
+	}
+	else if (brainName == "freeze") {
+		brain = new Freeze();
 	}
 
 	if (brain == NULL) { return; }

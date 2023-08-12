@@ -2,6 +2,7 @@
 #include "World.h"
 #include "Define.h"
 #include "Sound.h"
+#include "Story.h"
 #include "DxLib.h"
 
 /*
@@ -20,7 +21,8 @@ CharacterData::CharacterData(const char* name) {
 GameData::GameData() {
 	m_saveFilePath = "data/save/savedata1.dat";
 
-	m_areaNum = 1;
+	m_areaNum = 0;
+	m_storyNum = 0;
 
 	// 主要キャラを設定
 	m_characterData.push_back("ハート");
@@ -67,11 +69,14 @@ Game::Game() {
 	m_soundPlayer->setVolume(50);
 
 	// 世界
-	int startAreaNum = 1;
+	int startAreaNum = 0;
 	m_world = new World(-1, startAreaNum, m_soundPlayer);
 
 	// データを世界に反映
 	m_gameData->asignWorld(m_world);
+
+	// ストーリー
+	m_story = new Story(m_gameData->getStoryNum(), m_world, m_soundPlayer);
 }
 
 Game::~Game() {
@@ -81,8 +86,16 @@ Game::~Game() {
 }
 
 bool Game::play() {
-	// 戦わせる
-	m_world->battle();
+	 // 戦わせる
+	 // m_world->battle();
+	
+	// ストーリー進行
+	if (m_story->play()) {
+		// 次のストーリーへ
+		m_gameData->setStoryNum(m_gameData->getStoryNum() + 1);
+		delete m_story;
+		m_story = new Story(m_gameData->getStoryNum(), m_world, m_soundPlayer);
+	}
 
 	// 音
 	m_soundPlayer->play();

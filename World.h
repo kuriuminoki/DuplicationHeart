@@ -2,6 +2,7 @@
 #define WORLD_H_INCLUDE
 
 #include <vector>
+#include <string>
 
 class CharacterController;
 class CharacterAction;
@@ -83,6 +84,12 @@ public:
 
 	// キャラの状態を教える
 	void asignCharacterData(const char* name, int& hp);
+
+	/*
+	* イベント用
+	*/
+	Character* getCharacterWithName(std::string characterName) const;
+	CharacterController* getControllerWithName(std::string characterName) const;
 
 private:
 	// キャラクターとオブジェクトの当たり判定

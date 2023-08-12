@@ -442,3 +442,22 @@ void World::atariAttackAndAttack() {
 void World::talk() {
 
 }
+
+
+Character* World::getCharacterWithName(string characterName) const {
+	for (unsigned int i = 0; i < m_characters.size(); i++) {
+		if (m_characters[i]->getName() == characterName) {
+			return m_characters[i];
+		}
+	}
+	return NULL;
+}
+
+CharacterController* World::getControllerWithName(string characterName) const {
+	for (unsigned int i = 0; i < m_characters.size(); i++) {
+		if (m_characterControllers[i]->getAction()->getCharacter()->getName() == characterName) {
+			return m_characterControllers[i];
+		}
+	}
+	return NULL;
+}
