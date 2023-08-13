@@ -204,19 +204,40 @@ void World::pushCharacter(Character* character, CharacterController* controller)
 
 void World::popCharacter(int id) {
 	for (unsigned int i = 0; i < m_characterControllers.size(); i++) {
+		if (m_characterControllers[i]->getAction()->getCharacter()->getName() == "ハート") {
+			continue;
+		}
 		if (m_characterControllers[i]->getAction()->getCharacter()->getId() == id) {
 			delete m_characterControllers[i];
 			m_characterControllers[i] = m_characterControllers.back();
 			m_characterControllers.pop_back();
+			i--;
 		}
 	}
 	for (unsigned int i = 0; i < m_characters.size(); i++) {
+		if (m_characters[i]->getName() == "ハート") {
+			continue;
+		}
 		if (m_characters[i]->getId() == id) {
+			for (unsigned int j = 0; j < m_characterControllers.size(); j++) {
+				if (m_characterControllers[j]->getBrain()->getTargetId() == id) {
+					m_characterControllers[j]->setTarget(NULL);
+				}
+			}
+			//m_characters[i]->setHp(0);
 			delete m_characters[i];
 			m_characters[i] = m_characters.back();
 			m_characters.pop_back();
+			i--;
 		}
 	}
+	//// 攻撃エフェクト削除
+	//for (unsigned i = 0; i < m_animations.size(); i++) {
+	//	delete m_animations[i];
+	//	m_animations[i] = m_animations.back();
+	//	m_animations.pop_back();
+	//	i--;
+	//}
 }
 
 
@@ -472,7 +493,9 @@ void World::controlCharacter() {
 		if (slashAttack != NULL) { m_attackObjects.push_back(slashAttack); }
 
 		// 反映
-		controller->action();
+		if (!m_duplicationFlag || m_characterControllers[i]->getAction()->getCharacter()->getId() != m_playerId) {
+			controller->action();
+		}
 
 		// オブジェクトとの貫通判定
 		penetrationCharacterAndObject(controller, m_stageObjects);
@@ -563,6 +586,23 @@ Character* World::getCharacterWithName(string characterName) const {
 		}
 	}
 	return NULL;
+}
+
+Character* World::getCharacterWithId(int id) const {
+	for (unsigned int i = 0; i < m_characters.size(); i++) {
+		if (m_characters[i]->getId() == id) {
+			return m_characters[i];
+		}
+	}
+	return NULL;
+}
+
+void World::setBrainWithId(int id, Brain* brain) {
+	for (unsigned int i = 0; i < m_characterControllers.size(); i++) {
+		if (m_characterControllers[i]->getAction()->getCharacter()->getId() == id) {
+			m_characterControllers[i]->setBrain(brain);
+		}
+	}
 }
 
 CharacterController* World::getControllerWithName(string characterName) const {

@@ -135,6 +135,7 @@ Character::Character(int hp, int x, int y, int groupId) {
 	m_attackInfo = NULL;
 	m_graphHandle = NULL;
 	m_faceHandle = NULL;
+	m_duplicationFlag = false;
 }
 
 Character::~Character() {
@@ -143,7 +144,7 @@ Character::~Character() {
 		delete m_characterInfo;
 	}
 	// AttackInfoの削除
-	if (m_attackInfo != NULL) {
+	if (m_attackInfo != NULL && !m_duplicationFlag) {
 		delete m_attackInfo;
 	}
 	// GraphHandleの削除
@@ -156,7 +157,7 @@ Character::~Character() {
 	}
 }
 
-const GraphHandle* Character::getGraphHandle() const {
+GraphHandle* Character::getGraphHandle() const {
 	return m_graphHandle->getHandle();
 }
 
@@ -256,16 +257,33 @@ Heart::Heart(const char* name, int hp, int x, int y, int groupId) :
 	m_y -= getHeight();
 }
 
+Heart::Heart(const char* name, int hp, int x, int y, int groupId, AttackInfo* attackInfo) :
+	Character(hp, x, y, groupId)
+{
+	m_duplicationFlag = true;
+	m_attackInfo = attackInfo;
+	m_characterInfo = new CharacterInfo(name);
+	m_hp = m_characterInfo->maxHp();
+	// 各画像のロード
+	m_graphHandle = new CharacterGraphHandle(name, m_characterInfo->handleEx());
+	m_faceHandle = new FaceGraphHandle(name, 1.0);
+	// とりあえず立ち画像でスタート
+	//switchStand();
+	//m_y -= getHeight();
+}
+
 // デストラクタ
 Heart::~Heart() {
 
 }
 
 Character* Heart::createCopy() {
-	Character* res = new Heart(m_characterInfo->name().c_str(), m_hp, m_x, m_y, m_groupId);
+	Character* res = new Heart(m_characterInfo->name().c_str(), m_hp, m_x, m_y, m_groupId, m_attackInfo);
 	res->setY(m_y);
 	res->setId(m_id);
 	res->setLeftDirection(m_leftDirection);
+	res->setHp(m_hp);
+	res->getCharacterGraphHandle()->setGraph(getGraphHandle());
 	return res;
 }
 
@@ -365,12 +383,19 @@ Siesta::Siesta(const char* name, int hp, int x, int y, int groupId) :
 {
 
 }
+Siesta::Siesta(const char* name, int hp, int x, int y, int groupId, AttackInfo* attackInfo):
+	Heart(name, hp, x, y, groupId, attackInfo)
+{
+
+}
 
 Character* Siesta::createCopy() {
-	Character* res = new Siesta(m_characterInfo->name().c_str(), m_hp, m_x, m_y, m_groupId);
+	Character* res = new Siesta(m_characterInfo->name().c_str(), m_hp, m_x, m_y, m_groupId, m_attackInfo);
 	res->setY(m_y);
 	res->setId(m_id);
 	res->setLeftDirection(m_leftDirection);
+	res->setHp(m_hp);
+	res->getCharacterGraphHandle()->setGraph(getGraphHandle());
 	return res;
 }
 

@@ -792,6 +792,7 @@ void BulletObject::setBulletParam(BulletObject* object) {
 	object->setGy(m_gy);
 	object->setD(m_d);
 	object->setDamage(m_damage);
+	object->setEffectHandles(m_effectHandles_p);
 }
 Object* ParabolaBullet::createCopy() {
 	ParabolaBullet* res = new ParabolaBullet(m_x1, m_y1, m_handle, m_gx, m_gy);
@@ -814,6 +815,7 @@ void SlashObject::setSlashParam(SlashObject* object) {
 	object->setCnt(m_cnt);
 	object->setSlashImpactX(m_slashImpactX);
 	object->setSlashImpactY(m_slashImpactY);
+	object->setEffectHandles(m_effectHandles_p);
 }
 Object* DoorObject::createCopy() {
 	DoorObject* res = new DoorObject(m_x1, m_y1, m_x2, m_y2, m_fileName, m_areaNum);

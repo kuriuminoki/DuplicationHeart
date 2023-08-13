@@ -6,6 +6,7 @@
 class SoundPlayer;
 class World;
 class Story;
+class Character;
 
 
 // キャラのセーブデータ
@@ -102,6 +103,8 @@ private:
 
 	// 操作記録をコピーする
 	void copyRecord(const World* from, World* to);
+
+	void createDuplicationHeart();
 };
 
 

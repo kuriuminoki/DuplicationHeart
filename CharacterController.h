@@ -49,16 +49,20 @@ public:
 	virtual int bulletOrder() = 0;
 
 	// 攻撃対象を決める(AIクラスでオーバライドする。)
-	virtual void searchTarget(const Character* character) { };
+	virtual void searchTarget(const Character* character) { }
 
 	// 攻撃対象を変更する必要があるならtrueでアピールする(AIクラスでオーバライドする)。
 	virtual bool needSearchTarget() const { return false; }
 
 	// 追跡対象を決める(AIクラスでオーバライドする。)
-	virtual void searchFollow(const Character* character) { };
+	virtual void searchFollow(const Character* character) { }
 
 	// 追跡対象を変更する必要があるならtrueでアピールする(AIクラスでオーバライドする)。
 	virtual bool needSearchFollow() const { return false; }
+
+	virtual int getTargetId() const { return -1; }
+
+	virtual void setTarget(Character* character) {  }
 };
 
 /*
@@ -178,6 +182,8 @@ public:
 	// 攻撃対象を変更する必要があるならtrueでアピールする。
 	bool needSearchTarget() const;
 
+	int getTargetId() const;
+
 protected:
 	// スティック操作
 	void stickOrder(int& right, int& left, int& up, int& down);
@@ -253,6 +259,7 @@ public:
 	// セッタ
 	void setAction(CharacterAction* action);
 	void setBrain(Brain* brain);
+	void setTarget(Character* character) { m_brain->setTarget(character); }
 
 	// 話しかけたり扉に入ったりするボタンがtrueか
 	virtual bool getActionKey() const { return m_brain->actionOrder(); }

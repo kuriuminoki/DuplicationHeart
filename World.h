@@ -13,6 +13,7 @@ class Camera;
 class Animation;
 class SoundPlayer;
 class Conversation;
+class Brain;
 
 class World {
 private:
@@ -94,6 +95,7 @@ public:
 
 	// セッタ
 	inline void setSkillFlag(bool skillFlag) { m_skillFlag = skillFlag; }
+	inline void setFocusId(int id) { m_focusId = id; }
 
 	//デバッグ
 	void debug(int x, int y, int color) const;
@@ -115,6 +117,8 @@ public:
 	*/
 	Character* getCharacterWithName(std::string characterName) const;
 	CharacterController* getControllerWithName(std::string characterName) const;
+	Character* getCharacterWithId(int id) const;
+	void setBrainWithId(int id, Brain* brain);
 	inline void setConversation(Conversation* conversation){ m_conversation_p = conversation; }
 	void pushCharacter(Character* character, CharacterController* controller);
 	void popCharacter(int id);

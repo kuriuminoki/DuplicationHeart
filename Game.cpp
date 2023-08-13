@@ -102,7 +102,7 @@ bool Game::play() {
 	// スキル発動 Fキーかつスキル未発動状態かつ発動可能なイベント中（もしくはイベント中でない）かつエリア移動中でない
 	if (controlF() == 1 && m_skill == NULL && m_story->skillAble() && m_world->getBrightValue() == 255) {
 		m_world->setSkillFlag(true);
-		m_skill = new HeartSkill(3, m_world);
+		m_skill = new HeartSkill(2, m_world);
 	}
 	
 	// スキル発動中
@@ -147,8 +147,15 @@ HeartSkill::HeartSkill(int loopNum, World* world) {
 	m_loopNum = loopNum;
 	m_loopNow = 0;
 	m_world_p = world;
-	m_duplicationWorld = createDuplicationWorld(m_world_p);
 	m_cnt = 0;
+
+	// オリジナルのハートを動けなくさせ、無敵
+	Character* original = m_world_p->getCharacterWithId(m_world_p->getPlayerId());
+	original->setGroupId(-1);
+	m_world_p->setBrainWithId(m_world_p->getPlayerId(), new Freeze());
+
+	// 最初の複製
+	m_duplicationWorld = createDuplicationWorld(m_world_p);
 }
 
 bool HeartSkill::play() {
@@ -160,17 +167,17 @@ bool HeartSkill::play() {
 
 		if (m_loopNow < m_loopNum) {
 			// duplicationWorldを新たに作り、worldと以前のduplicationWorldの操作記録をコピーする
-			Character* heart = new Heart("ハート", 100, 500 + GetRand(500), 0, 0);
-			m_duplicationId.push_back(heart->getId());
-			CharacterAction* action = new StickAction(heart, m_world_p->getSoundPlayer());
-			Brain* brain = new KeyboardBrain(m_duplicationWorld->getCamera());
-			m_world_p->pushCharacter(heart, new NormalController(brain, action));
 			World* nextWorld = createDuplicationWorld(m_world_p);
 			copyRecord(m_duplicationWorld, nextWorld);
 			delete m_duplicationWorld;
 			m_duplicationWorld = nextWorld;
 		}
 		else if (m_loopNow == m_loopNum) {
+			// オリジナルのハートを元に戻す
+			Character* original = m_world_p->getCharacterWithId(m_world_p->getPlayerId());
+			original->setGroupId(0);
+			m_world_p->setBrainWithId(m_world_p->getPlayerId(), new KeyboardBrain(m_world_p->getCamera()));
+			m_world_p->setFocusId(m_world_p->getPlayerId());
 			// 最後のループはもとのWorldに操作記録をコピーして、そのWorldでbattle
 			copyRecord(m_duplicationWorld, m_world_p);
 			delete m_duplicationWorld;
@@ -197,6 +204,7 @@ bool HeartSkill::play() {
 
 // 世界のコピーを作る コピーの変更はオリジナルに影響しない
 World* HeartSkill::createDuplicationWorld(const World* world) {
+	createDuplicationHeart();
 	World* res = new World(world);
 	res->setSkillFlag(true);
 	return res;
@@ -205,4 +213,21 @@ World* HeartSkill::createDuplicationWorld(const World* world) {
 // 操作記録をコピーする
 void HeartSkill::copyRecord(const World* from, World* to) {
 
+}
+
+// m_world_pに複製をpush
+void HeartSkill::createDuplicationHeart() {
+	// ハートの複製
+	Character* original = m_world_p->getCharacterWithId(m_world_p->getPlayerId());
+	Character* duplicationHeart = new Heart("複製のハート", original->getHp(), original->getX(), original->getY(), 0, original->getAttackInfo());
+	// Character* duplicationHeart = original->createCopy();
+	duplicationHeart->setX(duplicationHeart->getX() + GetRand(200));
+	duplicationHeart->setHp(original->getHp());
+
+	// push
+	m_duplicationId.push_back(duplicationHeart->getId());
+	CharacterAction* action = new StickAction(duplicationHeart, m_world_p->getSoundPlayer());
+	Brain* brain = new KeyboardBrain(m_world_p->getCamera());
+	m_world_p->pushCharacter(duplicationHeart, new NormalController(brain, action));
+	m_world_p->setFocusId(duplicationHeart->getId());
 }

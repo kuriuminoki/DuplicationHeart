@@ -87,10 +87,12 @@ NormalAI::NormalAI() {
 Brain* NormalAI::createCopy(std::vector<Character*> characters, const Camera* camera) {
 	NormalAI* res = new NormalAI();
 
-	for (unsigned int i = 0; i < characters.size(); i++) {
-		if (m_target_p->getId() == characters[i]->getId()) {
-			res->setTarget(characters[i]);
-			break;
+	if (m_target_p != NULL) {
+		for (unsigned int i = 0; i < characters.size(); i++) {
+			if (m_target_p->getId() == characters[i]->getId()) {
+				res->setTarget(characters[i]);
+				break;
+			}
 		}
 	}
 	setParam(res);
@@ -280,11 +282,13 @@ void NormalAI::searchTarget(const Character* character) {
 
 // 攻撃対象を変更する必要があるならtrueでアピールする。
 bool NormalAI::needSearchTarget() const {
-	if (m_target_p == NULL || m_target_p->getHp() == 0 || GetRand(99) == 0) {
+	if (m_target_p == NULL || m_target_p->getHp() == 0 || GetRand(99) == 0 || m_target_p->getGroupId() == -1) {
 		return true;
 	}
 	return false;
 }
+
+int  NormalAI::getTargetId() const { return m_target_p == NULL ? NULL : m_target_p->getId(); }
 
 
 void ParabolaAI::bulletTargetPoint(int& x, int& y) {

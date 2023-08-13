@@ -23,7 +23,7 @@ private:
 	unsigned int m_textSpeed;
 
 	// テキストを飛ばせるようになるまでの時間
-	const unsigned int MOVE_FINAL_ABLE = 30;
+	const unsigned int MOVE_FINAL_ABLE = 10;
 
 	// ファイルポインタ
 	int m_fp;
