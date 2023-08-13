@@ -43,7 +43,7 @@ void ConversationDrawer::draw() {
 	static const int TEXT_GRAPH_EDGE = 32;
 
 	// 上端
-	static const int Y1 = 550;
+	static const int Y1 = 551;
 
 	// フキダシ
 	DrawExtendGraph(EDGE, Y1, GAME_WIDE - EDGE, GAME_HEIGHT - EDGE, m_frameHandle, TRUE);

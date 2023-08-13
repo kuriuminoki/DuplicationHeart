@@ -240,8 +240,9 @@ void NormalAI::searchTarget(const Character* character) {
 		if (abs(x - character->getCenterX()) > TARGET_DISTANCE) {
 			return;
 		}
-		// Ž©•ªŽ©g‚â–¡•û‚¶‚á‚È‚¯‚ê‚Î
-		if (character->getId() != m_characterAction_p->getCharacter()->getId() && character->getGroupId() != m_characterAction_p->getCharacter()->getGroupId()) {
+		// –¡•û‚¶‚á‚È‚¯‚ê‚Î&’†—§‚¶‚á‚È‚¯‚ê‚Î
+		int groupId = character->getGroupId();
+		if (groupId != m_characterAction_p->getCharacter()->getGroupId() && groupId != -1) {
 			m_target_p = character;
 		}
 	}
