@@ -78,6 +78,9 @@ World::World(int fromAreaNum, int toAreaNum, SoundPlayer* soundPlayer) {
 	// 会話イベント
 	m_conversation_p = NULL;
 
+	// スキル発動中
+	m_skillFlag = false;
+
 	// 主人公のスタート地点
 	m_areaNum = toAreaNum;
 
@@ -330,6 +333,10 @@ void World::atariCharacterAndObject(CharacterController* controller, vector<Obje
 
 // キャラクターと扉オブジェクトの当たり判定
 void World::atariCharacterAndDoor(CharacterController* controller, vector<Object*>& objects) {
+
+	// スキル発動中は扉は入れない
+	if (m_skillFlag) { return; }
+
 	// 壁や床オブジェクトの処理 (当たり判定と動き)
 	for (unsigned int i = 0; i < objects.size(); i++) {
 		// 当たり判定をここで行う
@@ -340,6 +347,7 @@ void World::atariCharacterAndDoor(CharacterController* controller, vector<Object
 			m_brightValue--;
 		}
 	}
+
 }
 
 // キャラクターの動き

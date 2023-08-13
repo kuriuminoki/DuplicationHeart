@@ -33,6 +33,9 @@ public:
 	void debug(int x, int y, int color);
 
 	bool play();
+
+	// ハートのスキル発動が可能かどうか
+	bool skillAble();
 };
 
 

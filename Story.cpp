@@ -75,3 +75,11 @@ bool Story::play() {
 	}
 	return false;
 }
+
+// ハートのスキル発動が可能かどうか
+bool Story::skillAble() {
+	if (m_nowEvent == NULL) {
+		return true;
+	}
+	return m_nowEvent->skillAble();
+}

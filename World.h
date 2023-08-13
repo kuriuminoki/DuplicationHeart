@@ -22,6 +22,9 @@ private:
 	// 会話イベント EventElementクラスからもらう
 	Conversation* m_conversation_p;
 
+	// スキル発動中はエリア間の移動できない
+	bool m_skillFlag;
+
 	// 画面の明るさ
 	int m_brightValue;
 
@@ -74,6 +77,10 @@ public:
 	inline const int getBackGroundGraph() const { return m_backGroundGraph; }
 	inline const int getBackGroundColor() const { return m_backGroundColor; }
 	inline const Conversation* getConversation() const { return m_conversation_p; }
+	inline SoundPlayer* getSoundPlayer() const { return m_soundPlayer_p; }
+
+	// セッタ
+	inline void setSkillFlag(bool skillFlag) { m_skillFlag = skillFlag; }
 
 	//デバッグ
 	void debug(int x, int y, int color) const;

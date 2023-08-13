@@ -55,6 +55,10 @@ Event::Event(int eventNum, World* world, SoundPlayer* soundPlayer) {
 
 }
 
+bool Event::skillAble() {
+	return m_eventElement[m_nowElement]->skillAble();
+}
+
 // Fire�̍쐬
 void Event::createFire(vector<string> param, World* world, SoundPlayer* soundPlayer) {
 	string param0 = param[0];

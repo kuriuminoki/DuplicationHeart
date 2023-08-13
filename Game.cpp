@@ -3,6 +3,7 @@
 #include "Define.h"
 #include "Sound.h"
 #include "Story.h"
+#include "Control.h"
 #include "DxLib.h"
 
 /*
@@ -77,6 +78,9 @@ Game::Game() {
 
 	// ストーリー
 	m_story = new Story(m_gameData->getStoryNum(), m_world, m_soundPlayer);
+
+	// スキル
+	m_skill = NULL;
 }
 
 Game::~Game() {
@@ -86,16 +90,29 @@ Game::~Game() {
 }
 
 bool Game::play() {
-	 // 戦わせる
-	 // m_world->battle();
 
 	// これ以上ストーリーを進ませない（テスト用）
 	if (m_gameData->getStoryNum() == 1) {
 		return false;
 	}
+
+	// スキル発動 Fキーかつスキル未発動状態かつ発動可能なイベント中（もしくはイベント中でない）
+	if (controlF() == 1 && m_skill == NULL && m_story->skillAble()) {
+		m_world->setSkillFlag(true);
+		m_skill = new HeartSkill(3, m_world);
+	}
 	
+	// スキル発動中
+	if (m_skill != NULL) {
+		if (m_skill->play()) {
+			// スキル終了
+			delete m_skill;
+			m_skill = NULL;
+			m_world->setSkillFlag(false);
+		}
+	}
 	// ストーリー進行
-	if (m_story->play()) {
+	else if (m_story->play()) {
 		// 次のストーリーへ
 		m_gameData->setStoryNum(m_gameData->getStoryNum() + 1);
 		delete m_story;
@@ -117,4 +134,63 @@ bool Game::play() {
 		return true;
 	}
 	return false;
+}
+
+
+/*
+* ハートのスキル
+*/
+HeartSkill::HeartSkill(int loopNum, World* world) {
+	m_loopNum = loopNum;
+	m_loopNow = 0;
+	m_world_p = world;
+	m_duplicationWorld = createDuplicationWorld(m_world_p);
+	m_cnt = 0;
+}
+
+bool HeartSkill::play() {
+	m_cnt++;
+	if (m_cnt == DUPLICATION_TIME) {
+		// 次のループへ
+		m_cnt = 0;
+		m_loopNow++;
+
+		if (m_loopNow < m_loopNum) {
+			// duplicationWorldを新たに作り、worldと以前のduplicationWorldの操作記録をコピーする
+			World* nextWorld = createDuplicationWorld(m_world_p);
+			copyRecord(m_duplicationWorld, nextWorld);
+			delete m_duplicationWorld;
+			m_duplicationWorld = nextWorld;
+		}
+		else if (m_loopNow == m_loopNum) {
+			// 最後のループはもとのWorldに操作記録をコピーして、そのWorldでbattle
+			copyRecord(m_duplicationWorld, m_world_p);
+			delete m_duplicationWorld;
+		}
+		else {
+			// スキル終了
+			return true;
+		}
+	}
+
+	// 戦わせる（最後のループ以外なら、操作記録をするという言い方が正しい）
+	if (m_loopNow < m_loopNum) {
+		m_duplicationWorld->battle();
+	}
+	else {
+		m_world_p->battle();
+	}
+
+	return false;
+}
+
+// 世界のコピーを作る コピーの変更はオリジナルに影響しない
+World* HeartSkill::createDuplicationWorld(const World* world) {
+	SoundPlayer* soundPlayer = world->getSoundPlayer();
+	return new World(0, 0, soundPlayer);
+}
+
+// 操作記録をコピーする
+void HeartSkill::copyRecord(const World* from, World* to) {
+
 }
