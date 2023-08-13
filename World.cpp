@@ -70,6 +70,8 @@ void penetrationCharacterAndObject(CharacterController* controller, vector<Objec
 * オブジェクトのロードなど
 */
 World::World(int fromAreaNum, int toAreaNum, SoundPlayer* soundPlayer) {
+	m_duplicationFlag = false;
+
 	m_brightValue = 255;
 
 	// サウンドプレイヤー
@@ -122,8 +124,101 @@ World::~World() {
 	}
 
 	// 背景
-	DeleteGraph(m_backGroundGraph);
+	if (!m_duplicationFlag) {
+		DeleteGraph(m_backGroundGraph);
+	}
 }
+
+World::World(const World* original) {
+	m_duplicationFlag = true;
+	m_brightValue = 255;
+	m_conversation_p = NULL;
+	m_skillFlag = false;
+	m_areaNum = original->getAreaNum();
+
+	// エリアをコピー
+	m_camera = new Camera(original->getCamera());
+	m_focusId = original->getFocusId();
+	m_playerId = original->getPlayerId();
+	m_soundPlayer_p = original->getSoundPlayer();
+	// キャラをコピー
+	for (unsigned int i = 0; i < original->getCharacters().size(); i++) {
+		Character* copy;
+		copy = original->getCharacters()[i]->createCopy();
+		m_characters.push_back(copy);
+	}
+	// コントローラをコピー
+	for (unsigned int i = 0; i < original->getCharacterControllers().size(); i++) {
+		CharacterController* copy;
+		// BrainとActionコピー用にCharacterとカメラを渡す
+		copy = original->getCharacterControllers()[i]->createCopy(m_characters, m_camera);
+		m_characterControllers.push_back(copy);
+	}
+	for (unsigned int i = 0; i < original->getStageObjects().size(); i++) {
+		Object* copy;
+		copy = original->getStageObjects()[i]->createCopy();
+		m_stageObjects.push_back(copy);
+	}
+	for (unsigned int i = 0; i < original->getDoorObjects().size(); i++) {
+		Object* copy;
+		copy = original->getDoorObjects()[i]->createCopy();
+		m_doorObjects.push_back(copy);
+	}
+	for (unsigned int i = 0; i < original->getAttackObjects().size(); i++) {
+		Object* copy;
+		copy = original->getAttackObjects()[i]->createCopy();
+		m_attackObjects.push_back(copy);
+	}
+	for (unsigned int i = 0; i < original->getAnimations().size(); i++) {
+		Animation* copy;
+		copy = original->getAnimations()[i]->createCopy();
+		m_animations.push_back(copy);
+	}
+	m_backGroundGraph = original->getBackGroundGraph();
+	m_backGroundColor = original->getBackGroundColor();
+}
+
+std::vector<CharacterController*> World::getCharacterControllers() const {
+	return m_characterControllers;
+}
+std::vector<Character*> World::getCharacters() const {
+	return m_characters;
+}
+std::vector<Object*> World::getStageObjects() const {
+	return m_stageObjects;
+}
+std::vector<Object*> World::getDoorObjects() const {
+	return m_doorObjects;
+}
+std::vector<Object*> World::getAttackObjects() const {
+	return m_attackObjects;
+}
+std::vector<Animation*> World::getAnimations() const {
+	return m_animations;
+}
+
+void World::pushCharacter(Character* character, CharacterController* controller) {
+	m_characters.push_back(character);
+	m_characterControllers.push_back(controller);
+}
+
+void World::popCharacter(int id) {
+	for (unsigned int i = 0; i < m_characterControllers.size(); i++) {
+		if (m_characterControllers[i]->getAction()->getCharacter()->getId() == id) {
+			delete m_characterControllers[i];
+			m_characterControllers[i] = m_characterControllers.back();
+			m_characterControllers.pop_back();
+		}
+	}
+	for (unsigned int i = 0; i < m_characters.size(); i++) {
+		if (m_characters[i]->getId() == id) {
+			delete m_characters[i];
+			m_characters[i] = m_characters.back();
+			m_characters.pop_back();
+		}
+	}
+}
+
 
 // キャラの状態を変更する
 void World::asignedCharacterData(const char* name, int hp) {
@@ -176,7 +271,7 @@ vector<const Object*> World::getBackObjects() const {
 }
 
 // Animationのvectorを返す
-vector<const Animation*> World::getAnimations() const {
+vector<const Animation*> World::getConstAnimations() const {
 
 	vector<const Animation*> allAnimations;
 	allAnimations.insert(allAnimations.end(), m_animations.begin(), m_animations.end());

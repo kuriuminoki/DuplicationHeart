@@ -83,6 +83,36 @@ NormalAI::NormalAI() {
 	m_moveCnt = 0;
 }
 
+
+Brain* NormalAI::createCopy(std::vector<Character*> characters, const Camera* camera) {
+	NormalAI* res = new NormalAI();
+
+	for (unsigned int i = 0; i < characters.size(); i++) {
+		if (m_target_p->getId() == characters[i]->getId()) {
+			res->setTarget(characters[i]);
+			break;
+		}
+	}
+	setParam(res);
+	return res;
+}
+
+void NormalAI::setParam(NormalAI* brain) {
+	// 移動用
+	brain->setRightKey(m_rightKey);
+	brain->setLeftKey(m_leftKey);
+	brain->setUpKey(m_upKey);
+	brain->setDownKey(m_downKey);
+	// ジャンプの長さ
+	brain->setJumpCnt(m_jumpCnt);
+	// しゃがむ長さ
+	brain->setSquatCnt(m_squatCnt);
+	// 移動目標
+	brain->setGx(m_gx);
+	brain->setGy(m_gy);
+	brain->setMoveCnt(m_moveCnt);
+}
+
 void NormalAI::setCharacterAction(const CharacterAction* characterAction) { 
 	m_characterAction_p = characterAction;
 	// 目標地点は現在地に設定
@@ -278,6 +308,24 @@ FollowNormalAI::FollowNormalAI() :
 	m_follow_p = NULL;
 }
 
+Brain* FollowNormalAI::createCopy(std::vector<Character*> characters, const Camera* camera) {
+	FollowNormalAI* res = new FollowNormalAI();
+	for (unsigned int i = 0; i < characters.size(); i++) {
+		if (m_follow_p->getId() == characters[i]->getId()) {
+			res->setFollow(characters[i]);
+			break;
+		}
+	}
+	for (unsigned int i = 0; i < characters.size(); i++) {
+		if (m_target_p->getId() == characters[i]->getId()) {
+			res->setTarget(characters[i]);
+			break;
+		}
+	}
+	setParam(res);
+	return res;
+}
+
 int FollowNormalAI::getFollowId() const {
 	if (m_follow_p == nullptr) { return -1; }
 	return m_follow_p->getId();
@@ -436,6 +484,14 @@ NormalController::NormalController(Brain* brain, CharacterAction* characterActio
 	CharacterController(brain, characterAction)
 {
 
+}
+
+CharacterController* NormalController::createCopy(std::vector<Character*> characters, const Camera* camera) {
+	CharacterAction* action = m_characterAction->createCopy(characters);
+	Brain* brain = m_brain->createCopy(characters, camera);
+	brain->setCharacterAction(action);
+	CharacterController* res = new NormalController(brain, action);
+	return res;
 }
 
 void NormalController::control() {

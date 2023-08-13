@@ -81,6 +81,9 @@ private:
 	// DUPLICATION_TIMEまでカウントする
 	int m_cnt;
 
+	// 複製のキャラID スキル終了時に消すため
+	std::vector<int> m_duplicationId;
+
 public:
 	HeartSkill(int loopNum, World* world);
 

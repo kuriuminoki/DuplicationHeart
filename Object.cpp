@@ -37,6 +37,18 @@ Object::Object(int x1, int y1, int x2, int y2, int hp) {
 	m_soundHandle_p = -1;
 }
 
+void Object::setParam(Object* object) {
+	object->setX1(m_x1);
+	object->setY1(m_y1);
+	object->setX2(m_x2);
+	object->setY2(m_y2);
+	object->setHp(m_hp);
+	object->setDamageCnt(m_damageCnt);
+	object->setDeleteFlag(m_deleteFlag);
+	object->setEffectHandles(m_effectHandles_p);
+	object->setSoundHandle(m_soundHandle_p);
+}
+
 // HPを減らす
 void Object::decreaseHp(int damageValue) {
 	m_hp = max(0, m_hp - damageValue);
@@ -490,6 +502,26 @@ BulletObject::BulletObject(int x, int y, int color, int gx, int gy, AttackInfo* 
 	m_soundHandle_p = attackInfo->bulletSoundeHandle();
 }
 
+BulletObject::BulletObject(int x, int y, int color, int gx, int gy) :
+	Object()
+{
+	m_characterId = -1;
+	m_groupId = -1;
+	m_color = color;
+	m_gx = gx;
+	m_gy = gy;
+	m_rx = 0;
+	m_ry = 0;
+	m_damage = 0;
+	m_d = 0;
+	m_hp = 0;
+	m_v = 0;
+	m_vx = 0;
+	m_vy = 0;
+	m_effectHandles_p = NULL;
+	m_soundHandle_p = -1;
+}
+
 // キャラとの当たり判定
 // 当たっているならキャラを操作する。
 bool BulletObject::atari(CharacterController* characterController) {
@@ -559,6 +591,11 @@ ParabolaBullet::ParabolaBullet(int x, int y, GraphHandle* handle, int gx, int gy
 	int graphSize = min(graphX, graphY);
 	m_handle->setEx((double)attackSize / (double)graphSize);
 }
+ParabolaBullet::ParabolaBullet(int x, int y, GraphHandle* handle, int gx, int gy) :
+	BulletObject(x, y, -1, gx, gy)
+{
+	m_handle = handle;
+}
 
 void ParabolaBullet::action() {
 	if (m_damageCnt > 0) { m_damageCnt--; }
@@ -603,6 +640,21 @@ SlashObject::SlashObject(int x1, int y1, int x2, int y2, GraphHandle* handle, in
 
 	// サウンド
 	m_soundHandle_p = attackInfo->slashSoundHandle();
+}
+
+SlashObject::SlashObject(int x1, int y1, int x2, int y2, GraphHandle* handle, int slashCountSum) :
+	Object(x1, y1, x2, y2, 0)
+{
+	m_characterId = -1;
+	m_groupId = -1;
+	m_handle = handle;
+	m_damage = 0;
+	m_slashCountSum = slashCountSum;
+	m_cnt = 0;
+	m_slashImpactX = 0;
+	m_slashImpactY = 0;
+	m_effectHandles_p = NULL;
+	m_soundHandle_p = -1;
 }
 
 // 大きさを指定しない場合。画像からサイズ取得。生存時間、AttackInfo
@@ -679,13 +731,16 @@ void SlashObject::action() {
 DoorObject::DoorObject(int x1, int y1, int x2, int y2, const char* fileName, int areaNum) :
 	Object(x1, y1, x2, y2)
 {
+	m_fileName = fileName;
 	m_graph = new GraphHandle(fileName, 1.0, 0.0, true);
 	m_areaNum = areaNum;
 	m_text = "";
 }
+
 DoorObject::~DoorObject() {
 	delete m_graph;
 }
+
 bool DoorObject::atari(CharacterController* characterController) {
 	if (!characterController->getAction()->ableDamage() || !characterController->getAction()->getGrand()) {
 		m_text = "";
@@ -705,6 +760,68 @@ bool DoorObject::atari(CharacterController* characterController) {
 	m_text = "";
 	return false;
 }
+
+
+// コピー作成
+Object* BoxObject::createCopy() {
+	Object* res = new BoxObject(m_x1, m_y1, m_x2, m_y2, m_color, m_hp);
+	setParam(res);
+	return res;
+}
+Object* TriangleObject::createCopy() {
+	Object* res = new TriangleObject(m_x1, m_y1, m_x2, m_y2, m_color, m_leftDown, m_hp);
+	setParam(res);
+	return res;
+}
+Object* BulletObject::createCopy() {
+	BulletObject* res = new BulletObject(m_x1, m_y1, m_color, m_gx, m_gy);
+	setParam(res);
+	setBulletParam(res);
+	return res;
+}
+void BulletObject::setBulletParam(BulletObject* object) {
+	object->setCharacterId(m_characterId);
+	object->setGroupId(m_groupId);
+	object->setColor(m_color);
+	object->setRx(m_rx);
+	object->setRy(m_ry);
+	object->setV(m_v);
+	object->setVx(m_vx);
+	object->setVy(m_vy);
+	object->setGx(m_gx);
+	object->setGy(m_gy);
+	object->setD(m_d);
+	object->setDamage(m_damage);
+}
+Object* ParabolaBullet::createCopy() {
+	ParabolaBullet* res = new ParabolaBullet(m_x1, m_y1, m_handle, m_gx, m_gy);
+	setParam(res);
+	setBulletParam(res);
+	res->setGraphHandle(m_handle);
+	return res;
+}
+Object* SlashObject::createCopy() {
+	SlashObject* res = new SlashObject(m_x1, m_y1, m_x2, m_y2, m_handle, m_slashCountSum);
+	setParam(res);
+	setSlashParam(res);
+	return res;
+}
+void SlashObject::setSlashParam(SlashObject* object) {
+	object->setCharacterId(m_characterId);
+	object->setGroupId(m_groupId);
+	object->setDamage(m_damage);
+	object->setGraphHandle(m_handle);
+	object->setCnt(m_cnt);
+	object->setSlashImpactX(m_slashImpactX);
+	object->setSlashImpactY(m_slashImpactY);
+}
+Object* DoorObject::createCopy() {
+	DoorObject* res = new DoorObject(m_x1, m_y1, m_x2, m_y2, m_fileName, m_areaNum);
+	setParam(res);
+	res->setText(m_text);
+	return res;
+}
+
 
 // 描画用
 // オブジェクト描画（画像がないときに使う）

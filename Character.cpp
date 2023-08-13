@@ -261,6 +261,14 @@ Heart::~Heart() {
 
 }
 
+Character* Heart::createCopy() {
+	Character* res = new Heart(m_characterInfo->name().c_str(), m_hp, m_x, m_y, m_groupId);
+	res->setY(m_y);
+	res->setId(m_id);
+	res->setLeftDirection(m_leftDirection);
+	return res;
+}
+
 // 走り画像をセット
 void Heart::switchRun(int cnt) { 
 	int index = (cnt / RUN_ANIME_SPEED) % (m_graphHandle->getRunHandle()->getSize());
@@ -356,6 +364,14 @@ Siesta::Siesta(const char* name, int hp, int x, int y, int groupId) :
 	Heart(name, hp, x, y, groupId)
 {
 
+}
+
+Character* Siesta::createCopy() {
+	Character* res = new Siesta(m_characterInfo->name().c_str(), m_hp, m_x, m_y, m_groupId);
+	res->setY(m_y);
+	res->setId(m_id);
+	res->setLeftDirection(m_leftDirection);
+	return res;
 }
 
 // 射撃攻撃をする(キャラごとに違う)

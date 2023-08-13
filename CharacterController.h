@@ -1,6 +1,10 @@
 #ifndef CHACACTER_CONTROLLER_H_INCLUDED
 #define CHACACTER_CONTROLLER_H_INCLUDED
 
+
+#include <vector>
+
+
 class Character;
 class CharacterAction;
 class Object;
@@ -15,6 +19,8 @@ protected:
 
 public:
 	Brain();
+
+	virtual Brain* createCopy(std::vector<Character*> characters, const Camera* camera) = 0;
 
 	virtual void debug(int x, int y, int color) const = 0;
 
@@ -67,6 +73,7 @@ private:
 
 public:
 	KeyboardBrain(const Camera* camera);
+	Brain* createCopy(std::vector<Character*> characters, const Camera* camera){ return new KeyboardBrain(camera); }
 	void debug(int x, int y, int color) const;
 	inline void setCharacterAction(const CharacterAction* characterAction) { m_characterAction_p = characterAction; }
 	void bulletTargetPoint(int& x, int& y);
@@ -85,7 +92,8 @@ class Freeze :
 	public Brain
 {
 public:
-	Freeze(){ }
+	Freeze() { }
+	Brain* createCopy(std::vector<Character*> characters, const Camera* camera) { return new Freeze(); }
 	void debug(int x, int y, int color) const { }
 	bool actionOrder() { return false; }
 	void setCharacterAction(const CharacterAction* characterAction) {  }
@@ -141,6 +149,20 @@ protected:
 
 public:
 	NormalAI();
+	Brain* createCopy(std::vector<Character*> characters, const Camera* camera);
+	void setParam(NormalAI* brain);
+
+	void setRightKey(int rightKey) { m_rightKey = rightKey; }
+	void setLeftKey(int leftKey) { m_leftKey = leftKey; }
+	void setUpKey(int upKey) { m_upKey = upKey; }
+	void setDownKey(int downKey) { m_downKey = downKey; }
+	void setJumpCnt(int cnt) { m_jumpCnt = cnt; }
+	void setSquatCnt(int cnt) { m_squatCnt = cnt; }
+	void setGx(int gx) { m_gx = gx; }
+	void setGy(int gy) { m_gy = gy; }
+	void setMoveCnt(int cnt) { m_moveCnt = cnt; }
+	void setTarget(Character* character) { m_target_p = character; }
+
 	void debug(int x, int y, int color) const;
 	void setCharacterAction(const CharacterAction* characterAction);
 	void bulletTargetPoint(int& x, int& y);
@@ -182,9 +204,13 @@ private:
 public:
 	FollowNormalAI();
 
+	Brain* createCopy(std::vector<Character*> characters, const Camera* camera);
+
 	void debug(int x, int y, int color) const;
 
 	int getFollowId() const;
+
+	void setFollow(Character* character) { m_follow_p = character; }
 
 	// 移動の目標地点設定
 	void moveOrder(int& right, int& left, int& up, int& down);
@@ -213,6 +239,8 @@ public:
 	CharacterController();
 	CharacterController(Brain* brain, CharacterAction* characterAction);
 	~CharacterController();
+
+	virtual CharacterController* createCopy(std::vector<Character*> characters, const Camera* camera) = 0;
 
 	// デバッグ
 	void debugController(int x, int y, int color) const;
@@ -279,6 +307,8 @@ private:
 	const int JUMP_KEY_LONG = 10;
 public:
 	NormalController(Brain* brain, CharacterAction* characterAction);
+
+	CharacterController* createCopy(std::vector<Character*> characters, const Camera* camera);
 
 	void debug(int x, int y, int color) const;
 

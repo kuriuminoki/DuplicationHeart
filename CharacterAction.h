@@ -1,6 +1,10 @@
 #ifndef CHACACTER_ACTION_H_INCLUDED
 #define CHACACTER_ACTION_H_INCLUDED
 
+
+#include <vector>
+
+
 class Character;
 class Object;
 class SoundPlayer;
@@ -93,6 +97,9 @@ public:
 	CharacterAction();
 	CharacterAction(Character* character, SoundPlayer* soundPlayer_p);
 
+	virtual CharacterAction* createCopy(std::vector<Character*> characters) = 0;
+	void setParam(CharacterAction* action);
+
 	// デバッグ
 	void debugAction(int x, int y, int color) const;
 	virtual void debug(int x, int y, int color) const = 0;
@@ -114,6 +121,7 @@ public:
 
 	// セッタ
 	void setState(CHARACTER_STATE state);
+	inline void setSimpleGrand(bool grand) { m_grand = grand; }
 	void setGrand(bool grand);
 	void setRightLock(bool lock);
 	void setLeftLock(bool lock);
@@ -122,6 +130,20 @@ public:
 	inline void setBoost() { if(!m_grand) m_boostCnt = BOOST_TIME; }
 	inline void setGrandRightSlope(bool grand) { m_grandRightSlope = grand; }
 	inline void setGrandLeftSlope(bool grand) { m_grandLeftSlope = grand; }
+	void setRunCnt(int runCnt) { m_runCnt = runCnt; }
+	void setJumpCnt(int preJumpCnt) { m_preJumpCnt = preJumpCnt; }
+	void setMoveRight(bool moveRight) { m_moveRight = moveRight; }
+	void setMoveLeft(bool moveLeft) { m_moveLeft = moveLeft; }
+	void setMoveUp(bool moveUp) { m_moveUp = moveUp; }
+	void setMoveDown(bool moveDown) { m_moveDown = moveDown; }
+	void setVx(int vx) { m_vx = vx; }
+	void setVy(int vy) { m_vy = vy; }
+	void setBulletCnt(int bulletCnt) { m_bulletCnt = bulletCnt; }
+	void setSlashCnt(int slashCnt) { m_slashCnt = slashCnt; }
+	void setAttackLeftDirection(bool attackLeftDirection) { m_attackLeftDirection = attackLeftDirection; }
+	void setLandCnt(int landCnt) { m_landCnt = landCnt; }
+	void setBoostCnt(int boostCnt) { m_boostCnt = boostCnt; }
+	void setDamageCnt(int damageCnt) { m_damageCnt = damageCnt; }
 
 	// 今ダメージを受けていて動けない
 	inline bool damageFlag() const { return m_state == CHARACTER_STATE::DAMAGE; }
@@ -193,6 +215,8 @@ private:
 
 public:
 	StickAction(Character* character, SoundPlayer* soundPlayer_p);
+
+	CharacterAction* createCopy(std::vector<Character*> characters);
 
 	void debug(int x, int y, int color) const;
 

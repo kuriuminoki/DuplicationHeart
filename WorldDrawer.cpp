@@ -110,7 +110,7 @@ void WorldDrawer::draw() {
 	}
 
 	// 各Animationを描画
-	vector<const Animation*> animations = m_world->getAnimations();
+	vector<const Animation*> animations = m_world->getConstAnimations();
 	size = animations.size();
 	for (unsigned int i = 0; i < size; i++) {
 		// AnimationをDrawerにセット

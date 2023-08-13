@@ -12,9 +12,14 @@ Animation::Animation(int x, int y, int flameCnt, GraphHandles* graphHandles) {
 	m_finishFlag = false;
 }
 
-Animation::~Animation() {
-	// delete m_handles;
+Animation* Animation::createCopy() {
+	Animation* res = new Animation(m_x, m_y, m_flameCnt, m_handles);
+	res->setCnt(m_cnt);
+	res->setFinishCnt(m_finishCnt);
+	res->setFinishFlag(m_finishFlag);
+	return res;
 }
+
 
 // ƒJƒEƒ“ƒg
 void Animation::count() { 

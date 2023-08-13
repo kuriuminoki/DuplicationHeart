@@ -4,6 +4,9 @@
 #include "Sound.h"
 #include "Story.h"
 #include "Control.h"
+#include "Character.h"
+#include "CharacterAction.h"
+#include "CharacterController.h"
 #include "DxLib.h"
 
 /*
@@ -96,8 +99,8 @@ bool Game::play() {
 		return false;
 	}
 
-	// スキル発動 Fキーかつスキル未発動状態かつ発動可能なイベント中（もしくはイベント中でない）
-	if (controlF() == 1 && m_skill == NULL && m_story->skillAble()) {
+	// スキル発動 Fキーかつスキル未発動状態かつ発動可能なイベント中（もしくはイベント中でない）かつエリア移動中でない
+	if (controlF() == 1 && m_skill == NULL && m_story->skillAble() && m_world->getBrightValue() == 255) {
 		m_world->setSkillFlag(true);
 		m_skill = new HeartSkill(3, m_world);
 	}
@@ -157,6 +160,11 @@ bool HeartSkill::play() {
 
 		if (m_loopNow < m_loopNum) {
 			// duplicationWorldを新たに作り、worldと以前のduplicationWorldの操作記録をコピーする
+			Character* heart = new Heart("ハート", 100, 500 + GetRand(500), 0, 0);
+			m_duplicationId.push_back(heart->getId());
+			CharacterAction* action = new StickAction(heart, m_world_p->getSoundPlayer());
+			Brain* brain = new KeyboardBrain(m_duplicationWorld->getCamera());
+			m_world_p->pushCharacter(heart, new NormalController(brain, action));
 			World* nextWorld = createDuplicationWorld(m_world_p);
 			copyRecord(m_duplicationWorld, nextWorld);
 			delete m_duplicationWorld;
@@ -169,6 +177,9 @@ bool HeartSkill::play() {
 		}
 		else {
 			// スキル終了
+			for (unsigned int i = 0; i < m_duplicationId.size(); i++) {
+				m_world_p->popCharacter(m_duplicationId[i]);
+			}
 			return true;
 		}
 	}
@@ -186,8 +197,9 @@ bool HeartSkill::play() {
 
 // 世界のコピーを作る コピーの変更はオリジナルに影響しない
 World* HeartSkill::createDuplicationWorld(const World* world) {
-	SoundPlayer* soundPlayer = world->getSoundPlayer();
-	return new World(0, 0, soundPlayer);
+	World* res = new World(world);
+	res->setSkillFlag(true);
+	return res;
 }
 
 // 操作記録をコピーする
