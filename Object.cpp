@@ -497,8 +497,9 @@ bool BulletObject::atari(CharacterController* characterController) {
 	if (m_characterId == characterController->getAction()->getCharacter()->getId()) {
 		return false;
 	}
-	// ƒ`[ƒ€ƒLƒ‹–hŽ~
-	if (m_groupId == characterController->getAction()->getCharacter()->getGroupId()) {
+	// ƒ`[ƒ€ƒLƒ‹–hŽ~ && ’†—§ƒLƒƒƒ‰‚É‚Í“–‚½‚ç‚È‚¢
+	int groupId = characterController->getAction()->getCharacter()->getGroupId();
+	if (m_groupId == groupId || groupId == -1) {
 		return false;
 	}
 
@@ -623,7 +624,8 @@ bool SlashObject::atari(CharacterController* characterController) {
 		return false;
 	}
 	// ƒ`[ƒ€ƒLƒ‹–hŽ~
-	if (m_groupId == characterController->getAction()->getCharacter()->getGroupId()) {
+	int groupId = characterController->getAction()->getCharacter()->getGroupId();
+	if (m_groupId == groupId || groupId == -1) {
 		return false;
 	}
 
