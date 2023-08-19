@@ -122,6 +122,9 @@ public:
 	inline void setConversation(Conversation* conversation){ m_conversation_p = conversation; }
 	void pushCharacter(Character* character, CharacterController* controller);
 	void popCharacter(int id);
+	void createRecorder();
+	void initRecorder();
+	void eraseRecorder();
 
 private:
 	// キャラクターとオブジェクトの当たり判定

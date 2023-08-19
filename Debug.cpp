@@ -10,6 +10,7 @@
 #include "Text.h"
 #include "Event.h"
 #include "Story.h"
+#include "Brain.h"
 #include "DxLib.h"
 
 /*

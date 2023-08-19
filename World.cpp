@@ -10,6 +10,8 @@
 #include "Control.h"
 #include "Define.h"
 #include "Text.h"
+#include "Brain.h"
+#include "ControllerRecorder.h"
 #include "DxLib.h"
 #include <algorithm>
 
@@ -231,13 +233,35 @@ void World::popCharacter(int id) {
 			i--;
 		}
 	}
-	//// 攻撃エフェクト削除
-	//for (unsigned i = 0; i < m_animations.size(); i++) {
-	//	delete m_animations[i];
-	//	m_animations[i] = m_animations.back();
-	//	m_animations.pop_back();
-	//	i--;
-	//}
+}
+
+
+// レコーダを作成し使用を開始
+void World::createRecorder() {
+	for (unsigned int i = 0; i < m_characterControllers.size(); i++) {
+		if (m_characterControllers[i]->getAction()->getCharacter()->getName() == "ハート") { continue; }
+		m_characterControllers[i]->setStickRecorder(new ControllerRecorder(0));
+		m_characterControllers[i]->setJumpRecorder(new ControllerRecorder(0));
+		m_characterControllers[i]->setSquatRecorder(new ControllerRecorder(0));
+		m_characterControllers[i]->setSlashRecorder(new ControllerRecorder(0));
+		m_characterControllers[i]->setBulletRecorder(new ControllerRecorder(0));
+	}
+}
+
+// レコーダの時間を最初に戻す
+void World::initRecorder() {
+	for (unsigned int i = 0; i < m_characterControllers.size(); i++) {
+		if (m_characterControllers[i]->getAction()->getCharacter()->getName() == "ハート") { continue; }
+		m_characterControllers[i]->initRecorder();
+	}
+}
+
+// レコーダの使用をやめて削除する
+void World::eraseRecorder() {
+	for (unsigned int i = 0; i < m_characterControllers.size(); i++) {
+		if (m_characterControllers[i]->getAction()->getCharacter()->getName() == "ハート") { continue; }
+		m_characterControllers[i]->eraseRecorder();
+	}
 }
 
 
@@ -482,7 +506,9 @@ void World::controlCharacter() {
 		}
 
 		// 操作
-		controller->control();
+		if (!m_duplicationFlag || m_characterControllers[i]->getAction()->getCharacter()->getId() != m_playerId) {
+			controller->control();
+		}
 
 		// 射撃攻撃
 		Object* bulletAttack = controller->bulletAttack();

@@ -5,6 +5,7 @@
 #include "CharacterController.h"
 #include "Character.h"
 #include "Text.h"
+#include "Brain.h"
 #include <sstream>
 
 using namespace std;

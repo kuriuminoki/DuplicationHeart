@@ -7,6 +7,8 @@
 #include "Character.h"
 #include "CharacterAction.h"
 #include "CharacterController.h"
+#include "Brain.h"
+#include "ControllerRecorder.h"
 #include "DxLib.h"
 
 /*
@@ -100,9 +102,9 @@ bool Game::play() {
 	}
 
 	// スキル発動 Fキーかつスキル未発動状態かつ発動可能なイベント中（もしくはイベント中でない）かつエリア移動中でない
-	if (controlF() == 1 && m_skill == NULL && m_story->skillAble() && m_world->getBrightValue() == 255) {
+	if (controlF() == 1 && m_skill == NULL && m_story->skillAble() && m_world->getBrightValue() == 255 && m_world->getCharacterWithName("ハート")->getHp() > 0) {
 		m_world->setSkillFlag(true);
-		m_skill = new HeartSkill(2, m_world);
+		m_skill = new HeartSkill(3, m_world);
 	}
 	
 	// スキル発動中
@@ -153,6 +155,7 @@ HeartSkill::HeartSkill(int loopNum, World* world) {
 	Character* original = m_world_p->getCharacterWithId(m_world_p->getPlayerId());
 	original->setGroupId(-1);
 	m_world_p->setBrainWithId(m_world_p->getPlayerId(), new Freeze());
+	m_world_p->createRecorder();
 
 	// 最初の複製
 	m_duplicationWorld = createDuplicationWorld(m_world_p);
@@ -164,6 +167,7 @@ bool HeartSkill::play() {
 		// 次のループへ
 		m_cnt = 0;
 		m_loopNow++;
+		m_world_p->initRecorder();
 
 		if (m_loopNow < m_loopNum) {
 			// duplicationWorldを新たに作り、worldと以前のduplicationWorldの操作記録をコピーする
@@ -186,6 +190,7 @@ bool HeartSkill::play() {
 			// スキル終了
 			for (unsigned int i = 0; i < m_duplicationId.size(); i++) {
 				m_world_p->popCharacter(m_duplicationId[i]);
+				m_world_p->eraseRecorder();
 			}
 			return true;
 		}
@@ -223,11 +228,18 @@ void HeartSkill::createDuplicationHeart() {
 	// Character* duplicationHeart = original->createCopy();
 	duplicationHeart->setX(duplicationHeart->getX() + GetRand(200));
 	duplicationHeart->setHp(original->getHp());
+	duplicationHeart->setLeftDirection(original->getLeftDirection());
 
 	// push
 	m_duplicationId.push_back(duplicationHeart->getId());
 	CharacterAction* action = new StickAction(duplicationHeart, m_world_p->getSoundPlayer());
 	Brain* brain = new KeyboardBrain(m_world_p->getCamera());
-	m_world_p->pushCharacter(duplicationHeart, new NormalController(brain, action));
+	NormalController* controller = new NormalController(brain, action);
+	controller->setStickRecorder(new ControllerRecorder(0));
+	controller->setJumpRecorder(new ControllerRecorder(0));
+	controller->setSquatRecorder(new ControllerRecorder(0));
+	controller->setSlashRecorder(new ControllerRecorder(0));
+	controller->setBulletRecorder(new ControllerRecorder(0));
+	m_world_p->pushCharacter(duplicationHeart, controller);
 	m_world_p->setFocusId(duplicationHeart->getId());
 }
