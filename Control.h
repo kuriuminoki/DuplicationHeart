@@ -22,11 +22,17 @@ int controlA();
 // Dキー（右キー）
 int controlD();
 
+// Fキー（スキル発動）
+int controlF();
+
 //FPS表示のオンオフ
 int controlDebug();
 
 //スペースキー
 int controlSpace();
+
+// 左Shiftキー
+int controlLeftShift();
 
 //ESCキー：ゲーム終了
 int controlEsc();

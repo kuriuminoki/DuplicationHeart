@@ -4,6 +4,9 @@
 
 class Camera {
 private:
+	// カメラの移動速度の初期値
+	const int CAMERA_SPEED_DEFAULT = 5;
+
 	// カメラの座標(画面の中心)
 	int m_x, m_y;
 
@@ -22,12 +25,20 @@ private:
 
 public:
 	Camera();
-	Camera(int x, int y, double ex, int speed);
+	Camera(int x, int y, double ex, int speed=0);
+	Camera(const Camera* original);
 
-	// ゲッタとセッタ
-	inline void getPoint(int* x, int* y) { *x = m_x; *y = m_y; }
-	inline int getX() { return m_x; }
-	inline int getY() { return m_y; }
+	// ゲッタ
+	inline void getPoint(int* x, int* y) const { *x = m_x; *y = m_y; }
+	inline int getX() const { return m_x; }
+	inline int getY() const { return m_y; }
+	inline int getGx() const { return m_gx; }
+	inline int getGy() const { return m_gy; }
+	inline double getEx() const { return m_ex; }
+	inline int getSpeed() const { return m_speed; }
+	inline int getMaxSpeed() const { return m_maxSpeed; }
+
+	// セッタ
 	inline void setPoint(int x, int y) { m_x = x; m_y = y; }
 	inline void setGPoint(int x, int y) { m_gx = x; m_gy = y; }
 	inline void setX(int x) { m_x = x; }
@@ -35,7 +46,6 @@ public:
 	inline void setGx(int x) { m_gx = x; }
 	inline void setGy(int y) { m_gy = y; }
 	inline void setSpeed(int speed) { m_speed = speed; }
-	inline double getEx() const { return m_ex; }
 	inline void setEx(double ex) { m_ex = ex; }
 
 	// カメラの動き

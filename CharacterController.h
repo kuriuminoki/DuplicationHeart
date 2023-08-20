@@ -1,123 +1,16 @@
 #ifndef CHACACTER_CONTROLLER_H_INCLUDED
 #define CHACACTER_CONTROLLER_H_INCLUDED
 
+
+#include <vector>
+
+
 class Character;
 class CharacterAction;
 class Object;
 class Camera;
-
-
-// Controllerに命令するクラス（キーボード＆マウスやＡＩ）
-class Brain {
-protected:
-	// 今のキャラの状態を考慮して射撃の目標座標や次の行動を決めるため必要
-	const CharacterAction* m_characterAction;
-
-public:
-	Brain();
-
-	// セッタ
-	virtual void setCharacterAction(const CharacterAction* characterAction) = 0;
-	
-	// 遠距離攻撃の目標座標
-	virtual void bulletTargetPoint(int& x, int& y) = 0;
-
-	// 移動（上下左右の入力）
-	virtual void moveOrder(int& right, int& left, int& up, int& down) = 0;
-
-	// ジャンプの制御
-	virtual int jumpOrder() = 0;
-
-	// しゃがみの制御
-	virtual int squatOrder() = 0;
-
-	// 近距離攻撃
-	virtual int slashOrder() = 0;
-
-	// 遠距離攻撃
-	virtual int bulletOrder() = 0;
-
-	// 攻撃対象を決める(AIクラスでオーバライドする。)
-	virtual void searchTarget(const Character* character) = 0;
-
-	// 攻撃対象を変更する必要があるならtrueでアピールする(AIクラスでオーバライドする)。
-	virtual bool needSearchTarget() const = 0;
-};
-
-/*
-* キーボードでキャラの操作を命令するクラス
-*/
-class KeyboardBrain :
-	public Brain
-{
-private:
-	// カメラ
-	const Camera* m_camera;
-
-public:
-	KeyboardBrain(const Camera* camera);
-	void setCharacterAction(const CharacterAction* characterAction) { m_characterAction = characterAction; }
-	void bulletTargetPoint(int& x, int& y);
-	void moveOrder(int& right, int& left, int& up, int& down);
-	int jumpOrder();
-	int squatOrder();
-	int slashOrder();
-	int bulletOrder();
-	void searchTarget(const Character* character) {  }
-	bool needSearchTarget() const { return false; }
-};
-
-/*
-*  普通に敵と戦うよう命令するＡＩのクラス
-*/
-class NormalAI :
-	public Brain
-{
-private:
-	// 攻撃対象
-	const Character* m_target;
-
-	// 射撃の精度
-	const int BULLET_ERROR = 400;
-
-	// 移動目標
-	int m_gx, m_gy;
-
-	// 移動目標達成とみなす誤差 ±GX_ERROR
-	const int GX_ERROR = 100;
-
-	// 移動時間
-	int m_moveCnt;
-
-	// 移動を諦めるまでの時間
-	const int GIVE_UP_MOVE_CNT = 300;
-
-	// 移動用
-	int m_rightKey, m_leftKey, m_upKey, m_downKey;
-
-	// ジャンプの長さ
-	int m_jumpCnt;
-
-	// しゃがむ長さ
-	int m_squatCnt;
-
-public:
-	NormalAI();
-	void setCharacterAction(const CharacterAction* characterAction);
-	void bulletTargetPoint(int& x, int& y);
-	void moveOrder(int& right, int& left, int& up, int& down);
-	int jumpOrder();
-	int squatOrder();
-	int slashOrder();
-	int bulletOrder();
-
-	// 攻撃対象を決める(targetのままか、characterに変更するか)
-	void searchTarget(const Character* character);
-
-	// 攻撃対象を変更する必要があるならtrueでアピールする。
-	bool needSearchTarget() const;
-};
-
+class Brain;
+class ControllerRecorder;
 
 
 /*
@@ -125,26 +18,65 @@ public:
 */
 class CharacterController {
 protected:
-	// こいつが操作を命令してくる
+	// 複製ならtrue Recorderをデリートしないため
+	bool m_duplicationFlag;
+
+	// こいつが操作を命令してくる Controllerがデリートする
 	Brain* m_brain;
 
-	// 操作対象
+	// 操作対象 Controllerがデリートする
 	CharacterAction* m_characterAction;
+
+	// 操作の記録 使わないならNULL
+	ControllerRecorder* m_stickRecorder;
+	ControllerRecorder* m_jumpRecorder;
+	ControllerRecorder* m_squatRecorder;
+	ControllerRecorder* m_slashRecorder;
+	ControllerRecorder* m_bulletRecorder;
+
+	// ダメージの記録 変化したらそれ以降のレコードを削除する
+	ControllerRecorder* m_damageRecorder;
 
 public:
 	CharacterController();
 	CharacterController(Brain* brain, CharacterAction* characterAction);
 	~CharacterController();
 
+	virtual CharacterController* createCopy(std::vector<Character*> characters, const Camera* camera) = 0;
+
 	// デバッグ
 	void debugController(int x, int y, int color) const;
 	virtual void debug(int x, int y, int color) const = 0;
 
-	// アクションの情報取得
+	// ゲッタ
 	inline const CharacterAction* getAction() const { return m_characterAction; }
-
-	// Brainの情報取得
 	inline const Brain* getBrain() const { return m_brain; }
+	inline const ControllerRecorder* getStickRecorder() const { return m_stickRecorder; }
+	inline const ControllerRecorder* getJumpRecorder() const { return m_jumpRecorder; }
+	inline const ControllerRecorder* getSquatRecorder() const { return m_squatRecorder; }
+	inline const ControllerRecorder* getSlashRecorder() const { return m_slashRecorder; }
+	inline const ControllerRecorder* getBulletRecorder() const { return m_bulletRecorder; }
+	inline const ControllerRecorder* getDamageRecorder() const { return m_damageRecorder; }
+
+	// セッタ
+	void setAction(CharacterAction* action);
+	void setBrain(Brain* brain);
+	void setStickRecorder(ControllerRecorder* recorder);
+	void setJumpRecorder(ControllerRecorder* recorder);
+	void setSquatRecorder(ControllerRecorder* recorder);
+	void setSlashRecorder(ControllerRecorder* recorder);
+	void setBulletRecorder(ControllerRecorder* recorder);
+	void setDamageRecorder(ControllerRecorder* recorder);
+	void setTarget(Character* character);
+	void setDuplicationFlag(bool flag) { m_duplicationFlag = flag; }
+
+	// レコーダを初期化
+	void initRecorder();
+	// レコードをやめる
+	void eraseRecorder();
+
+	// 話しかけたり扉に入ったりするボタンがtrueか
+	virtual bool getActionKey() const;
 
 	// アクションのセッタ
 	void setCharacterGrand(bool grand);
@@ -163,14 +95,17 @@ public:
 	// 行動前の処理 毎フレーム行う
 	void init();
 
-	// 攻撃対象を変更（するかも）
+	// 攻撃対象を変更
 	void searchTargetCandidate(Character* character);
 
-	// キャラの操作
-	virtual void control() = 0;
+	// 追跡対象を変更
+	void searchFollowCandidate(Character* character);
 
 	// 操作や当たり判定の結果を反映（実際にキャラを動かす）毎フレーム行う
 	void action();
+
+	// キャラの操作
+	virtual void control() = 0;
 
 	// 射撃攻撃
 	virtual Object* bulletAttack() = 0;
@@ -178,7 +113,8 @@ public:
 	// 斬撃攻撃
 	virtual Object* slashAttack() = 0;
 
-	virtual void damage(int vx, int vy, int damageValue, int soundHandle) = 0;
+	// ダメージ
+	virtual void damage(int vx, int vy, int damageValue) = 0;
 };
 
 /*
@@ -193,6 +129,8 @@ private:
 public:
 	NormalController(Brain* brain, CharacterAction* characterAction);
 
+	CharacterController* createCopy(std::vector<Character*> characters, const Camera* camera);
+
 	void debug(int x, int y, int color) const;
 
 	// キャラの移動やしゃがみ(;攻撃以外の)操作 毎フレーム行う
@@ -205,7 +143,7 @@ public:
 	Object* slashAttack();
 
 	// ダメ―ジ
-	void damage(int vx, int vy, int damageValue, int soundHandle);
+	void damage(int vx, int vy, int damageValue);
 };
 
 #endif

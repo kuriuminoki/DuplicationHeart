@@ -153,41 +153,55 @@
   <ItemGroup>
     <ClCompile Include="Animation.cpp" />
     <ClCompile Include="AnimationDrawer.cpp" />
+    <ClCompile Include="Brain.cpp" />
     <ClCompile Include="Camera.cpp" />
     <ClCompile Include="Character.cpp" />
     <ClCompile Include="CharacterAction.cpp" />
     <ClCompile Include="CharacterDrawer.cpp" />
     <ClCompile Include="CharacterController.cpp" />
     <ClCompile Include="Control.cpp" />
+    <ClCompile Include="ControllerRecorder.cpp" />
     <ClCompile Include="CsvReader.cpp" />
     <ClCompile Include="Debug.cpp" />
+    <ClCompile Include="Event.cpp" />
     <ClCompile Include="Game.cpp" />
     <ClCompile Include="GameDrawer.cpp" />
     <ClCompile Include="GraphHandle.cpp" />
     <ClCompile Include="Main.cpp" />
     <ClCompile Include="Object.cpp" />
     <ClCompile Include="ObjectDrawer.cpp" />
+    <ClCompile Include="ObjectLoader.cpp" />
     <ClCompile Include="Sound.cpp" />
+    <ClCompile Include="Story.cpp" />
+    <ClCompile Include="Text.cpp" />
+    <ClCompile Include="TextDrawer.cpp" />
     <ClCompile Include="World.cpp" />
     <ClCompile Include="WorldDrawer.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Animation.h" />
     <ClInclude Include="AnimationDrawer.h" />
+    <ClInclude Include="Brain.h" />
     <ClInclude Include="Camera.h" />
     <ClInclude Include="Character.h" />
     <ClInclude Include="CharacterAction.h" />
     <ClInclude Include="CharacterDrawer.h" />
     <ClInclude Include="CharacterController.h" />
     <ClInclude Include="Control.h" />
+    <ClInclude Include="ControllerRecorder.h" />
     <ClInclude Include="CsvReader.h" />
     <ClInclude Include="Define.h" />
+    <ClInclude Include="Event.h" />
     <ClInclude Include="Game.h" />
     <ClInclude Include="GameDrawer.h" />
     <ClInclude Include="GraphHandle.h" />
     <ClInclude Include="Object.h" />
     <ClInclude Include="ObjectDrawer.h" />
+    <ClInclude Include="ObjectLoader.h" />
     <ClInclude Include="Sound.h" />
+    <ClInclude Include="Story.h" />
+    <ClInclude Include="Text.h" />
+    <ClInclude Include="TextDrawer.h" />
     <ClInclude Include="World.h" />
     <ClInclude Include="WorldDrawer.h" />
   </ItemGroup>

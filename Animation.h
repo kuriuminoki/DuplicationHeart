@@ -26,12 +26,18 @@ private:
 
 public:
 	Animation(int x, int y, int flameCnt, GraphHandles* graphHandles);
-	~Animation();
+
+	Animation* createCopy();
 
 	// ゲッタ
 	inline int getX() const { return m_x; }
 	inline int getY() const { return m_y; }
 	inline bool getFinishFlag() const { return m_finishFlag; }
+
+	// セッタ
+	inline void setCnt(int cnt) { m_cnt = cnt; }
+	inline void setFinishCnt(int finishCnt) { m_finishCnt = finishCnt; }
+	inline void setFinishFlag(int finishFlag) { m_finishFlag = finishFlag; }
 
 	// カウント
 	void count();

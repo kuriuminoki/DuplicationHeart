@@ -3,215 +3,11 @@
 #include "Character.h"
 #include "Camera.h"
 #include "Control.h"
+#include "Brain.h"
+#include "ControllerRecorder.h"
 #include "Define.h"
 #include "DxLib.h"
 #include <algorithm>
-
-
-// Brainクラス
-Brain::Brain() {
-	m_characterAction = NULL;
-}
-
-
-/*
-* キーボード
-*/
-KeyboardBrain::KeyboardBrain(const Camera* camera) {
-	m_camera = camera;
-}
-
-void KeyboardBrain::bulletTargetPoint(int& x, int& y) {
-	// マウスの位置
-	int mouseX, mouseY;
-	GetMousePoint(&mouseX, &mouseY);
-
-	// カメラで座標を補正
-	m_camera->getMouse(&mouseX, &mouseY);
-
-	x = mouseX;
-	y = mouseY;
-}
-
-// 移動（上下左右の入力）
-void KeyboardBrain::moveOrder(int& right, int& left, int& up, int& down) {
-	right = controlD();
-	left = controlA();
-	up = controlW();
-	down = controlS();
-}
-
-// ジャンプ
-int KeyboardBrain::jumpOrder() {
-	return controlSpace();
-}
-
-// しゃがみ
-int KeyboardBrain::squatOrder() {
-	return controlS();
-}
-
-// 近距離攻撃
-int KeyboardBrain::slashOrder() {
-	return rightClick();
-}
-
-// 遠距離攻撃
-int KeyboardBrain::bulletOrder() {
-	return leftClick();
-}
-
-
-/*
-* Normal AI
-*/
-NormalAI::NormalAI() {
-	m_target = NULL;
-	m_gx = 0;
-	m_gy = 0;
-	m_rightKey = 0;
-	m_leftKey = 0;
-	m_upKey = 0;
-	m_downKey = 0;
-	m_jumpCnt = 0;
-	m_squatCnt = 0;
-	m_moveCnt = 0;
-}
-
-void NormalAI::setCharacterAction(const CharacterAction* characterAction) { 
-	m_characterAction = characterAction;
-	// 目標地点は現在地に設定
-	m_gx = m_characterAction->getCharacter()->getX();
-	m_gy = m_characterAction->getCharacter()->getY();
-}
-
-void NormalAI::bulletTargetPoint(int& x, int& y) {
-	if (m_target == NULL) {
-		x = 0;
-		y = 0;
-	}
-	else { // ターゲットに向かって射撃攻撃
-		x = m_target->getCenterX() + (GetRand(BULLET_ERROR) - BULLET_ERROR / 2);
-		y = m_target->getCenterY() + (GetRand(BULLET_ERROR) - BULLET_ERROR / 2);
-	}
-}
-
-void NormalAI::moveOrder(int& right, int& left, int& up, int& down) {
-	// 現在地
-	int x = m_characterAction->getCharacter()->getX();
-	int y = m_characterAction->getCharacter()->getY();
-
-	// (壁につっかえるなどで)移動できてないから諦める
-	//DrawFormatString(800, 50, GetColor(255, 255, 255), "moveCnt = %d, x(%d) -> gx(%d)", m_moveCnt, x, m_gx);
-	if (m_moveCnt == GIVE_UP_MOVE_CNT) {
-		m_gx = x;
-		m_gy = y;
-	}
-
-	// 目標地点設定
-	if (m_gx > x - GX_ERROR && m_gx < x + GX_ERROR && GetRand(99) == 0) {
-		if (m_target != NULL) {
-			// targetについていく
-			m_gx = m_target->getCenterX() + GetRand(2000) - 1000;
-		}
-		else {
-			// ランダムに設定
-			m_gx = GetRand(200) + 100;
-			if (GetRand(99) < GX_ERROR) { m_gx *= -1; }
-			m_gx += x;
-		}
-	}
-
-	// 目標に向かって走る
-	if (m_gx > x + GX_ERROR) {
-		m_rightKey++;
-		m_leftKey = 0;
-		m_moveCnt++;
-	}
-	else if (m_gx < x - GX_ERROR) {
-		m_rightKey = 0;
-		m_leftKey++;
-		m_moveCnt++;
-	}
-	else {
-		m_rightKey = 0;
-		m_leftKey = 0;
-		m_moveCnt = 0;
-	}
-
-	// 反映
-	right = m_rightKey;
-	left = m_leftKey;
-	up = m_upKey;
-	down = m_downKey;
-}
-
-int NormalAI::jumpOrder() {
-	// ダメージを食らったらリセット
-	if (m_characterAction->getState() == CHARACTER_STATE::DAMAGE) {
-		m_jumpCnt = 0;
-	}
-
-	// ランダムでジャンプ
-	if (m_squatCnt == 0 && GetRand(99) == 0) { m_jumpCnt = GetRand(15) + 5; }
-
-	// 壁にぶつかったからジャンプ
-	if (m_rightKey > 0 && m_characterAction->getRightLock()) { m_jumpCnt = 20; }
-	else if (m_leftKey > 0 && m_characterAction->getLeftLock()) { m_jumpCnt = 20; }
-
-	if (m_jumpCnt > 0) { m_jumpCnt--; }
-	return m_jumpCnt;
-}
-
-int NormalAI::squatOrder() {
-	// ダメージを食らったらリセット
-	if (m_characterAction->getState() == CHARACTER_STATE::DAMAGE) {
-		m_squatCnt = 0;
-	}
-
-	// ランダムでしゃがむ
-	if (m_characterAction->getGrand() && GetRand(99) == 0) { m_squatCnt = GetRand(60) + 30; }
-
-	if (m_squatCnt > 0) { m_squatCnt--; }
-	return m_squatCnt;
-}
-
-int NormalAI::slashOrder() {
-	if (m_target != NULL && abs(m_target->getCenterX() - m_characterAction->getCharacter()->getCenterX()) > 500) {
-		return 0;
-	}
-	// ランダムで斬撃
-	if (GetRand(50) == 0) {
-		return 1;
-	}
-	return 0;
-}
-
-int NormalAI::bulletOrder() {
-	// ランダムで射撃
-	if (GetRand(50) == 0) { 
-		return 1;
-	}
-	return 0;
-}
-
-// 攻撃対象を決める(targetのままか、characterに変更するか)
-void NormalAI::searchTarget(const Character* character) {
-	if (m_target == NULL || m_target->getHp() == 0) {
-		// 自分自身や味方じゃなければ
-		if (character->getId() != m_characterAction->getCharacter()->getId() && character->getGroupId() != m_characterAction->getCharacter()->getGroupId()) {
-			m_target = character;
-		}
-	}
-}
-
-// 攻撃対象を変更する必要があるならtrueでアピールする。
-bool NormalAI::needSearchTarget() const {
-	if (m_target == NULL || GetRand(99) == 0) {
-		return true;
-	}
-	return false;
-}
 
 
 /*
@@ -225,6 +21,16 @@ CharacterController::CharacterController(Brain* brain, CharacterAction* characte
 
 	// BrainにActionを注入
 	m_brain->setCharacterAction(m_characterAction);
+
+	// レコーダはデフォルトで使わない
+	m_stickRecorder = NULL;
+	m_jumpRecorder = NULL;
+	m_squatRecorder = NULL;
+	m_slashRecorder = NULL;
+	m_bulletRecorder = NULL;
+	m_damageRecorder = NULL;
+
+	m_duplicationFlag = false;
 }
 
 CharacterController::CharacterController() :
@@ -241,6 +47,88 @@ CharacterController::~CharacterController() {
 	if (m_brain != NULL) {
 		delete m_brain;
 	}
+	if (m_stickRecorder != NULL && !m_duplicationFlag) {
+		delete m_stickRecorder;
+		delete m_jumpRecorder;
+		delete m_squatRecorder;
+		delete m_slashRecorder;
+		delete m_bulletRecorder;
+	}
+	if (m_damageRecorder != NULL && !m_duplicationFlag) {
+		delete m_damageRecorder;
+	}
+}
+
+// レコーダを初期化
+void CharacterController::initRecorder() {
+	if (m_stickRecorder != NULL) {
+		m_stickRecorder->init();
+		m_jumpRecorder->init();
+		m_squatRecorder->init();
+		m_slashRecorder->init();
+		m_bulletRecorder->init();
+	}
+	if (m_damageRecorder != NULL) {
+		m_damageRecorder->init();
+	}
+}
+
+// レコードをやめる
+void CharacterController::eraseRecorder() { 
+	if (m_stickRecorder != NULL) { 
+		delete m_stickRecorder;
+		delete m_jumpRecorder;
+		delete m_squatRecorder;
+		delete m_slashRecorder;
+		delete m_bulletRecorder;
+		m_stickRecorder = NULL;
+		m_jumpRecorder = NULL;
+		m_squatRecorder = NULL;
+		m_slashRecorder = NULL;
+		m_bulletRecorder = NULL;
+	}
+	if (m_damageRecorder != NULL) {
+		delete m_damageRecorder;
+		m_damageRecorder = NULL;
+	}
+}
+
+// 話しかけたり扉に入ったりするボタンがtrueか
+bool CharacterController::getActionKey() const { return m_brain->actionOrder(); }
+
+void CharacterController::setAction(CharacterAction* action) {
+	delete m_characterAction;
+	m_characterAction = action;
+	m_brain->setCharacterAction(m_characterAction);
+}
+void CharacterController::setBrain(Brain* brain) {
+	delete m_brain;
+	m_brain = brain;
+	m_brain->setCharacterAction(m_characterAction);
+}
+
+// レコーダのセッタ
+void CharacterController::setStickRecorder(ControllerRecorder* recorder) {
+	m_stickRecorder = recorder;
+}
+void CharacterController::setJumpRecorder(ControllerRecorder* recorder) {
+	m_jumpRecorder = recorder;
+}
+void CharacterController::setSquatRecorder(ControllerRecorder* recorder) {
+	m_squatRecorder = recorder;
+}
+void CharacterController::setSlashRecorder(ControllerRecorder* recorder) {
+	m_slashRecorder = recorder;
+}
+void CharacterController::setBulletRecorder(ControllerRecorder* recorder) {
+	m_bulletRecorder = recorder;
+}
+void CharacterController::setDamageRecorder(ControllerRecorder* recorder) {
+	m_damageRecorder = recorder;
+}
+
+void CharacterController::setTarget(Character* character) { 
+	m_brain->setTarget(character);
 }
 
 // アクションのセッタ
@@ -282,9 +170,14 @@ void CharacterController::init() {
 	m_characterAction->init();
 }
 
-// 攻撃対象を変更（するかも）
+// 攻撃対象を変更
 void CharacterController::searchTargetCandidate(Character* character) {
 	m_brain->searchTarget(character);
+}
+
+// 追跡対象を変更
+void CharacterController::searchFollowCandidate(Character* character) {
+	m_brain->searchFollow(character);
 }
 
 // 行動の結果反映
@@ -303,29 +196,141 @@ NormalController::NormalController(Brain* brain, CharacterAction* characterActio
 
 }
 
+CharacterController* NormalController::createCopy(std::vector<Character*> characters, const Camera* camera) {
+	CharacterAction* action = m_characterAction->createCopy(characters);
+	Brain* brain = m_brain->createCopy(characters, camera);
+	brain->setCharacterAction(action);
+	CharacterController* res = new NormalController(brain, action);
+	// 複製はレコーダをデリートしないためFlagをtrueにする
+	res->setDuplicationFlag(true);
+	res->setStickRecorder(m_stickRecorder);
+	res->setJumpRecorder(m_jumpRecorder);
+	res->setSquatRecorder(m_squatRecorder);
+	res->setSlashRecorder(m_slashRecorder);
+	res->setBulletRecorder(m_bulletRecorder);
+	res->setDamageRecorder(m_damageRecorder);
+	return res;
+}
+
 void NormalController::control() {
+	// ダメージのレコード（もし記録と現状が違えば以降のレコードを削除）
+	if (m_damageRecorder != NULL) {
+		bool flag = (m_characterAction->getState() == CHARACTER_STATE::DAMAGE);
+		if (m_damageRecorder->existRecord()) {
+			if ((bool)m_damageRecorder->checkInput() != flag) {
+				m_stickRecorder->discardRecord();
+				m_jumpRecorder->discardRecord();
+				m_squatRecorder->discardRecord();
+				m_slashRecorder->discardRecord();
+				m_bulletRecorder->discardRecord();
+				m_damageRecorder->discardRecord();
+				m_damageRecorder->writeRecord((int)flag);
+			}
+		}
+		else {
+			m_damageRecorder->writeRecord((int)flag);
+		}
+		m_damageRecorder->addTime();
+	}
+
 	// 移動 stickなどの入力状態を更新する
-	int rightStick, leftStick, upStick, downStick;
-	m_brain->moveOrder(rightStick, leftStick, upStick, downStick);
+	int rightStick = 0, leftStick = 0, upStick = 0, downStick = 0;
+	if (m_stickRecorder != NULL) {
+		if (m_stickRecorder->existRecord()) {
+			int input = m_stickRecorder->checkInput();
+			if (((input >> 0) & 1) == 1) { 
+				rightStick = 1;
+			}
+			if (((input >> 1) & 1) == 1) { 
+				leftStick = 1;
+			}
+			if (((input >> 2) & 1) == 1) { upStick = 1; }
+			if (((input >> 3) & 1) == 1) { downStick = 1; }
+		}
+		else {
+			m_brain->moveOrder(rightStick, leftStick, upStick, downStick);
+			int bit = 0;
+			if (rightStick > 0) { bit |= (1 << 0); }
+			if (leftStick > 0) { bit |= (1 << 1); }
+			if (upStick > 0) { bit |= (1 << 2); }
+			if (downStick > 0) { bit |= (1 << 3); }
+			m_stickRecorder->writeRecord(bit);
+		}
+		m_stickRecorder->addTime();
+	}
+	else {
+		m_brain->moveOrder(rightStick, leftStick, upStick, downStick);
+	}
 
 	// stickに応じて移動
 	m_characterAction->move(rightStick, leftStick, upStick, downStick);
 
 	// ジャンプ
-	int jump = m_brain->jumpOrder();
+	int jump = 0;
+	if (m_jumpRecorder != NULL) {
+		if (m_jumpRecorder->existRecord()) {
+			jump = m_jumpRecorder->checkInput();
+		}
+		else {
+			jump = m_brain->jumpOrder();
+			if (jump == 1) {
+				jump;
+			}
+			m_jumpRecorder->writeRecord(jump);
+		}
+		m_jumpRecorder->addTime();
+	}
+	else {
+		jump = m_brain->jumpOrder();
+	}
 	m_characterAction->jump(jump);
 
 	// しゃがみ
-	int squat = m_brain->squatOrder();
+	int squat = 0;
+	if (m_squatRecorder != NULL) {
+		if (m_squatRecorder->existRecord()) {
+			squat = m_squatRecorder->checkInput();
+		}
+		else {
+			squat = m_brain->squatOrder();
+			m_squatRecorder->writeRecord(squat);
+		}
+		m_squatRecorder->addTime();
+	}
+	else {
+		squat = m_brain->squatOrder();
+	}
 	m_characterAction->setSquat(squat);
 }
 
 Object* NormalController::bulletAttack() {
+
+	// 攻撃目標
+	int targetX = 0, targetY = 0;
+	m_brain->bulletTargetPoint(targetX, targetY);
+
+	// 命令
+	int order = 0;
+	if (m_bulletRecorder != NULL) {
+		if (m_bulletRecorder->existRecord()) {
+			order = m_bulletRecorder->checkInput();
+			// 攻撃目標を取得
+			m_bulletRecorder->getGoal(targetX, targetY);
+		}
+		else {
+			order = m_brain->bulletOrder();
+			m_bulletRecorder->writeRecord(order);
+			// 攻撃目標を書き込み
+			m_bulletRecorder->setGoal(targetX, targetY);
+		}
+		m_bulletRecorder->addTime();
+	}
+	else {
+		order = m_brain->bulletOrder();
+	}
+
 	// 遠距離攻撃の命令がされているなら
-	if (m_brain->bulletOrder() > 0) {
-		// 攻撃目標
-		int targetX, targetY;
-		m_brain->bulletTargetPoint(targetX, targetY);
+	if (order > 0) {
 		// 目標に向かって射撃
 		return m_characterAction->bulletAttack(targetX, targetY);
 	}
@@ -333,16 +338,38 @@ Object* NormalController::bulletAttack() {
 }
 
 Object* NormalController::slashAttack() {
+
+	// 攻撃目標
+	int targetX = 0, targetY = 0;
+	m_brain->bulletTargetPoint(targetX, targetY);
+
+	// 命令
+	int order = 0;
+	if (m_slashRecorder != NULL) {
+		if (m_slashRecorder->existRecord()) {
+			order = m_slashRecorder->checkInput();
+			// 攻撃目標を取得
+			m_slashRecorder->getGoal(targetX, targetY);
+		}
+		else {
+			order = m_brain->slashOrder();
+			m_slashRecorder->writeRecord(order);
+			// 攻撃目標を書き込み
+			m_bulletRecorder->setGoal(targetX, targetY);
+		}
+		m_slashRecorder->addTime();
+	}
+	else {
+		order = m_brain->slashOrder();
+	}
+
 	// 近距離攻撃の命令がされたか、した後で今が攻撃タイミングなら
-	if (m_brain->slashOrder() == 1 || m_characterAction->getSlashCnt() > 0) {
-		// 攻撃目標
-		int targetX, targetY;
-		m_brain->bulletTargetPoint(targetX, targetY);
+	if (order == 1 || m_characterAction->getSlashCnt() > 0) {
 		return m_characterAction->slashAttack(targetX, targetY);
 	}
 	return NULL;
 }
 
-void NormalController::damage(int vx, int vy, int damageValue, int soundHandle) {
-	m_characterAction->damage(vx, vy, damageValue, soundHandle);
+void NormalController::damage(int vx, int vy, int damageValue) {
+	m_characterAction->damage(vx, vy, damageValue);
 }

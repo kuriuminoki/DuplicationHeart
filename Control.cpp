@@ -38,7 +38,7 @@ static int right_cnt = 0;
 void mouseClick() {
 	if ((GetMouseInput() & MOUSE_INPUT_LEFT) != 0) { left_cnt++; }
 	else { left_cnt = 0; }
-	if (GetMouseInput() == MOUSE_INPUT_RIGHT) { right_cnt++; }
+	if ((GetMouseInput() & MOUSE_INPUT_RIGHT) != 0) { right_cnt++; }
 	else { right_cnt = 0; }
 }
 int leftClick() {
@@ -69,9 +69,14 @@ int controlD() {
 	return Key[KEY_INPUT_D];
 }
 
+// Fキー（スキル発動）
+int controlF() {
+	return Key[KEY_INPUT_F];
+}
+
 //デバッグモード起動用
 int controlDebug() {
-	if (Key[KEY_INPUT_F] == 1) { // Fキーが押されていたら
+	if (Key[KEY_INPUT_P] == 1) { // Pキーが押されていたら
 		return TRUE;
 	}
 	return FALSE;
@@ -81,6 +86,12 @@ int controlDebug() {
 int controlSpace()
 {
 	return Key[KEY_INPUT_SPACE];
+}
+
+//左Shiftキー
+int controlLeftShift()
+{
+	return Key[KEY_INPUT_LSHIFT];
 }
 
 //ゲーム終了用

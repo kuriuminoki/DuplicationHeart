@@ -5,7 +5,10 @@
 #include "DxLib.h"
 
 
+// フルスクリーンならFALSE
 static int WINDOW = TRUE;
+// マウスを表示するならFALSE
+static int MOUSE_DISP = FALSE;
 
 ///////fpsの調整///////////////
 static int mStartTime;
@@ -50,14 +53,14 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 	//SetAlwaysRunFlag(TRUE);//画面を常にアクティブ
 	SetMainWindowText("複製のHeart");
 	////マウス関連////
-	SetMouseDispFlag(TRUE);//マウス表示
+	SetMouseDispFlag(MOUSE_DISP);//マウス表示
 	//SetMousePoint(320, 240);//マウスカーソルの初期位置
-	//SetDrawMode(DX_DRAWMODE_BILINEAR);
-	SetDrawMode(DX_DRAWMODE_NEAREST);
+	SetDrawMode(DX_DRAWMODE_BILINEAR);
+	//SetDrawMode(DX_DRAWMODE_NEAREST);
 	//ゲーム本体
 	Game game;
 	// ゲーム描画用
-	GameDrawer gameDrawer(&game);
+	GameDrawer* gameDrawer = new GameDrawer(&game);
 	bool title_flag = false;//trueならタイトル画面終了
 	while (ScreenFlip() == 0 && ProcessMessage() == 0 && ClearDrawScreen() == 0)
 	{
@@ -65,8 +68,11 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 		mouseClick();
 
 		/////メイン////
-		game.play();
-		gameDrawer.draw();
+		if (game.play()) {
+			delete gameDrawer;
+			gameDrawer = new GameDrawer(&game);
+		}
+		gameDrawer->draw();
 		///////////////
 
 		//FPS操作
@@ -77,8 +83,8 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 		Update();
 		// デバッグ
 		if (debug == TRUE) {
-			Draw(0, 0, WHITE);
-			game.debug(0, DRAW_FORMAT_STRING_SIZE, WHITE);
+			Draw(0, 0, BLACK);
+			game.debug(0, DRAW_FORMAT_STRING_SIZE, BLACK);
 		}
 		Wait();
 		if (controlEsc() == TRUE) { DxLib_End(); }

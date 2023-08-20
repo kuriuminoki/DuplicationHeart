@@ -1,8 +1,13 @@
 #ifndef CHACACTER_ACTION_H_INCLUDED
 #define CHACACTER_ACTION_H_INCLUDED
 
+
+#include <vector>
+
+
 class Character;
 class Object;
+class SoundPlayer;
 
 
 // キャラクターの状態
@@ -21,11 +26,14 @@ enum class CHARACTER_STATE {
 */
 class CharacterAction {
 protected:
-	// 動かすキャラクター
-	Character* m_character;
+	// サウンドプレイヤー
+	SoundPlayer* m_soundPlayer_p;
 
 	// キャラの状態
 	CHARACTER_STATE m_state;
+
+	// 動かすキャラクター
+	Character* m_character_p;
 
 	// キャラが地面にいる
 	bool m_grand;
@@ -54,6 +62,7 @@ protected:
 	// 着地モーションの総時間
 	const int LAND_TIME = 10;
 
+	// ブーストアニメの残り時間 または受け身状態
 	int m_boostCnt;
 	const int BOOST_TIME = 10;
 
@@ -86,33 +95,58 @@ protected:
 
 public:
 	CharacterAction();
-	CharacterAction(Character* character);
+	CharacterAction(Character* character, SoundPlayer* soundPlayer_p);
+
+	virtual CharacterAction* createCopy(std::vector<Character*> characters) = 0;
+	void setParam(CharacterAction* action);
 
 	// デバッグ
 	void debugAction(int x, int y, int color) const;
 	virtual void debug(int x, int y, int color) const = 0;
 
-	// ゲッタとセッタ
+	// ゲッタ
+	inline const Character* getCharacter() const { return m_character_p; }
 	inline CHARACTER_STATE getState() const { return m_state; }
 	inline bool getGrand() const { return m_grand; }
-	void setGrand(bool grand);
 	inline bool getGrandRightSlope() const { return m_grandRightSlope; }
-	inline void setGrandRightSlope(bool grand) { m_grandRightSlope = grand; }
 	inline bool getGrandLeftSlope() const { return m_grandLeftSlope; }
-	inline void setGrandLeftSlope(bool grand) { m_grandLeftSlope = grand; }
 	inline int getVx() const { return m_vx; }
 	inline int getVy() const { return m_vy; }
-	inline int getSlashCnt() { return m_slashCnt; }
+	inline int getSlashCnt() const { return m_slashCnt; }
+	inline int getBulletCnt() const { return m_bulletCnt; }
 	bool getRightLock() const { return m_rightLock; }
 	bool getLeftLock() const { return m_leftLock; }
 	bool getUpLock() const { return m_upLock; }
 	bool getDownLock() const { return m_downLock; }
+
+	// セッタ
+	void setState(CHARACTER_STATE state);
+	inline void setSimpleGrand(bool grand) { m_grand = grand; }
+	void setGrand(bool grand);
 	void setRightLock(bool lock);
 	void setLeftLock(bool lock);
 	void setUpLock(bool lock);
 	void setDownLock(bool lock);
-	inline void setBoost() { m_boostCnt = BOOST_TIME; }
-	inline const Character* getCharacter() const { return m_character; }
+	inline void setBoost() { if(!m_grand) m_boostCnt = BOOST_TIME; }
+	inline void setGrandRightSlope(bool grand) { m_grandRightSlope = grand; }
+	inline void setGrandLeftSlope(bool grand) { m_grandLeftSlope = grand; }
+	void setRunCnt(int runCnt) { m_runCnt = runCnt; }
+	void setJumpCnt(int preJumpCnt) { m_preJumpCnt = preJumpCnt; }
+	void setMoveRight(bool moveRight) { m_moveRight = moveRight; }
+	void setMoveLeft(bool moveLeft) { m_moveLeft = moveLeft; }
+	void setMoveUp(bool moveUp) { m_moveUp = moveUp; }
+	void setMoveDown(bool moveDown) { m_moveDown = moveDown; }
+	void setVx(int vx) { m_vx = vx; }
+	void setVy(int vy) { m_vy = vy; }
+	void setBulletCnt(int bulletCnt) { m_bulletCnt = bulletCnt; }
+	void setSlashCnt(int slashCnt) { m_slashCnt = slashCnt; }
+	void setAttackLeftDirection(bool attackLeftDirection) { m_attackLeftDirection = attackLeftDirection; }
+	void setLandCnt(int landCnt) { m_landCnt = landCnt; }
+	void setBoostCnt(int boostCnt) { m_boostCnt = boostCnt; }
+	void setDamageCnt(int damageCnt) { m_damageCnt = damageCnt; }
+
+	// 今ダメージを受けていて動けない
+	inline bool damageFlag() const { return m_state == CHARACTER_STATE::DAMAGE; }
 
 	// squat==trueならしゃがむ、falseなら立つ
 	void setSquat(bool squat);
@@ -144,10 +178,17 @@ public:
 	virtual Object* slashAttack(int gx, int gy) = 0;
 
 	// ダメージ
-	virtual void damage(int vx, int vy, int damageValue, int soundHandle) = 0;
+	virtual void damage(int vx, int vy, int damageValue) = 0;
 
 	// 今無敵時間じゃない
 	bool ableDamage() const;
+
+	// 今攻撃可能状態
+	bool ableAttack() const;
+
+	// 歩くのをやめる
+	void stopMoveLeft();
+	void stopMoveRight();
 
 protected:
 	// 画像のサイズ変更による位置調整
@@ -173,7 +214,9 @@ private:
 	void switchHandle();
 
 public:
-	StickAction(Character* character);
+	StickAction(Character* character, SoundPlayer* soundPlayer_p);
+
+	CharacterAction* createCopy(std::vector<Character*> characters);
 
 	void debug(int x, int y, int color) const;
 
@@ -196,7 +239,7 @@ public:
 	Object* slashAttack(int gx, int gy);
 
 	// ダメージ
-	void damage(int vx, int vy, int damageValue, int soundHandle);
+	void damage(int vx, int vy, int damageValue);
 };
 
 #endif

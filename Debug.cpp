@@ -7,6 +7,10 @@
 #include "GraphHandle.h"
 #include "Animation.h"
 #include "Define.h"
+#include "Text.h"
+#include "Event.h"
+#include "Story.h"
+#include "Brain.h"
 #include "DxLib.h"
 
 /*
@@ -15,7 +19,9 @@
 // Gameクラスのデバッグ
 void Game::debug(int x, int y, int color) const {
 	DrawFormatString(x, y, color, "**GAME**");
-	m_world->debug(x + DRAW_FORMAT_STRING_SIZE, y + DRAW_FORMAT_STRING_SIZE, color);
+	DrawFormatString(x, y + DRAW_FORMAT_STRING_SIZE, color, "StoryNum=%d", m_gameData->getStoryNum());
+	//m_story->debug(x + DRAW_FORMAT_STRING_SIZE, y + DRAW_FORMAT_STRING_SIZE * 2, color);
+	m_world->debug(x + DRAW_FORMAT_STRING_SIZE, y + DRAW_FORMAT_STRING_SIZE * 3, color);
 }
 
 
@@ -32,14 +38,15 @@ void debugObjects(int x, int y, int color, std::vector<Object*> objects) {
 void World::debug(int x, int y, int color) const {
 	DrawFormatString(x, y, color, "**World**");
 	DrawFormatString(x, y + DRAW_FORMAT_STRING_SIZE, color, "CharacterSum=%d, ControllerSum=%d, anime=%d", m_characters.size(), m_characterControllers.size(), m_animations.size());
-	m_characterControllers[0]->debug(x + DRAW_FORMAT_STRING_SIZE, y + DRAW_FORMAT_STRING_SIZE * 2, color);
-	//m_characterControllers[1]->debug(x + DRAW_FORMAT_STRING_SIZE + 600, y + DRAW_FORMAT_STRING_SIZE * 2, color);
-	// オブジェクト
-	// debugObjects(x, y, color, m_stageObjects);
-	debugObjects(x + 500, y, RED, m_attackObjects);
-	//for (unsigned int i = 0; i < m_animations.size(); i++) {
-	//	m_animations[i]->getHandle()->draw(GAME_WIDE - 200, 200, m_animations[i]->getHandle()->getEx());
-	//}
+	debugObjects(x, y + DRAW_FORMAT_STRING_SIZE * 2, color, m_attackObjects);
+}
+
+
+/*
+* Story
+*/
+void Story::debug(int x, int y, int color) {
+	DrawFormatString(x, y + DRAW_FORMAT_STRING_SIZE, color, "**Story**");
 }
 
 
@@ -49,13 +56,28 @@ void World::debug(int x, int y, int color) const {
 // CharacterControllerクラスのデバッグ
 void CharacterController::debugController(int x, int y, int color) const {
 	DrawFormatString(x, y, color, "**CharacterController**");
-	m_characterAction->debug(x + DRAW_FORMAT_STRING_SIZE, y + DRAW_FORMAT_STRING_SIZE, color);
+	DrawFormatString(x, y + DRAW_FORMAT_STRING_SIZE, color, "slashOrder=%d, slashCnt=%d, bulletOrder=%d, bulletCnt=%d", m_brain->slashOrder(), m_characterAction->getSlashCnt(), m_brain->bulletOrder(), m_characterAction->getBulletCnt());
+	m_brain->debug(x + DRAW_FORMAT_STRING_SIZE, y + DRAW_FORMAT_STRING_SIZE * 2, color);
+	m_characterAction->debug(x + DRAW_FORMAT_STRING_SIZE, y + DRAW_FORMAT_STRING_SIZE * 4, color);
 }
 
-// CharacterKeyboardControllerクラスのデバッグ
+// NormalControllerクラスのデバッグ
 void NormalController::debug(int x, int y, int color) const {
 	DrawFormatString(x, y, color, "**CharacterKeyboardController**");
 	debugController(x + DRAW_FORMAT_STRING_SIZE, y + DRAW_FORMAT_STRING_SIZE * 2, color);
+}
+
+void KeyboardBrain::debug(int x, int y, int color) const {
+	DrawFormatString(x, y, color, "**KeyboardBrain**");
+}
+
+void NormalAI::debug(int x, int y, int color) const {
+	DrawFormatString(x, y, color, "**NormalAI**");
+}
+
+void FollowNormalAI::debug(int x, int y, int color) const {
+	DrawFormatString(x, y, color, "**FollowNormalAI**");
+	DrawFormatString(x, y + DRAW_FORMAT_STRING_SIZE, color, "follow=%d, gx,gy=%d,%d", getFollowId(), m_gx, m_gy);
 }
 
 
@@ -68,7 +90,7 @@ void CharacterAction::debugAction(int x, int y, int color) const {
 	DrawFormatString(x, y + DRAW_FORMAT_STRING_SIZE, color, "state=%d, grand=%d(%d%d), (vx,vy)=(%d,%d), runCnt=%d", (int)m_state, m_grand, m_grandLeftSlope, m_grandRightSlope, m_vx, m_vy, m_runCnt);
 	DrawFormatString(x, y + DRAW_FORMAT_STRING_SIZE * 2, color, "制限中：(←, →, ↑, ↓)=(%d,%d,%d,%d)", m_leftLock, m_rightLock, m_upLock, m_downLock);
 	DrawFormatString(x, y + DRAW_FORMAT_STRING_SIZE * 3, color, "移動中：(←, →, ↑, ↓)=(%d,%d,%d,%d)", m_moveLeft, m_moveRight, m_moveUp, m_moveDown);
-	m_character->debug(x + DRAW_FORMAT_STRING_SIZE, y + DRAW_FORMAT_STRING_SIZE * 4, color);
+	m_character_p->debug(x + DRAW_FORMAT_STRING_SIZE, y + DRAW_FORMAT_STRING_SIZE * 4, color);
 }
 
 // StickActionのデバッグ
@@ -84,8 +106,8 @@ void StickAction::debug(int x, int y, int color) const {
 // Characterクラスのデバッグ
 void Character::debugCharacter(int x, int y, int color) const {
 	DrawFormatString(x, y, color, "**Character**");
-	DrawFormatString(x, y + DRAW_FORMAT_STRING_SIZE, color, "HP=%d/%d, (x,y)=(%d,%d), left=%d, id=%d, groupId=%d", m_hp, m_maxHp, m_x, m_y, m_leftDirection, m_id, m_groupId);
-	DrawFormatString(x, y + DRAW_FORMAT_STRING_SIZE * 2, color, "(wide, height)=(%d,%d), handle=%d", m_wide, m_height, m_graphHandle->getHandle());
+	DrawFormatString(x, y + DRAW_FORMAT_STRING_SIZE, color, "(x,y)=(%d,%d), left=%d, id=%d, groupId=%d, m_handle=%d", m_x, m_y, m_leftDirection, m_id, m_groupId, m_graphHandle->getHandle());
+	// DrawFormatString(x, y + DRAW_FORMAT_STRING_SIZE * 2, color, "(wide, height)=(%d,%d), handle=%d", m_wide, m_height, m_graphHandle->getHandle());
 	// 画像
 	// m_graphHandle->draw(GAME_WIDE - (m_wide / 2), (m_height / 2), m_graphHandle->getEx());
 	// DrawBox(m_x, m_y, m_x + m_wide, m_y + m_height, color, TRUE);
@@ -96,7 +118,7 @@ void Character::debugCharacter(int x, int y, int color) const {
 // Heartクラスのデバッグ
 void Heart::debug(int x, int y, int color) const {
 	DrawFormatString(x, y, color, "**Heart**");
-	DrawFormatString(x, y + DRAW_FORMAT_STRING_SIZE, color, "standHandle=%d", m_standHandle);
+	// DrawFormatString(x, y + DRAW_FORMAT_STRING_SIZE, color, "standHandle=%d", m_standHandle);
 	debugCharacter(x + DRAW_FORMAT_STRING_SIZE, y + DRAW_FORMAT_STRING_SIZE * 2, color);
 }
 
@@ -145,6 +167,13 @@ void BulletObject::debug(int x, int y, int color) const {
 	// DrawOval(m_x1 + m_rx, m_y1 + m_ry, m_rx, m_ry, m_color, TRUE);
 }
 
+void ParabolaBullet::debug(int x, int y, int color) const {
+	DrawFormatString(x, y, color, "**ParabolaObject**");
+	DrawFormatString(x, y + DRAW_FORMAT_STRING_SIZE, color, "(gx,gy)=(%d,%d), r=%f", m_gx, m_gy, m_handle->getAngle());
+	debugObject(x + DRAW_FORMAT_STRING_SIZE, y + DRAW_FORMAT_STRING_SIZE * 2, color);
+	// DrawOval(m_x1 + m_rx, m_y1 + m_ry, m_rx, m_ry, m_color, TRUE);
+}
+
 
 /*
 * 斬撃のデバッグ
@@ -154,4 +183,15 @@ void SlashObject::debug(int x, int y, int color) const {
 	DrawFormatString(x, y + DRAW_FORMAT_STRING_SIZE, color, "cnt=%d", m_cnt);
 	debugObject(x + DRAW_FORMAT_STRING_SIZE, y + DRAW_FORMAT_STRING_SIZE * 2, color);
 	// DrawBox(m_x1, m_y1, m_x2, m_y2, color, FALSE);
+}
+
+
+/*
+* 扉オブジェクトのデバッグ
+*/
+void DoorObject::debug(int x, int y, int color) const {
+	DrawFormatString(x, y, color, "**DoorObject**");
+	DrawFormatString(x, y + DRAW_FORMAT_STRING_SIZE, color, "GoTo=%d, text=%s", m_areaNum, m_text == "" ? "" : m_text);
+	debugObject(x + DRAW_FORMAT_STRING_SIZE, y + DRAW_FORMAT_STRING_SIZE * 2, color);
+	DrawBox(m_x1, m_y1, m_x2, m_y2, color, FALSE);
 }
