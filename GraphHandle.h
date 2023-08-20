@@ -27,7 +27,7 @@ public:
 	~GraphHandle();
 
 	// ゲッタ
-	inline int getHandle() { return m_handle; }
+	inline int getHandle() const { return m_handle; }
 	inline double getEx() const { return m_ex; }
 
 	// セッタ
@@ -60,7 +60,7 @@ public:
 	// ゲッタ
 	inline GraphHandle* getGraphHandle(int i = 0) const { return m_handles[i]; }
 	inline int getHandle(int i) { return m_handles[i]->getHandle(); }
-	inline int getSize() { return m_handleSum; }
+	inline int getSize() const { return m_handleSum; }
 
 	// セッタ
 	void setEx(double ex);
@@ -147,7 +147,7 @@ public:
 	~CharacterGraphHandle();
 
 	// 表示する画像を返す
-	inline GraphHandle* getHandle() const { return m_graphHandle; }
+	inline GraphHandle* getHandle() { return m_graphHandle; }
 	inline int getWide() const { return m_wide; }
 	inline int getHeight() const { return m_height; }
 
@@ -174,7 +174,8 @@ public:
 	void setGraphSize();
 
 	// 画像をセット、存在しない画像ならそのまま　サイズも決定
-	void setGraph(GraphHandles* graphHandles, int index);
+	void setGraph(const GraphHandles* graphHandles, int index);
+	void setGraph(GraphHandle* graphHandle);
 
 	// 立ち画像をセット
 	void switchStand(int index = 0);

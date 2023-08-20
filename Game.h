@@ -6,6 +6,7 @@
 class SoundPlayer;
 class World;
 class Story;
+class Character;
 
 
 // キャラのセーブデータ
@@ -60,6 +61,60 @@ public:
 };
 
 
+// ハートのスキル
+class HeartSkill {
+private:
+	// 複製の数
+	int m_loopNum;
+
+	// 今何ループ目か
+	int m_loopNow;
+
+	// 元の世界
+	World* m_world_p;
+
+	// 複製
+	World* m_duplicationWorld;
+
+	// 何秒間か
+	const int DUPLICATION_TIME = 600;
+
+	// DUPLICATION_TIMEまでカウントする
+	int m_cnt;
+
+	// 複製のキャラID スキル終了時に消すため
+	std::vector<int> m_duplicationId;
+
+	// サウンドプレイヤー
+	SoundPlayer* m_soundPlayer_p;
+
+	// 効果音
+	int m_sound;
+
+public:
+	HeartSkill(int loopNum, World* world, SoundPlayer* soundPlayer);
+	~HeartSkill();
+
+	// ゲッタ
+	inline int getLoopNum() const { return m_loopNum; }
+	inline int getLoopNow() const { return m_loopNow; }
+	inline World* getWorld() const { return m_loopNow < m_loopNum ? m_duplicationWorld : m_world_p; }
+	inline double getCnt() const { return ((double)DUPLICATION_TIME / 60.0) - ((double)m_cnt / 60.0); }
+
+	// スキル進行中
+	bool play();
+
+private:
+	// 世界のコピーを作る コピーの変更はオリジナルに影響しない
+	World* createDuplicationWorld(const World* world);
+
+	// 操作記録をコピーする
+	void copyRecord(const World* from, World* to);
+
+	void createDuplicationHeart();
+};
+
+
 class Game {
 private:
 	GameData* m_gameData;
@@ -73,12 +128,16 @@ private:
 	// ストーリー
 	Story* m_story;
 
+	// スキル
+	HeartSkill* m_skill;
+
 public:
 	Game();
 	~Game();
 
 	// ゲッタ
 	World* getWorld() const { return m_world; }
+	HeartSkill* getSkill() const { return m_skill; }
 
 	// デバッグ
 	void debug(int x, int y, int color) const;

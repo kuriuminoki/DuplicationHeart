@@ -22,6 +22,9 @@ int controlA();
 // Dキー（右キー）
 int controlD();
 
+// Fキー（スキル発動）
+int controlF();
+
 //FPS表示のオンオフ
 int controlDebug();
 

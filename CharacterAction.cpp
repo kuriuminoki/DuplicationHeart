@@ -3,6 +3,10 @@
 #include "Sound.h"
 #include "Define.h"
 #include "DxLib.h"
+#include <vector>
+
+
+using namespace std;
 
 
 /*
@@ -15,8 +19,6 @@ CharacterAction::CharacterAction(Character* character, SoundPlayer* soundPlayer_
 	//初期状態
 	m_state = CHARACTER_STATE::STAND;
 	m_grand = false;
-	m_grandRightSlope = false;
-	m_grandRightSlope = false;
 	m_runCnt = -1;
 	m_squat = false;
 	m_preJumpCnt = -1;
@@ -49,6 +51,33 @@ CharacterAction::CharacterAction() :
 	CharacterAction(NULL, NULL)
 {
 
+}
+
+void CharacterAction::setParam(CharacterAction* action) {
+	action->setState(m_state);
+	action->setSimpleGrand(m_grand);
+	action->setGrandLeftSlope(m_grandLeftSlope);
+	action->setGrandRightSlope(m_grandRightSlope);
+	action->setRunCnt(m_runCnt);
+
+	action->setSquat(m_squat);
+	action->setJumpCnt(m_preJumpCnt);
+	action->setMoveRight(m_moveRight);
+	action->setMoveLeft(m_moveLeft);
+	action->setMoveUp(m_moveUp);
+	action->setMoveDown(m_moveDown);
+	action->setVx(m_vx);
+	action->setVy(m_vy);
+	action->setRightLock(m_rightLock);
+	action->setLeftLock(m_leftLock);
+	action->setUpLock(m_upLock);
+	action->setDownLock(m_downLock);
+	action->setBulletCnt(m_bulletCnt);
+	action->setSlashCnt(m_slashCnt);
+	action->setAttackLeftDirection(m_attackLeftDirection);
+	action->setLandCnt(m_landCnt);
+	action->setBoostCnt(m_boostCnt);
+	action->setDamageCnt(m_damageCnt);
 }
 
 void CharacterAction::setState(CHARACTER_STATE state) {
@@ -148,6 +177,18 @@ StickAction::StickAction(Character* character, SoundPlayer* soundPlayer_p):
 	CharacterAction(character, soundPlayer_p)
 {
 
+}
+
+CharacterAction* StickAction::createCopy(vector<Character*> characters) {
+	CharacterAction* res = NULL;
+	for (unsigned int i = 0; i < characters.size(); i++) {
+		if (m_character_p->getId() == characters[i]->getId()) {
+			res = new StickAction(characters[i], m_soundPlayer_p);
+			// コピーする
+			setParam(res);
+		}
+	}
+	return res;
 }
 
 // 行動前の処理

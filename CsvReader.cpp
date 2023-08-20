@@ -4,6 +4,7 @@
 #include "CharacterController.h"
 #include "Object.h"
 #include "Camera.h"
+#include "Brain.h"
 #include "Define.h"
 #include "DxLib.h"
 

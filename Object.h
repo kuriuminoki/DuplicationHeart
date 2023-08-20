@@ -42,6 +42,9 @@ public:
 	Object();
 	Object(int x1, int y1, int x2, int y2, int hp = -1);
 
+	virtual Object* createCopy() = 0;
+	void setParam(Object* object);
+
 	void debugObject(int x, int y, int color) const;
 	virtual void debug(int x, int y, int color) const = 0;
 
@@ -60,6 +63,14 @@ public:
 
 	// セッタ
 	inline void setDeleteFlag(bool deleteFlag) { m_deleteFlag = deleteFlag; }
+	void setX1(int x1) { m_x1 = x1; }
+	void setY1(int y1) { m_y1 = y1; }
+	void setX2(int x2) { m_x2 = x2; }
+	void setY2(int y2) { m_y2 = y2; }
+	void setHp(int hp) { m_hp = hp; }
+	void setDamageCnt(int damageCnt) { m_damageCnt = damageCnt; }
+	void setEffectHandles(GraphHandles* effectHandles_p) { m_effectHandles_p = effectHandles_p; }
+	void setSoundHandle(int soundHandle_p) { m_soundHandle_p = soundHandle_p; }
 
 	// HPを減らす
 	void decreaseHp(int damageValue);
@@ -118,6 +129,8 @@ private:
 public:
 	BoxObject(int x1, int y1, int x2, int y2, int color, int hp = -1);
 
+	Object* createCopy();
+
 	void debug(int x, int y, int color) const;
 
 	// オブジェクト描画（画像がないときに使う）
@@ -154,6 +167,8 @@ private:
 	int getY(int x) const;
 public:
 	TriangleObject(int x1, int y1, int x2, int y2, int color, bool leftDown, int hp = -1);
+
+	Object* createCopy();
 
 	void debug(int x, int y, int color) const;
 
@@ -213,6 +228,10 @@ protected:
 public:
 	// x, y, gx, gyは弾の中心座標
 	BulletObject(int x, int y, int color, int gx, int gy, AttackInfo* attackInfo);
+	BulletObject(int x, int y, int color, int gx, int gy);
+
+	Object* createCopy();
+	void setBulletParam(BulletObject* obejct);
 
 	void debug(int x, int y, int color) const;
 
@@ -226,6 +245,16 @@ public:
 	// キャラクターIDをセット
 	inline void setCharacterId(int id) { m_characterId = id; }
 	inline void setGroupId(int id) { m_groupId = id; }
+	inline void setColor(int color) { m_color = color; }
+	inline void setRx(int rx) { m_rx = rx; }
+	inline void setRy(int ry) { m_ry = ry; }
+	inline void setV(int v) { m_v = v; }
+	inline void setVx(int vx) { m_vx = vx; }
+	inline void setVy(int vy) { m_vy = vy; }
+	inline void setGx(int gx) { m_gx = gx; }
+	inline void setGy(int gy) { m_gy = gy; }
+	inline void setD(int d) { m_d = d; }
+	inline void setDamage(int damage) { m_damage = damage; }
 
 	// 攻撃力 攻撃オブジェクト用
 	inline int getDamage() const { return m_damage; }
@@ -255,6 +284,11 @@ private:
 	const int G = 2;
 public:
 	ParabolaBullet(int x, int y, GraphHandle* handle, int gx, int gy, AttackInfo* attackInfo);
+	ParabolaBullet(int x, int y, GraphHandle* handle, int gx, int gy);
+
+	Object* createCopy();
+
+	inline void setGraphHandle(GraphHandle* handle) { m_handle = handle; }
 
 	// 動くオブジェクト用 毎フレーム行う
 	void action();
@@ -302,8 +336,14 @@ public:
 	// 座標、画像、生存時間、AttackInfo
 	SlashObject(int x1, int y1, int x2, int y2, GraphHandle* handle, int slashCountSum, AttackInfo* attackInfo);
 
+	SlashObject(int x1, int y1, int x2, int y2, GraphHandle* handle, int slashCountSum);
+
 	// 大きさを指定しない場合。画像からサイズ取得。生存時間、AttackInfo
 	SlashObject(int x, int y, GraphHandle* handle, int slashCountSum, AttackInfo* attackInfo);
+
+	Object* createCopy();
+
+	void setSlashParam(SlashObject* object);
 
 	void debug(int x, int y, int color) const;
 
@@ -316,6 +356,11 @@ public:
 	// セッタ
 	inline void setCharacterId(int id) { m_characterId = id; }
 	inline void setGroupId(int id) { m_groupId = id; }
+	inline void setDamage(int damage) { m_damage = damage; }
+	inline void setGraphHandle(GraphHandle* handle) { m_handle = handle; }
+	inline void setCnt(int cnt) { m_cnt = cnt; }
+	inline void setSlashImpactX(int slashImpactX) { m_slashImpactX = slashImpactX; }
+	inline void setSlashImpactY(int slashImpactY) { m_slashImpactY = slashImpactY; }
 
 	// 攻撃力 攻撃オブジェクト用
 	inline int getDamage() const { return m_damage; }
@@ -340,6 +385,9 @@ class DoorObject :
 	public Object 
 {
 private:
+	// ファイルネームを保存しておく
+	const char* m_fileName;
+
 	// 画像
 	GraphHandle* m_graph;
 
@@ -353,12 +401,17 @@ public:
 	DoorObject(int x1, int y1, int x2, int y2, const char* fileName, int areaNum);
 	~DoorObject();
 
+	Object* createCopy();
+
 	void debug(int x, int y, int color) const;
 
 	// ゲッタ
 	GraphHandle* getHandle() const { return m_graph; }
 	inline int getAreaNum() const { return m_areaNum; }
 	inline std::string getText() const { return m_text; }
+
+	// セッタ
+	inline void setText(std::string text) { m_text = text; }
 
 	// キャラとの当たり判定
 	virtual bool atari(CharacterController* characterController);

@@ -47,6 +47,9 @@ protected:
 public:
 	EventElement(World* world);
 	virtual EVENT_RESULT play() = 0;
+
+	// ハートのスキル発動が可能かどうか
+	virtual bool skillAble() = 0;
 };
 
 
@@ -78,6 +81,9 @@ public:
 
 	// イベント進行
 	EVENT_RESULT play();
+
+	// 今ハートのスキル発動可能かどうか
+	bool skillAble();
 
 private:
 	void createFire(std::vector<std::string> param, World* world, SoundPlayer* soundPlayer);
@@ -131,6 +137,9 @@ public:
 	ChangeBrainEvent(World* world, std::vector<std::string> param);
 
 	EVENT_RESULT play();
+
+	// ハートのスキル発動が可能かどうか
+	bool skillAble() { return false; }
 };
 
 // 特定のキャラのHPが0になるまで戦う
@@ -146,6 +155,9 @@ public:
 	DeadCharacterEvent(World* world, std::vector<std::string> param);
 
 	EVENT_RESULT play();
+
+	// ハートのスキル発動が可能かどうか
+	bool skillAble() { return true; }
 };
 
 // 会話イベント
@@ -161,6 +173,9 @@ public:
 	~TalkEvent();
 
 	EVENT_RESULT play();
+
+	// ハートのスキル発動が可能かどうか
+	bool skillAble() { return false; }
 };
 
 #endif

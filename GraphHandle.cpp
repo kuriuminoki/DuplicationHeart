@@ -183,9 +183,13 @@ void CharacterGraphHandle::setGraphSize() {
 }
 
 // ‰æ‘œ‚ðƒZƒbƒg‚·‚é ‘¶Ý‚µ‚È‚¢‚È‚ç‚»‚Ì‚Ü‚Ü
-void CharacterGraphHandle::setGraph(GraphHandles* graphHandles, int index) {
+void CharacterGraphHandle::setGraph(const GraphHandles* graphHandles, int index) {
 	if (index >= graphHandles->getSize() || index < 0) { return; }
 	m_graphHandle = graphHandles == NULL ? m_graphHandle : graphHandles->getGraphHandle(index);
+	setGraphSize();
+}
+void CharacterGraphHandle::setGraph(GraphHandle* graphHandle) {
+	m_graphHandle = graphHandle;
 	setGraphSize();
 }
 

@@ -69,9 +69,14 @@ int controlD() {
 	return Key[KEY_INPUT_D];
 }
 
+// Fキー（スキル発動）
+int controlF() {
+	return Key[KEY_INPUT_F];
+}
+
 //デバッグモード起動用
 int controlDebug() {
-	if (Key[KEY_INPUT_F] == 1) { // Fキーが押されていたら
+	if (Key[KEY_INPUT_P] == 1) { // Pキーが押されていたら
 		return TRUE;
 	}
 	return FALSE;

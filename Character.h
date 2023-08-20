@@ -165,6 +165,8 @@ class Character {
 protected:
 	static int characterId;
 
+	bool m_duplicationFlag;
+
 	// ID
 	int m_id;
 
@@ -198,6 +200,8 @@ public:
 	Character(int hp, int x, int y, int groupId);
 	~Character();
 
+	virtual Character* createCopy() = 0;
+
 	// デバッグ
 	void debugCharacter(int x, int y, int color) const;
 	virtual void debug(int x, int y, int color) const = 0;
@@ -210,13 +214,21 @@ public:
 	inline int getY() const { return m_y; }
 	inline bool getLeftDirection() const { return m_leftDirection; }
 	FaceGraphHandle* getFaceHandle() const { return m_faceHandle; }
+	inline CharacterGraphHandle* getCharacterGraphHandle() const { return m_graphHandle; }
+	inline AttackInfo* getAttackInfo() const { return m_attackInfo; }
+	inline CharacterInfo* getCharacterInfo() const { return m_characterInfo; }
 
 	// セッタ
 	inline void setHp(int hp) { m_hp = (hp > m_characterInfo->maxHp()) ? m_characterInfo->maxHp() : hp; }
 	inline void setX(int x) { m_x = x; }
 	inline void setY(int y) { m_y = y; }
+	inline void setId(int id) { m_id = id; }
+	inline void setGroupId(int id) { m_groupId = id; }
 	// キャラの向き変更は、画像の反転も行う
 	void setLeftDirection(bool leftDirection);
+	inline void setDuplicationFlag(bool flag) { m_duplicationFlag = flag; }
+	inline void setAttackInfo(AttackInfo* attackInfo) { m_attackInfo = attackInfo; }
+	inline void setCharacterInfo(CharacterInfo* characterInfo) { m_characterInfo = characterInfo; }
 
 	// CharacterInfoからキャラのスペックを取得
 	inline std::string getName() const { return m_characterInfo->name(); }
@@ -238,7 +250,7 @@ public:
 	int getWide() const;
 	int getHeight() const;
 	// 今描画する画像を取得
-	const GraphHandle* getGraphHandle() const;
+	GraphHandle* getGraphHandle() const;
 	void getHandleSize(int& wide, int& height) const;
 
 	// 立ち画像をセット
@@ -305,9 +317,12 @@ private:
 public:
 	// コンストラクタ
 	Heart(const char* name, int hp, int x, int y, int groupId);
+	Heart(const char* name, int hp, int x, int y, int groupId, AttackInfo* attackInfo);
 
 	// デストラクタ
 	~Heart();
+
+	Character* createCopy();
 
 	// デバッグ
 	void debug(int x, int y, int color) const;
@@ -339,6 +354,9 @@ class Siesta :
 public:
 	// コンストラクタ
 	Siesta(const char* name, int hp, int x, int y, int groupId);
+	Siesta(const char* name, int hp, int x, int y, int groupId, AttackInfo* attackInfo);
+
+	Character* createCopy();
 
 	// 射撃攻撃をする(キャラごとに違う)
 	Object* bulletAttack(int gx, int gy, SoundPlayer* soundPlayer);

@@ -5,6 +5,7 @@
 #include "CharacterController.h"
 #include "Character.h"
 #include "Text.h"
+#include "Brain.h"
 #include <sstream>
 
 using namespace std;
@@ -53,6 +54,10 @@ Event::Event(int eventNum, World* world, SoundPlayer* soundPlayer) {
 		createElement(mapParam2vector(elementsData[i]), world, soundPlayer);
 	}
 
+}
+
+bool Event::skillAble() {
+	return m_eventElement[m_nowElement]->skillAble();
 }
 
 // Fire�̍쐬

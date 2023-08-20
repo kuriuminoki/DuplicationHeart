@@ -13,14 +13,21 @@ class Camera;
 class Animation;
 class SoundPlayer;
 class Conversation;
+class Brain;
 
 class World {
 private:
+	// 複製ならtrue 背景をデリートしないため
+	bool m_duplicationFlag;
+
 	// サウンドプレイヤー
 	SoundPlayer* m_soundPlayer_p;
 
 	// 会話イベント EventElementクラスからもらう
 	Conversation* m_conversation_p;
+
+	// スキル発動中はエリア間の移動できない
+	bool m_skillFlag;
 
 	// 画面の明るさ
 	int m_brightValue;
@@ -63,17 +70,32 @@ public:
 	World(int fromAreaNum, int toAreaNum, SoundPlayer* soundPlayer);
 	~World();
 
+	World(const World* original);
+
 	// ゲッタ
+	inline int getFocusId() const { return m_focusId; }
+	inline int getPlayerId() const { return m_playerId; }
 	inline int getBrightValue() const { return m_brightValue; }
 	inline int getAreaNum() const { return m_areaNum; }
 	inline const Camera* getCamera() const { return m_camera; }
+	std::vector<CharacterController*> getCharacterControllers() const;
 	std::vector<const CharacterAction*> getActions() const;
+	std::vector<Character*> getCharacters() const;
+	std::vector<Object*> getStageObjects() const;
+	std::vector<Object*> getDoorObjects() const;
+	std::vector<Object*> getAttackObjects() const;
+	std::vector<Animation*> getAnimations() const;
 	std::vector<const Object*> getFrontObjects() const;
 	std::vector<const Object*> getBackObjects() const;
-	std::vector<const Animation*> getAnimations() const;
+	std::vector<const Animation*> getConstAnimations() const;
 	inline const int getBackGroundGraph() const { return m_backGroundGraph; }
 	inline const int getBackGroundColor() const { return m_backGroundColor; }
 	inline const Conversation* getConversation() const { return m_conversation_p; }
+	inline SoundPlayer* getSoundPlayer() const { return m_soundPlayer_p; }
+
+	// セッタ
+	inline void setSkillFlag(bool skillFlag) { m_skillFlag = skillFlag; }
+	inline void setFocusId(int id) { m_focusId = id; }
 
 	//デバッグ
 	void debug(int x, int y, int color) const;
@@ -95,7 +117,14 @@ public:
 	*/
 	Character* getCharacterWithName(std::string characterName) const;
 	CharacterController* getControllerWithName(std::string characterName) const;
+	Character* getCharacterWithId(int id) const;
+	void setBrainWithId(int id, Brain* brain);
 	inline void setConversation(Conversation* conversation){ m_conversation_p = conversation; }
+	void pushCharacter(Character* character, CharacterController* controller);
+	void popCharacter(int id);
+	void createRecorder();
+	void initRecorder();
+	void eraseRecorder();
 
 private:
 	// キャラクターとオブジェクトの当たり判定
