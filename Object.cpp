@@ -604,7 +604,7 @@ void ParabolaBullet::action() {
 	m_vy += G;
 	m_y1 += m_vy;
 	m_y2 += m_vy;
-	double r = std::atan2((double)m_vy, (double)m_vx);
+	double r = atan2((double)m_vy, (double)m_vx);
 	m_handle->setAngle(r);
 }
 

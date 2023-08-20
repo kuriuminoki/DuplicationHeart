@@ -29,6 +29,7 @@ public:
 	// ゲッタ
 	inline int getHandle() const { return m_handle; }
 	inline double getEx() const { return m_ex; }
+	inline double getAngle() const { return m_angle; }
 
 	// セッタ
 	inline void setEx(double ex) { m_ex = ex; }

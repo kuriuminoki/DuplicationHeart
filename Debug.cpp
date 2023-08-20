@@ -38,7 +38,7 @@ void debugObjects(int x, int y, int color, std::vector<Object*> objects) {
 void World::debug(int x, int y, int color) const {
 	DrawFormatString(x, y, color, "**World**");
 	DrawFormatString(x, y + DRAW_FORMAT_STRING_SIZE, color, "CharacterSum=%d, ControllerSum=%d, anime=%d", m_characters.size(), m_characterControllers.size(), m_animations.size());
-	//m_characterControllers[1]->debug(x + DRAW_FORMAT_STRING_SIZE, y + DRAW_FORMAT_STRING_SIZE * 2, color);
+	debugObjects(x, y + DRAW_FORMAT_STRING_SIZE * 2, color, m_attackObjects);
 }
 
 
@@ -163,6 +163,13 @@ void TriangleObject::debug(int x, int y, int color) const {
 void BulletObject::debug(int x, int y, int color) const {
 	DrawFormatString(x, y, color, "**BulletObject**");
 	DrawFormatString(x, y + DRAW_FORMAT_STRING_SIZE, color, "(gx,gy)=(%d,%d), groupId=%d", m_gx, m_gy, m_groupId);
+	debugObject(x + DRAW_FORMAT_STRING_SIZE, y + DRAW_FORMAT_STRING_SIZE * 2, color);
+	// DrawOval(m_x1 + m_rx, m_y1 + m_ry, m_rx, m_ry, m_color, TRUE);
+}
+
+void ParabolaBullet::debug(int x, int y, int color) const {
+	DrawFormatString(x, y, color, "**ParabolaObject**");
+	DrawFormatString(x, y + DRAW_FORMAT_STRING_SIZE, color, "(gx,gy)=(%d,%d), r=%f", m_gx, m_gy, m_handle->getAngle());
 	debugObject(x + DRAW_FORMAT_STRING_SIZE, y + DRAW_FORMAT_STRING_SIZE * 2, color);
 	// DrawOval(m_x1 + m_rx, m_y1 + m_ry, m_rx, m_ry, m_color, TRUE);
 }

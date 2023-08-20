@@ -225,6 +225,12 @@ EVENT_RESULT ChangeBrainEvent::play() {
 		Character* follow = m_world_p->getCharacterWithName(m_param[3]);
 		brain->searchFollow(follow);
 	}
+	else if (m_brainName == "FollowParabolaAI") {
+		brain = new FollowParabolaAI();
+		m_controller_p->setBrain(brain);
+		Character* follow = m_world_p->getCharacterWithName(m_param[3]);
+		brain->searchFollow(follow);
+	}
 	return EVENT_RESULT::SUCCESS;
 }
 void ChangeBrainEvent::setWorld(World* world) {
