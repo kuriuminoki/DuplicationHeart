@@ -297,7 +297,7 @@ public:
 	void action();
 
 	// ‰æ‘œƒnƒ“ƒhƒ‹‚ğ•Ô‚·
-	GraphHandle* getHandle() const { return m_handle; }
+	GraphHandle* getHandle() const;
 
 	// ‰æ‘œ‚Ì‘å‚«‚³‚ğ©“®’²ß‚·‚é
 	bool extendGraph() const { return false; }

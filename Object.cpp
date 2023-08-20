@@ -604,8 +604,14 @@ void ParabolaBullet::action() {
 	m_vy += G;
 	m_y1 += m_vy;
 	m_y2 += m_vy;
+}
+
+// ‰æ‘œƒnƒ“ƒhƒ‹‚ğ•Ô‚·
+GraphHandle* ParabolaBullet::getHandle() const { 
 	double r = atan2((double)m_vy, (double)m_vx);
+	if (m_vy == 0) { r = 0; }
 	m_handle->setAngle(r);
+	return m_handle;
 }
 
 
