@@ -97,14 +97,22 @@ Game::~Game() {
 bool Game::play() {
 
 	// これ以上ストーリーを進ませない（テスト用）
-	if (m_gameData->getStoryNum() == 3) {
+	if (m_gameData->getStoryNum() == 5) {
+		m_world->battle();
+		m_soundPlayer->play();
 		return false;
 	}
 
 	// スキル発動 Fキーかつスキル未発動状態かつ発動可能なイベント中（もしくはイベント中でない）かつエリア移動中でない
-	if (controlF() == 1 && m_skill == NULL && m_story->skillAble() && m_world->getBrightValue() == 255 && m_world->getCharacterWithName("ハート")->getHp() > 0) {
-		m_world->setSkillFlag(true);
-		m_skill = new HeartSkill(3, m_world, m_soundPlayer);
+	if (m_gameData->getStoryNum() >= 4) { // ストーリーの最初は発動できない
+		if (controlF() == 1 && m_skill == NULL) { // Fキーで発動、ただしスキル身発動時
+			if (m_story->skillAble() && m_world->getBrightValue() == 255) { // 特定のイベント時やエリア移動中はダメ
+				if (m_world->getCharacterWithName("ハート")->getHp() > 0) {
+					m_world->setSkillFlag(true);
+					m_skill = new HeartSkill(3, m_world, m_soundPlayer);
+				}
+			}
+		}
 	}
 	
 	// スキル発動中

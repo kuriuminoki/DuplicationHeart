@@ -15,6 +15,7 @@ using namespace std;
 
 Conversation::Conversation(int textNum, World* world, SoundPlayer* soundPlayer) {
 
+	m_finishCnt = 0;
 	m_finishFlag = false;
 	m_world_p = world;
 	m_soundPlayer_p = soundPlayer;
@@ -64,13 +65,23 @@ int Conversation::getTextSize() const {
 
 bool Conversation::play() {
 
+	// 終了処理
+	if (m_finishCnt > 0) {
+		m_finishCnt++;
+		if (m_finishCnt == FINISH_COUNT) {
+			m_finishFlag = true;
+			return true;
+		}
+		return false;
+	}
+
 	// プレイヤーからのアクション（スペースキー入力）
 	if (controlSpace() == 1 || leftClick() == 1) {
 		if (m_textNow == m_text.size()) {
 			// 全ての会話が終わった
 			if (FileRead_eof(m_fp) != 0) {
-				m_finishFlag = true;
-				return true;
+				m_finishCnt++;
+				return false;
 			}
 			// 次のテキストへ移る
 			setNextText();

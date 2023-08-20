@@ -32,6 +32,8 @@ public:
 	EventFire(World* world);
 
 	virtual bool fire() = 0;
+
+	virtual void setWorld(World* world) { m_world_p = world; }
 };
 
 
@@ -50,6 +52,8 @@ public:
 
 	// ハートのスキル発動が可能かどうか
 	virtual bool skillAble() = 0;
+
+	virtual void setWorld(World* world) { m_world_p = world; }
 };
 
 
@@ -59,6 +63,10 @@ public:
 */
 class Event {
 private:
+
+	// 発火後にこれを使ってElement生成
+	World* m_world_p;
+	SoundPlayer* m_soundPlayer;
 
 	// イベント番号
 	int m_eventNum;
@@ -85,6 +93,9 @@ public:
 	// 今ハートのスキル発動可能かどうか
 	bool skillAble();
 
+	// Worldを設定しなおす
+	void setWorld(World* world);
+
 private:
 	void createFire(std::vector<std::string> param, World* world, SoundPlayer* soundPlayer);
 	void createElement(std::vector<std::string> param, World* world, SoundPlayer* soundPlayer);
@@ -99,7 +110,10 @@ class CharacterPointFire :
 	public	EventFire
 {
 private:
-	// キャラの名前
+	// パラメータ
+	std::vector<std::string> m_param;
+
+	// キャラ
 	Character* m_character_p;
 
 	// エリア番号
@@ -115,6 +129,9 @@ public:
 	CharacterPointFire(World* world, std::vector<std::string> param);
 
 	bool fire();
+
+	// 世界を設定しなおす
+	void setWorld(World* world);
 };
 
 
@@ -126,6 +143,9 @@ class ChangeBrainEvent :
 	public EventElement
 {
 private:
+
+	// パラメータ
+	std::vector<std::string> m_param;
 
 	// Brainのクラス名
 	std::string m_brainName;
@@ -140,6 +160,35 @@ public:
 
 	// ハートのスキル発動が可能かどうか
 	bool skillAble() { return false; }
+
+	// 世界を設定しなおす
+	void setWorld(World* world);
+};
+
+// キャラのGroupIDを変える
+class ChangeGroupEvent :
+	public EventElement
+{
+private:
+
+	// パラメータ
+	std::vector<std::string> m_param;
+
+	int m_groupId;
+
+	// 対象のキャラ
+	Character* m_character_p;
+
+public:
+	ChangeGroupEvent(World* world, std::vector<std::string> param);
+
+	EVENT_RESULT play();
+
+	// ハートのスキル発動が可能かどうか
+	bool skillAble() { return false; }
+
+	// 世界を設定しなおす
+	void setWorld(World* world);
 };
 
 // 特定のキャラのHPが0になるまで戦う
@@ -148,11 +197,35 @@ class DeadCharacterEvent :
 {
 private:
 
+	// パラメータ
+	std::vector<std::string> m_param;
+
 	// 対象のキャラ
 	Character* m_character_p;
 
 public:
 	DeadCharacterEvent(World* world, std::vector<std::string> param);
+
+	EVENT_RESULT play();
+
+	// ハートのスキル発動が可能かどうか
+	bool skillAble() { return true; }
+
+	// 世界を設定しなおす
+	void setWorld(World* world);
+};
+
+// 特定のグループが全滅するまで戦う
+class DeadGroupEvent :
+	public EventElement
+{
+private:
+
+	// 対象のグループ
+	int m_groupId;
+
+public:
+	DeadGroupEvent(World* world, std::vector<std::string> param);
 
 	EVENT_RESULT play();
 

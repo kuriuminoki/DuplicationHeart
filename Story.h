@@ -45,7 +45,7 @@ public:
 	ObjectLoader* getObjectLoader() { return m_objectLoader; }
 
 	// ƒZƒbƒ^
-	void setWorld(World* world) { m_world_p = world; }
+	void setWorld(World* world);
 };
 
 
