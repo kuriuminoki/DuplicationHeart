@@ -5,11 +5,21 @@
 #include "Object.h"
 #include "Camera.h"
 #include "Brain.h"
+#include "ObjectLoader.h"
 #include "Define.h"
 #include "DxLib.h"
 
 
 using namespace std;
+
+
+// 色の名前から色ハンドルを取得
+int str2color(string colorName) {
+	if (colorName == "white") { return WHITE; }
+	else if (colorName == "gray") { return GRAY; }
+	else if (colorName == "lightBlue") { return LIGHT_BLUE; }
+	return -1;
+}
 
 
 // 一行分のテキストから一行分のデータに変換
@@ -189,14 +199,6 @@ map<string, string> CsvReader2::findOne(const char* domainName, const char* colu
 }
 
 
-// 色の名前から色ハンドルを取得
-int str2color(string colorName) {
-	if (colorName == "white") { return WHITE; }
-	else if (colorName == "gray") { return GRAY; }
-	else if (colorName == "lightBlue") { return LIGHT_BLUE; }
-	return -1;
-}
-
 /*
 * area/area?.csvからキャラクターやオブジェクトをロードする
 * Character等をnewするため、このクラスをnewした後はgetして削除すること。
@@ -232,9 +234,13 @@ AreaReader::AreaReader(int fromAreaNum, int toAreaNum, SoundPlayer* soundPlayer)
 	}
 	// OBJECT
 	data = csvReader2.getDomainData("OBJECT:");
+	ObjectLoader objectLoader;
 	for (unsigned int i = 0; i < data.size(); i++) {
-		loadObject(data[i]);
+		objectLoader.addObject(data[i]);
 	}
+	pair<vector<Object*>, vector<Object*> > p = objectLoader.getObjects();
+	m_objects = p.first;
+	m_doorObjects = p.second;
 	// BACKGROUND
 	data = csvReader2.getDomainData("BACKGROUND:");
 	for (unsigned int i = 0; i < data.size(); i++) {
@@ -329,37 +335,6 @@ void AreaReader::loadCharacter(std::map<std::string, std::string> dataMap) {
 	if (character != NULL && controller != NULL) { 
 		m_characters.push_back(character);
 		m_characterControllers.push_back(controller);
-	}
-}
-
-// オブジェクトのロード
-void AreaReader::loadObject(std::map<std::string, std::string> dataMap) {
-	string name = dataMap["name"];
-	int x1 = stoi(dataMap["x1"]);
-	int y1 = stoi(dataMap["y1"]);
-	int x2 = stoi(dataMap["x2"]);
-	int y2 = stoi(dataMap["y2"]);
-	string graph = dataMap["graph"];
-	string color = dataMap["color"];
-	int hp = stoi(dataMap["hp"]);
-	string other = dataMap["other"];
-
-	int colorHandle = str2color(color);
-	Object* object = NULL;
-	if (name == "Box") {
-		object = new BoxObject(x1, y1, x2, y2, colorHandle, hp);
-	}
-	else if (name == "Triangle") {
-		bool leftDown = false;
-		if (other == "leftDown") { leftDown = true; }
-		object = new TriangleObject(x1, y1, x2, y2, colorHandle, leftDown, hp);
-	}
-	if (object != NULL) { m_objects.push_back(object); }
-
-	// 扉オブジェクトは別に分ける
-	if (name == "Door") {
-		graph = "picture/stageMaterial/" + graph;
-		m_doorObjects.push_back(new DoorObject(x1, y1, x2, y2, graph.c_str(), stoi(other)));
 	}
 }
 

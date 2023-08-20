@@ -45,6 +45,14 @@ void ConversationDrawer::draw() {
 	// 上端
 	static const int Y1 = 551;
 
+	// 会話終了時
+	int finishCnt = m_conversation->getFinishCnt() * 8;
+	if (finishCnt > 0) {
+		// フキダシ
+		DrawExtendGraph(EDGE, Y1 + finishCnt, GAME_WIDE - EDGE, GAME_HEIGHT - EDGE - finishCnt, m_frameHandle, TRUE);
+		return;
+	}
+
 	// フキダシ
 	DrawExtendGraph(EDGE, Y1, GAME_WIDE - EDGE, GAME_HEIGHT - EDGE, m_frameHandle, TRUE);
 

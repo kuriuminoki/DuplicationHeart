@@ -6,6 +6,7 @@
 class Event;
 class World;
 class SoundPlayer;
+class ObjectLoader;
 
 // ストーリ－
 class Story {
@@ -26,6 +27,9 @@ private:
 	// クリア任意イベント
 	std::vector<Event*> m_subEvent;
 
+	// オブジェクトのデータ
+	ObjectLoader* m_objectLoader;
+
 public:
 	Story(int storyNum, World* world, SoundPlayer* soundPlayer);
 	~Story();
@@ -36,6 +40,12 @@ public:
 
 	// ハートのスキル発動が可能かどうか
 	bool skillAble();
+
+	// ゲッタ
+	ObjectLoader* getObjectLoader() { return m_objectLoader; }
+
+	// セッタ
+	void setWorld(World* world);
 };
 
 

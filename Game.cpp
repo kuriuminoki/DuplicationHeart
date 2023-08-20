@@ -27,8 +27,9 @@ CharacterData::CharacterData(const char* name) {
 GameData::GameData() {
 	m_saveFilePath = "data/save/savedata1.dat";
 
-	m_areaNum = 0;
-	m_storyNum = 0;
+	m_areaNum = 1;
+	m_storyNum = 1;
+	m_soundVolume = 50;
 
 	// 主要キャラを設定
 	m_characterData.push_back("ハート");
@@ -72,11 +73,10 @@ Game::Game() {
 
 	// サウンドプレイヤー
 	m_soundPlayer = new SoundPlayer();
-	m_soundPlayer->setVolume(50);
+	m_soundPlayer->setVolume(m_gameData->getSoundVolume());
 
 	// 世界
-	int startAreaNum = 0;
-	m_world = new World(-1, startAreaNum, m_soundPlayer);
+	m_world = new World(-1, m_gameData->getAreaNum(), m_soundPlayer);
 
 	// データを世界に反映
 	m_gameData->asignWorld(m_world);
@@ -97,14 +97,22 @@ Game::~Game() {
 bool Game::play() {
 
 	// これ以上ストーリーを進ませない（テスト用）
-	if (m_gameData->getStoryNum() == 1) {
+	if (m_gameData->getStoryNum() == 5) {
+		m_world->battle();
+		m_soundPlayer->play();
 		return false;
 	}
 
 	// スキル発動 Fキーかつスキル未発動状態かつ発動可能なイベント中（もしくはイベント中でない）かつエリア移動中でない
-	if (controlF() == 1 && m_skill == NULL && m_story->skillAble() && m_world->getBrightValue() == 255 && m_world->getCharacterWithName("ハート")->getHp() > 0) {
-		m_world->setSkillFlag(true);
-		m_skill = new HeartSkill(3, m_world, m_soundPlayer);
+	if (m_gameData->getStoryNum() >= 4) { // ストーリーの最初は発動できない
+		if (controlF() == 1 && m_skill == NULL) { // Fキーで発動、ただしスキル身発動時
+			if (m_story->skillAble() && m_world->getBrightValue() == 255) { // 特定のイベント時やエリア移動中はダメ
+				if (m_world->getCharacterWithName("ハート")->getHp() > 0) {
+					m_world->setSkillFlag(true);
+					m_skill = new HeartSkill(3, m_world, m_soundPlayer);
+				}
+			}
+		}
 	}
 	
 	// スキル発動中
@@ -122,6 +130,7 @@ bool Game::play() {
 		m_gameData->setStoryNum(m_gameData->getStoryNum() + 1);
 		delete m_story;
 		m_story = new Story(m_gameData->getStoryNum(), m_world, m_soundPlayer);
+		m_world->addObject(m_story->getObjectLoader());
 	}
 
 	// 音
@@ -136,6 +145,8 @@ bool Game::play() {
 		m_world = new World(m_gameData->getAreaNum(), nextAreaNum, m_soundPlayer);
 		m_gameData->asignWorld(m_world);
 		m_gameData->setAreaNum(nextAreaNum);
+		m_world->addObject(m_story->getObjectLoader());
+		m_story->setWorld(m_world);
 		return true;
 	}
 	return false;

@@ -63,6 +63,7 @@ public:
 	virtual void setTarget(Character* character) {  }
 };
 
+
 /*
 * キーボードでキャラの操作を命令するクラス
 */
@@ -87,6 +88,7 @@ public:
 	int bulletOrder();
 };
 
+
 /*
 * 全く動かないAI
 */
@@ -106,6 +108,7 @@ public:
 	int slashOrder() { return 0; }
 	int bulletOrder() { return 0; }
 };
+
 
 /*
 *  普通に敵と戦うよう命令するＡＩのクラス
@@ -188,6 +191,9 @@ protected:
 };
 
 
+/*
+* ParabolaBulletを使うAI
+*/
 class ParabolaAI :
 	public NormalAI
 {

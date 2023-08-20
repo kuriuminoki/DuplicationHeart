@@ -15,6 +15,10 @@ class GraphHandles;
 class Conversation {
 private:
 
+	// 終了時、少しだけ待機時間
+	const int FINISH_COUNT = 30;
+	int m_finishCnt;
+
 	// イベント終了したか
 	bool m_finishFlag;
 
@@ -63,6 +67,7 @@ public:
 	int getTextSize() const;
 	GraphHandle* getGraph() const;
 	inline 	std::string getSpeakerName() const { return m_speakerName; }
+	inline int getFinishCnt() const { return m_finishCnt; }
 	inline bool getFinishFlag() const { return m_finishFlag; }
 	inline int getTextNow() const { return m_textNow; }
 	inline int getCnt() const { return m_cnt; }
