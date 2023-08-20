@@ -108,6 +108,9 @@
     <ClCompile Include="ControllerRecorder.cpp">
       <Filter>ソース ファイル\api</Filter>
     </ClCompile>
+    <ClCompile Include="ObjectLoader.cpp">
+      <Filter>ソース ファイル\api</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Define.h">
@@ -180,6 +183,9 @@
       <Filter>ヘッダー ファイル\api</Filter>
     </ClInclude>
     <ClInclude Include="Brain.h">
+      <Filter>ヘッダー ファイル\api</Filter>
+    </ClInclude>
+    <ClInclude Include="ObjectLoader.h">
       <Filter>ヘッダー ファイル\api</Filter>
     </ClInclude>
   </ItemGroup>

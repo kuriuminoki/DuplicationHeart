@@ -7,6 +7,9 @@
 #include <sstream>
 
 
+int str2color(std::string colorName);
+
+
 class CsvReader {
 private:
 	/*

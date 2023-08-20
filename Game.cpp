@@ -27,8 +27,9 @@ CharacterData::CharacterData(const char* name) {
 GameData::GameData() {
 	m_saveFilePath = "data/save/savedata1.dat";
 
-	m_areaNum = 0;
-	m_storyNum = 0;
+	m_areaNum = 1;
+	m_storyNum = 1;
+	m_soundVolume = 50;
 
 	// 主要キャラを設定
 	m_characterData.push_back("ハート");
@@ -72,11 +73,10 @@ Game::Game() {
 
 	// サウンドプレイヤー
 	m_soundPlayer = new SoundPlayer();
-	m_soundPlayer->setVolume(50);
+	m_soundPlayer->setVolume(m_gameData->getSoundVolume());
 
 	// 世界
-	int startAreaNum = 0;
-	m_world = new World(-1, startAreaNum, m_soundPlayer);
+	m_world = new World(-1, m_gameData->getAreaNum(), m_soundPlayer);
 
 	// データを世界に反映
 	m_gameData->asignWorld(m_world);
@@ -97,7 +97,7 @@ Game::~Game() {
 bool Game::play() {
 
 	// これ以上ストーリーを進ませない（テスト用）
-	if (m_gameData->getStoryNum() == 1) {
+	if (m_gameData->getStoryNum() == 3) {
 		return false;
 	}
 
@@ -122,6 +122,7 @@ bool Game::play() {
 		m_gameData->setStoryNum(m_gameData->getStoryNum() + 1);
 		delete m_story;
 		m_story = new Story(m_gameData->getStoryNum(), m_world, m_soundPlayer);
+		m_world->addObject(m_story->getObjectLoader());
 	}
 
 	// 音
@@ -136,6 +137,8 @@ bool Game::play() {
 		m_world = new World(m_gameData->getAreaNum(), nextAreaNum, m_soundPlayer);
 		m_gameData->asignWorld(m_world);
 		m_gameData->setAreaNum(nextAreaNum);
+		m_world->addObject(m_story->getObjectLoader());
+		m_story->setWorld(m_world);
 		return true;
 	}
 	return false;

@@ -1,8 +1,10 @@
 #ifndef WORLD_H_INCLUDED
 #define WORLD_H_INCLUDE
 
+
 #include <vector>
 #include <string>
+
 
 class CharacterController;
 class CharacterAction;
@@ -14,6 +16,8 @@ class Animation;
 class SoundPlayer;
 class Conversation;
 class Brain;
+class ObjectLoader;
+
 
 class World {
 private:
@@ -96,6 +100,9 @@ public:
 	// セッタ
 	inline void setSkillFlag(bool skillFlag) { m_skillFlag = skillFlag; }
 	inline void setFocusId(int id) { m_focusId = id; }
+
+	// ストーリーやイベントによる追加オブジェクト
+	void addObject(ObjectLoader* objectLoader);
 
 	//デバッグ
 	void debug(int x, int y, int color) const;

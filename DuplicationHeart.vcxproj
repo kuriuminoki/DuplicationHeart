@@ -170,6 +170,7 @@
     <ClCompile Include="Main.cpp" />
     <ClCompile Include="Object.cpp" />
     <ClCompile Include="ObjectDrawer.cpp" />
+    <ClCompile Include="ObjectLoader.cpp" />
     <ClCompile Include="Sound.cpp" />
     <ClCompile Include="Story.cpp" />
     <ClCompile Include="Text.cpp" />
@@ -196,6 +197,7 @@
     <ClInclude Include="GraphHandle.h" />
     <ClInclude Include="Object.h" />
     <ClInclude Include="ObjectDrawer.h" />
+    <ClInclude Include="ObjectLoader.h" />
     <ClInclude Include="Sound.h" />
     <ClInclude Include="Story.h" />
     <ClInclude Include="Text.h" />

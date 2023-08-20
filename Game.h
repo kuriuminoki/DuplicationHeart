@@ -41,6 +41,9 @@ private:
 	// 今やっているストーリー
 	int m_storyNum;
 
+	// 音量
+	int m_soundVolume;
+
 public:
 	GameData();
 	GameData(const char* saveFilePath);
@@ -48,10 +51,12 @@ public:
 	// ゲッタ
 	inline int getAreaNum() const { return m_areaNum; }
 	inline int getStoryNum() const { return m_storyNum; }
+	inline int getSoundVolume() const { return m_soundVolume; }
 
 	// セッタ
 	inline void setAreaNum(int areaNum) { m_areaNum = areaNum; }
 	inline void setStoryNum(int storyNum) { m_storyNum = storyNum; }
+	inline void setSoundVolume(int soundVolume) { m_soundVolume = soundVolume; }
 
 	// 自身のデータをWorldにデータ反映させる
 	void asignWorld(World* world);

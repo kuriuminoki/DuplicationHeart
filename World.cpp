@@ -12,6 +12,7 @@
 #include "Text.h"
 #include "Brain.h"
 #include "ControllerRecorder.h"
+#include "ObjectLoader.h"
 #include "DxLib.h"
 #include <algorithm>
 
@@ -178,6 +179,15 @@ World::World(const World* original) {
 	}
 	m_backGroundGraph = original->getBackGroundGraph();
 	m_backGroundColor = original->getBackGroundColor();
+}
+
+// ストーリーやイベントによる追加オブジェクト
+void World::addObject(ObjectLoader* objectLoader) {
+	pair<vector<Object*>, vector<Object*> > p = objectLoader->getObjects(m_areaNum);
+	// 壁や床
+	m_stageObjects.insert(m_stageObjects.end(), p.first.begin(), p.first.end());
+	// ドア
+	m_doorObjects.insert(m_doorObjects.end(), p.second.begin(), p.second.end());
 }
 
 std::vector<CharacterController*> World::getCharacterControllers() const {
