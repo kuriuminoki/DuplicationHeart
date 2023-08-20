@@ -232,5 +232,14 @@ public:
 	bool needSearchFollow() const;
 };
 
+/*
+* ParabolaBullet‚ðŽg‚¤AI
+*/
+class FollowParabolaAI :
+	public FollowNormalAI
+{
+	void bulletTargetPoint(int& x, int& y);
+};
+
 
 #endif

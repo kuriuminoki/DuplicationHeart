@@ -3,7 +3,9 @@
 #include "CharacterAction.h"
 #include "Camera.h"
 #include "Control.h"
+#include "Object.h"
 #include "DxLib.h"
+#include <cmath>
 
 
 using namespace std;
@@ -283,7 +285,16 @@ void NormalAI::searchTarget(const Character* character) {
 
 // 攻撃対象を変更する必要があるならtrueでアピールする。
 bool NormalAI::needSearchTarget() const {
-	if (m_target_p == NULL || m_target_p->getHp() == 0 || GetRand(99) == 0 || m_target_p->getGroupId() == -1) {
+	// ターゲットを決めていないから
+	if (m_target_p == NULL || m_target_p->getHp() == 0) {
+		return true;
+	}
+	// 気まぐれで、or不適切な相手だから
+	if (GetRand(99) == 0 || m_target_p->getGroupId() == -1) {
+		return true;
+	}
+	// 今のターゲットは距離が遠いから
+	if (abs(m_target_p->getX() - m_characterAction_p->getCharacter()->getX()) > TARGET_DISTANCE) {
 		return true;
 	}
 	return false;
@@ -298,8 +309,77 @@ void ParabolaAI::bulletTargetPoint(int& x, int& y) {
 		y = 0;
 	}
 	else { // ターゲットに向かって射撃攻撃
-		x = m_target_p->getCenterX() + (GetRand(BULLET_ERROR) - BULLET_ERROR / 2);
-		y = m_target_p->getCenterY() + (GetRand(BULLET_ERROR) - BULLET_ERROR / 2) - 200;
+		const int G = -ParabolaBullet::G;
+		int dx = m_target_p->getCenterX() - m_characterAction_p->getCharacter()->getCenterX();
+		int gx = abs(dx);
+		int dy = -(m_target_p->getCenterY() - m_characterAction_p->getCharacter()->getCenterY());
+		int v = m_characterAction_p->getCharacter()->getAttackInfo()->bulletSpeed();
+		double A = (G * gx * gx) / (2 * v * v);
+		double a = gx / A;
+		double b = 1 - (dy / A);
+		double route = a * a / 4 - b;
+		if (route >= 0) {
+			double t = -sqrt(route) - (a / 2);
+			double r = atan(t);
+			if (dx > 0) {
+				x = (int)(m_characterAction_p->getCharacter()->getCenterX() + v * cos(r));
+			}
+			else {
+				x = (int)(m_characterAction_p->getCharacter()->getCenterX() - v * cos(r));
+			}
+			y = (int)(m_characterAction_p->getCharacter()->getCenterY() - v * sin(r)) - GetRand(100);
+		}
+		else {
+			// 射程外なら45度で投げる
+			double r = 3.14 / 4;
+			if (dx > 0) {
+				x = (int)(m_characterAction_p->getCharacter()->getCenterX() + v * cos(r));
+			}
+			else {
+				x = (int)(m_characterAction_p->getCharacter()->getCenterX() - v * cos(r));
+			}
+			y = (int)(m_characterAction_p->getCharacter()->getCenterY() - v * sin(r)) + 50 - GetRand(100);
+		}
+	}
+}
+
+void FollowParabolaAI::bulletTargetPoint(int& x, int& y) {
+	if (m_target_p == NULL) {
+		x = 0;
+		y = 0;
+	}
+	else { // ターゲットに向かって射撃攻撃
+		const int G = -ParabolaBullet::G;
+		int dx = m_target_p->getCenterX() - m_characterAction_p->getCharacter()->getCenterX();
+		int gx = abs(dx);
+		int dy = -(m_target_p->getCenterY() - m_characterAction_p->getCharacter()->getCenterY());
+		int v = m_characterAction_p->getCharacter()->getAttackInfo()->bulletSpeed();
+		double A = (G * gx * gx) / (2 * v * v);
+		double a = gx / A;
+		double b = 1 - (dy / A);
+		double route = a * a / 4 - b;
+		if (route >= 0) {
+			double t = -sqrt(route) - (a / 2);
+			double r = atan(t);
+			if (dx > 0) {
+				x = (int)(m_characterAction_p->getCharacter()->getCenterX() + v * cos(r));
+			}
+			else {
+				x = (int)(m_characterAction_p->getCharacter()->getCenterX() - v * cos(r));
+			}
+			y = (int)(m_characterAction_p->getCharacter()->getCenterY() - v * sin(r)) - GetRand(100);
+		}
+		else {
+			// 射程外なら45度で投げる
+			double r = 3.14 / 4;
+			if (dx > 0) {
+				x = (int)(m_characterAction_p->getCharacter()->getCenterX() + v * cos(r));
+			}
+			else {
+				x = (int)(m_characterAction_p->getCharacter()->getCenterX() - v * cos(r));
+			}
+			y = (int)(m_characterAction_p->getCharacter()->getCenterY() - v * sin(r)) + 50 - GetRand(100);
+		}
 	}
 }
 

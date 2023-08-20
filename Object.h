@@ -281,12 +281,15 @@ class ParabolaBullet :
 {
 private:
 	GraphHandle* m_handle;
-	const int G = 2;
 public:
+	static const int G = 2;
+
 	ParabolaBullet(int x, int y, GraphHandle* handle, int gx, int gy, AttackInfo* attackInfo);
 	ParabolaBullet(int x, int y, GraphHandle* handle, int gx, int gy);
 
 	Object* createCopy();
+
+	void debug(int x, int y, int color) const;
 
 	inline void setGraphHandle(GraphHandle* handle) { m_handle = handle; }
 
@@ -294,7 +297,7 @@ public:
 	void action();
 
 	// ‰æ‘œƒnƒ“ƒhƒ‹‚ğ•Ô‚·
-	GraphHandle* getHandle() const { return m_handle; }
+	GraphHandle* getHandle() const;
 
 	// ‰æ‘œ‚Ì‘å‚«‚³‚ğ©“®’²ß‚·‚é
 	bool extendGraph() const { return false; }
