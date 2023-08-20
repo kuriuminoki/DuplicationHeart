@@ -395,16 +395,20 @@ FollowNormalAI::FollowNormalAI() :
 
 Brain* FollowNormalAI::createCopy(std::vector<Character*> characters, const Camera* camera) {
 	FollowNormalAI* res = new FollowNormalAI();
-	for (unsigned int i = 0; i < characters.size(); i++) {
-		if (m_follow_p->getId() == characters[i]->getId()) {
-			res->setFollow(characters[i]);
-			break;
+	if (m_follow_p != NULL) {
+		for (unsigned int i = 0; i < characters.size(); i++) {
+			if (m_follow_p->getId() == characters[i]->getId()) {
+				res->setFollow(characters[i]);
+				break;
+			}
 		}
 	}
-	for (unsigned int i = 0; i < characters.size(); i++) {
-		if (m_target_p->getId() == characters[i]->getId()) {
-			res->setTarget(characters[i]);
-			break;
+	if (m_target_p != NULL) {
+		for (unsigned int i = 0; i < characters.size(); i++) {
+			if (m_target_p->getId() == characters[i]->getId()) {
+				res->setTarget(characters[i]);
+				break;
+			}
 		}
 	}
 	setParam(res);
