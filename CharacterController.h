@@ -34,6 +34,9 @@ protected:
 	ControllerRecorder* m_slashRecorder;
 	ControllerRecorder* m_bulletRecorder;
 
+	// ダメージの記録 変化したらそれ以降のレコードを削除する
+	ControllerRecorder* m_damageRecorder;
+
 public:
 	CharacterController();
 	CharacterController(Brain* brain, CharacterAction* characterAction);
@@ -53,6 +56,7 @@ public:
 	inline const ControllerRecorder* getSquatRecorder() const { return m_squatRecorder; }
 	inline const ControllerRecorder* getSlashRecorder() const { return m_slashRecorder; }
 	inline const ControllerRecorder* getBulletRecorder() const { return m_bulletRecorder; }
+	inline const ControllerRecorder* getDamageRecorder() const { return m_damageRecorder; }
 
 	// セッタ
 	void setAction(CharacterAction* action);
@@ -62,6 +66,7 @@ public:
 	void setSquatRecorder(ControllerRecorder* recorder);
 	void setSlashRecorder(ControllerRecorder* recorder);
 	void setBulletRecorder(ControllerRecorder* recorder);
+	void setDamageRecorder(ControllerRecorder* recorder);
 	void setTarget(Character* character);
 	void setDuplicationFlag(bool flag) { m_duplicationFlag = flag; }
 

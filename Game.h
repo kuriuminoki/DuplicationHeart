@@ -85,8 +85,15 @@ private:
 	// 複製のキャラID スキル終了時に消すため
 	std::vector<int> m_duplicationId;
 
+	// サウンドプレイヤー
+	SoundPlayer* m_soundPlayer_p;
+
+	// 効果音
+	int m_sound;
+
 public:
-	HeartSkill(int loopNum, World* world);
+	HeartSkill(int loopNum, World* world, SoundPlayer* soundPlayer);
+	~HeartSkill();
 
 	// ゲッタ
 	inline int getLoopNum() const { return m_loopNum; }

@@ -245,6 +245,7 @@ void World::createRecorder() {
 		m_characterControllers[i]->setSquatRecorder(new ControllerRecorder(0));
 		m_characterControllers[i]->setSlashRecorder(new ControllerRecorder(0));
 		m_characterControllers[i]->setBulletRecorder(new ControllerRecorder(0));
+		m_characterControllers[i]->setDamageRecorder(new ControllerRecorder(0));
 	}
 }
 

@@ -102,6 +102,12 @@
     <ClCompile Include="TextDrawer.cpp">
       <Filter>ソース ファイル\ui</Filter>
     </ClCompile>
+    <ClCompile Include="Brain.cpp">
+      <Filter>ソース ファイル\api</Filter>
+    </ClCompile>
+    <ClCompile Include="ControllerRecorder.cpp">
+      <Filter>ソース ファイル\api</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Define.h">
@@ -169,6 +175,12 @@
     </ClInclude>
     <ClInclude Include="TextDrawer.h">
       <Filter>ヘッダー ファイル\ui</Filter>
+    </ClInclude>
+    <ClInclude Include="ControllerRecorder.h">
+      <Filter>ヘッダー ファイル\api</Filter>
+    </ClInclude>
+    <ClInclude Include="Brain.h">
+      <Filter>ヘッダー ファイル\api</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

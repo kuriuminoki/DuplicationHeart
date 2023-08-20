@@ -24,6 +24,9 @@ private:
 	// 入力された時間の長さ（例えば1Fだけの入力なら1）
 	int m_timeLength;
 
+	// 攻撃用
+	int m_gx, m_gy;
+
 public:
 	ControllerRecord(int startTime, int input);
 
@@ -31,6 +34,12 @@ public:
 	int getInput() { return m_input; }
 	int getStartTime() { return m_startTime; }
 	int getTimeLength() { return m_timeLength; }
+	int getGx() { return m_gx; }
+	int getGy() { return m_gy; }
+
+	// セッタ
+	void setGx(int gx) { m_gx = gx; }
+	void setGy(int gy) { m_gy = gy; }
 
 	// 入力の終了時刻（終了時刻ちょうどでは入力なし）
 	int getEndTime() { return m_startTime + m_timeLength; }
@@ -92,6 +101,12 @@ public:
 
 	// time以降のレコードを削除する
 	void discardRecord();
+
+	// 攻撃目標を設定
+	void setGoal(int gx, int gy);
+
+	// 攻撃目標を取得
+	void getGoal(int& gx, int& gy);
 };
 
 

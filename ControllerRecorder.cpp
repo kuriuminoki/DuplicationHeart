@@ -12,6 +12,7 @@ ControllerRecord::ControllerRecord(int startTime, int input) {
 	m_startTime = startTime;
 	m_timeLength = 1;
 	m_input = input;
+	m_gx = 0; m_gy = 0;
 }
 
 
@@ -108,4 +109,18 @@ void ControllerRecorder::discardRecord() {
 	if (m_records.size() > 0) {
 		m_records.back()->setEndTime(m_time);
 	}
+}
+
+// UŒ‚–Ú•W‚ðÝ’è
+void ControllerRecorder::setGoal(int gx, int gy) {
+	if (!existRecord()) { return; }
+	m_records.back()->setGx(gx);
+	m_records.back()->setGy(gy);
+}
+
+// UŒ‚–Ú•W‚ðŽæ“¾
+void ControllerRecorder::getGoal(int& gx, int& gy) {
+	if (!existRecord()) { return; }
+	gx = m_records[m_index]->getGx();
+	gy = m_records[m_index]->getGy();
 }

@@ -104,7 +104,7 @@ bool Game::play() {
 	// スキル発動 Fキーかつスキル未発動状態かつ発動可能なイベント中（もしくはイベント中でない）かつエリア移動中でない
 	if (controlF() == 1 && m_skill == NULL && m_story->skillAble() && m_world->getBrightValue() == 255 && m_world->getCharacterWithName("ハート")->getHp() > 0) {
 		m_world->setSkillFlag(true);
-		m_skill = new HeartSkill(3, m_world);
+		m_skill = new HeartSkill(3, m_world, m_soundPlayer);
 	}
 	
 	// スキル発動中
@@ -145,7 +145,7 @@ bool Game::play() {
 /*
 * ハートのスキル
 */
-HeartSkill::HeartSkill(int loopNum, World* world) {
+HeartSkill::HeartSkill(int loopNum, World* world, SoundPlayer* soundPlayer) {
 	m_loopNum = loopNum;
 	m_loopNow = 0;
 	m_world_p = world;
@@ -159,6 +159,15 @@ HeartSkill::HeartSkill(int loopNum, World* world) {
 
 	// 最初の複製
 	m_duplicationWorld = createDuplicationWorld(m_world_p);
+
+	// 効果音
+	m_soundPlayer_p = soundPlayer;
+	m_sound = LoadSoundMem("sound/battle/skill.wav");
+	m_soundPlayer_p->pushSoundQueue(m_sound);
+}
+
+HeartSkill::~HeartSkill() {
+	DeleteSoundMem(m_sound);
 }
 
 bool HeartSkill::play() {
@@ -168,6 +177,7 @@ bool HeartSkill::play() {
 		m_cnt = 0;
 		m_loopNow++;
 		m_world_p->initRecorder();
+		m_soundPlayer_p->pushSoundQueue(m_sound);
 
 		if (m_loopNow < m_loopNum) {
 			// duplicationWorldを新たに作り、worldと以前のduplicationWorldの操作記録をコピーする
@@ -240,6 +250,7 @@ void HeartSkill::createDuplicationHeart() {
 	controller->setSquatRecorder(new ControllerRecorder(0));
 	controller->setSlashRecorder(new ControllerRecorder(0));
 	controller->setBulletRecorder(new ControllerRecorder(0));
+	//controller->setDamageRecorder(new ControllerRecorder(0));
 	m_world_p->pushCharacter(duplicationHeart, controller);
 	m_world_p->setFocusId(duplicationHeart->getId());
 }
