@@ -301,17 +301,12 @@ void AreaReader::loadCharacter(std::map<std::string, std::string> dataMap) {
 	}
 
 	// アクションを作成
-	CharacterAction* action = NULL;
 	SoundPlayer* soundPlayer = sound ? m_soundPlayer_p : NULL;
-	if (actionName == "stick") {
-		action = new StickAction(character, soundPlayer);
-	}
-
+	CharacterAction* action = createAction(actionName, character, soundPlayer);
 	if (action == NULL) { return; }
 
 	// Brainを作成
 	Brain* brain = createBrain(brainName, m_camera_p);
-
 	if (brain == NULL) { return; }
 
 	// コントローラを作成

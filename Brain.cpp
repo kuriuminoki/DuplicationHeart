@@ -22,7 +22,7 @@ const char* FollowParabolaAI::BRAIN_NAME = "FollowParabolaAI";
 
 // ƒNƒ‰ƒX–¼‚©‚çBrain‚ğì¬‚·‚éŠÖ”
 Brain* createBrain(const string brainName, const Camera* camera_p) {
-	Brain* brain = NULL;
+	Brain* brain = nullptr;
 	if (brainName == KeyboardBrain::BRAIN_NAME) {
 		brain = new KeyboardBrain(camera_p);
 	}

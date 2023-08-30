@@ -3,6 +3,7 @@
 
 
 #include <vector>
+#include <string>
 
 
 class Character;
@@ -94,6 +95,9 @@ protected:
 	int m_damageCnt;
 
 public:
+	static const char* ACTION_NAME;
+	virtual const char* getActionName() { return this->ACTION_NAME; }
+
 	CharacterAction();
 	CharacterAction(Character* character, SoundPlayer* soundPlayer_p);
 
@@ -196,6 +200,10 @@ protected:
 };
 
 
+// ƒNƒ‰ƒX–¼‚©‚çCharacterAction‚ðì¬‚·‚éŠÖ”
+CharacterAction* createAction(const std::string actionName, Character* character, SoundPlayer* soundPlayer_p);
+
+
 /*
 * ‹ó‚ð”ò‚Î‚È‚¢•’Ê‚Ì–_lŠÔ
 */
@@ -214,6 +222,9 @@ private:
 	void switchHandle();
 
 public:
+	static const char* ACTION_NAME;
+	const char* getActionName() { return this->ACTION_NAME; }
+
 	StickAction(Character* character, SoundPlayer* soundPlayer_p);
 
 	CharacterAction* createCopy(std::vector<Character*> characters);
