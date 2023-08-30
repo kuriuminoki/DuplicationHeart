@@ -310,11 +310,9 @@ void AreaReader::loadCharacter(std::map<std::string, std::string> dataMap) {
 	if (brain == NULL) { return; }
 
 	// コントローラを作成
-	CharacterController* controller = NULL;
-	if (controllerName == "normal") {
-		controller = new NormalController(brain, action);
-	}
+	CharacterController* controller = createController(controllerName, brain, action);
 
+	// 完成したキャラとコントローラを保存
 	if (character != NULL && controller != NULL) { 
 		m_characters.push_back(character);
 		m_characterControllers.push_back(controller);
