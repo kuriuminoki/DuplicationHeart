@@ -2,6 +2,7 @@
 #define GAME_H_INCLUDED
 
 #include <vector>
+#include <string>
 
 class SoundPlayer;
 class World;
@@ -12,8 +13,40 @@ class Character;
 // キャラのセーブデータ
 class CharacterData {
 private:
+
+	// 名前
 	const char* m_name;
+
+	// HP
 	int m_hp;
+
+	// ID
+	int m_id;
+
+	// GroupID
+	int m_groupId;
+
+	// どこのエリアにいるか
+	int m_areaNum;
+
+	// 座標
+	int m_x, m_y;
+
+	// Brainのクラス名
+	std::string m_brainName;
+
+	// 攻撃対象の名前 いないなら空文字
+	std::string m_target_name;
+
+	// 追跡対象の名前 いないなら空文字
+	std::string m_follow_name;
+
+	// CharacterActionのクラス名
+	std::string m_actionName;
+
+	// CharacterControllerのクラス名
+	std::string m_controllerName;
+
 public:
 	CharacterData(const char* name);
 

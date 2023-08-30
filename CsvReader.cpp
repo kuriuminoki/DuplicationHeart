@@ -310,22 +310,7 @@ void AreaReader::loadCharacter(std::map<std::string, std::string> dataMap) {
 	if (action == NULL) { return; }
 
 	// BrainÇçÏê¨
-	Brain* brain = NULL;
-	if (brainName == "Keyboard") {
-		brain = new KeyboardBrain(m_camera_p);
-	}
-	else if (brainName == "NormalAI") {
-		brain = new NormalAI();
-	}
-	else if (brainName == "FollowNormalAI") {
-		brain = new FollowNormalAI();
-	}
-	else if (brainName == "FollowParabolaAI") {
-		brain = new FollowParabolaAI();
-	}
-	else if (brainName == "Freeze") {
-		brain = new Freeze();
-	}
+	Brain* brain = createBrain(brainName, m_camera_p);
 
 	if (brain == NULL) { return; }
 

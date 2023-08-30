@@ -2,6 +2,7 @@
 #define BRAIN_H_INCLUDED
 
 #include <vector>
+#include <string>
 
 
 class Character;
@@ -16,6 +17,9 @@ protected:
 	const CharacterAction* m_characterAction_p;
 
 public:
+	static const char* BRAIN_NAME;
+	virtual const char* getBrainName() { return this->BRAIN_NAME; }
+
 	Brain();
 
 	virtual Brain* createCopy(std::vector<Character*> characters, const Camera* camera) = 0;
@@ -64,6 +68,10 @@ public:
 };
 
 
+// クラス名からBrainを作成する関数
+Brain* createBrain(const std::string brainName, const Camera* camera_p);
+
+
 /*
 * キーボードでキャラの操作を命令するクラス
 */
@@ -75,6 +83,8 @@ private:
 	const Camera* m_camera_p;
 
 public:
+	static const char* BRAIN_NAME;
+	const char* getBrainName() { return this->BRAIN_NAME; }
 	KeyboardBrain(const Camera* camera);
 	Brain* createCopy(std::vector<Character*> characters, const Camera* camera) { return new KeyboardBrain(camera); }
 	void debug(int x, int y, int color) const;
@@ -96,6 +106,8 @@ class Freeze :
 	public Brain
 {
 public:
+	static const char* BRAIN_NAME;
+	const char* getBrainName() { return this->BRAIN_NAME; }
 	Freeze() { }
 	Brain* createCopy(std::vector<Character*> characters, const Camera* camera) { return new Freeze(); }
 	void debug(int x, int y, int color) const { }
@@ -153,6 +165,8 @@ protected:
 	const int GIVE_UP_MOVE_CNT = 300;
 
 public:
+	static const char* BRAIN_NAME;
+	const char* getBrainName() { return this->BRAIN_NAME; }
 	NormalAI();
 	Brain* createCopy(std::vector<Character*> characters, const Camera* camera);
 	void setParam(NormalAI* brain);
@@ -197,6 +211,9 @@ protected:
 class ParabolaAI :
 	public NormalAI
 {
+public:
+	static const char* BRAIN_NAME;
+	const char* getBrainName() { return this->BRAIN_NAME; }
 	void bulletTargetPoint(int& x, int& y);
 };
 
@@ -212,6 +229,8 @@ private:
 	const int FOLLOW_X_ERROR = 500;
 
 public:
+	static const char* BRAIN_NAME;
+	const char* getBrainName() { return this->BRAIN_NAME; }
 	FollowNormalAI();
 
 	Brain* createCopy(std::vector<Character*> characters, const Camera* camera);
@@ -238,6 +257,9 @@ public:
 class FollowParabolaAI :
 	public FollowNormalAI
 {
+public:
+	static const char* BRAIN_NAME;
+	const char* getBrainName() { return this->BRAIN_NAME; }
 	void bulletTargetPoint(int& x, int& y);
 };
 

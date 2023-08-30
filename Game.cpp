@@ -17,6 +17,16 @@
 CharacterData::CharacterData(const char* name) {
 	m_name = name;
 	m_hp = -1;
+	m_id = -1;
+	m_groupId = -1;
+	m_areaNum = -1;
+	m_x, m_y = -1;
+	m_brainName = Brain::BRAIN_NAME;
+	m_brainName = KeyboardBrain::BRAIN_NAME;
+	m_target_name = "";
+	m_follow_name = "";
+	m_actionName = "";
+	m_controllerName = "";
 }
 
 
@@ -45,6 +55,7 @@ GameData::GameData(const char* saveFilePath):
 
 }
 
+// 自身のデータをWorldにデータ反映させる
 void GameData::asignWorld(World* world) {
 	size_t size = m_characterData.size();
 	for (unsigned int i = 0; i < size; i++) {
@@ -54,6 +65,7 @@ void GameData::asignWorld(World* world) {
 	}
 }
 
+// Worldのデータを自身に反映させる
 void GameData::asignedWorld(World* world) {
 	size_t size = m_characterData.size();
 	for (unsigned int i = 0; i < size; i++) {

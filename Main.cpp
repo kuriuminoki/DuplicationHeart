@@ -6,7 +6,7 @@
 
 
 // フルスクリーンならFALSE
-static int WINDOW = FALSE;
+static int WINDOW = TRUE;
 // マウスを表示するならFALSE
 static int MOUSE_DISP = FALSE;
 
