@@ -40,7 +40,7 @@ protected:
 
 public:
 	static const char* CONTROLLER_NAME;
-	virtual const char* getControllerName() { return this->CONTROLLER_NAME; }
+	virtual const char* getControllerName() const { return this->CONTROLLER_NAME; }
 
 	CharacterController();
 	CharacterController(Brain* brain, CharacterAction* characterAction);
@@ -136,7 +136,7 @@ private:
 	const int JUMP_KEY_LONG = 10;
 public:
 	static const char* CONTROLLER_NAME;
-	const char* getControllerName() { return this->CONTROLLER_NAME; }
+	const char* getControllerName() const { return this->CONTROLLER_NAME; }
 
 	NormalController(Brain* brain, CharacterAction* characterAction);
 

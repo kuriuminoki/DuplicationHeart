@@ -334,7 +334,9 @@ bool NormalAI::needSearchTarget() const {
 	return false;
 }
 
-int  NormalAI::getTargetId() const { return m_target_p == NULL ? NULL : m_target_p->getId(); }
+int  NormalAI::getTargetId() const { return m_target_p == nullptr ? -1 : m_target_p->getId(); }
+
+const char*  NormalAI::getTargetName() const { return m_target_p == nullptr ? "" : m_target_p->getName().c_str(); }
 
 
 void ParabolaAI::bulletTargetPoint(int& x, int& y) {
@@ -449,10 +451,9 @@ Brain* FollowNormalAI::createCopy(std::vector<Character*> characters, const Came
 	return res;
 }
 
-int FollowNormalAI::getFollowId() const {
-	if (m_follow_p == nullptr) { return -1; }
-	return m_follow_p->getId();
-}
+int FollowNormalAI::getFollowId() const { return m_follow_p == nullptr ? -1 : m_follow_p->getId(); }
+
+const char* FollowNormalAI::getFollowName() const { return m_follow_p == nullptr ? "" : m_follow_p->getName().c_str(); }
 
 void FollowNormalAI::moveOrder(int& right, int& left, int& up, int& down) {
 	// åªç›ín

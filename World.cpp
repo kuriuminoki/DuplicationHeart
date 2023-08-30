@@ -13,6 +13,7 @@
 #include "Brain.h"
 #include "ControllerRecorder.h"
 #include "ObjectLoader.h"
+#include "Game.h"
 #include "DxLib.h"
 #include <algorithm>
 
@@ -276,23 +277,50 @@ void World::eraseRecorder() {
 }
 
 
-// キャラの状態を変更する
-void World::asignedCharacterData(const char* name, int hp) {
+// キャラの状態を変更する いないなら作成する
+void World::asignedCharacterData(const char* name, CharacterData& data) {
+	if (data.areaNum() != m_areaNum) { return; }
 	size_t size = m_characters.size();
+	// キャラの設定
 	for (unsigned i = 0; i < size; i++) {
 		if (name == m_characters[i]->getName()) {
-			m_characters[i]->setHp(hp);
+			m_characters[i]->setHp(data.hp());
+			//m_characters[i]->setId(data.id());
+			m_characters[i]->setGroupId(data.groupId());
+			//m_characters[i]->setX(data.x());
+			//m_characters[i]->setY(data.y());
+		}
+	}
+	// コントローラ、アクション、Brainの設定
+	size = m_characterControllers.size();
+	for (unsigned int i = 0; i < size; i++) {
+		if (name == m_characterControllers[i]->getAction()->getCharacter()->getName()) {
+			// いろいろ設定
+			//if (m_characterControllers[i]->getControllerName() != data.controllerName()) {
+			//	delete m_characterControllers[i];
+			//}
 		}
 	}
 }
 
 // キャラの状態を教える
-void World::asignCharacterData(const char* name, int& hp) {
-	size_t size = m_characters.size();
+void World::asignCharacterData(const char* name, CharacterData& data) {
+	size_t size = m_characterControllers.size();
 	for (unsigned i = 0; i < size; i++) {
-		if (name == m_characters[i]->getName()) {
-			hp = m_characters[i]->getHp();
-			return;
+		if (name == m_characterControllers[i]->getAction()->getCharacter()->getName()) {
+			const Character* c = m_characterControllers[i]->getAction()->getCharacter();
+			data.setHp(c->getHp());
+			data.setId(c->getId());
+			data.setGroupId(c->getGroupId());
+			data.setAreaNum(m_areaNum);
+			data.setX(c->getX());
+			data.setY(c->getY());
+			data.setBrainName(m_characterControllers[i]->getBrain()->getBrainName());
+			data.setTargetName(m_characterControllers[i]->getBrain()->getTargetName());
+			data.setFollowName(m_characterControllers[i]->getBrain()->getFollowName());
+			data.setActionName(m_characterControllers[i]->getAction()->getActionName());
+			data.setControllerName(m_characterControllers[i]->getControllerName());
+			break;
 		}
 	}
 }

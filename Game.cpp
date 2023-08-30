@@ -21,10 +21,9 @@ CharacterData::CharacterData(const char* name) {
 	m_groupId = -1;
 	m_areaNum = -1;
 	m_x, m_y = -1;
-	m_brainName = Brain::BRAIN_NAME;
-	m_brainName = KeyboardBrain::BRAIN_NAME;
-	m_target_name = "";
-	m_follow_name = "";
+	m_brainName = "";
+	m_targetName = "";
+	m_followName = "";
 	m_actionName = "";
 	m_controllerName = "";
 }
@@ -59,9 +58,7 @@ GameData::GameData(const char* saveFilePath):
 void GameData::asignWorld(World* world) {
 	size_t size = m_characterData.size();
 	for (unsigned int i = 0; i < size; i++) {
-		int hp = m_characterData[i].hp();
-		if (hp == -1) { continue; }
-		world->asignedCharacterData(m_characterData[i].name(), hp);
+		world->asignedCharacterData(m_characterData[i].name(), m_characterData[i]);
 	}
 }
 
@@ -69,9 +66,7 @@ void GameData::asignWorld(World* world) {
 void GameData::asignedWorld(World* world) {
 	size_t size = m_characterData.size();
 	for (unsigned int i = 0; i < size; i++) {
-		int hp = 0;
-		world->asignCharacterData(m_characterData[i].name(), hp);
-		m_characterData[i].setHp(hp);
+		world->asignCharacterData(m_characterData[i].name(), m_characterData[i]);
 	}
 }
 

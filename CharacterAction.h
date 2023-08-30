@@ -96,7 +96,7 @@ protected:
 
 public:
 	static const char* ACTION_NAME;
-	virtual const char* getActionName() { return this->ACTION_NAME; }
+	virtual const char* getActionName() const { return this->ACTION_NAME; }
 
 	CharacterAction();
 	CharacterAction(Character* character, SoundPlayer* soundPlayer_p);
@@ -223,7 +223,7 @@ private:
 
 public:
 	static const char* ACTION_NAME;
-	const char* getActionName() { return this->ACTION_NAME; }
+	const char* getActionName() const { return this->ACTION_NAME; }
 
 	StickAction(Character* character, SoundPlayer* soundPlayer_p);
 
