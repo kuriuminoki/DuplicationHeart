@@ -276,35 +276,72 @@ void World::eraseRecorder() {
 	}
 }
 
+void World::asignedCharacter(Character* character, CharacterData& data) {
+	character->setHp(data.hp());
+	//character->setId(data.id());
+	character->setGroupId(data.groupId());
+	//character->setX(data.x());
+	//character->setY(data.y());
+}
+
+CharacterController* World::createControllerWithData(const Character* character, CharacterData& data) {
+	size_t size = m_characters.size();
+	// Actionを作成
+	CharacterAction* action = nullptr;
+	for (unsigned int j = 0; j < size; j++) {
+		if (m_characters[j]->getName() == character->getName()) {
+			action = createAction(data.actionName(), m_characters[j], data.soundFlag() ? m_soundPlayer_p : nullptr);
+			break;
+		}
+	}
+	// Brainを作成
+	Brain* brain = createBrain(data.brainName(), m_camera);
+	brain->setCharacterAction(action);
+	string follow = data.followName();
+	for (unsigned int j = 0; j < size; j++) {
+		if (m_characters[j]->getName() == follow) {
+			brain->searchFollow(m_characters[j]);
+			break;
+		}
+	}
+	// Controllerを作成
+	return createController(data.controllerName(), brain, action);
+}
 
 // キャラの状態を変更する いないなら作成する
 void World::asignedCharacterData(const char* name, CharacterData& data) {
-	if (data.areaNum() != m_areaNum) { return; }
+	if (data.id() == -1) { return; }
 	size_t size = m_characters.size();
 	// キャラの設定
+	bool flag = false;
 	for (unsigned i = 0; i < size; i++) {
 		if (name == m_characters[i]->getName()) {
-			m_characters[i]->setHp(data.hp());
-			//m_characters[i]->setId(data.id());
-			m_characters[i]->setGroupId(data.groupId());
-			//m_characters[i]->setX(data.x());
-			//m_characters[i]->setY(data.y());
+			asignedCharacter(m_characters[i], data);
+			flag = true;
 		}
 	}
+	// キャラを新規作成する場合（このエリアにいるはずのキャラだがまだいない）
+	if (!flag && data.areaNum() == m_areaNum) {
+		Character* character = createCharacter(name);
+		asignedCharacter(character, data);
+		m_characters.push_back(character);
+		m_characterControllers.push_back(createControllerWithData(character, data));
+		return;
+	}
 	// コントローラ、アクション、Brainの設定
-	size = m_characterControllers.size();
-	for (unsigned int i = 0; i < size; i++) {
-		if (name == m_characterControllers[i]->getAction()->getCharacter()->getName()) {
-			// いろいろ設定
-			//if (m_characterControllers[i]->getControllerName() != data.controllerName()) {
-			//	delete m_characterControllers[i];
-			//}
+	size_t controllerSize = m_characterControllers.size();
+	for (unsigned int i = 0; i < controllerSize; i++) {
+		const Character* character = m_characterControllers[i]->getAction()->getCharacter();
+		if (name == character->getName()) {
+			CharacterController* controller = createControllerWithData(character, data);
+			delete m_characterControllers[i];
+			m_characterControllers[i] = controller;
 		}
 	}
 }
 
 // キャラの状態を教える
-void World::asignCharacterData(const char* name, CharacterData& data) {
+void World::asignCharacterData(const char* name, CharacterData& data, int fromAreaNum) {
 	size_t size = m_characterControllers.size();
 	for (unsigned i = 0; i < size; i++) {
 		if (name == m_characterControllers[i]->getAction()->getCharacter()->getName()) {
@@ -312,13 +349,16 @@ void World::asignCharacterData(const char* name, CharacterData& data) {
 			data.setHp(c->getHp());
 			data.setId(c->getId());
 			data.setGroupId(c->getGroupId());
-			data.setAreaNum(m_areaNum);
+			data.setAreaNum(fromAreaNum);
 			data.setX(c->getX());
 			data.setY(c->getY());
 			data.setBrainName(m_characterControllers[i]->getBrain()->getBrainName());
 			data.setTargetName(m_characterControllers[i]->getBrain()->getTargetName());
-			data.setFollowName(m_characterControllers[i]->getBrain()->getFollowName());
+			if (m_characterControllers[i]->getBrain()->getFollow() != nullptr) {
+				data.setFollowName(m_characterControllers[i]->getBrain()->getFollow()->getName().c_str());
+			}
 			data.setActionName(m_characterControllers[i]->getAction()->getActionName());
+			data.setSoundFlag(m_characterControllers[i]->getAction()->getSoundPlayer() != nullptr);
 			data.setControllerName(m_characterControllers[i]->getControllerName());
 			break;
 		}

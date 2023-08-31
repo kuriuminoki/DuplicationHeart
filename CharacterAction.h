@@ -122,6 +122,7 @@ public:
 	bool getLeftLock() const { return m_leftLock; }
 	bool getUpLock() const { return m_upLock; }
 	bool getDownLock() const { return m_downLock; }
+	const SoundPlayer* getSoundPlayer() const { return m_soundPlayer_p; }
 
 	// ƒZƒbƒ^
 	void setState(CHARACTER_STATE state);

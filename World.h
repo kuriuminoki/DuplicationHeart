@@ -118,7 +118,7 @@ public:
 	void asignedCharacterData(const char* name, CharacterData& data);
 
 	// キャラの状態を教える
-	void asignCharacterData(const char* name, CharacterData& data);
+	void asignCharacterData(const char* name, CharacterData& data, int fromAreaNum);
 
 	/*
 	* イベント用
@@ -164,6 +164,10 @@ private:
 
 	// 攻撃<->攻撃の当たり判定
 	void atariAttackAndAttack();
+
+	// キャラのセーブデータを自身に反映させる
+	void asignedCharacter(Character* character, CharacterData& data);
+	CharacterController* createControllerWithData(const Character* character, CharacterData& data);
 };
 
 #endif

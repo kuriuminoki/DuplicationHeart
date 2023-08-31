@@ -44,6 +44,9 @@ private:
 	// CharacterActionのクラス名
 	std::string m_actionName;
 
+	// 効果音ありか
+	bool m_soundFlag;
+
 	// CharacterControllerのクラス名
 	std::string m_controllerName;
 
@@ -62,6 +65,7 @@ public:
 	inline std::string targetName() const { return m_targetName; }
 	inline std::string followName() const { return m_followName; }
 	inline std::string actionName() const { return m_actionName; }
+	inline bool soundFlag() const { return m_soundFlag; }
 	inline std::string controllerName() const { return m_controllerName; }
 
 	// セッタ
@@ -75,6 +79,7 @@ public:
 	inline void setTargetName(const char* targetName) { m_targetName = targetName; }
 	inline void setFollowName(const char* followName) { m_followName = followName; }
 	inline void setActionName(const char* actionName) { m_actionName = actionName; }
+	inline void setSoundFlag(bool soundFlag) { m_soundFlag = soundFlag; }
 	inline void setControllerName(const char* controllerName) { m_controllerName = controllerName; }
 };
 

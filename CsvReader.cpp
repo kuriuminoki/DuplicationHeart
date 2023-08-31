@@ -273,19 +273,7 @@ void AreaReader::loadCharacter(std::map<std::string, std::string> dataMap) {
 	bool playerFlag = (bool)stoi(dataMap["player"]);
 
 	// キャラを作成
-	Character* character = NULL;
-	if (name == "テスト") {
-		character = new Heart(name.c_str(), 100, x, y, groupId);
-	}
-	else if (name == "ハート") {
-		character = new Heart(name.c_str(), 100, x, y, groupId);
-	}
-	else if (name == "シエスタ") {
-		character = new Siesta(name.c_str(), 100, x, y, groupId);
-	}
-	else {
-		character = new Heart(name.c_str(), 100, x, y, groupId);
-	}
+	Character* character = createCharacter(name.c_str(), 100, x, y, groupId);
 
 	// カメラをセット
 	if (cameraFlag && m_camera_p == NULL && character != NULL) {

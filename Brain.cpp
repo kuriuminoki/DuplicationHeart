@@ -453,7 +453,10 @@ Brain* FollowNormalAI::createCopy(std::vector<Character*> characters, const Came
 
 int FollowNormalAI::getFollowId() const { return m_follow_p == nullptr ? -1 : m_follow_p->getId(); }
 
-const char* FollowNormalAI::getFollowName() const { return m_follow_p == nullptr ? "" : m_follow_p->getName().c_str(); }
+const char* FollowNormalAI::getFollowName() const { return m_follow_p == nullptr ? "ハート" : m_follow_p->getName().c_str(); }
+const Character* FollowNormalAI::getFollow() const {
+	return m_follow_p;
+}
 
 void FollowNormalAI::moveOrder(int& right, int& left, int& up, int& down) {
 	// 現在地

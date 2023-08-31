@@ -17,6 +17,7 @@
 CharacterData::CharacterData(const char* name) {
 	m_name = name;
 	m_hp = -1;
+	// id=-1はデータなしを意味する
 	m_id = -1;
 	m_groupId = -1;
 	m_areaNum = -1;
@@ -25,6 +26,7 @@ CharacterData::CharacterData(const char* name) {
 	m_targetName = "";
 	m_followName = "";
 	m_actionName = "";
+	m_soundFlag = false;
 	m_controllerName = "";
 }
 
@@ -38,10 +40,11 @@ GameData::GameData() {
 
 	m_areaNum = 1;
 	m_storyNum = 1;
-	m_soundVolume = 50;
+	m_soundVolume = 10;
 
 	// 主要キャラを設定
 	m_characterData.push_back("ハート");
+	m_characterData.push_back("シエスタ");
 
 }
 
@@ -66,7 +69,7 @@ void GameData::asignWorld(World* world) {
 void GameData::asignedWorld(World* world) {
 	size_t size = m_characterData.size();
 	for (unsigned int i = 0; i < size; i++) {
-		world->asignCharacterData(m_characterData[i].name(), m_characterData[i]);
+		world->asignCharacterData(m_characterData[i].name(), m_characterData[i], m_areaNum);
 	}
 }
 

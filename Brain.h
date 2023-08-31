@@ -67,6 +67,7 @@ public:
 	virtual const char* getTargetName() const { return ""; }
 	virtual int getFollowId() const { return -1; }
 	virtual const char* getFollowName() const { return ""; }
+	virtual const Character* getFollow() const { return nullptr; }
 
 	virtual void setTarget(Character* character) {  }
 };
@@ -227,7 +228,7 @@ public:
 class FollowNormalAI :
 	public NormalAI
 {
-private:
+protected:
 	// ついていくキャラ
 	const Character* m_follow_p;
 
@@ -246,6 +247,7 @@ public:
 	// 追跡対象の情報を取得（オーバーライド）
 	int getFollowId() const;
 	const char* getFollowName() const;
+	const Character* getFollow() const;
 
 	// 追跡対象をセット
 	void setFollow(Character* character) { m_follow_p = character; }

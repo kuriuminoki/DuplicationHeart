@@ -257,6 +257,9 @@ DeadCharacterEvent::DeadCharacterEvent(World* world, std::vector<std::string> pa
 }
 EVENT_RESULT DeadCharacterEvent::play() {
 	m_world_p->battle();
+	if (m_character_p == nullptr) {
+		return EVENT_RESULT::NOW;
+	}
 	// 対象のキャラのHPをチェックする
 	if (m_character_p->getHp() == 0) {
 		return EVENT_RESULT::SUCCESS;
@@ -273,9 +276,13 @@ DeadGroupEvent::DeadGroupEvent(World* world, std::vector<std::string> param) :
 	EventElement(world)
 {
 	m_groupId = stoi(param[1]);
+	m_areaNum = stoi(param[2]);
 }
 EVENT_RESULT DeadGroupEvent::play() {
 	m_world_p->battle();
+	if (m_world_p->getAreaNum() != m_areaNum || m_world_p->getBrightValue() < 255) {
+		return EVENT_RESULT::NOW;
+	}
 	vector<const CharacterAction*> actions = m_world_p->getActions();
 	for (unsigned int i = 0; i < actions.size(); i++) {
 		if (actions[i]->getCharacter()->getGroupId() == m_groupId && actions[i]->getCharacter()->getHp() > 0) {
