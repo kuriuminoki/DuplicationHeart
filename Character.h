@@ -301,6 +301,9 @@ public:
 };
 
 
+Character* createCharacter(const char* characterName, int hp = 100, int x = 0, int y = 0, int groupId = 0);
+
+
 /*
 * ハート（主人公）
 */

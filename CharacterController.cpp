@@ -10,6 +10,23 @@
 #include <algorithm>
 
 
+using namespace std;
+
+
+// クラス名
+const char* CharacterController::CONTROLLER_NAME = "CharacterController";
+const char* NormalController::CONTROLLER_NAME = "NormalController";
+
+// クラス名からコントローラを作成する関数
+CharacterController* createController(const string controllerName, Brain* brain, CharacterAction* action) {
+	CharacterController* controller = nullptr;
+	if (controllerName == NormalController::CONTROLLER_NAME) {
+		controller = new NormalController(brain, action);
+	}
+	return controller;
+}
+
+
 /*
 * コントローラ
 */

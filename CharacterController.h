@@ -3,6 +3,7 @@
 
 
 #include <vector>
+#include <string>
 
 
 class Character;
@@ -38,6 +39,9 @@ protected:
 	ControllerRecorder* m_damageRecorder;
 
 public:
+	static const char* CONTROLLER_NAME;
+	virtual const char* getControllerName() const { return this->CONTROLLER_NAME; }
+
 	CharacterController();
 	CharacterController(Brain* brain, CharacterAction* characterAction);
 	~CharacterController();
@@ -117,6 +121,10 @@ public:
 	virtual void damage(int vx, int vy, int damageValue) = 0;
 };
 
+
+CharacterController* createController(const std::string controllerName, Brain* brain, CharacterAction* action);
+
+
 /*
 * 普通のコントローラ
 */
@@ -127,6 +135,9 @@ private:
 	// ジャンプキーを長押しする最大時間
 	const int JUMP_KEY_LONG = 10;
 public:
+	static const char* CONTROLLER_NAME;
+	const char* getControllerName() const { return this->CONTROLLER_NAME; }
+
 	NormalController(Brain* brain, CharacterAction* characterAction);
 
 	CharacterController* createCopy(std::vector<Character*> characters, const Camera* camera);

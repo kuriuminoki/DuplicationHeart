@@ -3,10 +3,23 @@
 #include "Sound.h"
 #include "Define.h"
 #include "DxLib.h"
-#include <vector>
 
 
 using namespace std;
+
+
+// クラス名
+const char* CharacterAction::ACTION_NAME = "CharacterAction";
+const char* StickAction::ACTION_NAME = "StickAction";
+
+// クラス名からCharacterActionを作成する関数
+CharacterAction* createAction(const string actionName, Character* character, SoundPlayer* soundPlayer_p) {
+	CharacterAction* action = nullptr;
+	if (actionName == StickAction::ACTION_NAME) {
+		action = new StickAction(character, soundPlayer_p);
+	}
+	return action;
+}
 
 
 /*

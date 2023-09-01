@@ -96,10 +96,13 @@ bool Story::skillAble() {
 // ƒZƒbƒ^
 void Story::setWorld(World* world) {
 	m_world_p = world;
+	if (m_nowEvent != NULL) {
+		m_nowEvent->setWorld(m_world_p);
+	}
 	for (unsigned int i = 0; i < m_mustEvent.size(); i++) {
 		m_mustEvent[i]->setWorld(m_world_p);
 	}
 	for (unsigned int i = 0; i < m_subEvent.size(); i++) {
-		m_mustEvent[i]->setWorld(m_world_p);
+		m_subEvent[i]->setWorld(m_world_p);
 	}
 }

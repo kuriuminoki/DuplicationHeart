@@ -11,6 +11,40 @@
 using namespace std;
 
 
+// クラス名
+const char* Brain::BRAIN_NAME = "Brain";
+const char* KeyboardBrain::BRAIN_NAME = "KeyboardBrain";
+const char* Freeze::BRAIN_NAME = "Freeze";
+const char* NormalAI::BRAIN_NAME = "NormalAI";
+const char* ParabolaAI::BRAIN_NAME = "ParabolaAI";
+const char* FollowNormalAI::BRAIN_NAME = "FollowNormalAI";
+const char* FollowParabolaAI::BRAIN_NAME = "FollowParabolaAI";
+
+// クラス名からBrainを作成する関数
+Brain* createBrain(const string brainName, const Camera* camera_p) {
+	Brain* brain = nullptr;
+	if (brainName == KeyboardBrain::BRAIN_NAME) {
+		brain = new KeyboardBrain(camera_p);
+	}
+	else if (brainName == NormalAI::BRAIN_NAME) {
+		brain = new NormalAI();
+	}
+	else if (brainName == ParabolaAI::BRAIN_NAME) {
+		brain = new ParabolaAI();
+	}
+	else if (brainName == FollowNormalAI::BRAIN_NAME) {
+		brain = new FollowNormalAI();
+	}
+	else if (brainName == FollowParabolaAI::BRAIN_NAME) {
+		brain = new FollowParabolaAI();
+	}
+	else if (brainName == Freeze::BRAIN_NAME) {
+		brain = new Freeze();
+	}
+	return brain;
+}
+
+
 // Brainクラス
 Brain::Brain() {
 	m_characterAction_p = NULL;
@@ -300,7 +334,9 @@ bool NormalAI::needSearchTarget() const {
 	return false;
 }
 
-int  NormalAI::getTargetId() const { return m_target_p == NULL ? NULL : m_target_p->getId(); }
+int  NormalAI::getTargetId() const { return m_target_p == nullptr ? -1 : m_target_p->getId(); }
+
+const char*  NormalAI::getTargetName() const { return m_target_p == nullptr ? "" : m_target_p->getName().c_str(); }
 
 
 void ParabolaAI::bulletTargetPoint(int& x, int& y) {
@@ -327,7 +363,7 @@ void ParabolaAI::bulletTargetPoint(int& x, int& y) {
 			else {
 				x = (int)(m_characterAction_p->getCharacter()->getCenterX() - v * cos(r));
 			}
-			y = (int)(m_characterAction_p->getCharacter()->getCenterY() - v * sin(r)) - GetRand(100);
+			y = (int)(m_characterAction_p->getCharacter()->getCenterY() - v * sin(r)) + 50 - GetRand(100);
 		}
 		else {
 			// 射程外なら45度で投げる
@@ -367,7 +403,7 @@ void FollowParabolaAI::bulletTargetPoint(int& x, int& y) {
 			else {
 				x = (int)(m_characterAction_p->getCharacter()->getCenterX() - v * cos(r));
 			}
-			y = (int)(m_characterAction_p->getCharacter()->getCenterY() - v * sin(r)) - GetRand(100);
+			y = (int)(m_characterAction_p->getCharacter()->getCenterY() - v * sin(r)) + 50 - GetRand(100);
 		}
 		else {
 			// 射程外なら45度で投げる
@@ -415,9 +451,11 @@ Brain* FollowNormalAI::createCopy(std::vector<Character*> characters, const Came
 	return res;
 }
 
-int FollowNormalAI::getFollowId() const {
-	if (m_follow_p == nullptr) { return -1; }
-	return m_follow_p->getId();
+int FollowNormalAI::getFollowId() const { return m_follow_p == nullptr ? -1 : m_follow_p->getId(); }
+
+const char* FollowNormalAI::getFollowName() const { return m_follow_p == nullptr ? "ハート" : m_follow_p->getName().c_str(); }
+const Character* FollowNormalAI::getFollow() const {
+	return m_follow_p;
 }
 
 void FollowNormalAI::moveOrder(int& right, int& left, int& up, int& down) {

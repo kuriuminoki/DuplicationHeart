@@ -2,6 +2,7 @@
 #define GAME_H_INCLUDED
 
 #include <vector>
+#include <string>
 
 class SoundPlayer;
 class World;
@@ -12,17 +13,74 @@ class Character;
 // キャラのセーブデータ
 class CharacterData {
 private:
+
+	// 名前
 	const char* m_name;
+
+	// HP
 	int m_hp;
+
+	// ID
+	int m_id;
+
+	// GroupID
+	int m_groupId;
+
+	// どこのエリアにいるか
+	int m_areaNum;
+
+	// 座標
+	int m_x, m_y;
+
+	// Brainのクラス名
+	std::string m_brainName;
+
+	// 攻撃対象の名前 いないなら空文字
+	std::string m_targetName;
+
+	// 追跡対象の名前 いないなら空文字
+	std::string m_followName;
+
+	// CharacterActionのクラス名
+	std::string m_actionName;
+
+	// 効果音ありか
+	bool m_soundFlag;
+
+	// CharacterControllerのクラス名
+	std::string m_controllerName;
+
 public:
 	CharacterData(const char* name);
 
 	// ゲッタ
 	inline const char* name() const { return m_name; }
 	inline int hp() const { return m_hp; }
+	inline int id() const { return m_id; }
+	inline int groupId() const { return m_groupId; }
+	inline int areaNum() const { return m_areaNum; }
+	inline int x() const { return m_x; }
+	inline int y() const { return m_y; }
+	inline std::string brainName() const { return m_brainName; }
+	inline std::string targetName() const { return m_targetName; }
+	inline std::string followName() const { return m_followName; }
+	inline std::string actionName() const { return m_actionName; }
+	inline bool soundFlag() const { return m_soundFlag; }
+	inline std::string controllerName() const { return m_controllerName; }
 
 	// セッタ
 	inline void setHp(int hp) { m_hp = hp; }
+	inline void setId(int id) { m_id = id; }
+	inline void setGroupId(int groupId) { m_groupId = groupId; }
+	inline void setAreaNum(int areaNum) { m_areaNum = areaNum; }
+	inline void setX(int x) { m_x = x; }
+	inline void setY(int y) { m_y = y; }
+	inline void setBrainName(const char* brainName) { m_brainName = brainName; }
+	inline void setTargetName(const char* targetName) { m_targetName = targetName; }
+	inline void setFollowName(const char* followName) { m_followName = followName; }
+	inline void setActionName(const char* actionName) { m_actionName = actionName; }
+	inline void setSoundFlag(bool soundFlag) { m_soundFlag = soundFlag; }
+	inline void setControllerName(const char* controllerName) { m_controllerName = controllerName; }
 };
 
 

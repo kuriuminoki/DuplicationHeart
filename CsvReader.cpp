@@ -273,19 +273,7 @@ void AreaReader::loadCharacter(std::map<std::string, std::string> dataMap) {
 	bool playerFlag = (bool)stoi(dataMap["player"]);
 
 	// キャラを作成
-	Character* character = NULL;
-	if (name == "テスト") {
-		character = new Heart(name.c_str(), 100, x, y, groupId);
-	}
-	else if (name == "ハート") {
-		character = new Heart(name.c_str(), 100, x, y, groupId);
-	}
-	else if (name == "シエスタ") {
-		character = new Siesta(name.c_str(), 100, x, y, groupId);
-	}
-	else {
-		character = new Heart(name.c_str(), 100, x, y, groupId);
-	}
+	Character* character = createCharacter(name.c_str(), 100, x, y, groupId);
 
 	// カメラをセット
 	if (cameraFlag && m_camera_p == NULL && character != NULL) {
@@ -301,40 +289,18 @@ void AreaReader::loadCharacter(std::map<std::string, std::string> dataMap) {
 	}
 
 	// アクションを作成
-	CharacterAction* action = NULL;
 	SoundPlayer* soundPlayer = sound ? m_soundPlayer_p : NULL;
-	if (actionName == "stick") {
-		action = new StickAction(character, soundPlayer);
-	}
-
+	CharacterAction* action = createAction(actionName, character, soundPlayer);
 	if (action == NULL) { return; }
 
 	// Brainを作成
-	Brain* brain = NULL;
-	if (brainName == "Keyboard") {
-		brain = new KeyboardBrain(m_camera_p);
-	}
-	else if (brainName == "NormalAI") {
-		brain = new NormalAI();
-	}
-	else if (brainName == "FollowNormalAI") {
-		brain = new FollowNormalAI();
-	}
-	else if (brainName == "FollowParabolaAI") {
-		brain = new FollowParabolaAI();
-	}
-	else if (brainName == "Freeze") {
-		brain = new Freeze();
-	}
-
+	Brain* brain = createBrain(brainName, m_camera_p);
 	if (brain == NULL) { return; }
 
 	// コントローラを作成
-	CharacterController* controller = NULL;
-	if (controllerName == "normal") {
-		controller = new NormalController(brain, action);
-	}
+	CharacterController* controller = createController(controllerName, brain, action);
 
+	// 完成したキャラとコントローラを保存
 	if (character != NULL && controller != NULL) { 
 		m_characters.push_back(character);
 		m_characterControllers.push_back(controller);

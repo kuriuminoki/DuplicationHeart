@@ -13,6 +13,7 @@
 #include "Brain.h"
 #include "ControllerRecorder.h"
 #include "ObjectLoader.h"
+#include "Game.h"
 #include "DxLib.h"
 #include <algorithm>
 
@@ -275,24 +276,91 @@ void World::eraseRecorder() {
 	}
 }
 
+void World::asignedCharacter(Character* character, CharacterData& data) {
+	character->setHp(data.hp());
+	//character->setId(data.id());
+	character->setGroupId(data.groupId());
+	//character->setX(data.x());
+	//character->setY(data.y());
+}
 
-// キャラの状態を変更する
-void World::asignedCharacterData(const char* name, int hp) {
+CharacterController* World::createControllerWithData(const Character* character, CharacterData& data) {
 	size_t size = m_characters.size();
+	// Actionを作成
+	CharacterAction* action = nullptr;
+	for (unsigned int j = 0; j < size; j++) {
+		if (m_characters[j]->getName() == character->getName()) {
+			action = createAction(data.actionName(), m_characters[j], data.soundFlag() ? m_soundPlayer_p : nullptr);
+			break;
+		}
+	}
+	// Brainを作成
+	Brain* brain = createBrain(data.brainName(), m_camera);
+	brain->setCharacterAction(action);
+	string follow = data.followName();
+	for (unsigned int j = 0; j < size; j++) {
+		if (m_characters[j]->getName() == follow) {
+			brain->searchFollow(m_characters[j]);
+			break;
+		}
+	}
+	// Controllerを作成
+	return createController(data.controllerName(), brain, action);
+}
+
+// キャラの状態を変更する いないなら作成する
+void World::asignedCharacterData(const char* name, CharacterData& data) {
+	if (data.id() == -1) { return; }
+	size_t size = m_characters.size();
+	// キャラの設定
+	bool flag = false;
 	for (unsigned i = 0; i < size; i++) {
 		if (name == m_characters[i]->getName()) {
-			m_characters[i]->setHp(hp);
+			asignedCharacter(m_characters[i], data);
+			flag = true;
+		}
+	}
+	// キャラを新規作成する場合（このエリアにいるはずのキャラだがまだいない）
+	if (!flag && data.areaNum() == m_areaNum) {
+		Character* character = createCharacter(name);
+		asignedCharacter(character, data);
+		m_characters.push_back(character);
+		m_characterControllers.push_back(createControllerWithData(character, data));
+		return;
+	}
+	// コントローラ、アクション、Brainの設定
+	size_t controllerSize = m_characterControllers.size();
+	for (unsigned int i = 0; i < controllerSize; i++) {
+		const Character* character = m_characterControllers[i]->getAction()->getCharacter();
+		if (name == character->getName()) {
+			CharacterController* controller = createControllerWithData(character, data);
+			delete m_characterControllers[i];
+			m_characterControllers[i] = controller;
 		}
 	}
 }
 
 // キャラの状態を教える
-void World::asignCharacterData(const char* name, int& hp) {
-	size_t size = m_characters.size();
+void World::asignCharacterData(const char* name, CharacterData& data, int fromAreaNum) {
+	size_t size = m_characterControllers.size();
 	for (unsigned i = 0; i < size; i++) {
-		if (name == m_characters[i]->getName()) {
-			hp = m_characters[i]->getHp();
-			return;
+		if (name == m_characterControllers[i]->getAction()->getCharacter()->getName()) {
+			const Character* c = m_characterControllers[i]->getAction()->getCharacter();
+			data.setHp(c->getHp());
+			data.setId(c->getId());
+			data.setGroupId(c->getGroupId());
+			data.setAreaNum(fromAreaNum);
+			data.setX(c->getX());
+			data.setY(c->getY());
+			data.setBrainName(m_characterControllers[i]->getBrain()->getBrainName());
+			data.setTargetName(m_characterControllers[i]->getBrain()->getTargetName());
+			if (m_characterControllers[i]->getBrain()->getFollow() != nullptr) {
+				data.setFollowName(m_characterControllers[i]->getBrain()->getFollow()->getName().c_str());
+			}
+			data.setActionName(m_characterControllers[i]->getAction()->getActionName());
+			data.setSoundFlag(m_characterControllers[i]->getAction()->getSoundPlayer() != nullptr);
+			data.setControllerName(m_characterControllers[i]->getControllerName());
+			break;
 		}
 	}
 }

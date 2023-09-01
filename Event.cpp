@@ -209,28 +209,21 @@ ChangeBrainEvent::ChangeBrainEvent(World* world, vector<string> param) :
 	m_param = param;
 }
 EVENT_RESULT ChangeBrainEvent::play() {
+
 	// 対象のキャラのBrainを変更する
-	Brain* brain = NULL;
-	if (m_brainName == "NormalAI") {
-		brain = new NormalAI();
-		m_controller_p->setBrain(brain);
-	}
-	else if (m_brainName == "ParabolaAI") {
-		brain = new ParabolaAI();
-		m_controller_p->setBrain(brain);
-	}
-	else if (m_brainName == "FollowNormalAI") {
-		brain = new FollowNormalAI();
-		m_controller_p->setBrain(brain);
+	Brain* brain = createBrain(m_brainName, m_world_p->getCamera());
+	m_controller_p->setBrain(brain);
+
+	// 追跡対象が必要なBrainは追跡対象を設定
+	if (brain->getBrainName() == FollowNormalAI::BRAIN_NAME) {
 		Character* follow = m_world_p->getCharacterWithName(m_param[3]);
 		brain->searchFollow(follow);
 	}
-	else if (m_brainName == "FollowParabolaAI") {
-		brain = new FollowParabolaAI();
-		m_controller_p->setBrain(brain);
+	else if (brain->getBrainName() == FollowParabolaAI::BRAIN_NAME) {
 		Character* follow = m_world_p->getCharacterWithName(m_param[3]);
 		brain->searchFollow(follow);
 	}
+
 	return EVENT_RESULT::SUCCESS;
 }
 void ChangeBrainEvent::setWorld(World* world) {
@@ -264,6 +257,9 @@ DeadCharacterEvent::DeadCharacterEvent(World* world, std::vector<std::string> pa
 }
 EVENT_RESULT DeadCharacterEvent::play() {
 	m_world_p->battle();
+	if (m_character_p == nullptr) {
+		return EVENT_RESULT::NOW;
+	}
 	// 対象のキャラのHPをチェックする
 	if (m_character_p->getHp() == 0) {
 		return EVENT_RESULT::SUCCESS;
@@ -280,9 +276,13 @@ DeadGroupEvent::DeadGroupEvent(World* world, std::vector<std::string> param) :
 	EventElement(world)
 {
 	m_groupId = stoi(param[1]);
+	m_areaNum = stoi(param[2]);
 }
 EVENT_RESULT DeadGroupEvent::play() {
 	m_world_p->battle();
+	if (m_world_p->getAreaNum() != m_areaNum || m_world_p->getBrightValue() < 255) {
+		return EVENT_RESULT::NOW;
+	}
 	vector<const CharacterAction*> actions = m_world_p->getActions();
 	for (unsigned int i = 0; i < actions.size(); i++) {
 		if (actions[i]->getCharacter()->getGroupId() == m_groupId && actions[i]->getCharacter()->getHp() > 0) {

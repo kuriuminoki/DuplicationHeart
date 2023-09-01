@@ -17,6 +17,7 @@ class SoundPlayer;
 class Conversation;
 class Brain;
 class ObjectLoader;
+class CharacterData;
 
 
 class World {
@@ -113,11 +114,11 @@ public:
 	// キャラに会話させる
 	void talk();
 
-	// キャラの状態を変更
-	void asignedCharacterData(const char* name, int hp);
+	// キャラの状態を変更する いないなら作成する
+	void asignedCharacterData(const char* name, CharacterData& data);
 
 	// キャラの状態を教える
-	void asignCharacterData(const char* name, int& hp);
+	void asignCharacterData(const char* name, CharacterData& data, int fromAreaNum);
 
 	/*
 	* イベント用
@@ -163,6 +164,10 @@ private:
 
 	// 攻撃<->攻撃の当たり判定
 	void atariAttackAndAttack();
+
+	// キャラのセーブデータを自身に反映させる
+	void asignedCharacter(Character* character, CharacterData& data);
+	CharacterController* createControllerWithData(const Character* character, CharacterData& data);
 };
 
 #endif

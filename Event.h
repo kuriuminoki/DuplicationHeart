@@ -224,6 +224,9 @@ private:
 	// 対象のグループ
 	int m_groupId;
 
+	// エリア番号
+	int m_areaNum;
+
 public:
 	DeadGroupEvent(World* world, std::vector<std::string> param);
 

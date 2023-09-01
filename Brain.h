@@ -2,6 +2,7 @@
 #define BRAIN_H_INCLUDED
 
 #include <vector>
+#include <string>
 
 
 class Character;
@@ -16,6 +17,9 @@ protected:
 	const CharacterAction* m_characterAction_p;
 
 public:
+	static const char* BRAIN_NAME;
+	virtual const char* getBrainName() const { return this->BRAIN_NAME; }
+
 	Brain();
 
 	virtual Brain* createCopy(std::vector<Character*> characters, const Camera* camera) = 0;
@@ -58,10 +62,19 @@ public:
 	// 追跡対象を変更する必要があるならtrueでアピールする(AIクラスでオーバライドする)。
 	virtual bool needSearchFollow() const { return false; }
 
+	// 攻撃対象や追跡対象の情報を取得
 	virtual int getTargetId() const { return -1; }
+	virtual const char* getTargetName() const { return ""; }
+	virtual int getFollowId() const { return -1; }
+	virtual const char* getFollowName() const { return ""; }
+	virtual const Character* getFollow() const { return nullptr; }
 
 	virtual void setTarget(Character* character) {  }
 };
+
+
+// クラス名からBrainを作成する関数
+Brain* createBrain(const std::string brainName, const Camera* camera_p);
 
 
 /*
@@ -75,6 +88,8 @@ private:
 	const Camera* m_camera_p;
 
 public:
+	static const char* BRAIN_NAME;
+	const char* getBrainName() const { return this->BRAIN_NAME; }
 	KeyboardBrain(const Camera* camera);
 	Brain* createCopy(std::vector<Character*> characters, const Camera* camera) { return new KeyboardBrain(camera); }
 	void debug(int x, int y, int color) const;
@@ -96,6 +111,8 @@ class Freeze :
 	public Brain
 {
 public:
+	static const char* BRAIN_NAME;
+	const char* getBrainName() const { return this->BRAIN_NAME; }
 	Freeze() { }
 	Brain* createCopy(std::vector<Character*> characters, const Camera* camera) { return new Freeze(); }
 	void debug(int x, int y, int color) const { }
@@ -153,6 +170,8 @@ protected:
 	const int GIVE_UP_MOVE_CNT = 300;
 
 public:
+	static const char* BRAIN_NAME;
+	const char* getBrainName() const { return this->BRAIN_NAME; }
 	NormalAI();
 	Brain* createCopy(std::vector<Character*> characters, const Camera* camera);
 	void setParam(NormalAI* brain);
@@ -183,7 +202,9 @@ public:
 	// 攻撃対象を変更する必要があるならtrueでアピールする。
 	bool needSearchTarget() const;
 
+	// 攻撃対象の情報を取得（オーバーライド）
 	int getTargetId() const;
+	const char* getTargetName() const;
 
 protected:
 	// スティック操作
@@ -197,6 +218,9 @@ protected:
 class ParabolaAI :
 	public NormalAI
 {
+public:
+	static const char* BRAIN_NAME;
+	const char* getBrainName() const { return this->BRAIN_NAME; }
 	void bulletTargetPoint(int& x, int& y);
 };
 
@@ -204,7 +228,7 @@ class ParabolaAI :
 class FollowNormalAI :
 	public NormalAI
 {
-private:
+protected:
 	// ついていくキャラ
 	const Character* m_follow_p;
 
@@ -212,14 +236,20 @@ private:
 	const int FOLLOW_X_ERROR = 500;
 
 public:
+	static const char* BRAIN_NAME;
+	const char* getBrainName() const { return this->BRAIN_NAME; }
 	FollowNormalAI();
 
 	Brain* createCopy(std::vector<Character*> characters, const Camera* camera);
 
 	void debug(int x, int y, int color) const;
 
+	// 追跡対象の情報を取得（オーバーライド）
 	int getFollowId() const;
+	const char* getFollowName() const;
+	const Character* getFollow() const;
 
+	// 追跡対象をセット
 	void setFollow(Character* character) { m_follow_p = character; }
 
 	// 移動の目標地点設定
@@ -238,6 +268,9 @@ public:
 class FollowParabolaAI :
 	public FollowNormalAI
 {
+public:
+	static const char* BRAIN_NAME;
+	const char* getBrainName() const { return this->BRAIN_NAME; }
 	void bulletTargetPoint(int& x, int& y);
 };
 

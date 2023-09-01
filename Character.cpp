@@ -11,6 +11,25 @@
 using namespace std;
 
 
+Character* createCharacter(const char* characterName, int hp, int x, int y, int groupId) {
+	Character* character = NULL;
+	string name = characterName;
+	if (name == "テスト") {
+		character = new Heart(name.c_str(), hp, x, y, groupId);
+	}
+	else if (name == "ハート") {
+		character = new Heart(name.c_str(), hp, x, y, groupId);
+	}
+	else if (name == "シエスタ") {
+		character = new Siesta(name.c_str(), hp, x, y, groupId);
+	}
+	else {
+		character = new Heart(name.c_str(), hp, x, y, groupId);
+	}
+	return character;
+}
+
+
 CharacterInfo::CharacterInfo() :
 	CharacterInfo("test")
 {
