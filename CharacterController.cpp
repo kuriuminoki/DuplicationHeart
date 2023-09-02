@@ -333,12 +333,17 @@ Object* NormalController::bulletAttack() {
 			order = m_bulletRecorder->checkInput();
 			// UŒ‚–Ú•W‚ðŽæ“¾
 			m_bulletRecorder->getGoal(targetX, targetY);
+			targetX += m_characterAction->getCharacter()->getCenterX();
+			targetY += m_characterAction->getCharacter()->getCenterY();
 		}
 		else {
 			order = m_brain->bulletOrder();
 			m_bulletRecorder->writeRecord(order);
 			// UŒ‚–Ú•W‚ð‘‚«ž‚Ý
-			m_bulletRecorder->setGoal(targetX, targetY);
+			m_bulletRecorder->setGoal(
+				targetX - m_characterAction->getCharacter()->getCenterX(),
+				targetY - m_characterAction->getCharacter()->getCenterY()
+			);
 		}
 		m_bulletRecorder->addTime();
 	}
@@ -367,12 +372,17 @@ Object* NormalController::slashAttack() {
 			order = m_slashRecorder->checkInput();
 			// UŒ‚–Ú•W‚ðŽæ“¾
 			m_slashRecorder->getGoal(targetX, targetY);
+			targetX += m_characterAction->getCharacter()->getCenterX();
+			targetY += m_characterAction->getCharacter()->getCenterY();
 		}
 		else {
 			order = m_brain->slashOrder();
 			m_slashRecorder->writeRecord(order);
 			// UŒ‚–Ú•W‚ð‘‚«ž‚Ý
-			m_bulletRecorder->setGoal(targetX, targetY);
+			m_bulletRecorder->setGoal(
+				targetX - m_characterAction->getCharacter()->getCenterX(),
+				targetY - m_characterAction->getCharacter()->getCenterY()
+			);
 		}
 		m_slashRecorder->addTime();
 	}
