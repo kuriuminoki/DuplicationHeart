@@ -824,7 +824,7 @@ void SlashObject::setSlashParam(SlashObject* object) {
 	object->setEffectHandles(m_effectHandles_p);
 }
 Object* DoorObject::createCopy() {
-	DoorObject* res = new DoorObject(m_x1, m_y1, m_x2, m_y2, m_fileName, m_areaNum);
+	DoorObject* res = new DoorObject(m_x1, m_y1, m_x2, m_y2, m_fileName.c_str(), m_areaNum);
 	setParam(res);
 	res->setText(m_text);
 	return res;

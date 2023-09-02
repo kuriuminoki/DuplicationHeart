@@ -84,6 +84,41 @@ public:
 };
 
 
+class DoorData {
+private:
+
+	// 座標
+	int m_x1, m_y1, m_x2, m_y2;
+
+	// どこからどこへのドアか
+	int m_from, m_to;
+
+	// 画像のファイル名
+	const char* m_fileName;
+
+public:
+	DoorData(int x1, int y1, int x2, int y2, int from, int to, const char* fileName);
+
+	// ゲッタ
+	inline int x1() const { return m_x1; }
+	inline int y1() const { return m_y1; }
+	inline int x2() const { return m_x2; }
+	inline int y2() const { return m_y2; }
+	inline int from() const { return m_from; }
+	inline int to() const { return m_to; }
+	inline const char* fileName() const { return m_fileName; }
+
+	// セッタ
+	inline void setX1(int x1) { m_x1 = x1; }
+	inline void setY1(int y1) { m_y1 = y1; }
+	inline void setX2(int x2) { m_x2 = x2; }
+	inline void setY2(int y2) { m_y2 = y2; }
+	inline void setFrom(int from) { m_from = from; }
+	inline void setTo(int to) { m_to = to; }
+	inline void setFileName(const char* fileName) { m_fileName = fileName; }
+};
+
+
 // セーブデータ
 class GameData {
 private:
@@ -91,7 +126,10 @@ private:
 	const char* m_saveFilePath;
 
 	// キャラのデータ
-	std::vector<CharacterData> m_characterData;
+	std::vector<CharacterData*> m_characterData;
+
+	// ドアのデータ
+	std::vector<DoorData*> m_doorData;
 
 	// 今いるエリア
 	int m_areaNum;
@@ -105,6 +143,7 @@ private:
 public:
 	GameData();
 	GameData(const char* saveFilePath);
+	~GameData();
 
 	// ゲッタ
 	inline int getAreaNum() const { return m_areaNum; }

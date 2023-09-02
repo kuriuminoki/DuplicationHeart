@@ -60,6 +60,7 @@ public:
 	inline int getSoundHandle() const { return m_soundHandle_p; }
 	inline int getHp() const { return m_hp; }
 	inline int getDamageCnt() const { return m_damageCnt; }
+	virtual const char* getFileName() const { return ""; }
 
 	// セッタ
 	inline void setDeleteFlag(bool deleteFlag) { m_deleteFlag = deleteFlag; }
@@ -389,7 +390,7 @@ class DoorObject :
 {
 private:
 	// ファイルネームを保存しておく
-	const char* m_fileName;
+	std::string m_fileName;
 
 	// 画像
 	GraphHandle* m_graph;
@@ -412,6 +413,7 @@ public:
 	GraphHandle* getHandle() const { return m_graph; }
 	inline int getAreaNum() const { return m_areaNum; }
 	inline std::string getText() const { return m_text; }
+	const char* getFileName() const { return m_fileName.c_str(); }
 
 	// セッタ
 	inline void setText(std::string text) { m_text = text; }
