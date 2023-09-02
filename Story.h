@@ -6,6 +6,7 @@
 class Event;
 class World;
 class SoundPlayer;
+class CharacterLoader;
 class ObjectLoader;
 
 // ストーリ－
@@ -27,6 +28,9 @@ private:
 	// クリア任意イベント
 	std::vector<Event*> m_subEvent;
 
+	// キャラクターのデータ
+	CharacterLoader* m_characterLoader;
+
 	// オブジェクトのデータ
 	ObjectLoader* m_objectLoader;
 
@@ -42,7 +46,9 @@ public:
 	bool skillAble();
 
 	// ゲッタ
-	ObjectLoader* getObjectLoader() { return m_objectLoader; }
+	inline int getStoryNum() const { return m_storyNum; }
+	inline CharacterLoader* getCharacterLoader() const { return m_characterLoader; }
+	inline ObjectLoader* getObjectLoader() const { return m_objectLoader; }
 
 	// セッタ
 	void setWorld(World* world);

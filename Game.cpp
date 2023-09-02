@@ -7,6 +7,7 @@
 #include "Character.h"
 #include "CharacterAction.h"
 #include "CharacterController.h"
+#include "CharacterLoader.h"
 #include "Brain.h"
 #include "ControllerRecorder.h"
 #include "DxLib.h"
@@ -15,6 +16,7 @@
 * キャラのデータ
 */
 CharacterData::CharacterData(const char* name) {
+	m_initFlag = false;
 	m_name = name;
 	m_hp = -1;
 	// id=-1はデータなしを意味する
@@ -57,9 +59,11 @@ GameData::GameData() {
 	m_soundVolume = 10;
 
 	// 主要キャラを設定
-	m_characterData.push_back(new CharacterData("ハート"));
-	m_characterData.push_back(new CharacterData("シエスタ"));
-
+	const int mainSum = 3;
+	const char* mainCharacters[mainSum] = {"ハート", "シエスタ", "エム・サディ"};
+	for (int i = 0; i < mainSum; i++) {
+		m_characterData.push_back(new CharacterData(mainCharacters[i]));
+	}
 }
 
 // ファイルを指定してデータを復元
@@ -101,6 +105,17 @@ void GameData::asignedWorld(World* world) {
 	world->asignDoorData(m_doorData, m_areaNum);
 }
 
+// ストーリーが進んだ時にセーブデータを更新する
+void GameData::updateStory(Story* story) {
+	m_storyNum = story->getStoryNum();
+	// Storyによって変更・新登場されたキャラ情報を取得
+	CharacterLoader* characterLoader = story->getCharacterLoader();
+	size_t size = m_characterData.size();
+	for (unsigned int i = 0; i < size; i++) {
+		characterLoader->saveCharacterData(m_characterData[i]);
+	}
+}
+
 
 /*
 * ゲーム本体
@@ -116,11 +131,13 @@ Game::Game() {
 	// 世界
 	m_world = new World(-1, m_gameData->getAreaNum(), m_soundPlayer);
 
-	// データを世界に反映
-	m_gameData->asignWorld(m_world);
-
 	// ストーリー
 	m_story = new Story(m_gameData->getStoryNum(), m_world, m_soundPlayer);
+	// セーブデータに上書き
+	m_gameData->updateStory(m_story);
+
+	// データを世界に反映
+	m_gameData->asignWorld(m_world);
 
 	// スキル
 	m_skill = NULL;
@@ -169,6 +186,10 @@ bool Game::play() {
 		delete m_story;
 		m_story = new Story(m_gameData->getStoryNum(), m_world, m_soundPlayer);
 		// ストーリーの影響でオブジェクトが追加される（一度追加されると今後GameDataでデータは保持され続ける）
+		// セーブデータに上書き
+		m_gameData->updateStory(m_story);
+		// Worldに反映
+		m_world->addCharacter(m_story->getCharacterLoader());
 		m_world->addObject(m_story->getObjectLoader());
 	}
 
