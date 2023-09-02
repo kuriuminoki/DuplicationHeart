@@ -1,0 +1,83 @@
+#include "CharacterLoader.h"
+#include "Character.h"
+#include "CharacterAction.h"
+#include "CharacterController.h"
+#include "Brain.h"
+#include "CsvReader.h"
+#include "Sound.h"
+#include "Camera.h"
+
+
+using namespace std;
+
+
+// csvファイルから読み込んだCHARACTER:ドメインからオブジェクトを作成
+CharacterLoader::CharacterLoader() {
+	m_focusId = -1;
+	m_playerId = -1;
+	m_playerCharacter_p = nullptr;
+}
+
+void CharacterLoader::addCharacter(map<string, string> dataMap) {
+	// areaカラムがない場合は-1にマッピングしておく。
+	int areaNum = -1;
+	if (dataMap.find("area") != dataMap.end()) {
+		areaNum = stoi(dataMap["area"]);
+	}
+	m_characters[areaNum].push_back(dataMap);
+}
+
+// 特定のエリアの追加オブジェクトのvectorを取得
+pair<vector<Character*>, vector<CharacterController*> > CharacterLoader::getCharacters(Camera* camera_p, SoundPlayer* soundPlayer_p, int areaNum) {
+
+	pair<vector<Character*>, vector<CharacterController*> > res;
+
+	for (unsigned int i = 0; i < m_characters[areaNum].size(); i++) {
+		string name = m_characters[areaNum][i]["name"];
+		int x = stoi(m_characters[areaNum][i]["x"]);
+		int y = stoi(m_characters[areaNum][i]["y"]);
+		bool sound = (bool)stoi(m_characters[areaNum][i]["sound"]);
+		int groupId = stoi(m_characters[areaNum][i]["groupId"]);
+		string actionName = m_characters[areaNum][i]["action"];
+		string brainName = m_characters[areaNum][i]["brain"];
+		string controllerName = m_characters[areaNum][i]["controller"];
+		bool cameraFlag = (bool)stoi(m_characters[areaNum][i]["camera"]);
+		bool playerFlag = (bool)stoi(m_characters[areaNum][i]["player"]);
+
+		// キャラを作成
+		Character* character = createCharacter(name.c_str(), 100, x, y, groupId);
+
+		// カメラをセット
+		if (cameraFlag && character != NULL) {
+			camera_p->setPoint(character->getCenterX(), character->getCenterY());
+			m_focusId = character->getId();
+		}
+
+		// プレイヤーが操作中のキャラとしてセット
+		if (playerFlag && m_playerId == -1 && character != NULL) {
+			m_playerId = character->getId();
+			m_playerCharacter_p = character;
+		}
+
+		// アクションを作成
+		SoundPlayer* soundPlayer = sound ? soundPlayer_p : NULL;
+		CharacterAction* action = createAction(actionName, character, soundPlayer);
+
+		// Brainを作成
+		Brain* brain = createBrain(brainName, camera_p);
+
+		// コントローラを作成
+		CharacterController* controller = NULL;
+		if (action != NULL && brain != NULL) {
+			controller = createController(controllerName, brain, action);
+		}
+
+		// 完成したキャラとコントローラを保存
+		if (character != NULL && controller != NULL) {
+			res.first.push_back(character);
+			res.second.push_back(controller);
+		}
+	}
+
+	return res;
+}

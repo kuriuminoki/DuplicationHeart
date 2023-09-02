@@ -5,6 +5,7 @@
 #include "Object.h"
 #include "Camera.h"
 #include "Brain.h"
+#include "CharacterLoader.h"
 #include "ObjectLoader.h"
 #include "Define.h"
 #include "DxLib.h"
@@ -229,18 +230,26 @@ AreaReader::AreaReader(int fromAreaNum, int toAreaNum, SoundPlayer* soundPlayer)
 	}
 	// CHARACTER
 	data = csvReader2.getDomainData("CHARACTER:");
+	CharacterLoader characterLoader;
+	m_camera_p = new Camera(0, 0, 1.0);
 	for (unsigned int i = 0; i < data.size(); i++) {
-		loadCharacter(data[i]);
+		characterLoader.addCharacter(data[i]);
 	}
+	pair<vector<Character*>, vector<CharacterController*> > cp = characterLoader.getCharacters(m_camera_p, soundPlayer);
+	m_characters = cp.first;
+	m_characterControllers = cp.second;
+	m_focusId = characterLoader.getFocusId();
+	m_playerId = characterLoader.getPlayerId();
+	m_playerCharacter_p = characterLoader.getPlayerCharacter();
 	// OBJECT
 	data = csvReader2.getDomainData("OBJECT:");
 	ObjectLoader objectLoader;
 	for (unsigned int i = 0; i < data.size(); i++) {
 		objectLoader.addObject(data[i]);
 	}
-	pair<vector<Object*>, vector<Object*> > p = objectLoader.getObjects();
-	m_objects = p.first;
-	m_doorObjects = p.second;
+	pair<vector<Object*>, vector<Object*> > op = objectLoader.getObjects();
+	m_objects = op.first;
+	m_doorObjects = op.second;
 	// BACKGROUND
 	data = csvReader2.getDomainData("BACKGROUND:");
 	for (unsigned int i = 0; i < data.size(); i++) {
@@ -257,54 +266,6 @@ void AreaReader::loadBGM(std::map<std::string, std::string> dataMap) {
 	filePath << "sound/bgm/" << dataMap["name"];
 	m_bgmName = filePath.str().c_str();
 	m_bgmVolume = stoi(dataMap["volume"]);
-}
-
-// キャラクターのロード
-void AreaReader::loadCharacter(std::map<std::string, std::string> dataMap) {
-	string name = dataMap["name"];
-	int x = stoi(dataMap["x"]);
-	int y = stoi(dataMap["y"]);
-	bool sound = (bool)stoi(dataMap["sound"]);
-	int groupId = stoi(dataMap["groupId"]);
-	string actionName = dataMap["action"];
-	string brainName = dataMap["brain"];
-	string controllerName = dataMap["controller"];
-	bool cameraFlag = (bool)stoi(dataMap["camera"]);
-	bool playerFlag = (bool)stoi(dataMap["player"]);
-
-	// キャラを作成
-	Character* character = createCharacter(name.c_str(), 100, x, y, groupId);
-
-	// カメラをセット
-	if (cameraFlag && m_camera_p == NULL && character != NULL) {
-		m_camera_p = new Camera(0, 0, 1.0);
-		m_camera_p->setPoint(character->getCenterX(), character->getCenterY());
-		m_focusId = character->getId();
-	}
-
-	// プレイヤーが操作中のキャラとしてセット
-	if (playerFlag && m_playerId == -1 && character != NULL) {
-		m_playerId = character->getId();
-		m_playerCharacter_p = character;
-	}
-
-	// アクションを作成
-	SoundPlayer* soundPlayer = sound ? m_soundPlayer_p : NULL;
-	CharacterAction* action = createAction(actionName, character, soundPlayer);
-	if (action == NULL) { return; }
-
-	// Brainを作成
-	Brain* brain = createBrain(brainName, m_camera_p);
-	if (brain == NULL) { return; }
-
-	// コントローラを作成
-	CharacterController* controller = createController(controllerName, brain, action);
-
-	// 完成したキャラとコントローラを保存
-	if (character != NULL && controller != NULL) { 
-		m_characters.push_back(character);
-		m_characterControllers.push_back(controller);
-	}
 }
 
 // 背景のロード
