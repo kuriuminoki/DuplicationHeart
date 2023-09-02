@@ -3,6 +3,7 @@
 #include "CsvReader.h"
 #include "World.h"
 #include "Sound.h"
+#include "CharacterLoader.h"
 #include "ObjectLoader.h"
 #include <sstream>
 
@@ -28,6 +29,13 @@ Story::Story(int storyNum, World* world, SoundPlayer* soundPlayer) {
 		else { m_subEvent.push_back(eventOne); }
 	}
 
+	// キャラクターを用意
+	vector<map<string, string> > characterData = csvReader2.getDomainData("CHARACTER:");
+	m_characterLoader = new CharacterLoader;
+	for (unsigned int i = 0; i < characterData.size(); i++) {
+		m_characterLoader->addCharacter(characterData[i]);
+	}
+
 	// オブジェクトを用意
 	vector<map<string, string> > objectData = csvReader2.getDomainData("OBJECT:");
 	m_objectLoader = new ObjectLoader;
@@ -43,6 +51,7 @@ Story::~Story() {
 	for (unsigned int i = 0; i < m_subEvent.size(); i++) {
 		delete m_subEvent[i];
 	}
+	delete m_characterLoader;
 	delete m_objectLoader;
 }
 

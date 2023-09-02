@@ -12,6 +12,7 @@
 #include "Text.h"
 #include "Brain.h"
 #include "ControllerRecorder.h"
+#include "CharacterLoader.h"
 #include "ObjectLoader.h"
 #include "Game.h"
 #include "DxLib.h"
@@ -182,6 +183,15 @@ World::World(const World* original) {
 	m_backGroundColor = original->getBackGroundColor();
 }
 
+// ストーリーやイベントによる追加キャラクター
+void World::addCharacter(CharacterLoader* characterLoader) {
+	pair<vector<Character*>, vector<CharacterController*> > p = characterLoader->getCharacters(m_camera, m_soundPlayer_p, m_areaNum);
+	// キャラクター
+	m_characters.insert(m_characters.end(), p.first.begin(), p.first.end());
+	// コントローラ
+	m_characterControllers.insert(m_characterControllers.end(), p.second.begin(), p.second.end());
+}
+
 // ストーリーやイベントによる追加オブジェクト
 void World::addObject(ObjectLoader* objectLoader) {
 	pair<vector<Object*>, vector<Object*> > p = objectLoader->getObjects(m_areaNum);
@@ -278,11 +288,20 @@ void World::eraseRecorder() {
 
 // キャラ1体の情報を世界に反映
 void World::asignedCharacter(Character* character, CharacterData* data) {
-	character->setHp(data->hp());
+	if (data->id() != -1) {
+		// このゲームで初登場じゃない
+		character->setHp(data->hp());
+	}
 	//character->setId(data.id());
 	character->setGroupId(data->groupId());
-	//character->setX(data.x());
-	//character->setY(data.y());
+	character->setX(data->x());
+	if (data->initFlag()) {
+		character->setY(data->y());
+	}
+	else {
+		// 座標が変更されたので身長に合わせて調整
+		character->setY(data->y() - character->getHeight());
+	}
 }
 
 // コントローラ1個の情報を世界に反映
@@ -312,7 +331,7 @@ CharacterController* World::createControllerWithData(const Character* character,
 
 // キャラの状態を変更する いないなら作成する
 void World::asignedCharacterData(const char* name, CharacterData* data) {
-	if (data->id() == -1) { return; }
+	if (data->areaNum() == -1) { return; }
 	size_t size = m_characters.size();
 	// キャラの設定
 	bool flag = false;
@@ -348,6 +367,7 @@ void World::asignCharacterData(const char* name, CharacterData* data, int fromAr
 	for (unsigned i = 0; i < size; i++) {
 		if (name == m_characterControllers[i]->getAction()->getCharacter()->getName()) {
 			const Character* c = m_characterControllers[i]->getAction()->getCharacter();
+			data->setInitFlag(true);
 			data->setHp(c->getHp());
 			data->setId(c->getId());
 			data->setGroupId(c->getGroupId());
@@ -444,6 +464,7 @@ void World::setPlayerOnDoor(int from) {
 			break;
 		}
 	}
+	cameraPointInit();
 }
 
 // CharacterActionのvectorを返す
@@ -798,4 +819,14 @@ CharacterController* World::getControllerWithName(string characterName) const {
 		}
 	}
 	return NULL;
+}
+
+// カメラの位置をリセット
+void World::cameraPointInit() {
+	for (unsigned int i = 0; i < m_characters.size(); i++) {
+		if (m_characters[i]->getId() == m_focusId) {
+			m_camera->setPoint(m_characters[i]->getCenterX(), m_characters[i]->getCenterY());
+			break;
+		}
+	}
 }

@@ -16,6 +16,7 @@ class Animation;
 class SoundPlayer;
 class Conversation;
 class Brain;
+class CharacterLoader;
 class ObjectLoader;
 class CharacterData;
 class DoorData;
@@ -103,7 +104,8 @@ public:
 	inline void setSkillFlag(bool skillFlag) { m_skillFlag = skillFlag; }
 	inline void setFocusId(int id) { m_focusId = id; }
 
-	// ストーリーやイベントによる追加オブジェクト
+	// ストーリーやイベントによる追加
+	void addCharacter(CharacterLoader* characterLoader);
 	void addObject(ObjectLoader* objectLoader);
 
 	//デバッグ
@@ -129,6 +131,9 @@ public:
 
 	// プレイヤーとその仲間をドアの前に移動
 	void setPlayerOnDoor(int from);
+
+	// カメラの位置をリセット
+	void cameraPointInit();
 
 	/*
 	* イベント用

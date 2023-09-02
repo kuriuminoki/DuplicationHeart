@@ -14,6 +14,9 @@ class Character;
 class CharacterData {
 private:
 
+	// 初期化済みか(Y座標の調整のために必要)一度でもキャラが生成されるとtrue
+	bool m_initFlag;
+
 	// 名前
 	const char* m_name;
 
@@ -54,6 +57,7 @@ public:
 	CharacterData(const char* name);
 
 	// ゲッタ
+	inline bool initFlag() const { return m_initFlag; }
 	inline const char* name() const { return m_name; }
 	inline int hp() const { return m_hp; }
 	inline int id() const { return m_id; }
@@ -69,6 +73,7 @@ public:
 	inline std::string controllerName() const { return m_controllerName; }
 
 	// セッタ
+	inline void setInitFlag(bool initFlag) { m_initFlag = initFlag; }
 	inline void setHp(int hp) { m_hp = hp; }
 	inline void setId(int id) { m_id = id; }
 	inline void setGroupId(int groupId) { m_groupId = groupId; }
@@ -160,6 +165,9 @@ public:
 
 	// Worldのデータを自身に反映させる
 	void asignedWorld(World* world);
+
+	// ストーリーが進んだ時にセーブデータを更新する
+	void updateStory(Story* story);
 };
 
 
