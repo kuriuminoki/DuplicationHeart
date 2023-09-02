@@ -144,9 +144,7 @@ public:
 private:
 	void loadBGM(std::map<std::string, std::string> dataMap);
 	void loadCharacter(std::map<std::string, std::string> dataMap);
-	void loadObject(std::map<std::string, std::string> dataMap);
 	void loadBackGround(std::map<std::string, std::string> dataMap);
-	void setPlayer();
 	void setFollow();
 };
 

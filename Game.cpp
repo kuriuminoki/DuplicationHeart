@@ -32,6 +32,20 @@ CharacterData::CharacterData(const char* name) {
 
 
 /*
+* ドアのデータ
+*/
+DoorData::DoorData(int x1, int y1, int x2, int y2, int from, int to, const char* fileName) {
+	m_x1 = x1;
+	m_y1 = y1;
+	m_x2 = x2;
+	m_y2 = y2;
+	m_from = from;
+	m_to = to;
+	m_fileName = fileName;
+}
+
+
+/*
 * ゲームのセーブデータ
 */
 // 初期状態のデータを作成
@@ -43,8 +57,8 @@ GameData::GameData() {
 	m_soundVolume = 10;
 
 	// 主要キャラを設定
-	m_characterData.push_back("ハート");
-	m_characterData.push_back("シエスタ");
+	m_characterData.push_back(new CharacterData("ハート"));
+	m_characterData.push_back(new CharacterData("シエスタ"));
 
 }
 
@@ -57,11 +71,24 @@ GameData::GameData(const char* saveFilePath):
 
 }
 
+GameData::~GameData() {
+	for (unsigned int i = 0; i < m_characterData.size(); i++) {
+		delete m_characterData[i];
+	}
+	for (unsigned int i = 0; i < m_doorData.size(); i++) {
+		delete m_doorData[i];
+	}
+}
+
 // 自身のデータをWorldにデータ反映させる
 void GameData::asignWorld(World* world) {
 	size_t size = m_characterData.size();
 	for (unsigned int i = 0; i < size; i++) {
-		world->asignedCharacterData(m_characterData[i].name(), m_characterData[i]);
+		world->asignedCharacterData(m_characterData[i]->name(), m_characterData[i]);
+	}
+	size = m_doorData.size();
+	for (unsigned int i = 0; i < size; i++) {
+		world->asignedDoorData(m_doorData[i]);
 	}
 }
 
@@ -69,8 +96,9 @@ void GameData::asignWorld(World* world) {
 void GameData::asignedWorld(World* world) {
 	size_t size = m_characterData.size();
 	for (unsigned int i = 0; i < size; i++) {
-		world->asignCharacterData(m_characterData[i].name(), m_characterData[i], m_areaNum);
+		world->asignCharacterData(m_characterData[i]->name(), m_characterData[i], m_areaNum);
 	}
+	world->asignDoorData(m_doorData, m_areaNum);
 }
 
 
@@ -140,6 +168,7 @@ bool Game::play() {
 		m_gameData->setStoryNum(m_gameData->getStoryNum() + 1);
 		delete m_story;
 		m_story = new Story(m_gameData->getStoryNum(), m_world, m_soundPlayer);
+		// ストーリーの影響でオブジェクトが追加される（一度追加されると今後GameDataでデータは保持され続ける）
 		m_world->addObject(m_story->getObjectLoader());
 	}
 
@@ -148,15 +177,16 @@ bool Game::play() {
 
 	// エリア移動
 	if (m_world->getBrightValue() == 0) {
-		int nextAreaNum = m_world->getAreaNum();
+		int fromAreaNum = m_gameData->getAreaNum();
+		int toAreaNum = m_world->getAreaNum();
 		m_gameData->asignedWorld(m_world);
 		delete m_world;
 		InitGraph();
-		m_world = new World(m_gameData->getAreaNum(), nextAreaNum, m_soundPlayer);
+		m_world = new World(fromAreaNum, toAreaNum, m_soundPlayer);
 		m_gameData->asignWorld(m_world);
-		m_gameData->setAreaNum(nextAreaNum);
-		m_world->addObject(m_story->getObjectLoader());
+		m_world->setPlayerOnDoor(fromAreaNum);
 		m_story->setWorld(m_world);
+		m_gameData->setAreaNum(toAreaNum);
 		return true;
 	}
 	return false;
@@ -256,7 +286,6 @@ void HeartSkill::createDuplicationHeart() {
 	// ハートの複製
 	Character* original = m_world_p->getCharacterWithId(m_world_p->getPlayerId());
 	Character* duplicationHeart = new Heart("複製のハート", original->getHp(), original->getX(), original->getY(), 0, original->getAttackInfo());
-	// Character* duplicationHeart = original->createCopy();
 	duplicationHeart->setX(duplicationHeart->getX() + GetRand(200));
 	duplicationHeart->setHp(original->getHp());
 	duplicationHeart->setLeftDirection(original->getLeftDirection());

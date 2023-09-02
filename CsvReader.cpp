@@ -247,7 +247,7 @@ AreaReader::AreaReader(int fromAreaNum, int toAreaNum, SoundPlayer* soundPlayer)
 		loadBackGround(data[i]);
 	}
 
-	setPlayer();
+	// 追跡対象をプレイヤーにする
 	setFollow();
 }
 
@@ -323,21 +323,6 @@ void AreaReader::loadBackGround(std::map<std::string, std::string> dataMap) {
 	}
 	// 背景色
 	m_backGroundColor = str2color(color);
-}
-
-// プレイヤーの初期位置を、前いたエリアを元に設定
-void AreaReader::setPlayer() {
-	for (int i = 0; i < m_characters.size(); i++) {
-		if (m_playerId == m_characters[i]->getId()) {
-			for (int j = 0; j < m_doorObjects.size(); j++) {
-				if (m_doorObjects[j]->getAreaNum() == m_fromAreaNum) {
-					m_characters[i]->setX(m_doorObjects[j]->getX1());
-					m_characters[i]->setY(m_doorObjects[j]->getY2() - m_characters[i]->getHeight());
-				}
-			}
-			break;
-		}
-	}
 }
 
 // follow対象をプレイヤーにする

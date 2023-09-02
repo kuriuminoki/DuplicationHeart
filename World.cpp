@@ -276,28 +276,30 @@ void World::eraseRecorder() {
 	}
 }
 
-void World::asignedCharacter(Character* character, CharacterData& data) {
-	character->setHp(data.hp());
+// キャラ1体の情報を世界に反映
+void World::asignedCharacter(Character* character, CharacterData* data) {
+	character->setHp(data->hp());
 	//character->setId(data.id());
-	character->setGroupId(data.groupId());
+	character->setGroupId(data->groupId());
 	//character->setX(data.x());
 	//character->setY(data.y());
 }
 
-CharacterController* World::createControllerWithData(const Character* character, CharacterData& data) {
+// コントローラ1個の情報を世界に反映
+CharacterController* World::createControllerWithData(const Character* character, CharacterData* data) {
 	size_t size = m_characters.size();
 	// Actionを作成
 	CharacterAction* action = nullptr;
 	for (unsigned int j = 0; j < size; j++) {
 		if (m_characters[j]->getName() == character->getName()) {
-			action = createAction(data.actionName(), m_characters[j], data.soundFlag() ? m_soundPlayer_p : nullptr);
+			action = createAction(data->actionName(), m_characters[j], data->soundFlag() ? m_soundPlayer_p : nullptr);
 			break;
 		}
 	}
 	// Brainを作成
-	Brain* brain = createBrain(data.brainName(), m_camera);
+	Brain* brain = createBrain(data->brainName(), m_camera);
 	brain->setCharacterAction(action);
-	string follow = data.followName();
+	string follow = data->followName();
 	for (unsigned int j = 0; j < size; j++) {
 		if (m_characters[j]->getName() == follow) {
 			brain->searchFollow(m_characters[j]);
@@ -305,12 +307,12 @@ CharacterController* World::createControllerWithData(const Character* character,
 		}
 	}
 	// Controllerを作成
-	return createController(data.controllerName(), brain, action);
+	return createController(data->controllerName(), brain, action);
 }
 
 // キャラの状態を変更する いないなら作成する
-void World::asignedCharacterData(const char* name, CharacterData& data) {
-	if (data.id() == -1) { return; }
+void World::asignedCharacterData(const char* name, CharacterData* data) {
+	if (data->id() == -1) { return; }
 	size_t size = m_characters.size();
 	// キャラの設定
 	bool flag = false;
@@ -321,7 +323,7 @@ void World::asignedCharacterData(const char* name, CharacterData& data) {
 		}
 	}
 	// キャラを新規作成する場合（このエリアにいるはずのキャラだがまだいない）
-	if (!flag && data.areaNum() == m_areaNum) {
+	if (!flag && (data->areaNum() == m_areaNum || data->followName() == "ハート")) {
 		Character* character = createCharacter(name);
 		asignedCharacter(character, data);
 		m_characters.push_back(character);
@@ -341,25 +343,104 @@ void World::asignedCharacterData(const char* name, CharacterData& data) {
 }
 
 // キャラの状態を教える
-void World::asignCharacterData(const char* name, CharacterData& data, int fromAreaNum) {
+void World::asignCharacterData(const char* name, CharacterData* data, int fromAreaNum) {
 	size_t size = m_characterControllers.size();
 	for (unsigned i = 0; i < size; i++) {
 		if (name == m_characterControllers[i]->getAction()->getCharacter()->getName()) {
 			const Character* c = m_characterControllers[i]->getAction()->getCharacter();
-			data.setHp(c->getHp());
-			data.setId(c->getId());
-			data.setGroupId(c->getGroupId());
-			data.setAreaNum(fromAreaNum);
-			data.setX(c->getX());
-			data.setY(c->getY());
-			data.setBrainName(m_characterControllers[i]->getBrain()->getBrainName());
-			data.setTargetName(m_characterControllers[i]->getBrain()->getTargetName());
+			data->setHp(c->getHp());
+			data->setId(c->getId());
+			data->setGroupId(c->getGroupId());
+			data->setAreaNum(fromAreaNum);
+			data->setX(c->getX());
+			data->setY(c->getY());
+			data->setBrainName(m_characterControllers[i]->getBrain()->getBrainName());
+			data->setTargetName(m_characterControllers[i]->getBrain()->getTargetName());
 			if (m_characterControllers[i]->getBrain()->getFollow() != nullptr) {
-				data.setFollowName(m_characterControllers[i]->getBrain()->getFollow()->getName().c_str());
+				data->setFollowName(m_characterControllers[i]->getBrain()->getFollow()->getName().c_str());
 			}
-			data.setActionName(m_characterControllers[i]->getAction()->getActionName());
-			data.setSoundFlag(m_characterControllers[i]->getAction()->getSoundPlayer() != nullptr);
-			data.setControllerName(m_characterControllers[i]->getControllerName());
+			data->setActionName(m_characterControllers[i]->getAction()->getActionName());
+			data->setSoundFlag(m_characterControllers[i]->getAction()->getSoundPlayer() != nullptr);
+			data->setControllerName(m_characterControllers[i]->getControllerName());
+			break;
+		}
+	}
+}
+
+// Doorの状態を変更する いないなら作成する
+void World::asignedDoorData(DoorData* data) {
+	if (data->from() != m_areaNum) { return; }
+	bool flag = false;
+	for (unsigned i = 0; i < m_doorObjects.size(); i++) {
+		if (data->to() == m_doorObjects[i]->getAreaNum()) {
+			m_doorObjects[i]->setX1(data->x1());
+			m_doorObjects[i]->setY1(data->y1());
+			m_doorObjects[i]->setX2(data->x2());
+			m_doorObjects[i]->setY2(data->y2());
+			flag = true;
+			break;
+		}
+	}
+	if (!flag) {
+		m_doorObjects.push_back(new DoorObject(data->x1(), data->y1(), data->x2(), data->y2(), data->fileName(), data->to()));
+	}
+}
+
+// Doorの状態を教える
+void World::asignDoorData(vector<DoorData*>& data, int fromAreaNum) {
+	size_t size = data.size();
+	for (unsigned i = 0; i < m_doorObjects.size(); i++) {
+		bool flag = false;
+		for (unsigned j = 0; j < size; j++) {
+			if (data[j]->to() == m_doorObjects[i]->getAreaNum() && data[j]->from() == fromAreaNum) {
+				data[j]->setX1(m_doorObjects[i]->getX1());
+				data[j]->setY1(m_doorObjects[i]->getY1());
+				data[j]->setX2(m_doorObjects[i]->getX2());
+				data[j]->setY2(m_doorObjects[i]->getY2());
+				data[j]->setFrom(fromAreaNum);
+				data[j]->setTo(m_doorObjects[i]->getAreaNum());
+				data[j]->setFileName(m_doorObjects[i]->getFileName());
+				flag = true;
+				break;
+			}
+		}
+		if (!flag) {
+			//m_doorObjects.push_back(new DoorObject(data[i].x1(), data[i].y1(), data[i].x2(), data[i].y2(), data[i].fileName(), data[i].to()));
+			data.push_back(new DoorData(m_doorObjects[i]->getX1(), m_doorObjects[i]->getY1(),
+				m_doorObjects[i]->getX2(), m_doorObjects[i]->getY2(),
+				fromAreaNum, m_doorObjects[i]->getAreaNum(), m_doorObjects[i]->getFileName()));
+		}
+	}
+}
+
+// プレイヤーとその仲間をドアの前に移動
+void World::setPlayerOnDoor(int from) {
+	int doorX1 = 0, doorY2 = 0;
+	for (unsigned int i = 0; i < m_doorObjects.size(); i++) {
+		if (m_doorObjects[i]->getAreaNum() == from) {
+			doorX1 = m_doorObjects[i]->getX1();
+			doorY2 = m_doorObjects[i]->getY2();
+		}
+	}
+	// プレイヤー
+	for (unsigned int i = 0; i < m_characters.size(); i++) {
+		if (m_playerId == m_characters[i]->getId()) {
+			m_characters[i]->setX(doorX1);
+			m_characters[i]->setY(doorY2 - m_characters[i]->getHeight());
+			break;
+		}
+	}
+	// プレイヤーの仲間
+	for (unsigned int i = 0; i < m_characterControllers.size(); i++) {
+		const Character* follow = m_characterControllers[i]->getBrain()->getFollow();
+		if (follow != nullptr && m_playerId == follow->getId()) {
+			for (unsigned int j = 0; j < m_characters.size(); j++) {
+				if (m_characterControllers[i]->getAction()->getCharacter()->getId() == m_characters[j]->getId()) {
+					m_characters[j]->setX(doorX1);
+					m_characters[j]->setY(doorY2 - m_characters[j]->getHeight());
+					break;
+				}
+			}
 			break;
 		}
 	}

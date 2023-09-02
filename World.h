@@ -18,6 +18,7 @@ class Conversation;
 class Brain;
 class ObjectLoader;
 class CharacterData;
+class DoorData;
 
 
 class World {
@@ -115,10 +116,19 @@ public:
 	void talk();
 
 	// キャラの状態を変更する いないなら作成する
-	void asignedCharacterData(const char* name, CharacterData& data);
+	void asignedCharacterData(const char* name, CharacterData* data);
 
 	// キャラの状態を教える
-	void asignCharacterData(const char* name, CharacterData& data, int fromAreaNum);
+	void asignCharacterData(const char* name, CharacterData* data, int fromAreaNum);
+
+	// Doorの状態を変更する いないなら作成する
+	void asignedDoorData(DoorData* data);
+
+	// Doorの状態を教える
+	void asignDoorData(std::vector<DoorData*>& data, int fromAreaNum);
+
+	// プレイヤーとその仲間をドアの前に移動
+	void setPlayerOnDoor(int from);
 
 	/*
 	* イベント用
@@ -166,8 +176,8 @@ private:
 	void atariAttackAndAttack();
 
 	// キャラのセーブデータを自身に反映させる
-	void asignedCharacter(Character* character, CharacterData& data);
-	CharacterController* createControllerWithData(const Character* character, CharacterData& data);
+	void asignedCharacter(Character* character, CharacterData* data);
+	CharacterController* createControllerWithData(const Character* character, CharacterData* data);
 };
 
 #endif

@@ -348,22 +348,23 @@ void ParabolaAI::bulletTargetPoint(int& x, int& y) {
 		const int G = -ParabolaBullet::G;
 		int dx = m_target_p->getCenterX() - m_characterAction_p->getCharacter()->getCenterX();
 		int gx = abs(dx);
-		int dy = -(m_target_p->getCenterY() - m_characterAction_p->getCharacter()->getCenterY());
+		int gy = -(m_target_p->getCenterY() - m_characterAction_p->getCharacter()->getCenterY());
 		int v = m_characterAction_p->getCharacter()->getAttackInfo()->bulletSpeed();
 		double A = (G * gx * gx) / (2 * v * v);
 		double a = gx / A;
-		double b = 1 - (dy / A);
-		double route = a * a / 4 - b;
-		if (route >= 0) {
-			double t = -sqrt(route) - (a / 2);
-			double r = atan(t);
+		double b = 1 - (gy / A);
+		double routeInside = a * a / 4 - b;
+		if (routeInside >= 0) {
+			double route = sqrt(routeInside);
+			if (GetRand(99) < 50) { route *= -1; }
+			double r = atan(route - (a / 2));
 			if (dx > 0) {
 				x = (int)(m_characterAction_p->getCharacter()->getCenterX() + v * cos(r));
 			}
 			else {
 				x = (int)(m_characterAction_p->getCharacter()->getCenterX() - v * cos(r));
 			}
-			y = (int)(m_characterAction_p->getCharacter()->getCenterY() - v * sin(r)) + 50 - GetRand(100);
+			y = (int)(m_characterAction_p->getCharacter()->getCenterY() - v * sin(r));
 		}
 		else {
 			// 射程外なら45度で投げる
@@ -374,7 +375,7 @@ void ParabolaAI::bulletTargetPoint(int& x, int& y) {
 			else {
 				x = (int)(m_characterAction_p->getCharacter()->getCenterX() - v * cos(r));
 			}
-			y = (int)(m_characterAction_p->getCharacter()->getCenterY() - v * sin(r)) + 50 - GetRand(100);
+			y = (int)(m_characterAction_p->getCharacter()->getCenterY() - v * sin(r));
 		}
 	}
 }
@@ -388,22 +389,23 @@ void FollowParabolaAI::bulletTargetPoint(int& x, int& y) {
 		const int G = -ParabolaBullet::G;
 		int dx = m_target_p->getCenterX() - m_characterAction_p->getCharacter()->getCenterX();
 		int gx = abs(dx);
-		int dy = -(m_target_p->getCenterY() - m_characterAction_p->getCharacter()->getCenterY());
+		int gy = -(m_target_p->getCenterY() - m_characterAction_p->getCharacter()->getCenterY());
 		int v = m_characterAction_p->getCharacter()->getAttackInfo()->bulletSpeed();
 		double A = (G * gx * gx) / (2 * v * v);
 		double a = gx / A;
-		double b = 1 - (dy / A);
-		double route = a * a / 4 - b;
-		if (route >= 0) {
-			double t = -sqrt(route) - (a / 2);
-			double r = atan(t);
+		double b = 1 - (gy / A);
+		double routeInside = a * a / 4 - b;
+		if (routeInside >= 0) {
+			double route = sqrt(routeInside);
+			if (GetRand(99) < 50) { route *= -1; }
+			double r = atan(route - (a / 2));
 			if (dx > 0) {
 				x = (int)(m_characterAction_p->getCharacter()->getCenterX() + v * cos(r));
 			}
 			else {
 				x = (int)(m_characterAction_p->getCharacter()->getCenterX() - v * cos(r));
 			}
-			y = (int)(m_characterAction_p->getCharacter()->getCenterY() - v * sin(r)) + 50 - GetRand(100);
+			y = (int)(m_characterAction_p->getCharacter()->getCenterY() - v * sin(r));
 		}
 		else {
 			// 射程外なら45度で投げる
@@ -414,7 +416,7 @@ void FollowParabolaAI::bulletTargetPoint(int& x, int& y) {
 			else {
 				x = (int)(m_characterAction_p->getCharacter()->getCenterX() - v * cos(r));
 			}
-			y = (int)(m_characterAction_p->getCharacter()->getCenterY() - v * sin(r)) + 50 - GetRand(100);
+			y = (int)(m_characterAction_p->getCharacter()->getCenterY() - v * sin(r));
 		}
 	}
 }
