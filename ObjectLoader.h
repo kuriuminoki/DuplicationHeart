@@ -13,6 +13,8 @@ class Object;
 
 class ObjectLoader {
 private:
+
+	// <•Ç‚â°, ƒhƒA>
 	std::map<int, std::vector<std::map<std::string, std::string> > > m_objects;
 
 public:

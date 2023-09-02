@@ -31,6 +31,12 @@
     <Filter Include="ソース ファイル\api">
       <UniqueIdentifier>{90673ed7-0489-46f2-9ea0-a008e3b9cd13}</UniqueIdentifier>
     </Filter>
+    <Filter Include="ソース ファイル\Loader">
+      <UniqueIdentifier>{04faa9ca-0181-4eec-9208-eb95a6455dbe}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ヘッダー ファイル\Loader">
+      <UniqueIdentifier>{ed248952-e8e8-41aa-bff0-b4ac934a8e07}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Main.cpp">
@@ -64,9 +70,6 @@
       <Filter>ソース ファイル\api</Filter>
     </ClCompile>
     <ClCompile Include="Object.cpp">
-      <Filter>ソース ファイル\api</Filter>
-    </ClCompile>
-    <ClCompile Include="CsvReader.cpp">
       <Filter>ソース ファイル\api</Filter>
     </ClCompile>
     <ClCompile Include="GraphHandle.cpp">
@@ -108,8 +111,14 @@
     <ClCompile Include="ControllerRecorder.cpp">
       <Filter>ソース ファイル\api</Filter>
     </ClCompile>
+    <ClCompile Include="CharacterLoader.cpp">
+      <Filter>ソース ファイル\Loader</Filter>
+    </ClCompile>
+    <ClCompile Include="CsvReader.cpp">
+      <Filter>ソース ファイル\Loader</Filter>
+    </ClCompile>
     <ClCompile Include="ObjectLoader.cpp">
-      <Filter>ソース ファイル\api</Filter>
+      <Filter>ソース ファイル\Loader</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -141,9 +150,6 @@
       <Filter>ヘッダー ファイル\api</Filter>
     </ClInclude>
     <ClInclude Include="Object.h">
-      <Filter>ヘッダー ファイル\api</Filter>
-    </ClInclude>
-    <ClInclude Include="CsvReader.h">
       <Filter>ヘッダー ファイル\api</Filter>
     </ClInclude>
     <ClInclude Include="GraphHandle.h">
@@ -185,8 +191,14 @@
     <ClInclude Include="Brain.h">
       <Filter>ヘッダー ファイル\api</Filter>
     </ClInclude>
+    <ClInclude Include="CharacterLoader.h">
+      <Filter>ヘッダー ファイル\Loader</Filter>
+    </ClInclude>
+    <ClInclude Include="CsvReader.h">
+      <Filter>ヘッダー ファイル\Loader</Filter>
+    </ClInclude>
     <ClInclude Include="ObjectLoader.h">
-      <Filter>ヘッダー ファイル\api</Filter>
+      <Filter>ヘッダー ファイル\Loader</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

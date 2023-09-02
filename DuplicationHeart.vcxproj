@@ -159,6 +159,7 @@
     <ClCompile Include="CharacterAction.cpp" />
     <ClCompile Include="CharacterDrawer.cpp" />
     <ClCompile Include="CharacterController.cpp" />
+    <ClCompile Include="CharacterLoader.cpp" />
     <ClCompile Include="Control.cpp" />
     <ClCompile Include="ControllerRecorder.cpp" />
     <ClCompile Include="CsvReader.cpp" />
@@ -187,6 +188,7 @@
     <ClInclude Include="CharacterAction.h" />
     <ClInclude Include="CharacterDrawer.h" />
     <ClInclude Include="CharacterController.h" />
+    <ClInclude Include="CharacterLoader.h" />
     <ClInclude Include="Control.h" />
     <ClInclude Include="ControllerRecorder.h" />
     <ClInclude Include="CsvReader.h" />

@@ -12,6 +12,7 @@ ObjectLoader::ObjectLoader() {
 }
 
 void ObjectLoader::addObject(map<string, string> dataMap) {
+	// areaカラムがない場合は-1にマッピングしておく。
 	int areaNum = -1;
 	if (dataMap.find("area") != dataMap.end()) {
 		areaNum = stoi(dataMap["area"]);
