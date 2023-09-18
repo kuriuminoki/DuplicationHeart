@@ -25,6 +25,9 @@ int controlD();
 // Fキー（スキル発動）
 int controlF();
 
+// Qキー（一時停止）
+int controlQ();
+
 //FPS表示のオンオフ
 int controlDebug();
 

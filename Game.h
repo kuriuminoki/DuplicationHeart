@@ -8,6 +8,7 @@ class SoundPlayer;
 class World;
 class Story;
 class Character;
+class GamePause;
 
 
 // キャラのセーブデータ
@@ -241,6 +242,9 @@ private:
 	// スキル
 	HeartSkill* m_skill;
 
+	// 一時停止画面
+	GamePause* m_gamePause;
+
 public:
 	Game();
 	~Game();
@@ -248,6 +252,7 @@ public:
 	// ゲッタ
 	World* getWorld() const { return m_world; }
 	HeartSkill* getSkill() const { return m_skill; }
+	GamePause* getGamePause() const { return m_gamePause; }
 
 	// デバッグ
 	void debug(int x, int y, int color) const;

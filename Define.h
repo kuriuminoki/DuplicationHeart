@@ -3,6 +3,11 @@
 
 #include"DxLib.h"
 
+// フルスクリーンならFALSE
+static int WINDOW = TRUE;
+// マウスを表示するならFALSE
+static int MOUSE_DISP = FALSE;
+
 //画面の大きさ
 #define GAME_WIDE 1920
 #define GAME_HEIGHT 1080

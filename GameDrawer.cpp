@@ -2,6 +2,7 @@
 #include "Game.h"
 #include "World.h"
 #include "WorldDrawer.h"
+#include "PausePage.h"
 #include "Define.h"
 #include "DxLib.h"
 #include <string>
@@ -25,6 +26,7 @@ GameDrawer::~GameDrawer() {
 }
 
 void GameDrawer::draw() {
+
 	// 世界を描画
 	HeartSkill* skill = m_game->getSkill();
 	if (skill != NULL) {
@@ -47,4 +49,14 @@ void GameDrawer::draw() {
 			DrawStringToHandle(700, 50, oss.str().c_str(), BLACK, m_skillHandle);
 		}
 	}
+
+	// 一時停止画面
+	if (m_game->getGamePause() != NULL) {
+		SetMouseDispFlag(TRUE);//マウス表示
+		m_game->getGamePause()->draw();
+	}
+	else{
+		SetMouseDispFlag(MOUSE_DISP);//マウス表示
+	}
+
 }
