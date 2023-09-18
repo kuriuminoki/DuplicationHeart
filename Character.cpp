@@ -23,6 +23,12 @@ Character* createCharacter(const char* characterName, int hp, int x, int y, int 
 	else if (name == "シエスタ") {
 		character = new Siesta(name.c_str(), hp, x, y, groupId);
 	}
+	else if (name == "ヒエラルキー") {
+		character = new Hierarchy(name.c_str(), hp, x, y, groupId);
+	}
+	else if (name == "ヴァルキリア") {
+		character = new Valkyria(name.c_str(), hp, x, y, groupId);
+	}
 	else {
 		character = new Heart(name.c_str(), hp, x, y, groupId);
 	}
@@ -49,6 +55,7 @@ CharacterInfo::CharacterInfo(const char* characterName) {
 	m_handleEx = stod(data["handleEx"]);
 	m_moveSpeed = stoi(data["moveSpeed"]);
 	m_jumpHeight = stoi(data["jumpHeight"]);
+	m_sameBulletDirection = (bool)stoi(data["sameBulletDirection"]);
 
 	// 効果音をロード
 	string filePath = "sound/stick/";
@@ -308,18 +315,24 @@ Character* Heart::createCopy() {
 
 // 走り画像をセット
 void Heart::switchRun(int cnt) { 
+	if (m_graphHandle->getRunHandle() == nullptr) { return; }
 	int index = (cnt / RUN_ANIME_SPEED) % (m_graphHandle->getRunHandle()->getSize());
 	m_graphHandle->switchRun(index);
 }
 
 // 走り射撃画像をセット
 void Heart::switchRunBullet(int cnt) {
+	if (m_graphHandle->getRunBulletHandle() == nullptr) { 
+		switchRun(cnt);
+		return;
+	}
 	int index = (cnt / RUN_ANIME_SPEED) % (m_graphHandle->getRunBulletHandle()->getSize());
 	m_graphHandle->switchRunBullet(index);
 }
 
 // ジャンプ前画像をセット
 void Heart::switchPreJump(int cnt) { 
+	if (m_graphHandle->getPreJumpHandle() == nullptr) { return; }
 	int index = (cnt / RUN_PREJUMP_SPEED) % (m_graphHandle->getPreJumpHandle()->getSize());
 	m_graphHandle->switchPreJump(index);
 }
@@ -436,6 +449,137 @@ Object* Siesta::bulletAttack(int gx, int gy, SoundPlayer* soundPlayer) {
 
 // 斬撃攻撃をする(キャラごとに違う)
 Object* Siesta::slashAttack(bool leftDirection, int cnt, SoundPlayer* soundPlayer) {
+	// 攻撃範囲を決定
+	int centerX = getCenterX();
+	int height = getHeight();
+	int x1 = centerX;
+	int x2 = centerX;
+	if (leftDirection) { // 左向きに攻撃
+		x1 += 50;
+		x2 -= m_attackInfo->slashLenX();
+	}
+	else { // 右向きに攻撃
+		x1 -= 50;
+		x2 += m_attackInfo->slashLenX();
+	}
+
+	// 攻撃の画像と持続時間(cntを考慮して決定)
+	cnt -= m_attackInfo->slashInterval();
+	int index = 0;
+	int slashCountSum = m_attackInfo->slashCountSum() / 3 + 1;
+	SlashObject* attackObject = NULL;
+	GraphHandles* slashHandles = m_graphHandle->getSlashHandle();
+	// 攻撃の方向
+	slashHandles->setReverseX(m_leftDirection);
+	// cntが攻撃のタイミングならオブジェクト生成
+	if (cnt == m_attackInfo->slashCountSum()) {
+		index = 0;
+		attackObject = new SlashObject(x1, m_y, x2, m_y + height,
+			slashHandles->getGraphHandle(index), slashCountSum, m_attackInfo);
+		// 効果音
+		if (soundPlayer != NULL) {
+			soundPlayer->pushSoundQueue(m_attackInfo->slashStartSoundHandle(),
+				adjustPanSound(getCenterX(),
+					soundPlayer->getCameraX()));
+		}
+	}
+	else if (cnt == m_attackInfo->slashCountSum() * 2 / 3) {
+		index = 1;
+		attackObject = new SlashObject(x1, m_y, x2, m_y + height,
+			slashHandles->getGraphHandle(index), slashCountSum, m_attackInfo);
+	}
+	else if (cnt == m_attackInfo->slashCountSum() / 3) {
+		index = 2;
+		attackObject = new SlashObject(x1, m_y, x2, m_y + height,
+			slashHandles->getGraphHandle(index), slashCountSum, m_attackInfo);
+	}
+	if (attackObject != NULL) {
+		// 自滅防止
+		attackObject->setCharacterId(m_id);
+		// チームキル防止
+		attackObject->setGroupId(m_groupId);
+	}
+	return attackObject;
+}
+
+
+/*
+* ヒエラルキー
+*/
+Hierarchy::Hierarchy(const char* name, int hp, int x, int y, int groupId) :
+	Heart(name, hp, x, y, groupId)
+{
+
+}
+Hierarchy::Hierarchy(const char* name, int hp, int x, int y, int groupId, AttackInfo* attackInfo) :
+	Heart(name, hp, x, y, groupId, attackInfo)
+{
+
+}
+
+Character* Hierarchy::createCopy() {
+	Character* res = new Hierarchy(m_characterInfo->name().c_str(), m_hp, m_x, m_y, m_groupId, m_attackInfo);
+	res->setY(m_y);
+	res->setId(m_id);
+	res->setLeftDirection(m_leftDirection);
+	res->setHp(m_hp);
+	res->getCharacterGraphHandle()->setGraph(getGraphHandle());
+	return res;
+}
+
+// 射撃攻撃をする(キャラごとに違う)
+Object* Hierarchy::bulletAttack(int gx, int gy, SoundPlayer* soundPlayer) {
+	BulletObject* attackObject = new BulletObject(getCenterX(), getCenterY(), m_graphHandle->getBulletHandle()->getGraphHandle(), gx, gy, m_attackInfo);
+	// 自滅防止
+	attackObject->setCharacterId(m_id);
+	// チームキル防止
+	attackObject->setGroupId(m_groupId);
+	// 効果音
+	if (soundPlayer != NULL) {
+		soundPlayer->pushSoundQueue(m_attackInfo->bulletStartSoundeHandle(),
+			adjustPanSound(getCenterX(),
+				soundPlayer->getCameraX()));
+	}
+	return attackObject;
+}
+
+// 斬撃攻撃をする(キャラごとに違う)
+Object* Hierarchy::slashAttack(bool leftDirection, int cnt, SoundPlayer* soundPlayer) {
+	return nullptr;
+}
+
+
+/*
+* ヴァルキリア
+*/
+Valkyria::Valkyria(const char* name, int hp, int x, int y, int groupId) :
+	Heart(name, hp, x, y, groupId)
+{
+
+}
+Valkyria::Valkyria(const char* name, int hp, int x, int y, int groupId, AttackInfo* attackInfo) :
+	Heart(name, hp, x, y, groupId, attackInfo)
+{
+
+}
+
+Character* Valkyria::createCopy() {
+	Character* res = new Valkyria(m_characterInfo->name().c_str(), m_hp, m_x, m_y, m_groupId, m_attackInfo);
+	res->setY(m_y);
+	res->setId(m_id);
+	res->setLeftDirection(m_leftDirection);
+	res->setHp(m_hp);
+	res->getCharacterGraphHandle()->setGraph(getGraphHandle());
+	return res;
+}
+
+// 射撃攻撃をする(キャラごとに違う)
+Object* Valkyria::bulletAttack(int gx, int gy, SoundPlayer* soundPlayer) {
+	return nullptr;
+}
+
+// 斬撃攻撃をする(キャラごとに違う)
+Object* Valkyria::slashAttack(bool leftDirection, int cnt, SoundPlayer* soundPlayer) {
 	// 攻撃範囲を決定
 	int centerX = getCenterX();
 	int height = getHeight();

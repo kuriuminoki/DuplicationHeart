@@ -563,7 +563,9 @@ Object* StickAction::bulletAttack(int gx, int gy) {
 		// ŽËŒ‚•s‰Â”\ó‘Ô‚É‚µ‚Ä
 		m_bulletCnt = m_character_p->getBulletRapid();
 		// Œ‚‚Â•ûŒü‚ÖŒü‚­
-		m_character_p->setLeftDirection(m_character_p->getCenterX() > gx);
+		if (m_character_p->getCharacterInfo()->sameBulletDirection()) {
+			m_character_p->setLeftDirection(m_character_p->getCenterX() > gx);
+		}
 		// UŒ‚‚ð•Ô‚·
 		return m_character_p->bulletAttack(gx, gy, m_soundPlayer_p);
 	}

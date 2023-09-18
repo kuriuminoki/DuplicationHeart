@@ -254,4 +254,6 @@ public:
 	void damage(int vx, int vy, int damageValue);
 };
 
+
+
 #endif
