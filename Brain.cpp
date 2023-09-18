@@ -19,6 +19,7 @@ const char* NormalAI::BRAIN_NAME = "NormalAI";
 const char* ParabolaAI::BRAIN_NAME = "ParabolaAI";
 const char* FollowNormalAI::BRAIN_NAME = "FollowNormalAI";
 const char* FollowParabolaAI::BRAIN_NAME = "FollowParabolaAI";
+const char* ValkiriaAI::BRAIN_NAME = "ValkiriaAI";
 
 // クラス名からBrainを作成する関数
 Brain* createBrain(const string brainName, const Camera* camera_p) {
@@ -40,6 +41,9 @@ Brain* createBrain(const string brainName, const Camera* camera_p) {
 	}
 	else if (brainName == Freeze::BRAIN_NAME) {
 		brain = new Freeze();
+	}
+	else if (brainName == ValkiriaAI::BRAIN_NAME) {
+		brain = new ValkiriaAI();
 	}
 	return brain;
 }
@@ -240,15 +244,17 @@ int NormalAI::jumpOrder() {
 		if (GetRand(120) == 0) { return 1; }
 	}
 
+	int maxJump = m_characterAction_p->getPreJumpMax();
+
 	// ランダムでジャンプ
-	if (m_squatCnt == 0 && GetRand(99) == 0) { m_jumpCnt = GetRand(15) + 5; }
+	if (m_squatCnt == 0 && GetRand(99) == 0) { m_jumpCnt = GetRand(maxJump - 5) + 5; }
 
 	// 壁にぶつかったからジャンプ
-	if (m_rightKey > 0 && m_characterAction_p->getRightLock()) { m_jumpCnt = 20; }
-	else if (m_leftKey > 0 && m_characterAction_p->getLeftLock()) { m_jumpCnt = 20; }
+	if (m_rightKey > 0 && m_characterAction_p->getRightLock()) { m_jumpCnt = maxJump; }
+	else if (m_leftKey > 0 && m_characterAction_p->getLeftLock()) { m_jumpCnt = maxJump; }
 
 	if (m_jumpCnt > 0) { m_jumpCnt--; }
-	return m_jumpCnt == 0 ? 0 : 20 - m_jumpCnt;
+	return m_jumpCnt == 0 ? 0 : maxJump - m_jumpCnt;
 }
 
 int NormalAI::squatOrder() {
@@ -276,7 +282,7 @@ int NormalAI::slashOrder() {
 		return 0;
 	}
 	// 遠距離の敵には斬撃しない
-	if (m_target_p != NULL && abs(m_target_p->getCenterX() - m_characterAction_p->getCharacter()->getCenterX()) > 500) {
+	if (abs(m_target_p->getCenterX() - m_characterAction_p->getCharacter()->getCenterX()) > 500) {
 		return 0;
 	}
 	// ランダムで斬撃
@@ -295,7 +301,8 @@ int NormalAI::bulletOrder() {
 		return 0;
 	}
 	// ランダムで射撃
-	if (GetRand(30) == 0) {
+	int rapid = m_characterAction_p->getCharacter()->getAttackInfo()->bulletRapid();
+	if (GetRand(rapid) == 0) {
 		return 1;
 	}
 	return 0;
@@ -338,18 +345,18 @@ int  NormalAI::getTargetId() const { return m_target_p == nullptr ? -1 : m_targe
 
 const char*  NormalAI::getTargetName() const { return m_target_p == nullptr ? "" : m_target_p->getName().c_str(); }
 
-
-void ParabolaAI::bulletTargetPoint(int& x, int& y) {
-	if (m_target_p == NULL) {
+// 斜方投射の計算をする
+void setParabolaBulletTarget(int& x, int& y, const CharacterAction* characterAction_p, const Character* target_p) {
+	if (target_p == NULL) {
 		x = 0;
 		y = 0;
 	}
 	else { // ターゲットに向かって射撃攻撃
 		const int G = -ParabolaBullet::G;
-		int dx = m_target_p->getCenterX() - m_characterAction_p->getCharacter()->getCenterX();
+		int dx = target_p->getCenterX() - characterAction_p->getCharacter()->getCenterX();
 		int gx = abs(dx);
-		int gy = -(m_target_p->getCenterY() - m_characterAction_p->getCharacter()->getCenterY());
-		int v = m_characterAction_p->getCharacter()->getAttackInfo()->bulletSpeed();
+		int gy = -(target_p->getCenterY() - characterAction_p->getCharacter()->getCenterY());
+		int v = characterAction_p->getCharacter()->getAttackInfo()->bulletSpeed();
 		double A = (G * gx * gx) / (2 * v * v);
 		double a = gx / A;
 		double b = 1 - (gy / A);
@@ -359,66 +366,33 @@ void ParabolaAI::bulletTargetPoint(int& x, int& y) {
 			if (GetRand(99) < 50) { route *= -1; }
 			double r = atan(route - (a / 2));
 			if (dx > 0) {
-				x = (int)(m_characterAction_p->getCharacter()->getCenterX() + v * cos(r));
+				x = (int)(characterAction_p->getCharacter()->getCenterX() + v * cos(r));
 			}
 			else {
-				x = (int)(m_characterAction_p->getCharacter()->getCenterX() - v * cos(r));
+				x = (int)(characterAction_p->getCharacter()->getCenterX() - v * cos(r));
 			}
-			y = (int)(m_characterAction_p->getCharacter()->getCenterY() - v * sin(r));
+			y = (int)(characterAction_p->getCharacter()->getCenterY() - v * sin(r));
 		}
 		else {
 			// 射程外なら45度で投げる
 			double r = 3.14 / 4;
 			if (dx > 0) {
-				x = (int)(m_characterAction_p->getCharacter()->getCenterX() + v * cos(r));
+				x = (int)(characterAction_p->getCharacter()->getCenterX() + v * cos(r));
 			}
 			else {
-				x = (int)(m_characterAction_p->getCharacter()->getCenterX() - v * cos(r));
+				x = (int)(characterAction_p->getCharacter()->getCenterX() - v * cos(r));
 			}
-			y = (int)(m_characterAction_p->getCharacter()->getCenterY() - v * sin(r));
+			y = (int)(characterAction_p->getCharacter()->getCenterY() - v * sin(r));
 		}
 	}
 }
 
+void ParabolaAI::bulletTargetPoint(int& x, int& y) {
+	setParabolaBulletTarget(x, y, m_characterAction_p, m_target_p);
+}
+
 void FollowParabolaAI::bulletTargetPoint(int& x, int& y) {
-	if (m_target_p == NULL) {
-		x = 0;
-		y = 0;
-	}
-	else { // ターゲットに向かって射撃攻撃
-		const int G = -ParabolaBullet::G;
-		int dx = m_target_p->getCenterX() - m_characterAction_p->getCharacter()->getCenterX();
-		int gx = abs(dx);
-		int gy = -(m_target_p->getCenterY() - m_characterAction_p->getCharacter()->getCenterY());
-		int v = m_characterAction_p->getCharacter()->getAttackInfo()->bulletSpeed();
-		double A = (G * gx * gx) / (2 * v * v);
-		double a = gx / A;
-		double b = 1 - (gy / A);
-		double routeInside = a * a / 4 - b;
-		if (routeInside >= 0) {
-			double route = sqrt(routeInside);
-			if (GetRand(99) < 50) { route *= -1; }
-			double r = atan(route - (a / 2));
-			if (dx > 0) {
-				x = (int)(m_characterAction_p->getCharacter()->getCenterX() + v * cos(r));
-			}
-			else {
-				x = (int)(m_characterAction_p->getCharacter()->getCenterX() - v * cos(r));
-			}
-			y = (int)(m_characterAction_p->getCharacter()->getCenterY() - v * sin(r));
-		}
-		else {
-			// 射程外なら45度で投げる
-			double r = 3.14 / 4;
-			if (dx > 0) {
-				x = (int)(m_characterAction_p->getCharacter()->getCenterX() + v * cos(r));
-			}
-			else {
-				x = (int)(m_characterAction_p->getCharacter()->getCenterX() - v * cos(r));
-			}
-			y = (int)(m_characterAction_p->getCharacter()->getCenterY() - v * sin(r));
-		}
-	}
+	setParabolaBulletTarget(x, y, m_characterAction_p, m_target_p);
 }
 
 
@@ -460,6 +434,11 @@ const Character* FollowNormalAI::getFollow() const {
 	return m_follow_p;
 }
 
+bool FollowNormalAI::checkAlreadyFollow() {
+	int followX = m_follow_p->getCenterX();
+	return  m_gx < followX + FOLLOW_X_ERROR && m_gx > followX - FOLLOW_X_ERROR;
+}
+
 void FollowNormalAI::moveOrder(int& right, int& left, int& up, int& down) {
 	// 現在地
 	int x = m_characterAction_p->getCharacter()->getX();
@@ -474,7 +453,7 @@ void FollowNormalAI::moveOrder(int& right, int& left, int& up, int& down) {
 	// 目標地点設定用パラメータ
 	int followX = m_follow_p->getCenterX();
 	bool alreadyGoal = m_gx > x - GX_ERROR && m_gx < x + GX_ERROR;
-	bool alreadyFollow = m_gx < followX + FOLLOW_X_ERROR && m_gx > followX - FOLLOW_X_ERROR;
+	bool alreadyFollow = checkAlreadyFollow();
 
 	// 目標地点設定
 	if ((alreadyGoal && GetRand(MOVE_RAND) == 0) || !alreadyFollow) {
@@ -507,4 +486,50 @@ bool FollowNormalAI::needSearchFollow() const {
 		return true;
 	}
 	return false;
+}
+
+
+/*
+* ヴァルキリア用AI
+*/
+bool ValkiriaAI::checkAlreadyFollow() {
+	// 戦闘中の敵が近くにいるならハートとの距離を気にしない
+	if (m_target_p != nullptr) {
+		if (m_target_p->getHp() > 0) {
+			if (abs(m_target_p->getCenterX() - m_characterAction_p->getCharacter()->getCenterX()) <= 1000) {
+				return true;
+			}
+		}
+	}
+	// ハートに近いか判定
+	return FollowNormalAI::checkAlreadyFollow();
+}
+
+int ValkiriaAI::slashOrder() {
+	if (m_target_p == NULL || m_target_p->getHp() == 0) {
+		return 0;
+	}
+	// 遠距離の敵には斬撃しない
+	if (abs(m_target_p->getCenterX() - m_characterAction_p->getCharacter()->getCenterX()) > 1000) {
+		return 0;
+	}
+	// ランダムで斬撃
+	if (GetRand(30) == 0) {
+		return 1;
+	}
+	return 0;
+}
+
+int ValkiriaAI::bulletOrder() {
+	return 0;
+}
+
+void ValkiriaAI::moveOrder(int& right, int& left, int& up, int& down) {
+	if (m_characterAction_p->getSlashCnt() > 0) {
+		// 攻撃中は移動しない
+		right = 0; left = 0; up = 0; down = 0;
+	}
+	else {
+		FollowNormalAI::moveOrder(right, left, up, down);
+	}
 }

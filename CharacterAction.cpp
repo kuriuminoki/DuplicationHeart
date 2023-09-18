@@ -11,12 +11,16 @@ using namespace std;
 // クラス名
 const char* CharacterAction::ACTION_NAME = "CharacterAction";
 const char* StickAction::ACTION_NAME = "StickAction";
+const char* ValkiriaAction::ACTION_NAME = "ValkiriaAction";
 
 // クラス名からCharacterActionを作成する関数
 CharacterAction* createAction(const string actionName, Character* character, SoundPlayer* soundPlayer_p) {
 	CharacterAction* action = nullptr;
 	if (actionName == StickAction::ACTION_NAME) {
 		action = new StickAction(character, soundPlayer_p);
+	}
+	else if(actionName == ValkiriaAction::ACTION_NAME) {
+		action = new ValkiriaAction(character, soundPlayer_p);
 	}
 	return action;
 }
@@ -124,6 +128,14 @@ void CharacterAction::setCharacterLeftDirection(bool leftDirection) {
 	m_character_p->setLeftDirection(leftDirection);
 }
 
+void CharacterAction::startSlash() {
+
+}
+
+void CharacterAction::finishSlash() {
+	m_slashCnt = 0;
+}
+
 bool CharacterAction::ableDamage() const {
 	if (m_state == CHARACTER_STATE::DAMAGE) { return false; }
 	return true;
@@ -140,7 +152,7 @@ bool CharacterAction::ableAttack() const {
 void CharacterAction::setGrand(bool grand) {
 	if (m_vy > 0) { // 着地モーションになる
 		m_landCnt = LAND_TIME;
-		m_slashCnt = 0;
+		finishSlash();
 		// 効果音
 		if (m_soundPlayer_p != NULL) {
 			m_soundPlayer_p->pushSoundQueue(m_character_p->getLandSound(),
@@ -226,7 +238,10 @@ void StickAction::action() {
 	if (m_bulletCnt > 0) { m_bulletCnt--; }
 
 	// 斬撃のインターバル処理
-	if (m_slashCnt > 0) { m_slashCnt--; }
+	if (m_slashCnt > 0) { 
+		m_slashCnt--;
+		if (m_slashCnt == 0) { finishSlash(); }
+	}
 
 	// ダメージ受け状態は最低１秒近くある
 	if (m_damageCnt > 0) { m_damageCnt--; }
@@ -245,6 +260,7 @@ void StickAction::action() {
 	// 移動
 	if (m_vx > 0) {// 右
 		if (m_rightLock) {
+			stopMoveLeft(); // 左に移動したいのに吹っ飛び等で右へ移動しているとき、いったん左移動への入力をキャンセルさせないとバグる
 			m_vx = 0;
 		}
 		else {
@@ -253,6 +269,7 @@ void StickAction::action() {
 	}
 	else if (m_vx < 0) { // 左
 		if (m_leftLock) {
+			stopMoveRight();// 右に移動したいのに吹っ飛び等で左へ移動しているとき、いったん右移動への入力をキャンセルさせないとバグる
 			m_vx = 0;
 		}
 		else {
@@ -285,11 +302,11 @@ void StickAction::switchHandle() {
 	if (m_grand) { // 地面にいるとき
 		switch (getState()) {
 		case CHARACTER_STATE::STAND: //立ち状態
-			if (m_landCnt > 0) {
-				m_character_p->switchLand();
-			}
-			else if (m_slashCnt > 0) {
+			if (m_slashCnt > 0) {
 				m_character_p->switchSlash();
+			}
+			else if (m_landCnt > 0) {
+				m_character_p->switchLand();
 			}
 			else if (m_bulletCnt > 0) {
 				if (m_runCnt != -1) {
@@ -449,9 +466,15 @@ void StickAction::walk(bool right, bool left) {
 	if (!right || m_rightLock || m_squat || damageFlag()) {
 		stopMoveRight();
 	}
+	if (m_slashCnt > 0 && !m_attackLeftDirection && (m_rightLock || damageFlag())) {
+		finishSlash();
+	}
 	// 左へ歩くのをやめる
 	if (!left || m_leftLock || m_squat || damageFlag()) {
 		stopMoveLeft();
+	}
+	if (m_slashCnt > 0 && m_attackLeftDirection && (m_leftLock || damageFlag())) {
+		finishSlash();
 	}
 	if (damageFlag()) {
 		return;
@@ -530,9 +553,9 @@ void StickAction::jump(int cnt) {
 		setState(CHARACTER_STATE::PREJUMP);
 	}
 	if (m_grand && m_preJumpCnt >= 0) {
-		if (cnt == 0 || m_preJumpCnt == PRE_JUMP_MAX) {
+		if (cnt == 0 || m_preJumpCnt == getPreJumpMax()) {
 			// ジャンプ
-			int rate = (100 * m_preJumpCnt) / PRE_JUMP_MAX;
+			int rate = (100 * m_preJumpCnt) / getPreJumpMax();
 			int power = (m_character_p->getJumpHeight() * rate) / 100;
 			m_vy -= power;
 			m_grand = false;
@@ -563,7 +586,9 @@ Object* StickAction::bulletAttack(int gx, int gy) {
 		// 射撃不可能状態にして
 		m_bulletCnt = m_character_p->getBulletRapid();
 		// 撃つ方向へ向く
-		m_character_p->setLeftDirection(m_character_p->getCenterX() > gx);
+		if (m_character_p->getCharacterInfo()->sameBulletDirection()) {
+			m_character_p->setLeftDirection(m_character_p->getCenterX() > gx);
+		}
 		// 攻撃を返す
 		return m_character_p->bulletAttack(gx, gy, m_soundPlayer_p);
 	}
@@ -573,7 +598,7 @@ Object* StickAction::bulletAttack(int gx, int gy) {
 // 斬撃攻撃
 Object* StickAction::slashAttack(int gx, int gy) {
 	if (damageFlag() && m_boostCnt == 0) {
-		m_slashCnt = 0;
+		if (m_slashCnt > 0) { finishSlash(); }
 		return NULL;
 	}
 	// 攻撃開始
@@ -587,6 +612,8 @@ Object* StickAction::slashAttack(int gx, int gy) {
 		m_slashCnt = m_character_p->getSlashCountSum() + m_character_p->getSlashInterval();
 		// 攻撃の方向へ向く
 		m_character_p->setLeftDirection(m_attackLeftDirection);
+		// 斬撃開始時の処理
+		startSlash();
 	}
 	// 攻撃のタイミングじゃないならNULLが返る
 	return m_character_p->slashAttack(m_attackLeftDirection, m_slashCnt, m_soundPlayer_p);
@@ -608,4 +635,66 @@ void StickAction::damage(int vx, int vy, int damageValue) {
 	// HP減少
 	m_character_p->damageHp(damageValue);
 	m_boostCnt = 0;
+}
+
+
+/*
+* ヴァルキリア用Action 斬撃時に移動する
+*/
+ValkiriaAction::ValkiriaAction(Character* character, SoundPlayer* soundPlayer_p) :
+	StickAction(character, soundPlayer_p)
+{
+
+}
+
+CharacterAction* ValkiriaAction::createCopy(vector<Character*> characters) {
+	CharacterAction* res = NULL;
+	for (unsigned int i = 0; i < characters.size(); i++) {
+		if (m_character_p->getId() == characters[i]->getId()) {
+			res = new ValkiriaAction(characters[i], m_soundPlayer_p);
+			// コピーする
+			setParam(res);
+		}
+	}
+	return res;
+}
+
+// 着地
+void ValkiriaAction::setGrand(bool grand) {
+	if (m_vy > 0) { // 着地モーションになる
+		if (m_slashCnt == 0) {
+			m_landCnt = LAND_TIME;
+			// 効果音
+			if (m_soundPlayer_p != NULL) {
+				m_soundPlayer_p->pushSoundQueue(m_character_p->getLandSound(),
+					adjustPanSound(m_character_p->getCenterX(),
+						m_soundPlayer_p->getCameraX()));
+			}
+		}
+	}
+	m_grand = grand;
+	if (m_state == CHARACTER_STATE::DAMAGE && m_damageCnt == 0) {
+		m_vx = 0;
+		m_vy = 0;
+		m_state = CHARACTER_STATE::STAND;
+	}
+}
+
+void ValkiriaAction::startSlash() {
+	if (m_attackLeftDirection) {
+		m_vx -= SLASH_MOVE_SPEED;
+	}
+	else {
+		m_vx += SLASH_MOVE_SPEED;
+	}
+}
+
+void ValkiriaAction::finishSlash() {
+	if (m_attackLeftDirection && !m_leftLock) {
+		m_vx += SLASH_MOVE_SPEED;
+	}
+	else if(!m_rightLock) {
+		m_vx -= SLASH_MOVE_SPEED;
+	}
+	m_slashCnt = 0;
 }

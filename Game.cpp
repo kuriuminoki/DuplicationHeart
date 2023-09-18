@@ -54,13 +54,27 @@ DoorData::DoorData(int x1, int y1, int x2, int y2, int from, int to, const char*
 GameData::GameData() {
 	m_saveFilePath = "data/save/savedata1.dat";
 
+	const bool test = true;
+
 	m_areaNum = 1;
 	m_storyNum = 1;
+
+	if (test) {
+		m_areaNum = 0;
+		m_storyNum = 0;
+	}
+
 	m_soundVolume = 10;
 
 	// 主要キャラを設定
-	const int mainSum = 3;
-	const char* mainCharacters[mainSum] = {"ハート", "シエスタ", "エム・サディ"};
+	const int mainSum = 5;
+	const char* mainCharacters[mainSum] = {
+		"ハート",
+		"シエスタ",
+		"ヒエラルキー",
+		"ヴァルキリア",
+		"エム・サディ"
+	};
 	for (int i = 0; i < mainSum; i++) {
 		m_characterData.push_back(new CharacterData(mainCharacters[i]));
 	}
@@ -152,7 +166,7 @@ Game::~Game() {
 bool Game::play() {
 
 	// これ以上ストーリーを進ませない（テスト用）
-	if (m_gameData->getStoryNum() == 5) {
+	if (m_gameData->getStoryNum() == 5 || m_gameData->getStoryNum() == 0) {
 		m_world->battle();
 		m_soundPlayer->play();
 		return false;

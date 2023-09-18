@@ -500,6 +500,8 @@ BulletObject::BulletObject(int x, int y, int color, int gx, int gy, AttackInfo* 
 
 	// サウンド
 	m_soundHandle_p = attackInfo->bulletSoundeHandle();
+
+	m_handle = nullptr;
 }
 
 BulletObject::BulletObject(int x, int y, int color, int gx, int gy) :
@@ -520,6 +522,13 @@ BulletObject::BulletObject(int x, int y, int color, int gx, int gy) :
 	m_vy = 0;
 	m_effectHandles_p = NULL;
 	m_soundHandle_p = -1;
+	m_handle = nullptr;
+}
+
+BulletObject::BulletObject(int x, int y, GraphHandle* handle, int gx, int gy, AttackInfo* attackInfo):
+	BulletObject(x, y, WHITE, gx, gy, attackInfo)
+{
+	m_handle = handle;
 }
 
 // キャラとの当たり判定
@@ -607,7 +616,8 @@ void ParabolaBullet::action() {
 }
 
 // 画像ハンドルを返す
-GraphHandle* ParabolaBullet::getHandle() const { 
+GraphHandle* BulletObject::getHandle() const { 
+	if (m_handle == nullptr) { return nullptr; }
 	double r = atan2((double)m_vy, (double)m_vx);
 	if (m_vy == 0) { r = 0; }
 	m_handle->setAngle(r);

@@ -198,6 +198,10 @@ class BulletObject :
 	public Object
 {
 protected:
+
+	// 弾
+	GraphHandle* m_handle;
+
 	// この攻撃を出したキャラのＩＤ 自滅防止用
 	int m_characterId;
 
@@ -230,6 +234,7 @@ public:
 	// x, y, gx, gyは弾の中心座標
 	BulletObject(int x, int y, int color, int gx, int gy, AttackInfo* attackInfo);
 	BulletObject(int x, int y, int color, int gx, int gy);
+	BulletObject(int x, int y, GraphHandle* handle, int gx, int gy, AttackInfo* attackInfo);
 
 	Object* createCopy();
 	void setBulletParam(BulletObject* obejct);
@@ -241,6 +246,9 @@ public:
 
 	// ゲッタ
 	inline int getGroupId() const { return m_groupId; }
+
+	// 画像ハンドルを返す
+	GraphHandle* getHandle() const;
 
 	// セッタ
 	// キャラクターIDをセット
@@ -280,8 +288,6 @@ public:
 class ParabolaBullet :
 	public BulletObject
 {
-private:
-	GraphHandle* m_handle;
 public:
 	static const int G = 2;
 
@@ -296,9 +302,6 @@ public:
 
 	// 動くオブジェクト用 毎フレーム行う
 	void action();
-
-	// 画像ハンドルを返す
-	GraphHandle* getHandle() const;
 
 	// 画像の大きさを自動調節する
 	bool extendGraph() const { return false; }

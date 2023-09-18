@@ -112,7 +112,7 @@ void loadCharacterGraph(const char* dir, const char* characterName, GraphHandles
 		handles = new GraphHandles(oss.str().c_str(), n, ex, 0.0, true);
 	}
 	else {
-		handles = NULL;
+		handles = nullptr;
 	}
 }
 // デフォルト値で初期化
@@ -155,23 +155,23 @@ CharacterGraphHandle::CharacterGraphHandle(const char* characterName, double dra
 }
 // 画像を削除
 CharacterGraphHandle::~CharacterGraphHandle() {
-	delete m_standHandles;
-	delete m_slashHandles;
-	delete m_bulletHandles;
-	delete m_squatHandles;
-	delete m_squatBulletHandles;
-	delete m_standBulletHandles;
-	delete m_standSlashHandles;
-	delete m_runHandles;
-	delete m_runBulletHandles;
-	delete m_landHandles;
-	delete m_jumpHandles;
-	delete m_downHandles;
-	delete m_preJumpHandles;
-	delete m_damageHandles;
-	delete m_boostHandles;
-	delete m_airBulletHandles;
-	delete m_airSlashHandles;
+	if (m_standHandles != nullptr) { delete m_standHandles; }
+	if (m_standHandles != nullptr) { delete m_slashHandles; }
+	if (m_standHandles != nullptr) { delete m_bulletHandles; }
+	if (m_standHandles != nullptr) { delete m_squatHandles; }
+	if (m_standHandles != nullptr) { delete m_squatBulletHandles; }
+	if (m_standHandles != nullptr) { delete m_standBulletHandles; }
+	if (m_standHandles != nullptr) { delete m_standSlashHandles; }
+	if (m_standHandles != nullptr) { delete m_runHandles; }
+	if (m_standHandles != nullptr) { delete m_runBulletHandles; }
+	if (m_standHandles != nullptr) { delete m_landHandles; }
+	if (m_standHandles != nullptr) { delete m_jumpHandles; }
+	if (m_standHandles != nullptr) { delete m_downHandles; }
+	if (m_standHandles != nullptr) { delete m_preJumpHandles; }
+	if (m_standHandles != nullptr) { delete m_damageHandles; }
+	if (m_standHandles != nullptr) { delete m_boostHandles; }
+	if (m_standHandles != nullptr) { delete m_airBulletHandles; }
+	if (m_standHandles != nullptr) { delete m_airSlashHandles; }
 }
 
 // 画像のサイズをセット
@@ -184,8 +184,9 @@ void CharacterGraphHandle::setGraphSize() {
 
 // 画像をセットする 存在しないならそのまま
 void CharacterGraphHandle::setGraph(const GraphHandles* graphHandles, int index) {
+	if (graphHandles == nullptr) { return; }
 	if (index >= graphHandles->getSize() || index < 0) { return; }
-	m_graphHandle = graphHandles == NULL ? m_graphHandle : graphHandles->getGraphHandle(index);
+	m_graphHandle = graphHandles->getGraphHandle(index);
 	setGraphSize();
 }
 void CharacterGraphHandle::setGraph(GraphHandle* graphHandle) {
@@ -199,10 +200,12 @@ void CharacterGraphHandle::switchStand(int index){
 }
 // 立ち射撃画像をセット
 void CharacterGraphHandle::switchBullet(int index){
+	if (m_standBulletHandles == nullptr) { switchStand(index); }
 	setGraph(m_standBulletHandles, index);
 }
 // 立ち斬撃画像をセット
 void CharacterGraphHandle::switchSlash(int index){
+	if (m_standSlashHandles == nullptr) { switchStand(index); }
 	setGraph(m_standSlashHandles, index);
 }
 // しゃがみ画像をセット
@@ -219,6 +222,7 @@ void CharacterGraphHandle::switchRun(int index){
 }
 // 走り射撃画像をセット
 void CharacterGraphHandle::switchRunBullet(int index) {
+	if (m_runBulletHandles == nullptr) { switchRun(index); }
 	setGraph(m_runBulletHandles, index);
 }
 // 着地画像をセット

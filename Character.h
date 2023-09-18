@@ -29,6 +29,9 @@ private:
 	// ジャンプ時のY方向の初速
 	int m_jumpHeight;
 
+	// 射撃時に撃つ方向を向くか
+	bool m_sameBulletDirection;
+
 	// ジャンプ時の音
 	int m_jumpSound;
 
@@ -52,6 +55,7 @@ public:
 	inline double handleEx() const { return m_handleEx; }
 	inline int moveSpeed() const { return m_moveSpeed; }
 	inline int jumpHeight() const { return m_jumpHeight; }
+	inline bool sameBulletDirection() const { return m_sameBulletDirection; }
 	inline int jumpSound() const { return m_jumpSound; }
 	inline int passiveSound() const { return m_passiveSound; }
 	inline int landSound() const { return m_landSound; }
@@ -201,6 +205,7 @@ public:
 	~Character();
 
 	virtual Character* createCopy() = 0;
+	void setParam(Character* character);
 
 	// デバッグ
 	void debugCharacter(int x, int y, int color) const;
@@ -360,6 +365,51 @@ public:
 	Siesta(const char* name, int hp, int x, int y, int groupId, AttackInfo* attackInfo);
 
 	Character* createCopy();
+
+	// 射撃攻撃をする(キャラごとに違う)
+	Object* bulletAttack(int gx, int gy, SoundPlayer* soundPlayer);
+
+	// 斬撃攻撃をする(キャラごとに違う)
+	Object* slashAttack(bool leftDirection, int cnt, SoundPlayer* soundPlayer);
+};
+
+
+/*
+* ヒエラルキー
+*/
+class Hierarchy :
+	public Heart
+{
+public:
+	// コンストラクタ
+	Hierarchy(const char* name, int hp, int x, int y, int groupId);
+	Hierarchy(const char* name, int hp, int x, int y, int groupId, AttackInfo* attackInfo);
+
+	Character* createCopy();
+
+	// 射撃攻撃をする(キャラごとに違う)
+	Object* bulletAttack(int gx, int gy, SoundPlayer* soundPlayer);
+
+	// 斬撃攻撃をする(キャラごとに違う)
+	Object* slashAttack(bool leftDirection, int cnt, SoundPlayer* soundPlayer);
+};
+
+
+/*
+* ヴァルキリア
+*/
+class Valkyria :
+	public Heart
+{
+public:
+	// コンストラクタ
+	Valkyria(const char* name, int hp, int x, int y, int groupId);
+	Valkyria(const char* name, int hp, int x, int y, int groupId, AttackInfo* attackInfo);
+
+	Character* createCopy();
+
+	// ジャンプ前画像をセット
+	void switchPreJump(int cnt = 0);
 
 	// 射撃攻撃をする(キャラごとに違う)
 	Object* bulletAttack(int gx, int gy, SoundPlayer* soundPlayer);

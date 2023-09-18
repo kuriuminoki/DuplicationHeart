@@ -70,6 +70,9 @@ public:
 	virtual const Character* getFollow() const { return nullptr; }
 
 	virtual void setTarget(Character* character) {  }
+
+	// 追跡対象の近くにいるか判定
+	bool checkAlreadyFollow() { return true; }
 };
 
 
@@ -134,10 +137,6 @@ class NormalAI :
 	public Brain
 {
 private:
-
-	// 攻撃対象を認知する距離
-	const int TARGET_DISTANCE = 2000;
-
 	// 移動用
 	int m_rightKey, m_leftKey, m_upKey, m_downKey;
 
@@ -148,6 +147,9 @@ private:
 	int m_squatCnt;
 
 protected:
+	// 攻撃対象を認知する距離
+	const int TARGET_DISTANCE = 2000;
+
 	// 攻撃対象
 	const Character* m_target_p;
 
@@ -260,6 +262,9 @@ public:
 
 	// 追跡対象を変更する必要があるならtrueでアピールする(AIクラスでオーバライドする)。
 	bool needSearchFollow() const;
+
+	// 追跡対象の近くにいるか判定
+	bool checkAlreadyFollow();
 };
 
 /*
@@ -272,6 +277,25 @@ public:
 	static const char* BRAIN_NAME;
 	const char* getBrainName() const { return this->BRAIN_NAME; }
 	void bulletTargetPoint(int& x, int& y);
+};
+
+
+/*
+* ヴァルキリア用AI 斬撃の間合いやハートとの距離に気を付ける
+*/
+class ValkiriaAI :
+	public FollowNormalAI
+{
+public:
+	static const char* BRAIN_NAME;
+	const char* getBrainName() const { return this->BRAIN_NAME; }
+
+	int slashOrder();
+	int bulletOrder();
+	void moveOrder(int& right, int& left, int& up, int& down);
+
+	// 追跡対象の近くにいるか判定
+	bool checkAlreadyFollow();
 };
 
 

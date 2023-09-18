@@ -123,11 +123,12 @@ public:
 	bool getUpLock() const { return m_upLock; }
 	bool getDownLock() const { return m_downLock; }
 	const SoundPlayer* getSoundPlayer() const { return m_soundPlayer_p; }
+	virtual int getPreJumpMax() const { return PRE_JUMP_MAX; }
 
 	// セッタ
 	void setState(CHARACTER_STATE state);
 	inline void setSimpleGrand(bool grand) { m_grand = grand; }
-	void setGrand(bool grand);
+	virtual void setGrand(bool grand);
 	void setRightLock(bool lock);
 	void setLeftLock(bool lock);
 	void setUpLock(bool lock);
@@ -181,6 +182,12 @@ public:
 
 	// 斬撃攻撃
 	virtual Object* slashAttack(int gx, int gy) = 0;
+	
+	// 斬撃開始の処理
+	virtual void startSlash();
+
+	// 斬撃終了の処理
+	virtual void finishSlash();
 
 	// ダメージ
 	virtual void damage(int vx, int vy, int damageValue) = 0;
@@ -253,5 +260,38 @@ public:
 	// ダメージ
 	void damage(int vx, int vy, int damageValue);
 };
+
+
+class ValkiriaAction :
+	public StickAction
+{
+private:
+	// ジャンプのため時間の最大
+	const int PRE_JUMP_MAX = 30;
+
+	// 斬撃攻撃による移動速度
+	const int SLASH_MOVE_SPEED = 25;
+
+public:
+	static const char* ACTION_NAME;
+	const char* getActionName() const { return this->ACTION_NAME; }
+
+	ValkiriaAction(Character* character, SoundPlayer* soundPlayer_p);
+
+	CharacterAction* createCopy(std::vector<Character*> characters);
+
+	void debug(int x, int y, int color) const;
+
+	int getPreJumpMax() const { return PRE_JUMP_MAX; }
+
+	void setGrand(bool grand);
+
+	// 斬撃開始の処理
+	void startSlash();
+
+	// 斬撃終了の処理
+	void finishSlash();
+};
+
 
 #endif

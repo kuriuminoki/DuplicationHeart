@@ -55,8 +55,8 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 	////マウス関連////
 	SetMouseDispFlag(MOUSE_DISP);//マウス表示
 	//SetMousePoint(320, 240);//マウスカーソルの初期位置
-	SetDrawMode(DX_DRAWMODE_BILINEAR);
-	//SetDrawMode(DX_DRAWMODE_NEAREST);
+	//SetDrawMode(DX_DRAWMODE_BILINEAR);
+	SetDrawMode(DX_DRAWMODE_NEAREST);
 	//ゲーム本体
 	Game game;
 	// ゲーム描画用
