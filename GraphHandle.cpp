@@ -200,10 +200,12 @@ void CharacterGraphHandle::switchStand(int index){
 }
 // 立ち射撃画像をセット
 void CharacterGraphHandle::switchBullet(int index){
+	if (m_standBulletHandles == nullptr) { switchStand(index); }
 	setGraph(m_standBulletHandles, index);
 }
 // 立ち斬撃画像をセット
 void CharacterGraphHandle::switchSlash(int index){
+	if (m_standSlashHandles == nullptr) { switchStand(index); }
 	setGraph(m_standSlashHandles, index);
 }
 // しゃがみ画像をセット

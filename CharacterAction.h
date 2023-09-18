@@ -123,7 +123,7 @@ public:
 	bool getUpLock() const { return m_upLock; }
 	bool getDownLock() const { return m_downLock; }
 	const SoundPlayer* getSoundPlayer() const { return m_soundPlayer_p; }
-	virtual int getPreJumpMax() { return PRE_JUMP_MAX; }
+	virtual int getPreJumpMax() const { return PRE_JUMP_MAX; }
 
 	// セッタ
 	void setState(CHARACTER_STATE state);
@@ -268,6 +268,10 @@ class ValkiriaAction :
 private:
 	// ジャンプのため時間の最大
 	const int PRE_JUMP_MAX = 30;
+
+	// 斬撃攻撃による移動速度
+	const int SLASH_MOVE_SPEED = 25;
+
 public:
 	static const char* ACTION_NAME;
 	const char* getActionName() const { return this->ACTION_NAME; }
@@ -278,7 +282,7 @@ public:
 
 	void debug(int x, int y, int color) const;
 
-	int getPreJumpMax() { return PRE_JUMP_MAX; }
+	int getPreJumpMax() const { return PRE_JUMP_MAX; }
 
 	void setGrand(bool grand);
 

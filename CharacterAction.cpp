@@ -682,19 +682,19 @@ void ValkiriaAction::setGrand(bool grand) {
 
 void ValkiriaAction::startSlash() {
 	if (m_attackLeftDirection) {
-		m_vx -= 20;
+		m_vx -= SLASH_MOVE_SPEED;
 	}
 	else {
-		m_vx += 20;
+		m_vx += SLASH_MOVE_SPEED;
 	}
 }
 
 void ValkiriaAction::finishSlash() {
 	if (m_attackLeftDirection && !m_leftLock) {
-		m_vx += 20;
+		m_vx += SLASH_MOVE_SPEED;
 	}
 	else if(!m_rightLock) {
-		m_vx -= 20;
+		m_vx -= SLASH_MOVE_SPEED;
 	}
 	m_slashCnt = 0;
 }
