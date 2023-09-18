@@ -301,7 +301,8 @@ int NormalAI::bulletOrder() {
 		return 0;
 	}
 	// ランダムで射撃
-	if (GetRand(30) == 0) {
+	int rapid = m_characterAction_p->getCharacter()->getAttackInfo()->bulletRapid();
+	if (GetRand(rapid) == 0) {
 		return 1;
 	}
 	return 0;
@@ -344,18 +345,18 @@ int  NormalAI::getTargetId() const { return m_target_p == nullptr ? -1 : m_targe
 
 const char*  NormalAI::getTargetName() const { return m_target_p == nullptr ? "" : m_target_p->getName().c_str(); }
 
-
-void ParabolaAI::bulletTargetPoint(int& x, int& y) {
-	if (m_target_p == NULL) {
+// 斜方投射の計算をする
+void setParabolaBulletTarget(int& x, int& y, const CharacterAction* characterAction_p, const Character* target_p) {
+	if (target_p == NULL) {
 		x = 0;
 		y = 0;
 	}
 	else { // ターゲットに向かって射撃攻撃
 		const int G = -ParabolaBullet::G;
-		int dx = m_target_p->getCenterX() - m_characterAction_p->getCharacter()->getCenterX();
+		int dx = target_p->getCenterX() - characterAction_p->getCharacter()->getCenterX();
 		int gx = abs(dx);
-		int gy = -(m_target_p->getCenterY() - m_characterAction_p->getCharacter()->getCenterY());
-		int v = m_characterAction_p->getCharacter()->getAttackInfo()->bulletSpeed();
+		int gy = -(target_p->getCenterY() - characterAction_p->getCharacter()->getCenterY());
+		int v = characterAction_p->getCharacter()->getAttackInfo()->bulletSpeed();
 		double A = (G * gx * gx) / (2 * v * v);
 		double a = gx / A;
 		double b = 1 - (gy / A);
@@ -365,66 +366,33 @@ void ParabolaAI::bulletTargetPoint(int& x, int& y) {
 			if (GetRand(99) < 50) { route *= -1; }
 			double r = atan(route - (a / 2));
 			if (dx > 0) {
-				x = (int)(m_characterAction_p->getCharacter()->getCenterX() + v * cos(r));
+				x = (int)(characterAction_p->getCharacter()->getCenterX() + v * cos(r));
 			}
 			else {
-				x = (int)(m_characterAction_p->getCharacter()->getCenterX() - v * cos(r));
+				x = (int)(characterAction_p->getCharacter()->getCenterX() - v * cos(r));
 			}
-			y = (int)(m_characterAction_p->getCharacter()->getCenterY() - v * sin(r));
+			y = (int)(characterAction_p->getCharacter()->getCenterY() - v * sin(r));
 		}
 		else {
 			// 射程外なら45度で投げる
 			double r = 3.14 / 4;
 			if (dx > 0) {
-				x = (int)(m_characterAction_p->getCharacter()->getCenterX() + v * cos(r));
+				x = (int)(characterAction_p->getCharacter()->getCenterX() + v * cos(r));
 			}
 			else {
-				x = (int)(m_characterAction_p->getCharacter()->getCenterX() - v * cos(r));
+				x = (int)(characterAction_p->getCharacter()->getCenterX() - v * cos(r));
 			}
-			y = (int)(m_characterAction_p->getCharacter()->getCenterY() - v * sin(r));
+			y = (int)(characterAction_p->getCharacter()->getCenterY() - v * sin(r));
 		}
 	}
 }
 
+void ParabolaAI::bulletTargetPoint(int& x, int& y) {
+	setParabolaBulletTarget(x, y, m_characterAction_p, m_target_p);
+}
+
 void FollowParabolaAI::bulletTargetPoint(int& x, int& y) {
-	if (m_target_p == NULL) {
-		x = 0;
-		y = 0;
-	}
-	else { // ターゲットに向かって射撃攻撃
-		const int G = -ParabolaBullet::G;
-		int dx = m_target_p->getCenterX() - m_characterAction_p->getCharacter()->getCenterX();
-		int gx = abs(dx);
-		int gy = -(m_target_p->getCenterY() - m_characterAction_p->getCharacter()->getCenterY());
-		int v = m_characterAction_p->getCharacter()->getAttackInfo()->bulletSpeed();
-		double A = (G * gx * gx) / (2 * v * v);
-		double a = gx / A;
-		double b = 1 - (gy / A);
-		double routeInside = a * a / 4 - b;
-		if (routeInside >= 0) {
-			double route = sqrt(routeInside);
-			if (GetRand(99) < 50) { route *= -1; }
-			double r = atan(route - (a / 2));
-			if (dx > 0) {
-				x = (int)(m_characterAction_p->getCharacter()->getCenterX() + v * cos(r));
-			}
-			else {
-				x = (int)(m_characterAction_p->getCharacter()->getCenterX() - v * cos(r));
-			}
-			y = (int)(m_characterAction_p->getCharacter()->getCenterY() - v * sin(r));
-		}
-		else {
-			// 射程外なら45度で投げる
-			double r = 3.14 / 4;
-			if (dx > 0) {
-				x = (int)(m_characterAction_p->getCharacter()->getCenterX() + v * cos(r));
-			}
-			else {
-				x = (int)(m_characterAction_p->getCharacter()->getCenterX() - v * cos(r));
-			}
-			y = (int)(m_characterAction_p->getCharacter()->getCenterY() - v * sin(r));
-		}
-	}
+	setParabolaBulletTarget(x, y, m_characterAction_p, m_target_p);
 }
 
 
