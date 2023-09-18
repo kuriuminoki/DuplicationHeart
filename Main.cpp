@@ -5,11 +5,6 @@
 #include "DxLib.h"
 
 
-// フルスクリーンならFALSE
-static int WINDOW = TRUE;
-// マウスを表示するならFALSE
-static int MOUSE_DISP = FALSE;
-
 ///////fpsの調整///////////////
 static int mStartTime;
 static int mCount;

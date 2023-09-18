@@ -10,6 +10,7 @@
 #include "CharacterLoader.h"
 #include "Brain.h"
 #include "ControllerRecorder.h"
+#include "PausePage.h"
 #include "DxLib.h"
 
 /*
@@ -64,7 +65,7 @@ GameData::GameData() {
 		m_storyNum = 0;
 	}
 
-	m_soundVolume = 10;
+	m_soundVolume = 50;
 
 	// 主要キャラを設定
 	const int mainSum = 5;
@@ -155,6 +156,9 @@ Game::Game() {
 
 	// スキル
 	m_skill = NULL;
+
+	// 一時停止画面
+	m_gamePause = NULL;
 }
 
 Game::~Game() {
@@ -164,6 +168,21 @@ Game::~Game() {
 }
 
 bool Game::play() {
+
+	// 一時停止
+	if (controlQ() == 1) {
+		if (m_gamePause == NULL) {
+			m_gamePause = new GamePause(m_soundPlayer);
+		}
+		else {
+			delete m_gamePause;
+			m_gamePause = NULL;
+		}
+	}
+	if (m_gamePause != NULL) {
+		m_gamePause->play();
+		return false;
+	}
 
 	// これ以上ストーリーを進ませない（テスト用）
 	if (m_gameData->getStoryNum() == 5 || m_gameData->getStoryNum() == 0) {

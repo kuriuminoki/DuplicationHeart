@@ -41,9 +41,9 @@ SoundPlayer::~SoundPlayer() {
 void SoundPlayer::setVolume(int volume) {
 	if (volume < 0) { m_volume = 0; }
 	else {
-		m_volume = min(m_volume, 100);
+		m_volume = min(volume, 100);
 	}
-	changeSoundVolume(m_bgmHandle, m_volume);
+	changeSoundVolume(m_volume, m_bgmHandle);
 }
 
 // BGMをセット（変更）
