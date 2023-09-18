@@ -205,6 +205,7 @@ public:
 	~Character();
 
 	virtual Character* createCopy() = 0;
+	void setParam(Character* character);
 
 	// デバッグ
 	void debugCharacter(int x, int y, int color) const;
@@ -406,6 +407,9 @@ public:
 	Valkyria(const char* name, int hp, int x, int y, int groupId, AttackInfo* attackInfo);
 
 	Character* createCopy();
+
+	// ジャンプ前画像をセット
+	void switchPreJump(int cnt = 0);
 
 	// 射撃攻撃をする(キャラごとに違う)
 	Object* bulletAttack(int gx, int gy, SoundPlayer* soundPlayer);

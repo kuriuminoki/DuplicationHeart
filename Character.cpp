@@ -183,6 +183,14 @@ Character::~Character() {
 	}
 }
 
+void Character::setParam(Character* character) {
+	character->setY(m_y);
+	character->setId(m_id);
+	character->setLeftDirection(m_leftDirection);
+	character->setHp(m_hp);
+	character->getCharacterGraphHandle()->setGraph(getGraphHandle());
+}
+
 GraphHandle* Character::getGraphHandle() const {
 	return m_graphHandle->getHandle();
 }
@@ -305,11 +313,7 @@ Heart::~Heart() {
 
 Character* Heart::createCopy() {
 	Character* res = new Heart(m_characterInfo->name().c_str(), m_hp, m_x, m_y, m_groupId, m_attackInfo);
-	res->setY(m_y);
-	res->setId(m_id);
-	res->setLeftDirection(m_leftDirection);
-	res->setHp(m_hp);
-	res->getCharacterGraphHandle()->setGraph(getGraphHandle());
+	setParam(res);
 	return res;
 }
 
@@ -423,11 +427,7 @@ Siesta::Siesta(const char* name, int hp, int x, int y, int groupId, AttackInfo* 
 
 Character* Siesta::createCopy() {
 	Character* res = new Siesta(m_characterInfo->name().c_str(), m_hp, m_x, m_y, m_groupId, m_attackInfo);
-	res->setY(m_y);
-	res->setId(m_id);
-	res->setLeftDirection(m_leftDirection);
-	res->setHp(m_hp);
-	res->getCharacterGraphHandle()->setGraph(getGraphHandle());
+	setParam(res);
 	return res;
 }
 
@@ -519,11 +519,7 @@ Hierarchy::Hierarchy(const char* name, int hp, int x, int y, int groupId, Attack
 
 Character* Hierarchy::createCopy() {
 	Character* res = new Hierarchy(m_characterInfo->name().c_str(), m_hp, m_x, m_y, m_groupId, m_attackInfo);
-	res->setY(m_y);
-	res->setId(m_id);
-	res->setLeftDirection(m_leftDirection);
-	res->setHp(m_hp);
-	res->getCharacterGraphHandle()->setGraph(getGraphHandle());
+	setParam(res);
 	return res;
 }
 
@@ -573,6 +569,16 @@ Character* Valkyria::createCopy() {
 	return res;
 }
 
+// ジャンプ前画像をセット
+void Valkyria::switchPreJump(int cnt) {
+	if (m_graphHandle->getPreJumpHandle() == nullptr) { return; }
+	int index = 0;
+	if (cnt >= 25) { index = 3; }
+	else if (cnt >= 20) { index = 2; }
+	else if (cnt >= 15) { index = 1; }
+	m_graphHandle->switchPreJump(index);
+}
+
 // 射撃攻撃をする(キャラごとに違う)
 Object* Valkyria::bulletAttack(int gx, int gy, SoundPlayer* soundPlayer) {
 	return nullptr;
@@ -581,18 +587,12 @@ Object* Valkyria::bulletAttack(int gx, int gy, SoundPlayer* soundPlayer) {
 // 斬撃攻撃をする(キャラごとに違う)
 Object* Valkyria::slashAttack(bool leftDirection, int cnt, SoundPlayer* soundPlayer) {
 	// 攻撃範囲を決定
-	int centerX = getCenterX();
-	int height = getHeight();
-	int x1 = centerX;
-	int x2 = centerX;
-	if (leftDirection) { // 左向きに攻撃
-		x1 += 50;
-		x2 -= m_attackInfo->slashLenX();
-	}
-	else { // 右向きに攻撃
-		x1 -= 50;
-		x2 += m_attackInfo->slashLenX();
-	}
+	int attackWide, attackHeight;
+	GetGraphSize(m_graphHandle->getStandSlashHandle()->getHandle(0), &attackWide, &attackHeight);
+	attackWide = (int)(attackWide * m_graphHandle->getStandSlashHandle()->getGraphHandle()->getEx());
+	attackHeight = (int)(attackHeight * m_graphHandle->getStandSlashHandle()->getGraphHandle()->getEx());
+	int x1 = m_x;
+	int x2 = m_x + attackWide;
 
 	// 攻撃の画像と持続時間(cntを考慮して決定)
 	cnt -= m_attackInfo->slashInterval();
@@ -602,11 +602,12 @@ Object* Valkyria::slashAttack(bool leftDirection, int cnt, SoundPlayer* soundPla
 	GraphHandles* slashHandles = m_graphHandle->getSlashHandle();
 	// 攻撃の方向
 	slashHandles->setReverseX(m_leftDirection);
+	// キャラの身長
+	int height = attackHeight;
 	// cntが攻撃のタイミングならオブジェクト生成
-	if (cnt == m_attackInfo->slashCountSum()) {
-		index = 0;
+	if (cnt == m_attackInfo->slashCountSum() - 1) {
 		attackObject = new SlashObject(x1, m_y, x2, m_y + height,
-			slashHandles->getGraphHandle(index), slashCountSum, m_attackInfo);
+			slashHandles->getGraphHandle(index), m_attackInfo->slashCountSum() - 12, m_attackInfo);
 		// 効果音
 		if (soundPlayer != NULL) {
 			soundPlayer->pushSoundQueue(m_attackInfo->slashStartSoundHandle(),
@@ -615,14 +616,12 @@ Object* Valkyria::slashAttack(bool leftDirection, int cnt, SoundPlayer* soundPla
 		}
 	}
 	else if (cnt == m_attackInfo->slashCountSum() * 2 / 3) {
-		index = 1;
 		attackObject = new SlashObject(x1, m_y, x2, m_y + height,
-			slashHandles->getGraphHandle(index), slashCountSum, m_attackInfo);
+			slashHandles->getGraphHandle(index), m_attackInfo->slashCountSum() - slashCountSum - 6, m_attackInfo);
 	}
 	else if (cnt == m_attackInfo->slashCountSum() / 3) {
-		index = 2;
 		attackObject = new SlashObject(x1, m_y, x2, m_y + height,
-			slashHandles->getGraphHandle(index), slashCountSum, m_attackInfo);
+			slashHandles->getGraphHandle(index), m_attackInfo->slashCountSum() - 2 * slashCountSum, m_attackInfo);
 	}
 	if (attackObject != NULL) {
 		// 自滅防止

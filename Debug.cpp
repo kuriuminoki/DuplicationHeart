@@ -100,6 +100,12 @@ void StickAction::debug(int x, int y, int color) const {
 	debugAction(x + DRAW_FORMAT_STRING_SIZE, y + DRAW_FORMAT_STRING_SIZE, color);
 }
 
+// ValkiriaActionのデバッグ
+void ValkiriaAction::debug(int x, int y, int color) const {
+	DrawFormatString(x, y, color, "**ValkiriaAction**");
+	debugAction(x + DRAW_FORMAT_STRING_SIZE, y + DRAW_FORMAT_STRING_SIZE, color);
+}
+
 
 /*
 * Character
