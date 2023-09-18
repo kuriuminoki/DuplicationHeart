@@ -159,8 +159,8 @@ void NormalAI::setParam(NormalAI* brain) {
 void NormalAI::setCharacterAction(const CharacterAction* characterAction) {
 	m_characterAction_p = characterAction;
 	// 目標地点は現在地に設定
-	m_gx = m_characterAction_p->getCharacter()->getX();
-	m_gy = m_characterAction_p->getCharacter()->getY();
+	m_gx = m_characterAction_p->getCharacter()->getCenterX();
+	m_gy = m_characterAction_p->getCharacter()->getCenterY();
 }
 
 void NormalAI::bulletTargetPoint(int& x, int& y) {
@@ -176,8 +176,8 @@ void NormalAI::bulletTargetPoint(int& x, int& y) {
 
 void NormalAI::moveOrder(int& right, int& left, int& up, int& down) {
 	// 現在地
-	int x = m_characterAction_p->getCharacter()->getX();
-	int y = m_characterAction_p->getCharacter()->getY();
+	int x = m_characterAction_p->getCharacter()->getCenterX();
+	int y = m_characterAction_p->getCharacter()->getCenterY();
 
 	// (壁につっかえるなどで)移動できてないから諦める
 	//DrawFormatString(800, 50, GetColor(255, 255, 255), "moveCnt = %d, x(%d) -> gx(%d)", m_moveCnt, x, m_gx);
@@ -199,10 +199,10 @@ void NormalAI::moveOrder(int& right, int& left, int& up, int& down) {
 		}
 		else {
 			// ランダムに設定
-			m_gx = GetRand(200) + 100;
-			if (GetRand(99) < GX_ERROR) { m_gx *= -1; }
+			m_gx = GetRand(200) - 400;
 			m_gx += x;
 		}
+		if (abs(x - m_gx) < 50) { m_gx = x; }
 	}
 	stickOrder(right, left, up, down);
 }
@@ -210,8 +210,8 @@ void NormalAI::moveOrder(int& right, int& left, int& up, int& down) {
 // スティック操作
 void NormalAI::stickOrder(int& right, int& left, int& up, int& down) {
 	// 現在地
-	int x = m_characterAction_p->getCharacter()->getX();
-	int y = m_characterAction_p->getCharacter()->getY();
+	int x = m_characterAction_p->getCharacter()->getCenterX();
+	int y = m_characterAction_p->getCharacter()->getCenterY();
 
 	// 目標に向かって走る
 	if (m_gx > x + GX_ERROR) {
@@ -225,9 +225,13 @@ void NormalAI::stickOrder(int& right, int& left, int& up, int& down) {
 		m_moveCnt++;
 	}
 	else {
-		m_rightKey = 0;
-		m_leftKey = 0;
-		m_moveCnt = 0;
+		if (m_moveCnt == 0) {
+			m_rightKey = 0;
+			m_leftKey = 0;
+		}
+		else {
+			m_moveCnt = 0;
+		}
 	}
 
 	// 反映
@@ -246,12 +250,14 @@ int NormalAI::jumpOrder() {
 
 	int maxJump = m_characterAction_p->getPreJumpMax();
 
-	// ランダムでジャンプ
-	if (m_squatCnt == 0 && GetRand(99) == 0) { m_jumpCnt = GetRand(maxJump - 5) + 5; }
+	if (m_jumpCnt == 0) {
+		// ランダムでジャンプ
+		if (m_squatCnt == 0 && GetRand(99) == 0) { m_jumpCnt = GetRand(maxJump - 5) + 5; }
 
-	// 壁にぶつかったからジャンプ
-	if (m_rightKey > 0 && m_characterAction_p->getRightLock()) { m_jumpCnt = maxJump; }
-	else if (m_leftKey > 0 && m_characterAction_p->getLeftLock()) { m_jumpCnt = maxJump; }
+		// 壁にぶつかったからジャンプ
+		if (m_rightKey > 0 && m_characterAction_p->getRightLock()) { m_jumpCnt = maxJump; }
+		else if (m_leftKey > 0 && m_characterAction_p->getLeftLock()) { m_jumpCnt = maxJump; }
+	}
 
 	if (m_jumpCnt > 0) { m_jumpCnt--; }
 	return m_jumpCnt == 0 ? 0 : maxJump - m_jumpCnt;
@@ -264,7 +270,7 @@ int NormalAI::squatOrder() {
 	}
 
 	// 目標地点にいないならしゃがまない
-	int x = m_characterAction_p->getCharacter()->getX();
+	int x = m_characterAction_p->getCharacter()->getCenterX();
 	bool alreadyGoal = m_gx > x - GX_ERROR && m_gx < x + GX_ERROR;
 	if (!alreadyGoal) { m_squatCnt = 0; }
 
@@ -296,7 +302,7 @@ int NormalAI::bulletOrder() {
 	if (m_target_p == NULL || m_target_p->getHp() == 0) {
 		return 0;
 	}
-	int x = m_characterAction_p->getCharacter()->getX();
+	int x = m_characterAction_p->getCharacter()->getCenterX();
 	if (abs(x - m_target_p->getCenterX()) > TARGET_DISTANCE) {
 		return 0;
 	}
@@ -311,7 +317,7 @@ int NormalAI::bulletOrder() {
 // 攻撃対象を決める(targetのままか、characterに変更するか)
 void NormalAI::searchTarget(const Character* character) {
 	if (GetRand(99) < 50) {
-		int x = m_characterAction_p->getCharacter()->getX();
+		int x = m_characterAction_p->getCharacter()->getCenterX();
 		// 距離が遠い
 		if (abs(x - character->getCenterX()) > TARGET_DISTANCE) {
 			return;
@@ -335,7 +341,7 @@ bool NormalAI::needSearchTarget() const {
 		return true;
 	}
 	// 今のターゲットは距離が遠いから
-	if (abs(m_target_p->getX() - m_characterAction_p->getCharacter()->getX()) > TARGET_DISTANCE) {
+	if (abs(m_target_p->getCenterX() - m_characterAction_p->getCharacter()->getCenterX()) > TARGET_DISTANCE) {
 		return true;
 	}
 	return false;
@@ -441,8 +447,8 @@ bool FollowNormalAI::checkAlreadyFollow() {
 
 void FollowNormalAI::moveOrder(int& right, int& left, int& up, int& down) {
 	// 現在地
-	int x = m_characterAction_p->getCharacter()->getX();
-	int y = m_characterAction_p->getCharacter()->getY();
+	int x = m_characterAction_p->getCharacter()->getCenterX();
+	int y = m_characterAction_p->getCharacter()->getCenterY();
 
 	// (壁につっかえるなどで)移動できてないから諦める
 	if (m_moveCnt >= GIVE_UP_MOVE_CNT) {
@@ -463,10 +469,10 @@ void FollowNormalAI::moveOrder(int& right, int& left, int& up, int& down) {
 		}
 		else {
 			// ランダムに設定
-			m_gx = GetRand(200) + 100;
-			if (GetRand(99) < GX_ERROR) { m_gx *= -1; }
+			m_gx = GetRand(400) - 200;
 			m_gx += x;
 		}
+		if (abs(x - m_gx) < 50) { m_gx = x; }
 	}
 
 	stickOrder(right, left, up, down);
@@ -496,7 +502,7 @@ bool ValkiriaAI::checkAlreadyFollow() {
 	// 戦闘中の敵が近くにいるならハートとの距離を気にしない
 	if (m_target_p != nullptr) {
 		if (m_target_p->getHp() > 0) {
-			if (abs(m_target_p->getCenterX() - m_characterAction_p->getCharacter()->getCenterX()) <= 1000) {
+			if (abs(m_target_p->getCenterX() - m_characterAction_p->getCharacter()->getCenterX()) <= 2000) {
 				return true;
 			}
 		}
@@ -510,7 +516,7 @@ int ValkiriaAI::slashOrder() {
 		return 0;
 	}
 	// 遠距離の敵には斬撃しない
-	if (abs(m_target_p->getCenterX() - m_characterAction_p->getCharacter()->getCenterX()) > 1000) {
+	if (abs(m_target_p->getCenterX() - m_characterAction_p->getCharacter()->getCenterX()) > 2000) {
 		return 0;
 	}
 	// ランダムで斬撃
