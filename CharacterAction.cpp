@@ -698,3 +698,14 @@ void ValkiriaAction::finishSlash() {
 	}
 	m_slashCnt = 0;
 }
+
+// ƒ_ƒ[ƒW‚ðŽó‚¯‚é
+void ValkiriaAction::damage(int vx, int vy, int damageValue) {
+	if (m_slashCnt > 0) {
+		// HPŒ¸­
+		m_character_p->damageHp(damageValue / 2);
+	}
+	else {
+		StickAction::damage(vx, vy, damageValue);
+	}
+}

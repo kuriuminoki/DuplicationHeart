@@ -291,6 +291,9 @@ public:
 
 	// 斬撃終了の処理
 	void finishSlash();
+
+	// ダメージ
+	void damage(int vx, int vy, int damageValue);
 };
 
 
