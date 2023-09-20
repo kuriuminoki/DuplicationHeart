@@ -210,10 +210,12 @@ void CharacterGraphHandle::switchSlash(int index){
 }
 // しゃがみ画像をセット
 void CharacterGraphHandle::switchSquat(int index){
+	if (m_squatHandles == nullptr) { switchStand(index); }
 	setGraph(m_squatHandles, index);
 }
 // しゃがみ射撃画像をセット
 void CharacterGraphHandle::switchSquatBullet(int index) {
+	if (m_squatBulletHandles == nullptr) { switchBullet(index); }
 	setGraph(m_squatBulletHandles, index);
 }
 // 走り画像をセット
