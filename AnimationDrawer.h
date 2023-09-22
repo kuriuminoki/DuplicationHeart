@@ -12,7 +12,7 @@ public:
 
 	inline void setAnimation(const Animation* animation) { m_animation = animation; };
 
-	void drawAnimation(const Camera* const camera);
+	void drawAnimation(const Camera* const camera = nullptr);
 };
 
 #endif

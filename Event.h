@@ -10,6 +10,7 @@ class SoundPlayer;
 class CharacterController;
 class Character;
 class Conversation;
+class Movie;
 
 
 enum class EVENT_RESULT {
@@ -247,6 +248,24 @@ private:
 public:
 	TalkEvent(World* world, SoundPlayer* soundPlayer, std::vector<std::string> param);
 	~TalkEvent();
+
+	EVENT_RESULT play();
+
+	// ハートのスキル発動が可能かどうか
+	bool skillAble() { return false; }
+};
+
+// ムービーイベント
+class MovieEvent :
+	public EventElement
+{
+private:
+
+	Movie* m_movie;
+
+public:
+	MovieEvent(World* world, SoundPlayer* soundPlayer, std::vector<std::string> param);
+	~MovieEvent();
 
 	EVENT_RESULT play();
 

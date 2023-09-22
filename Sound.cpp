@@ -67,6 +67,11 @@ void SoundPlayer::stopBGM() {
 	StopSoundMem(m_bgmHandle);
 }
 
+// BGMが再生していないか調べる
+int SoundPlayer::checkBGMplay() {
+	return CheckSoundMem(m_bgmHandle);
+}
+
 // 効果音の再生待機列へプッシュ
 void SoundPlayer::pushSoundQueue(int soundHandle, int panPal) {
 	m_soundQueue.push(make_pair(soundHandle, panPal));

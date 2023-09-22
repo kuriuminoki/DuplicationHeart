@@ -85,6 +85,9 @@ World::World(int fromAreaNum, int toAreaNum, SoundPlayer* soundPlayer) {
 	// 会話イベント
 	m_conversation_p = NULL;
 
+	// ムービー
+	m_movie_p = NULL;
+
 	// スキル発動中
 	m_skillFlag = false;
 
@@ -138,6 +141,7 @@ World::World(const World* original) {
 	m_duplicationFlag = true;
 	m_brightValue = 255;
 	m_conversation_p = NULL;
+	m_movie_p = NULL;
 	m_skillFlag = false;
 	m_areaNum = original->getAreaNum();
 
@@ -778,9 +782,21 @@ void World::atariAttackAndAttack() {
 // 会話させる
 void World::talk() {
 	if (m_conversation_p != NULL) {
+		m_conversation_p->play();
 		// 会話終了
-		if (m_conversation_p->play()) {
+		if (m_conversation_p->getFinishFlag()) {
 			m_conversation_p = NULL;
+		}
+	}
+}
+
+// ムービーを流す
+void World::moviePlay() {
+	if (m_movie_p != NULL) {
+		m_movie_p->play();
+		// ムービー終了
+		if (m_movie_p->getFinishFlag()) {
+			m_movie_p = NULL;
 		}
 	}
 }

@@ -15,6 +15,8 @@ void AnimationDrawer::drawAnimation(const Camera* camera) {
 	double ex = handle->getEx();
 
 	// ƒJƒƒ‰‚Å•â³‚µ‚Ä•`‰æ
-	camera->setCamera(&x, &y, &ex);
+	if (camera != nullptr) {
+		camera->setCamera(&x, &y, &ex);
+	}
 	handle->draw(x, y, ex);
 }
