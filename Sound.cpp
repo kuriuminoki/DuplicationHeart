@@ -77,6 +77,11 @@ void SoundPlayer::pushSoundQueue(int soundHandle, int panPal) {
 	m_soundQueue.push(make_pair(soundHandle, panPal));
 }
 
+// Œø‰Ê‰¹‚ÌÄ¶‘Ò‹@—ñ‚ğƒNƒŠƒA
+void SoundPlayer::clearSoundQueue() {
+	queue<pair<int, int> >().swap(m_soundQueue);
+}
+
 // Œø‰Ê‰¹‚ğ–Â‚ç‚·
 void SoundPlayer::play() {
 	while (!m_soundQueue.empty()) {

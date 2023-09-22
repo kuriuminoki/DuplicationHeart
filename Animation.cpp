@@ -81,7 +81,14 @@ OpMovie::OpMovie(SoundPlayer* soundPlayer_p):
 	Movie(soundPlayer_p)
 {
 	string path = "picture/movie/op/";
-	m_title = new GraphHandles((path + "複製のHeartタイトル").c_str(), 1);
+	// タイトル
+	m_titleH = new GraphHandles((path + "title/" + "h").c_str(), 4);
+	m_title = new GraphHandles((path + "title/" + "title").c_str(), 8);
+	m_titleChara = new GraphHandles((path + "title/" + "キャラ").c_str(), 5);
+	m_titleBlue = new GraphHandles((path + "title/" + "titleBlue").c_str(), 1);
+	m_titleOrange = new GraphHandles((path + "title/" + "titleOrange").c_str(), 1);
+	m_titleHeart = new GraphHandles((path + "title/" + "heart").c_str(), 1);
+	// キャラ
 	m_archive = new GraphHandles((path + "アーカイブ").c_str(), 1);
 	m_aigis = new GraphHandles((path + "アイギス").c_str(), 1);
 	m_assault = new GraphHandles((path + "アサルト03").c_str(), 1);
@@ -104,16 +111,46 @@ OpMovie::OpMovie(SoundPlayer* soundPlayer_p):
 	m_rabbi = new GraphHandles((path + "ラビ―").c_str(), 1);
 	m_tank = new GraphHandles((path + "棒タンク").c_str(), 1);
 
+	// 表示する順にpush
+	characterQueue.push(make_pair(m_koharu, 30));
+	characterQueue.push(make_pair(m_assault, 30));
+	characterQueue.push(make_pair(m_msadi, 30));
+	characterQueue.push(make_pair(m_exlucina, 30));
+	characterQueue.push(make_pair(m_yuri, 30));
+	characterQueue.push(make_pair(m_titius, 30));
+	characterQueue.push(make_pair(m_tank, 30));
+	characterQueue.push(make_pair(m_chocola, 30));
+	characterQueue.push(make_pair(m_vermelia, 30));
+	characterQueue.push(make_pair(m_french, 30));
+	characterQueue.push(make_pair(m_courir, 30));
+	characterQueue.push(make_pair(m_cornein, 30));
+	characterQueue.push(make_pair(m_aigis, 30));
+	characterQueue.push(make_pair(m_elnino, 30));
+	characterQueue.push(make_pair(m_onyx, 30));
+	characterQueue.push(make_pair(m_fred, 30));
+	characterQueue.push(make_pair(m_mascara, 30));
+	characterQueue.push(make_pair(m_rabbi, 30));
+	characterQueue.push(make_pair(m_archive, 30));
+	characterQueue.push(make_pair(m_siesta, 30));
+
 	// 最初の画像
-	m_animation = new Animation(GAME_WIDE / 2, GAME_HEIGHT / 2, 100, m_title);
+	m_animation = new Animation(GAME_WIDE / 2, GAME_HEIGHT / 2, 16, m_titleChara);
 
 	// 音楽
-	m_soundPlayer_p->setBGM("sound/movie/kobune_full.mp3");
+	m_soundPlayer_p->setBGM("sound/movie/kobune.mp3");
+	m_soundPlayer_p->clearSoundQueue();
 }
 
 OpMovie::~OpMovie() {
 	// 画像
+	// タイトル
+	delete m_titleH;
 	delete m_title;
+	delete m_titleChara;
+	delete m_titleBlue;
+	delete m_titleOrange;
+	delete m_titleHeart;
+	// キャラ
 	delete m_archive;
 	delete m_aigis;
 	delete m_assault;
@@ -143,15 +180,46 @@ OpMovie::~OpMovie() {
 void OpMovie::play() {
 	m_cnt++;
 	m_animation->count();
-	if (m_cnt == 180) {
-		m_animation->changeGraph(m_siesta, 10);
+
+	// 画像を設定
+	if (m_cnt < 120 && m_animation->getFinishFlag()) {
+		m_animation->changeGraph(m_titleH, 1000);
 	}
-	else if (m_cnt == 230) {
+	else if (m_cnt == 180) {
+		m_animation->changeGraph(m_titleH, 5);
+	}
+	else if (m_cnt < 440 && m_animation->getFinishFlag()) {
+		m_animation->changeGraph(m_title, 30);
+	}
+	else if (m_cnt < 600 && m_cnt >= 440) {
+		m_animation->changeGraph(m_titleHeart, 60);
+		m_animation->setX(m_animation->getX() + 8);
+	}
+	else if (m_cnt < 690 && m_cnt >= 600) {
+		m_animation->setX(GAME_WIDE / 2);
+		if (m_cnt / 5 % 2 == 0) {
+			m_animation->changeGraph(m_titleBlue, 60);
+		}
+		else {
+			m_animation->changeGraph(m_titleOrange, 60);
+		}
+	}
+	else if (m_cnt < 700 && m_cnt >= 690) {
+		m_animation->changeGraph(m_titleOrange, 60);
+	}
+	else if (m_cnt >= 2130 && m_cnt < 2740) {
+		if (m_animation->getFinishFlag() && !characterQueue.empty()) {
+			GraphHandles* next = characterQueue.front().first;
+			m_animation->changeGraph(next, characterQueue.front().second / next->getSize());
+			characterQueue.pop();
+		}
+	}
+	else if (m_cnt == 2760) {
 		m_animation->changeGraph(m_heart);
 	}
 
 	// 終了
-	if (m_soundPlayer_p->checkBGMplay() == 0) {
+	if (m_cnt == 5000) {
 		m_finishFlag = true;
 	}
 }

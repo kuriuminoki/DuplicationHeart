@@ -1,6 +1,8 @@
 #ifndef ANIMATION_H_INCLUDED
 #define ANIMATION_H_INCLUDED
 
+#include <queue>
+
 class GraphHandle;
 class GraphHandles;
 class SoundPlayer;
@@ -36,6 +38,8 @@ public:
 	inline bool getFinishFlag() const { return m_finishFlag; }
 
 	// セッタ
+	inline void setX(int x) { m_x = x; }
+	inline void setY(int y) { m_y = y; }
 	inline void setCnt(int cnt) { m_cnt = cnt; }
 	inline void setFinishCnt(int finishCnt) { m_finishCnt = finishCnt; }
 	inline void setFinishFlag(int finishFlag) { m_finishFlag = finishFlag; }
@@ -90,7 +94,14 @@ class OpMovie:
 private:
 
 	// 画像
+	// タイトル
+	GraphHandles* m_titleH;
 	GraphHandles* m_title;
+	GraphHandles* m_titleChara;
+	GraphHandles* m_titleBlue;
+	GraphHandles* m_titleOrange;
+	GraphHandles* m_titleHeart;
+	// キャラ
 	GraphHandles* m_archive;
 	GraphHandles* m_aigis;
 	GraphHandles* m_assault;
@@ -112,6 +123,9 @@ private:
 	GraphHandles* m_yuri;
 	GraphHandles* m_rabbi;
 	GraphHandles* m_tank;
+
+	// キャラを順に表示する用 (graph, cntSum)
+	std::queue<std::pair<GraphHandles*, int> > characterQueue;
 
 public:
 	OpMovie(SoundPlayer* soundPlayer_p);
