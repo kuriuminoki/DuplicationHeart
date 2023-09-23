@@ -219,7 +219,7 @@ EVENT_RESULT ChangeBrainEvent::play() {
 	m_controller_p->setBrain(brain);
 
 	// 追跡対象が必要なBrainは追跡対象を設定
-	if (brain->getBrainName() == FollowNormalAI::BRAIN_NAME) {
+	if (brain->getBrainName() == FollowNormalAI::BRAIN_NAME || brain->getBrainName() == ValkiriaAI::BRAIN_NAME) {
 		Character* follow = m_world_p->getCharacterWithName(m_param[3]);
 		brain->searchFollow(follow);
 	}
@@ -244,7 +244,7 @@ ChangeGroupEvent::ChangeGroupEvent(World* world, std::vector<string> param) :
 	m_character_p = m_world_p->getCharacterWithName(param[2]);
 }
 EVENT_RESULT ChangeGroupEvent::play() {
-	// 対象のキャラのBrainを変更する
+	// 対象のキャラのGroupIdを変更する
 	m_character_p->setGroupId(m_groupId);
 	return EVENT_RESULT::SUCCESS;
 }

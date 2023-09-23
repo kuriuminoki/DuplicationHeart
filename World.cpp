@@ -457,7 +457,9 @@ void World::setPlayerOnDoor(int from) {
 	// プレイヤーの仲間
 	for (unsigned int i = 0; i < m_characterControllers.size(); i++) {
 		const Character* follow = m_characterControllers[i]->getBrain()->getFollow();
+		// 追跡対象がプレイヤーなら
 		if (follow != nullptr && m_playerId == follow->getId()) {
+			// Controllerに対応するCharacterに変更を加える
 			for (unsigned int j = 0; j < m_characters.size(); j++) {
 				if (m_characterControllers[i]->getAction()->getCharacter()->getId() == m_characters[j]->getId()) {
 					m_characters[j]->setX(doorX1);
@@ -465,7 +467,6 @@ void World::setPlayerOnDoor(int from) {
 					break;
 				}
 			}
-			break;
 		}
 	}
 	cameraPointInit();

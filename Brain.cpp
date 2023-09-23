@@ -441,6 +441,7 @@ const Character* FollowNormalAI::getFollow() const {
 }
 
 bool FollowNormalAI::checkAlreadyFollow() {
+	if (m_follow_p == nullptr) { return true; }
 	int followX = m_follow_p->getCenterX();
 	return  m_gx < followX + FOLLOW_X_ERROR && m_gx > followX - FOLLOW_X_ERROR;
 }
