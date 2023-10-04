@@ -85,6 +85,9 @@ World::World(int fromAreaNum, int toAreaNum, SoundPlayer* soundPlayer) {
 	// 会話イベント
 	m_conversation_p = NULL;
 
+	// ムービー
+	m_movie_p = NULL;
+
 	// スキル発動中
 	m_skillFlag = false;
 
@@ -138,6 +141,7 @@ World::World(const World* original) {
 	m_duplicationFlag = true;
 	m_brightValue = 255;
 	m_conversation_p = NULL;
+	m_movie_p = NULL;
 	m_skillFlag = false;
 	m_areaNum = original->getAreaNum();
 
@@ -453,7 +457,9 @@ void World::setPlayerOnDoor(int from) {
 	// プレイヤーの仲間
 	for (unsigned int i = 0; i < m_characterControllers.size(); i++) {
 		const Character* follow = m_characterControllers[i]->getBrain()->getFollow();
+		// 追跡対象がプレイヤーなら
 		if (follow != nullptr && m_playerId == follow->getId()) {
+			// Controllerに対応するCharacterに変更を加える
 			for (unsigned int j = 0; j < m_characters.size(); j++) {
 				if (m_characterControllers[i]->getAction()->getCharacter()->getId() == m_characters[j]->getId()) {
 					m_characters[j]->setX(doorX1);
@@ -461,7 +467,6 @@ void World::setPlayerOnDoor(int from) {
 					break;
 				}
 			}
-			break;
 		}
 	}
 	cameraPointInit();
@@ -778,9 +783,21 @@ void World::atariAttackAndAttack() {
 // 会話させる
 void World::talk() {
 	if (m_conversation_p != NULL) {
+		m_conversation_p->play();
 		// 会話終了
-		if (m_conversation_p->play()) {
+		if (m_conversation_p->getFinishFlag()) {
 			m_conversation_p = NULL;
+		}
+	}
+}
+
+// ムービーを流す
+void World::moviePlay() {
+	if (m_movie_p != NULL) {
+		m_movie_p->play();
+		// ムービー終了
+		if (m_movie_p->getFinishFlag()) {
+			m_movie_p = NULL;
 		}
 	}
 }

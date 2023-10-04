@@ -45,8 +45,14 @@ public:
 	// BGMをストップ
 	void stopBGM();
 
+	// BGMが再生していないか調べる
+	int checkBGMplay();
+
 	// 効果音の再生待機列へプッシュ
 	void pushSoundQueue(int soundHandle, int panPal = 0);
+
+	// 効果音の再生待機列をクリア
+	void clearSoundQueue();
 
 	// 効果音を鳴らす
 	void play();

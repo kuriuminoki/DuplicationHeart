@@ -55,7 +55,7 @@ DoorData::DoorData(int x1, int y1, int x2, int y2, int from, int to, const char*
 GameData::GameData() {
 	m_saveFilePath = "data/save/savedata1.dat";
 
-	const bool test = true;
+	const bool test = false;
 
 	m_areaNum = 1;
 	m_storyNum = 1;
@@ -173,10 +173,13 @@ bool Game::play() {
 	if (controlQ() == 1) {
 		if (m_gamePause == NULL) {
 			m_gamePause = new GamePause(m_soundPlayer);
+			// ‚±‚±‚Å‰¹Šy‚àŽ~‚ß‚é
+			m_soundPlayer->stopBGM();
 		}
 		else {
 			delete m_gamePause;
 			m_gamePause = NULL;
+			m_soundPlayer->playBGM();
 		}
 	}
 	if (m_gamePause != NULL) {

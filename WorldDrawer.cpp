@@ -5,6 +5,7 @@
 #include "CharacterAction.h"
 #include "ObjectDrawer.h"
 #include "AnimationDrawer.h"
+#include "Animation.h"
 #include "TextDrawer.h"
 #include "Text.h"
 #include "Define.h"
@@ -123,6 +124,13 @@ void WorldDrawer::draw() {
 	m_targetDrawer.setEx(camera->getEx());
 	m_targetDrawer.draw();
 	SetDrawBright(255, 255, 255);
+
+	// ムービー
+	const Movie* movie = m_world->getMovie();
+	if (movie != NULL) {
+		m_animationDrawer->setAnimation(movie->getAnimation());
+		m_animationDrawer->drawAnimation();
+	}
 
 	// テキストイベント
 	const Conversation* conversation = m_world->getConversation();

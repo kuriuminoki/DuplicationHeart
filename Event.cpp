@@ -7,6 +7,7 @@
 #include "Character.h"
 #include "Text.h"
 #include "Brain.h"
+#include "Animation.h"
 #include <sstream>
 
 using namespace std;
@@ -101,6 +102,9 @@ void Event::createElement(vector<string> param, World* world, SoundPlayer* sound
 	}
 	else if (param0 == "Talk") {
 		element = new TalkEvent(world, soundPlayer, param);
+	}
+	else if (param0 == "Movie") {
+		element = new MovieEvent(world, soundPlayer, param);
 	}
 
 	if (element != NULL) { m_eventElement.push_back(element); }
@@ -215,7 +219,7 @@ EVENT_RESULT ChangeBrainEvent::play() {
 	m_controller_p->setBrain(brain);
 
 	// 追跡対象が必要なBrainは追跡対象を設定
-	if (brain->getBrainName() == FollowNormalAI::BRAIN_NAME) {
+	if (brain->getBrainName() == FollowNormalAI::BRAIN_NAME || brain->getBrainName() == ValkiriaAI::BRAIN_NAME) {
 		Character* follow = m_world_p->getCharacterWithName(m_param[3]);
 		brain->searchFollow(follow);
 	}
@@ -240,7 +244,7 @@ ChangeGroupEvent::ChangeGroupEvent(World* world, std::vector<string> param) :
 	m_character_p = m_world_p->getCharacterWithName(param[2]);
 }
 EVENT_RESULT ChangeGroupEvent::play() {
-	// 対象のキャラのBrainを変更する
+	// 対象のキャラのGroupIdを変更する
 	m_character_p->setGroupId(m_groupId);
 	return EVENT_RESULT::SUCCESS;
 }
@@ -308,6 +312,27 @@ EVENT_RESULT TalkEvent::play() {
 	m_world_p->setConversation(m_conversation);
 	m_world_p->talk();
 	if (m_conversation->getFinishFlag()) {
+		return EVENT_RESULT::SUCCESS;
+	}
+	return EVENT_RESULT::NOW;
+}
+
+
+MovieEvent::MovieEvent(World* world, SoundPlayer* soundPlayer, std::vector<std::string> param) :
+	EventElement(world)
+{
+	//int textNum = stoi(param[1]);
+	m_movie = new OpMovie(soundPlayer);
+	m_world_p->setMovie(m_movie);
+}
+
+MovieEvent::~MovieEvent() {
+	delete m_movie;
+}
+
+EVENT_RESULT MovieEvent::play() {
+	m_world_p->moviePlay();
+	if (m_movie->getFinishFlag()) {
 		return EVENT_RESULT::SUCCESS;
 	}
 	return EVENT_RESULT::NOW;

@@ -235,7 +235,7 @@ protected:
 	const Character* m_follow_p;
 
 	// í«ê’ëŒè€ÇÃãﬂÇ≠Ç…Ç¢ÇÈÇ∆Ç›Ç»Ç∑åÎç∑ Å}GX_ERROR
-	const int FOLLOW_X_ERROR = 800;
+	const int FOLLOW_X_ERROR = 600;
 
 public:
 	static const char* BRAIN_NAME;

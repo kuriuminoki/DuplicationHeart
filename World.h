@@ -20,6 +20,7 @@ class CharacterLoader;
 class ObjectLoader;
 class CharacterData;
 class DoorData;
+class Movie;
 
 
 class World {
@@ -32,6 +33,9 @@ private:
 
 	// 会話イベント EventElementクラスからもらう
 	Conversation* m_conversation_p;
+
+	// ムービー EventElementクラスからもらう
+	Movie* m_movie_p;
 
 	// スキル発動中はエリア間の移動できない
 	bool m_skillFlag;
@@ -98,6 +102,7 @@ public:
 	inline const int getBackGroundGraph() const { return m_backGroundGraph; }
 	inline const int getBackGroundColor() const { return m_backGroundColor; }
 	inline const Conversation* getConversation() const { return m_conversation_p; }
+	inline const Movie* getMovie() const { return m_movie_p; }
 	inline SoundPlayer* getSoundPlayer() const { return m_soundPlayer_p; }
 
 	// セッタ
@@ -116,6 +121,9 @@ public:
 
 	// キャラに会話させる
 	void talk();
+
+	// ムービーを流す
+	void moviePlay();
 
 	// キャラの状態を変更する いないなら作成する
 	void asignedCharacterData(const char* name, CharacterData* data);
@@ -143,6 +151,7 @@ public:
 	Character* getCharacterWithId(int id) const;
 	void setBrainWithId(int id, Brain* brain);
 	inline void setConversation(Conversation* conversation){ m_conversation_p = conversation; }
+	inline void setMovie(Movie* movie) { m_movie_p = movie; }
 	void pushCharacter(Character* character, CharacterController* controller);
 	void popCharacter(int id);
 	void createRecorder();
