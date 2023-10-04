@@ -29,6 +29,9 @@ Character* createCharacter(const char* characterName, int hp, int x, int y, int 
 	else if (name == "ヴァルキリア") {
 		character = new Valkyria(name.c_str(), hp, x, y, groupId);
 	}
+	else if (name == "トロイ") {
+		character = new Troy(name.c_str(), hp, x, y, groupId);
+	}
 	else {
 		character = new Heart(name.c_str(), hp, x, y, groupId);
 	}
@@ -561,11 +564,7 @@ Valkyria::Valkyria(const char* name, int hp, int x, int y, int groupId, AttackIn
 
 Character* Valkyria::createCopy() {
 	Character* res = new Valkyria(m_characterInfo->name().c_str(), m_hp, m_x, m_y, m_groupId, m_attackInfo);
-	res->setY(m_y);
-	res->setId(m_id);
-	res->setLeftDirection(m_leftDirection);
-	res->setHp(m_hp);
-	res->getCharacterGraphHandle()->setGraph(getGraphHandle());
+	setParam(res);
 	return res;
 }
 
@@ -630,4 +629,30 @@ Object* Valkyria::slashAttack(bool leftDirection, int cnt, SoundPlayer* soundPla
 		attackObject->setGroupId(m_groupId);
 	}
 	return attackObject;
+}
+
+
+/*
+* トロイ
+*/
+Troy::Troy(const char* name, int hp, int x, int y, int groupId) :
+	Heart(name, hp, x, y, groupId)
+{
+
+}
+Troy::Troy(const char* name, int hp, int x, int y, int groupId, AttackInfo* attackInfo) :
+	Heart(name, hp, x, y, groupId, attackInfo)
+{
+
+}
+
+Character* Troy::createCopy() {
+	Character* res = new Troy(m_characterInfo->name().c_str(), m_hp, m_x, m_y, m_groupId, m_attackInfo);
+	setParam(res);
+	return res;
+}
+
+// 斬撃攻撃をする(キャラごとに違う)
+Object* Troy::slashAttack(bool leftDirection, int cnt, SoundPlayer* soundPlayer) {
+	return nullptr;
 }

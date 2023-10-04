@@ -419,4 +419,22 @@ public:
 };
 
 
+/*
+* トロイ
+*/
+class Troy :
+	public Heart
+{
+public:
+	// コンストラクタ
+	Troy(const char* name, int hp, int x, int y, int groupId);
+	Troy(const char* name, int hp, int x, int y, int groupId, AttackInfo* attackInfo);
+
+	Character* createCopy();
+
+	// 斬撃攻撃をする(キャラごとに違う)
+	Object* slashAttack(bool leftDirection, int cnt, SoundPlayer* soundPlayer);
+};
+
+
 #endif

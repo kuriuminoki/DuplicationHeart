@@ -94,6 +94,10 @@ protected:
 
 	int m_damageCnt;
 
+private:
+	// キャラの画像を変更
+	virtual void switchHandle() = 0;
+
 public:
 	static const char* ACTION_NAME;
 	virtual const char* getActionName() const { return this->ACTION_NAME; }
@@ -101,7 +105,10 @@ public:
 	CharacterAction();
 	CharacterAction(Character* character, SoundPlayer* soundPlayer_p);
 
+	// コピー作成
 	virtual CharacterAction* createCopy(std::vector<Character*> characters) = 0;
+
+	// コピー作成用
 	void setParam(CharacterAction* action);
 
 	// デバッグ
@@ -168,9 +175,6 @@ public:
 	// 物理演算 毎フレーム行う
 	virtual void action() = 0;
 
-	// キャラの画像を変更
-	virtual void switchHandle() = 0;
-
 	// 移動 引数は４方向分 キャラによっては斜めに移動できるため。
 	virtual void move(bool right, bool left, bool up, bool down) = 0;
 
@@ -182,15 +186,15 @@ public:
 
 	// 斬撃攻撃
 	virtual Object* slashAttack(int gx, int gy) = 0;
-	
-	// 斬撃開始の処理
-	virtual void startSlash();
-
-	// 斬撃終了の処理
-	virtual void finishSlash();
 
 	// ダメージ
 	virtual void damage(int vx, int vy, int damageValue) = 0;
+
+	// 斬撃開始の処理 必要に応じてオーバーライド
+	virtual void startSlash();
+
+	// 斬撃終了の処理 必要に応じてオーバーライド
+	virtual void finishSlash();
 
 	// 今無敵時間じゃない
 	bool ableDamage() const;
@@ -201,6 +205,8 @@ public:
 	// 歩くのをやめる
 	void stopMoveLeft();
 	void stopMoveRight();
+	void stopMoveUp();
+	void stopMoveDown();
 
 protected:
 	// 画像のサイズ変更による位置調整
@@ -291,6 +297,52 @@ public:
 
 	// 斬撃終了の処理
 	void finishSlash();
+
+	// ダメージ
+	void damage(int vx, int vy, int damageValue);
+};
+
+
+/*
+* 空を飛ぶキャラ
+*/
+class FlightAction :
+	public CharacterAction
+{
+private:
+
+	// キャラの画像を状態(state)に応じて変更
+	void switchHandle();
+
+	void walk(bool right, bool left, bool up, bool down);
+
+public:
+	static const char* ACTION_NAME;
+	const char* getActionName() const { return this->ACTION_NAME; }
+
+	FlightAction(Character* character, SoundPlayer* soundPlayer_p);
+
+	CharacterAction* createCopy(std::vector<Character*> characters);
+
+	void debug(int x, int y, int color) const;
+
+	//行動前の処理 毎フレーム行う
+	void init();
+
+	// 物理演算 毎フレーム行う
+	void action();
+
+	// 移動 引数は４方向分
+	void move(bool right, bool left, bool up, bool down);
+
+	// ジャンプ cntフレーム目
+	void jump(int cnt);
+
+	// 射撃攻撃
+	Object* bulletAttack(int gx, int gy);
+
+	// 斬撃攻撃
+	Object* slashAttack(int gx, int gy);
 
 	// ダメージ
 	void damage(int vx, int vy, int damageValue);
