@@ -59,7 +59,7 @@ void SoundPlayer::setBGM(std::string bgmName, int volume) {
 
 // BGMを再生
 void SoundPlayer::playBGM() {
-	PlaySoundMem(m_bgmHandle, DX_PLAYTYPE_LOOP);
+	PlaySoundMem(m_bgmHandle, DX_PLAYTYPE_LOOP, FALSE);
 }
 
 // BGMをストップ

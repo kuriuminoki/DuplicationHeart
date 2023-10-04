@@ -134,7 +134,7 @@ OpMovie::OpMovie(SoundPlayer* soundPlayer_p):
 	characterQueue.push(make_pair(m_siesta, 30));
 
 	// Å‰‚Ì‰æ‘œ
-	m_animation = new Animation(GAME_WIDE / 2, GAME_HEIGHT / 2, 16, m_titleChara);
+	m_animation = new Animation(GAME_WIDE / 2, GAME_HEIGHT / 2, 120, m_titleH);
 
 	// ‰¹Šy
 	m_soundPlayer_p->setBGM("sound/movie/kobune.mp3");
@@ -182,7 +182,10 @@ void OpMovie::play() {
 	m_animation->count();
 
 	// ‰æ‘œ‚ğİ’è
-	if (m_cnt < 120 && m_animation->getFinishFlag()) {
+	if (m_cnt == 45) {
+		m_animation->changeGraph(m_titleChara, 12);
+	}
+	else if (m_cnt < 120 && m_animation->getFinishFlag()) {
 		m_animation->changeGraph(m_titleH, 1000);
 	}
 	else if (m_cnt == 180) {

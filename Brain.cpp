@@ -249,10 +249,11 @@ int NormalAI::jumpOrder() {
 	}
 
 	int maxJump = m_characterAction_p->getPreJumpMax();
+	int minJump = maxJump / 3;
 
 	if (m_jumpCnt == 0) {
 		// ランダムでジャンプ
-		if (m_squatCnt == 0 && GetRand(99) == 0) { m_jumpCnt = GetRand(maxJump - 5) + 5; }
+		if (m_squatCnt == 0 && GetRand(99) == 0) { m_jumpCnt = GetRand(maxJump - minJump) + minJump; }
 
 		// 壁にぶつかったからジャンプ
 		if (m_rightKey > 0 && m_characterAction_p->getRightLock()) { m_jumpCnt = maxJump; }

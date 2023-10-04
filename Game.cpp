@@ -173,10 +173,13 @@ bool Game::play() {
 	if (controlQ() == 1) {
 		if (m_gamePause == NULL) {
 			m_gamePause = new GamePause(m_soundPlayer);
+			// ‚±‚±‚Å‰¹Šy‚àŽ~‚ß‚é
+			m_soundPlayer->stopBGM();
 		}
 		else {
 			delete m_gamePause;
 			m_gamePause = NULL;
+			m_soundPlayer->playBGM();
 		}
 	}
 	if (m_gamePause != NULL) {

@@ -62,5 +62,5 @@ void CharacterDrawer::drawCharacter(const Camera* const camera, int bright) {
 	int height = (int)(HP_BAR_HEIGHT * camera->getEx());
 	y -= (int)(10 * camera->getEx());
 	// ‘Ì—Í‚Ì•`‰æ
-	drawHpBar(x - wide, y - height, x + wide, y, character->getHp(), character->getMaxHp(), DAMAGE_COLOR, HP_COLOR);
+	//drawHpBar(x - wide, y - height, x + wide, y, character->getHp(), character->getMaxHp(), DAMAGE_COLOR, HP_COLOR);
 }
