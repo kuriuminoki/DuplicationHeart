@@ -20,6 +20,8 @@ const char* ParabolaAI::BRAIN_NAME = "ParabolaAI";
 const char* FollowNormalAI::BRAIN_NAME = "FollowNormalAI";
 const char* FollowParabolaAI::BRAIN_NAME = "FollowParabolaAI";
 const char* ValkiriaAI::BRAIN_NAME = "ValkiriaAI";
+const char* FlightAI::BRAIN_NAME = "FlightAI";
+const char* FollowFlightAI::BRAIN_NAME = "FollowFlightAI";
 
 // クラス名からBrainを作成する関数
 Brain* createBrain(const string brainName, const Camera* camera_p) {
@@ -44,6 +46,12 @@ Brain* createBrain(const string brainName, const Camera* camera_p) {
 	}
 	else if (brainName == ValkiriaAI::BRAIN_NAME) {
 		brain = new ValkiriaAI();
+	}
+	else if (brainName == FlightAI::BRAIN_NAME) {
+		brain = new FlightAI();
+	}
+	else if (brainName == FollowFlightAI::BRAIN_NAME) {
+		brain = new FollowFlightAI();
 	}
 	return brain;
 }
@@ -180,7 +188,6 @@ void NormalAI::moveOrder(int& right, int& left, int& up, int& down) {
 	int y = m_characterAction_p->getCharacter()->getCenterY();
 
 	// (壁につっかえるなどで)移動できてないから諦める
-	//DrawFormatString(800, 50, GetColor(255, 255, 255), "moveCnt = %d, x(%d) -> gx(%d)", m_moveCnt, x, m_gx);
 	if (m_moveCnt >= GIVE_UP_MOVE_CNT) {
 		m_gx = x;
 		m_gy = y;
@@ -232,6 +239,20 @@ void NormalAI::stickOrder(int& right, int& left, int& up, int& down) {
 		else {
 			m_moveCnt = 0;
 		}
+	}
+
+	// 目標に向かって上下移動
+	if (m_gy > y + GY_ERROR && !m_characterAction_p->getGrand()) {
+		m_downKey++;// 宙にいるなら下へ移動、そうじゃないならしゃがんじゃうから
+		m_upKey = 0;
+	}
+	else if (m_gy < y - GY_ERROR) {
+		m_downKey = 0;
+		m_upKey++;
+	}
+	else {
+		m_downKey = 0;
+		m_upKey = 0;
 	}
 
 	// 反映
@@ -540,4 +561,65 @@ void ValkiriaAI::moveOrder(int& right, int& left, int& up, int& down) {
 	else {
 		FollowNormalAI::moveOrder(right, left, up, down);
 	}
+}
+
+
+void FlightAI::moveOrder(int& right, int& left, int& up, int& down) {
+	// 現在地
+	int x = m_characterAction_p->getCharacter()->getCenterX();
+	int y = m_characterAction_p->getCharacter()->getCenterY();
+
+	// (壁につっかえるなどで)移動できてないから諦める
+	if (m_moveCnt >= GIVE_UP_MOVE_CNT) {
+		m_gx = x;
+		m_gy = y;
+		m_try = false;
+	}
+
+	// 壁にぶつかったから上下移動
+	if ((m_rightKey > 0 && m_characterAction_p->getRightLock()) || (m_leftKey > 0 && m_characterAction_p->getLeftLock())) {
+		if (!m_try) {
+			if (GetRand(100) < 50) {
+				m_gy = y - 1000;
+			}
+			else {
+				m_gy = y + 1000;
+			}
+			m_try = true;
+		}
+		else if (m_upKey > 0 && m_characterAction_p->getUpLock()) {
+			m_gy = y + 2000;
+		}
+		else if (m_downKey > 0 && m_characterAction_p->getDownLock()) {
+			m_gy = y - 2000;
+		}
+	}
+	else {
+		if(m_try){ m_gy = y; }
+		m_try = false;
+	}
+
+	// 目標地点設定
+	bool alreadyGoal = m_gx > x - GX_ERROR && m_gx < x + GX_ERROR;
+	// ダメージを受けたらリセット
+	if (m_characterAction_p->getState() == CHARACTER_STATE::DAMAGE) {
+		m_gx = x, m_gy = y;
+		m_try = false;
+	}
+	else if (alreadyGoal && GetRand(MOVE_RAND) == 0) {
+		if (m_target_p != NULL && abs(x - m_target_p->getCenterX()) < TARGET_DISTANCE) {
+			// targetについていく
+			m_gx = m_target_p->getCenterX() + GetRand(2000) - 1000;
+			m_gy = m_target_p->getCenterY() + GetRand(800) - 700;
+		}
+		else {
+			// ランダムに設定
+			m_gx = GetRand(200) - 400;
+			m_gx += x;
+			m_gy = y + (GetRand(200) - 100);
+		}
+		if (abs(x - m_gx) < 50) { m_gx = x; }
+		m_try = false;
+	}
+	stickOrder(right, left, up, down);
 }

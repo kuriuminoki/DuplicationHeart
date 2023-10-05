@@ -919,15 +919,22 @@ void FlightAction::walk(bool right, bool left, bool up, bool down) {
 		return;
 	}
 	// 右へ歩き始める
-	if (!m_grand && !m_rightLock && !m_moveRight && !m_moveLeft && right && (!left || !m_character_p->getLeftDirection()) && !m_squat) { // 右へ歩く
+	if (!m_rightLock && !m_moveRight && !m_moveLeft && right && (!left || !m_character_p->getLeftDirection()) && !m_squat) { // 右へ歩く
 		m_vx += m_character_p->getMoveSpeed();
 		m_moveRight = true;
-		m_grand = false;
+		if(m_grand){
+			m_vy -= m_character_p->getMoveSpeed();
+			m_moveUp = true;
+		}
 	}
 	// 左へ歩き始める
-	if (!m_grand && !m_leftLock && !m_moveRight && !m_moveLeft && left && (!right || m_character_p->getLeftDirection()) && !m_squat) { // 左へ歩く
+	if (!m_leftLock && !m_moveRight && !m_moveLeft && left && (!right || m_character_p->getLeftDirection()) && !m_squat) { // 左へ歩く
 		m_vx -= m_character_p->getMoveSpeed();
 		m_moveLeft = true;
+		if (m_grand) {
+			m_vy -= m_character_p->getMoveSpeed();
+			m_moveUp = true;
+		}
 	}
 	// 上へ歩き始める
 	if (!m_upLock && !m_moveDown && !m_moveUp && up && !down) { // 上へ歩く
