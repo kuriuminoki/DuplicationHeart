@@ -68,12 +68,13 @@ GameData::GameData() {
 	m_soundVolume = 50;
 
 	// 主要キャラを設定
-	const int mainSum = 5;
+	const int mainSum = 6;
 	const char* mainCharacters[mainSum] = {
 		"ハート",
 		"シエスタ",
 		"ヒエラルキー",
 		"ヴァルキリア",
+		"トロイ",
 		"エム・サディ"
 	};
 	for (int i = 0; i < mainSum; i++) {

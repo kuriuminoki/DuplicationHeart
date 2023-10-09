@@ -219,11 +219,10 @@ EVENT_RESULT ChangeBrainEvent::play() {
 	m_controller_p->setBrain(brain);
 
 	// ’ÇÕ‘ÎÛ‚ª•K—v‚ÈBrain‚Í’ÇÕ‘ÎÛ‚ðÝ’è
-	if (brain->getBrainName() == FollowNormalAI::BRAIN_NAME || brain->getBrainName() == ValkiriaAI::BRAIN_NAME) {
-		Character* follow = m_world_p->getCharacterWithName(m_param[3]);
-		brain->searchFollow(follow);
-	}
-	else if (brain->getBrainName() == FollowParabolaAI::BRAIN_NAME) {
+	if (brain->getBrainName() == FollowNormalAI::BRAIN_NAME || 
+		brain->getBrainName() == FollowParabolaAI::BRAIN_NAME ||
+		brain->getBrainName() == ValkiriaAI::BRAIN_NAME ||
+		brain->getBrainName() == FollowFlightAI::BRAIN_NAME) {
 		Character* follow = m_world_p->getCharacterWithName(m_param[3]);
 		brain->searchFollow(follow);
 	}

@@ -315,12 +315,15 @@ Character* createCharacter(const char* characterName, int hp = 100, int x = 0, i
 class Heart :
 	public Character
 {
-private:
+protected:
 	//// 走りアニメのスピード
 	const int RUN_ANIME_SPEED = 6;
 	
 	//// ジャンプ前アニメのスピード
 	const int RUN_PREJUMP_SPEED = 6;
+
+	// 弾の色
+	int m_bulletColor;
 	
 public:
 	// コンストラクタ
@@ -413,6 +416,24 @@ public:
 
 	// 射撃攻撃をする(キャラごとに違う)
 	Object* bulletAttack(int gx, int gy, SoundPlayer* soundPlayer);
+
+	// 斬撃攻撃をする(キャラごとに違う)
+	Object* slashAttack(bool leftDirection, int cnt, SoundPlayer* soundPlayer);
+};
+
+
+/*
+* トロイ
+*/
+class Troy :
+	public Heart
+{
+public:
+	// コンストラクタ
+	Troy(const char* name, int hp, int x, int y, int groupId);
+	Troy(const char* name, int hp, int x, int y, int groupId, AttackInfo* attackInfo);
+
+	Character* createCopy();
 
 	// 斬撃攻撃をする(キャラごとに違う)
 	Object* slashAttack(bool leftDirection, int cnt, SoundPlayer* soundPlayer);

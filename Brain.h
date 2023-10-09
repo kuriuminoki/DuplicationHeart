@@ -136,7 +136,7 @@ public:
 class NormalAI :
 	public Brain
 {
-private:
+protected:
 	// 移動用
 	int m_rightKey, m_leftKey, m_upKey, m_downKey;
 
@@ -146,7 +146,6 @@ private:
 	// しゃがむ長さ
 	int m_squatCnt;
 
-protected:
 	// 攻撃対象を認知する距離
 	const int TARGET_DISTANCE = 2000;
 
@@ -164,6 +163,7 @@ protected:
 
 	// 移動目標達成とみなす誤差 ±GX_ERROR
 	const int GX_ERROR = 100;
+	const int GY_ERROR = 50;
 
 	// 移動時間
 	int m_moveCnt;
@@ -193,6 +193,7 @@ public:
 	void setCharacterAction(const CharacterAction* characterAction);
 	void bulletTargetPoint(int& x, int& y);
 	void moveOrder(int& right, int& left, int& up, int& down);
+	void moveUpDownOrder(int x, int y, bool& tryFlag);
 	int jumpOrder();
 	int squatOrder();
 	int slashOrder();
@@ -296,6 +297,38 @@ public:
 
 	// 追跡対象の近くにいるか判定
 	bool checkAlreadyFollow();
+};
+
+
+/*
+* 空を飛ぶキャラ用のAI
+*/
+class FlightAI :
+	public NormalAI
+{
+private:
+	// 壁にぶつかったとき、trueにして上か下へ移動する。trueのとき天井や床にぶつかっていたら逆へ移動
+	bool m_try;
+public:
+	static const char* BRAIN_NAME;
+	const char* getBrainName() const { return this->BRAIN_NAME; }
+	void moveOrder(int& right, int& left, int& up, int& down);
+};
+
+
+/*
+* 空を飛ぶ追跡キャラAI
+*/
+class FollowFlightAI :
+	public FollowNormalAI
+{
+private:
+	// 壁にぶつかったとき、trueにして上か下へ移動する。trueのとき天井や床にぶつかっていたら逆へ移動
+	bool m_try;
+public:
+	static const char* BRAIN_NAME;
+	const char* getBrainName() const { return this->BRAIN_NAME; }
+	void moveOrder(int& right, int& left, int& up, int& down);
 };
 
 
