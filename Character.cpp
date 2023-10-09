@@ -289,6 +289,8 @@ Heart::Heart(const char* name, int hp, int x, int y, int groupId) :
 	m_graphHandle = new CharacterGraphHandle(name, m_characterInfo->handleEx());
 	m_faceHandle = new FaceGraphHandle(name, 1.0);
 
+	m_bulletColor = WHITE;
+
 	// とりあえず立ち画像でスタート
 	switchStand();
 	m_y -= getHeight();
@@ -304,6 +306,9 @@ Heart::Heart(const char* name, int hp, int x, int y, int groupId, AttackInfo* at
 	// 各画像のロード
 	m_graphHandle = new CharacterGraphHandle(name, m_characterInfo->handleEx());
 	m_faceHandle = new FaceGraphHandle(name, 1.0);
+
+	m_bulletColor = WHITE;
+
 	// とりあえず立ち画像でスタート
 	//switchStand();
 	//m_y -= getHeight();
@@ -346,7 +351,7 @@ void Heart::switchPreJump(int cnt) {
 
 // 射撃攻撃をする(キャラごとに違う)
 Object* Heart::bulletAttack(int gx, int gy, SoundPlayer* soundPlayer) {
-	BulletObject* attackObject = new BulletObject(getCenterX(), getCenterY(), WHITE, gx, gy, m_attackInfo);
+	BulletObject* attackObject = new BulletObject(getCenterX(), getCenterY(), m_bulletColor, gx, gy, m_attackInfo);
 	// 自滅防止
 	attackObject->setCharacterId(m_id);
 	// チームキル防止
@@ -638,12 +643,12 @@ Object* Valkyria::slashAttack(bool leftDirection, int cnt, SoundPlayer* soundPla
 Troy::Troy(const char* name, int hp, int x, int y, int groupId) :
 	Heart(name, hp, x, y, groupId)
 {
-
+	m_bulletColor = BLUE;
 }
 Troy::Troy(const char* name, int hp, int x, int y, int groupId, AttackInfo* attackInfo) :
 	Heart(name, hp, x, y, groupId, attackInfo)
 {
-
+	m_bulletColor = BLUE;
 }
 
 Character* Troy::createCopy() {

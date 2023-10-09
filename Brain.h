@@ -193,6 +193,7 @@ public:
 	void setCharacterAction(const CharacterAction* characterAction);
 	void bulletTargetPoint(int& x, int& y);
 	void moveOrder(int& right, int& left, int& up, int& down);
+	void moveUpDownOrder(int x, int y, bool& tryFlag);
 	int jumpOrder();
 	int squatOrder();
 	int slashOrder();
@@ -321,10 +322,13 @@ public:
 class FollowFlightAI :
 	public FollowNormalAI
 {
+private:
+	// •Ç‚É‚Ô‚Â‚©‚Á‚½‚Æ‚«Atrue‚É‚µ‚Äã‚©‰º‚ÖˆÚ“®‚·‚éBtrue‚Ì‚Æ‚«“Vˆä‚â°‚É‚Ô‚Â‚©‚Á‚Ä‚¢‚½‚ç‹t‚ÖˆÚ“®
+	bool m_try;
 public:
 	static const char* BRAIN_NAME;
 	const char* getBrainName() const { return this->BRAIN_NAME; }
-	//void moveOrder(int& right, int& left, int& up, int& down);
+	void moveOrder(int& right, int& left, int& up, int& down);
 };
 
 

@@ -214,6 +214,39 @@ void NormalAI::moveOrder(int& right, int& left, int& up, int& down) {
 	stickOrder(right, left, up, down);
 }
 
+// 上下移動するAIが使う
+void NormalAI::moveUpDownOrder(int x, int y, bool& tryFlag) {
+	// (壁につっかえるなどで)移動できてないから諦める
+	if (m_moveCnt >= GIVE_UP_MOVE_CNT || (m_gy > y && m_characterAction_p->getGrand())) {
+		m_gx = x;
+		m_gy = y;
+		tryFlag = false;
+	}
+
+	// 壁にぶつかったから上下移動
+	if ((m_rightKey > 0 && m_characterAction_p->getRightLock()) || (m_leftKey > 0 && m_characterAction_p->getLeftLock())) {
+		if (!tryFlag) {
+			if (GetRand(100) < 50) {
+				m_gy = y - 1000;
+			}
+			else {
+				m_gy = y + 1000;
+			}
+			tryFlag = true;
+		}
+		else if (m_upKey > 0 && m_characterAction_p->getUpLock()) {
+			m_gy = y + 2000;
+		}
+		else if (m_downKey > 0 && m_characterAction_p->getDownLock()) {
+			m_gy = y - 2000;
+		}
+	}
+	else {
+		if (tryFlag) { m_gy = y; }
+		tryFlag = false;
+	}
+}
+
 // スティック操作
 void NormalAI::stickOrder(int& right, int& left, int& up, int& down) {
 	// 現在地
@@ -569,35 +602,8 @@ void FlightAI::moveOrder(int& right, int& left, int& up, int& down) {
 	int x = m_characterAction_p->getCharacter()->getCenterX();
 	int y = m_characterAction_p->getCharacter()->getCenterY();
 
-	// (壁につっかえるなどで)移動できてないから諦める
-	if (m_moveCnt >= GIVE_UP_MOVE_CNT) {
-		m_gx = x;
-		m_gy = y;
-		m_try = false;
-	}
-
-	// 壁にぶつかったから上下移動
-	if ((m_rightKey > 0 && m_characterAction_p->getRightLock()) || (m_leftKey > 0 && m_characterAction_p->getLeftLock())) {
-		if (!m_try) {
-			if (GetRand(100) < 50) {
-				m_gy = y - 1000;
-			}
-			else {
-				m_gy = y + 1000;
-			}
-			m_try = true;
-		}
-		else if (m_upKey > 0 && m_characterAction_p->getUpLock()) {
-			m_gy = y + 2000;
-		}
-		else if (m_downKey > 0 && m_characterAction_p->getDownLock()) {
-			m_gy = y - 2000;
-		}
-	}
-	else {
-		if(m_try){ m_gy = y; }
-		m_try = false;
-	}
+	// 上下移動の制御
+	moveUpDownOrder(x, y, m_try);
 
 	// 目標地点設定
 	bool alreadyGoal = m_gx > x - GX_ERROR && m_gx < x + GX_ERROR;
@@ -611,6 +617,42 @@ void FlightAI::moveOrder(int& right, int& left, int& up, int& down) {
 			// targetについていく
 			m_gx = m_target_p->getCenterX() + GetRand(2000) - 1000;
 			m_gy = m_target_p->getCenterY() + GetRand(800) - 700;
+		}
+		else {
+			// ランダムに設定
+			m_gx = GetRand(200) - 400;
+			m_gx += x;
+			m_gy = y + (GetRand(200) - 100);
+		}
+		if (abs(x - m_gx) < 50) { m_gx = x; }
+		m_try = false;
+	}
+	stickOrder(right, left, up, down);
+}
+
+
+void FollowFlightAI::moveOrder(int& right, int& left, int& up, int& down) {
+	// 現在地
+	int x = m_characterAction_p->getCharacter()->getCenterX();
+	int y = m_characterAction_p->getCharacter()->getCenterY();
+
+	// 上下移動の制御
+	moveUpDownOrder(x, y, m_try);
+
+	// 目標地点設定
+	bool alreadyGoal = m_gx > x - GX_ERROR && m_gx < x + GX_ERROR;
+	bool alreadyFollow = checkAlreadyFollow();
+
+	// ダメージを受けたらリセット
+	if (m_characterAction_p->getState() == CHARACTER_STATE::DAMAGE) {
+		m_gx = x, m_gy = y;
+		m_try = false;
+	}
+	else if ((alreadyGoal && GetRand(MOVE_RAND) == 0) || !alreadyFollow) {
+		if (m_follow_p != NULL) {
+			// followについていく
+			m_gx = m_follow_p->getCenterX() + GetRand(FOLLOW_X_ERROR * 2) - FOLLOW_X_ERROR;
+			m_gy = m_follow_p->getCenterY() + GetRand(800) - 700;
 		}
 		else {
 			// ランダムに設定
