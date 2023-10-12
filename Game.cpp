@@ -193,7 +193,7 @@ GameData::~GameData() {
 bool GameData::save() {
 	FILE *intFp = nullptr, *strFp = nullptr;
 	string fileName = m_saveFilePath;
-	if (fopen_s(&intFp, (fileName + "intData.txt").c_str(), "w") != 0 || fopen_s(&strFp, (fileName + "strData.txt").c_str(), "w") != 0) {
+	if (fopen_s(&intFp, (fileName + "intData.dat").c_str(), "wb") != 0 || fopen_s(&strFp, (fileName + "strData.dat").c_str(), "wb") != 0) {
 		return false;
 	}
 	// Write
@@ -218,7 +218,7 @@ bool GameData::save() {
 bool GameData::load() {
 	FILE* intFp = nullptr, * strFp = nullptr;
 	string fileName = m_saveFilePath;
-	if (fopen_s(&intFp, (fileName + "intData.txt").c_str(), "r") != 0 || fopen_s(&strFp, (fileName + "strData.txt").c_str(), "r") != 0) {
+	if (fopen_s(&intFp, (fileName + "intData.dat").c_str(), "rb") != 0 || fopen_s(&strFp, (fileName + "strData.dat").c_str(), "rb") != 0) {
 		return false;
 	}
 	// Read
