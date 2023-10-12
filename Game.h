@@ -19,7 +19,7 @@ private:
 	bool m_initFlag;
 
 	// 名前
-	const char* m_name;
+	std::string m_name;
 
 	// HP
 	int m_hp;
@@ -57,9 +57,13 @@ private:
 public:
 	CharacterData(const char* name);
 
+	// セーブとロード
+	void save(FILE* intFp, FILE* strFp);
+	void load(FILE* intFp, FILE* strFp);
+
 	// ゲッタ
 	inline bool initFlag() const { return m_initFlag; }
-	inline const char* name() const { return m_name; }
+	inline const char* name() const { return m_name.c_str(); }
 	inline int hp() const { return m_hp; }
 	inline int id() const { return m_id; }
 	inline int groupId() const { return m_groupId; }
@@ -100,10 +104,15 @@ private:
 	int m_from, m_to;
 
 	// 画像のファイル名
-	const char* m_fileName;
+	std::string m_fileName;
 
 public:
+	DoorData(FILE* intFp, FILE* strFp);
 	DoorData(int x1, int y1, int x2, int y2, int from, int to, const char* fileName);
+
+	// セーブとロード
+	void save(FILE* intFp, FILE* strFp);
+	void load(FILE* intFp, FILE* strFp);
 
 	// ゲッタ
 	inline int x1() const { return m_x1; }
@@ -112,7 +121,7 @@ public:
 	inline int y2() const { return m_y2; }
 	inline int from() const { return m_from; }
 	inline int to() const { return m_to; }
-	inline const char* fileName() const { return m_fileName; }
+	inline const char* fileName() const { return m_fileName.c_str(); }
 
 	// セッタ
 	inline void setX1(int x1) { m_x1 = x1; }
@@ -151,6 +160,10 @@ public:
 	GameData(const char* saveFilePath);
 	~GameData();
 
+	// セーブとロード
+	bool save();
+	bool load();
+
 	// ゲッタ
 	inline int getAreaNum() const { return m_areaNum; }
 	inline int getStoryNum() const { return m_storyNum; }
@@ -165,7 +178,7 @@ public:
 	void asignWorld(World* world);
 
 	// Worldのデータを自身に反映させる
-	void asignedWorld(World* world);
+	void asignedWorld(const World* world);
 
 	// ストーリーが進んだ時にセーブデータを更新する
 	void updateStory(Story* story);

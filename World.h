@@ -129,13 +129,13 @@ public:
 	void asignedCharacterData(const char* name, CharacterData* data);
 
 	// キャラの状態を教える
-	void asignCharacterData(const char* name, CharacterData* data, int fromAreaNum);
+	void asignCharacterData(const char* name, CharacterData* data, int fromAreaNum) const;
 
 	// Doorの状態を変更する いないなら作成する
 	void asignedDoorData(DoorData* data);
 
 	// Doorの状態を教える
-	void asignDoorData(std::vector<DoorData*>& data, int fromAreaNum);
+	void asignDoorData(std::vector<DoorData*>& data, int fromAreaNum) const;
 
 	// プレイヤーとその仲間をドアの前に移動
 	void setPlayerOnDoor(int from);

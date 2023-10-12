@@ -9,10 +9,10 @@ static int WINDOW = TRUE;
 static int MOUSE_DISP = FALSE;
 
 //‰æ–Ê‚Ì‘å‚«‚³
-#define GAME_WIDE 1920
-#define GAME_HEIGHT 1080
-//#define GAME_WIDE 1240
-//#define GAME_HEIGHT 1024
+//#define GAME_WIDE 1920
+//#define GAME_HEIGHT 1080
+#define GAME_WIDE 1240
+#define GAME_HEIGHT 1024
 
 // DrawFormatStringŠÖ”‚Å•\¦‚³‚ê‚é•¶š‚Ì‘å‚«‚³‚Í20‚­‚ç‚¢
 #define DRAW_FORMAT_STRING_SIZE 20

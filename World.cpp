@@ -366,10 +366,10 @@ void World::asignedCharacterData(const char* name, CharacterData* data) {
 }
 
 // キャラの状態を教える
-void World::asignCharacterData(const char* name, CharacterData* data, int fromAreaNum) {
+void World::asignCharacterData(const char* name, CharacterData* data, int fromAreaNum) const {
 	size_t size = m_characterControllers.size();
 	for (unsigned i = 0; i < size; i++) {
-		if (name == m_characterControllers[i]->getAction()->getCharacter()->getName()) {
+		if (m_characterControllers[i]->getAction()->getCharacter()->getName() == name) {
 			const Character* c = m_characterControllers[i]->getAction()->getCharacter();
 			data->setInitFlag(true);
 			data->setHp(c->getHp());
@@ -411,9 +411,10 @@ void World::asignedDoorData(DoorData* data) {
 }
 
 // Doorの状態を教える
-void World::asignDoorData(vector<DoorData*>& data, int fromAreaNum) {
+void World::asignDoorData(vector<DoorData*>& data, int fromAreaNum) const {
 	size_t size = data.size();
 	for (unsigned i = 0; i < m_doorObjects.size(); i++) {
+		// セーブデータにドアが存在するか
 		bool flag = false;
 		for (unsigned j = 0; j < size; j++) {
 			if (data[j]->to() == m_doorObjects[i]->getAreaNum() && data[j]->from() == fromAreaNum) {
@@ -428,8 +429,7 @@ void World::asignDoorData(vector<DoorData*>& data, int fromAreaNum) {
 				break;
 			}
 		}
-		if (!flag) {
-			//m_doorObjects.push_back(new DoorObject(data[i].x1(), data[i].y1(), data[i].x2(), data[i].y2(), data[i].fileName(), data[i].to()));
+		if (!flag) { // 新たなドアならセーブデータに追加
 			data.push_back(new DoorData(m_doorObjects[i]->getX1(), m_doorObjects[i]->getY1(),
 				m_doorObjects[i]->getX2(), m_doorObjects[i]->getY2(),
 				fromAreaNum, m_doorObjects[i]->getAreaNum(), m_doorObjects[i]->getFileName()));

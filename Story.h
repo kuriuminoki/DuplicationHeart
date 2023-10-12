@@ -49,6 +49,7 @@ public:
 	inline int getStoryNum() const { return m_storyNum; }
 	inline CharacterLoader* getCharacterLoader() const { return m_characterLoader; }
 	inline ObjectLoader* getObjectLoader() const { return m_objectLoader; }
+	inline const World* getWorld() const { return m_world_p; }
 
 	// ƒZƒbƒ^
 	void setWorld(World* world);
