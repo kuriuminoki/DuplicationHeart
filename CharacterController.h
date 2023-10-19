@@ -28,7 +28,7 @@ protected:
 	// 操作対象 Controllerがデリートする
 	CharacterAction* m_characterAction;
 
-	// 操作の記録 使わないならNULL
+	// 操作の記録 使わないならnullptr
 	ControllerRecorder* m_stickRecorder;
 	ControllerRecorder* m_jumpRecorder;
 	ControllerRecorder* m_squatRecorder;

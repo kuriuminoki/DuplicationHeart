@@ -209,7 +209,7 @@ AreaReader::AreaReader(int fromAreaNum, int toAreaNum, SoundPlayer* soundPlayer)
 	m_fromAreaNum = fromAreaNum;
 	m_soundPlayer_p = soundPlayer;
 
-	m_camera_p = NULL;
+	m_camera_p = nullptr;
 	m_focusId = -1;
 	m_playerId = -1;
 	m_backGroundGraph = -1;

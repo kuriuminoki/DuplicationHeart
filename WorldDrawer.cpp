@@ -48,10 +48,10 @@ void TargetDrawer::anime() {
 
 WorldDrawer::WorldDrawer(const World* world) {
 	m_world = world;
-	m_characterDrawer = new CharacterDrawer(NULL);
-	m_objectDrawer = new ObjectDrawer(NULL);
-	m_animationDrawer = new AnimationDrawer(NULL);
-	m_conversationDrawer = new ConversationDrawer(NULL);
+	m_characterDrawer = new CharacterDrawer(nullptr);
+	m_objectDrawer = new ObjectDrawer(nullptr);
+	m_animationDrawer = new AnimationDrawer(nullptr);
+	m_conversationDrawer = new ConversationDrawer(nullptr);
 }
 
 WorldDrawer::~WorldDrawer() {
@@ -127,14 +127,14 @@ void WorldDrawer::draw() {
 
 	// ムービー
 	const Movie* movie = m_world->getMovie();
-	if (movie != NULL) {
+	if (movie != nullptr) {
 		m_animationDrawer->setAnimation(movie->getAnimation());
 		m_animationDrawer->drawAnimation();
 	}
 
 	// テキストイベント
 	const Conversation* conversation = m_world->getConversation();
-	if (conversation != NULL) {
+	if (conversation != nullptr) {
 		m_conversationDrawer->setConversation(conversation);
 		m_conversationDrawer->draw();
 	}

@@ -85,13 +85,13 @@ public:
 	// 扉用
 	virtual inline int getAreaNum() const { return -1; }
 
-	// 画像を返す　ないならNULL
+	// 画像を返す　ないならnullptr
 	virtual GraphHandle* getHandle() const { return nullptr; }
 
 	// 画像の大きさを自動調節する
 	virtual bool extendGraph() const { return true; }
 
-	// テキストを返す ないならNULL
+	// テキストを返す ないならnullptr
 	virtual inline std::string getText() const { return ""; }
 
 	// オブジェクト描画（画像がないときに使う）
@@ -354,7 +354,7 @@ public:
 
 	void debug(int x, int y, int color) const;
 
-	// 画像を返す　ないならNULL
+	// 画像を返す　ないならnullptr
 	GraphHandle* getHandle() const { return m_handle; }
 
 	// ゲッタ

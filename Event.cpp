@@ -74,19 +74,19 @@ void Event::setWorld(World* world) {
 // Fire�̍쐬
 void Event::createFire(vector<string> param, World* world, SoundPlayer* soundPlayer) {
 	string param0 = param[0];
-	EventFire* fire = NULL;
+	EventFire* fire = nullptr;
 
 	if (param0 == "CharacterPoint") {
 		fire = new CharacterPointFire(world, param);
 	}
 
-	if (fire != NULL) { m_eventFire.push_back(fire); }
+	if (fire != nullptr) { m_eventFire.push_back(fire); }
 }
 
 // Element�̍쐬
 void Event::createElement(vector<string> param, World* world, SoundPlayer* soundPlayer) {
 	string param0 = param[0];
-	EventElement* element = NULL;
+	EventElement* element = nullptr;
 
 	if (param0 == "ChangeBrain") {
 		element = new ChangeBrainEvent(world, param);
@@ -107,7 +107,7 @@ void Event::createElement(vector<string> param, World* world, SoundPlayer* sound
 		element = new MovieEvent(world, soundPlayer, param);
 	}
 
-	if (element != NULL) { m_eventElement.push_back(element); }
+	if (element != nullptr) { m_eventElement.push_back(element); }
 }
 
 Event::~Event() {

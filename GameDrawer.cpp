@@ -15,9 +15,9 @@ using namespace std;
 GameDrawer::GameDrawer(const Game* game) {
 	m_game = game;
 
-	m_worldDrawer = new WorldDrawer(NULL);
+	m_worldDrawer = new WorldDrawer(nullptr);
 
-	m_skillHandle = CreateFontToHandle(NULL, SKILL_SIZE, 10);
+	m_skillHandle = CreateFontToHandle(nullptr, SKILL_SIZE, 10);
 }
 
 GameDrawer::~GameDrawer() {
@@ -29,7 +29,7 @@ void GameDrawer::draw() {
 
 	// ¢ŠE‚ð•`‰æ
 	HeartSkill* skill = m_game->getSkill();
-	if (skill != NULL) {
+	if (skill != nullptr) {
 		m_worldDrawer->setWorld(skill->getWorld());
 	}
 	else {
@@ -38,7 +38,7 @@ void GameDrawer::draw() {
 	m_worldDrawer->draw();
 
 	// ƒXƒLƒ‹‚ÌŽžŠÔ“™‚ð•`‰æ
-	if (skill != NULL) {
+	if (skill != nullptr) {
 		int num = skill->getLoopNum();
 		int now = skill->getLoopNow();
 		if (now < num) {
@@ -51,7 +51,7 @@ void GameDrawer::draw() {
 	}
 
 	// ˆêŽž’âŽ~‰æ–Ê
-	if (m_game->getGamePause() != NULL) {
+	if (m_game->getGamePause() != nullptr) {
 		SetMouseDispFlag(TRUE);//ƒ}ƒEƒX•\Ž¦
 		m_game->getGamePause()->draw();
 	}

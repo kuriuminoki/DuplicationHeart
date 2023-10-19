@@ -37,7 +37,7 @@ pair<vector<Object*>, vector<Object*> > ObjectLoader::getObjects(int areaNum) {
 		string other = m_objects[areaNum][i]["other"];
 
 		int colorHandle = str2color(color);
-		Object* object = NULL;
+		Object* object = nullptr;
 		if (name == "Box") {
 			object = new BoxObject(x1, y1, x2, y2, colorHandle, hp);
 		}
@@ -46,7 +46,7 @@ pair<vector<Object*>, vector<Object*> > ObjectLoader::getObjects(int areaNum) {
 			if (other == "leftDown") { leftDown = true; }
 			object = new TriangleObject(x1, y1, x2, y2, colorHandle, leftDown, hp);
 		}
-		if (object != NULL) { res.first.push_back(object); }
+		if (object != nullptr) { res.first.push_back(object); }
 
 		// 扉オブジェクトは別に分ける
 		if (name == "Door") {
@@ -60,7 +60,7 @@ pair<vector<Object*>, vector<Object*> > ObjectLoader::getObjects(int areaNum) {
 
 // キャラのエリアと座標をセーブする
 void ObjectLoader::saveDoorData(vector<DoorData*>& doorData) {
-	unsigned int initSize = doorData.size();
+	unsigned int initSize = (unsigned int)doorData.size();
 	for (auto it = m_objects.begin(); it != m_objects.end(); it++) {
 		int areaNum = it->first;
 		vector<map<string, string> > doors = it->second;

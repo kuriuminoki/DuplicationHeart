@@ -20,7 +20,7 @@ Conversation::Conversation(int textNum, World* world, SoundPlayer* soundPlayer) 
 	m_world_p = world;
 	m_soundPlayer_p = soundPlayer;
 	m_speakerName = "";
-	m_speakerGraph = NULL;
+	m_speakerGraph = nullptr;
 	m_text = "";
 	m_textNow = 0;
 	m_cnt = 0;

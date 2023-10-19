@@ -299,10 +299,10 @@ public:
 	void moveDown(int d);
 
 	// 射撃攻撃をする(キャラごとに違う)
-	virtual Object* bulletAttack(int gx, int gy, SoundPlayer* soundPlayer) { return NULL; }
+	virtual Object* bulletAttack(int gx, int gy, SoundPlayer* soundPlayer) { return nullptr; }
 
 	// 斬撃攻撃をする(キャラごとに違う) 左を向いているか、今何カウントか
-	virtual Object* slashAttack(bool leftDirection, int cnt, SoundPlayer* soundPlayer) { return NULL; }
+	virtual Object* slashAttack(bool leftDirection, int cnt, SoundPlayer* soundPlayer) { return nullptr; }
 };
 
 

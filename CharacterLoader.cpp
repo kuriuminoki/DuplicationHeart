@@ -51,32 +51,32 @@ pair<vector<Character*>, vector<CharacterController*> > CharacterLoader::getChar
 		Character* character = createCharacter(name.c_str(), 100, x, y, groupId);
 
 		// カメラをセット
-		if (cameraFlag && character != NULL) {
+		if (cameraFlag && character != nullptr) {
 			camera_p->setPoint(character->getCenterX(), character->getCenterY());
 			m_focusId = character->getId();
 		}
 
 		// プレイヤーが操作中のキャラとしてセット
-		if (playerFlag && m_playerId == -1 && character != NULL) {
+		if (playerFlag && m_playerId == -1 && character != nullptr) {
 			m_playerId = character->getId();
 			m_playerCharacter_p = character;
 		}
 
 		// アクションを作成
-		SoundPlayer* soundPlayer = sound ? soundPlayer_p : NULL;
+		SoundPlayer* soundPlayer = sound ? soundPlayer_p : nullptr;
 		CharacterAction* action = createAction(actionName, character, soundPlayer);
 
 		// Brainを作成
 		Brain* brain = createBrain(brainName, camera_p);
 
 		// コントローラを作成
-		CharacterController* controller = NULL;
-		if (action != NULL && brain != NULL) {
+		CharacterController* controller = nullptr;
+		if (action != nullptr && brain != nullptr) {
 			controller = createController(controllerName, brain, action);
 		}
 
 		// 完成したキャラとコントローラを保存
-		if (character != NULL && controller != NULL) {
+		if (character != nullptr && controller != nullptr) {
 			res.first.push_back(character);
 			res.second.push_back(controller);
 		}

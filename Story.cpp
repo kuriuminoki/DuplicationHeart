@@ -12,7 +12,7 @@ using namespace std;
 
 Story::Story(int storyNum, World* world, SoundPlayer* soundPlayer) {
 	m_world_p = world;
-	m_nowEvent = NULL;
+	m_nowEvent = nullptr;
 	m_storyNum = storyNum;
 
 	ostringstream oss;
@@ -56,7 +56,7 @@ Story::~Story() {
 }
 
 bool Story::play() {
-	if (m_nowEvent == NULL) {
+	if (m_nowEvent == nullptr) {
 		// 普通に世界を動かす
 		m_world_p->battle();
 		// イベントの発火確認
@@ -83,12 +83,12 @@ bool Story::play() {
 		// イベント終了
 		if (result != EVENT_RESULT::NOW) {
 			delete m_nowEvent;
-			m_nowEvent = NULL;
+			m_nowEvent = nullptr;
 		}
 	}
 
 	// 必須イベント全て終わり
-	if (m_mustEvent.size() == 0 && m_nowEvent == NULL) { 
+	if (m_mustEvent.size() == 0 && m_nowEvent == nullptr) { 
 		return true;
 	}
 	return false;
@@ -96,7 +96,7 @@ bool Story::play() {
 
 // ハートのスキル発動が可能かどうか
 bool Story::skillAble() {
-	if (m_nowEvent == NULL) {
+	if (m_nowEvent == nullptr) {
 		return true;
 	}
 	return m_nowEvent->skillAble();
@@ -105,7 +105,7 @@ bool Story::skillAble() {
 // セッタ
 void Story::setWorld(World* world) {
 	m_world_p = world;
-	if (m_nowEvent != NULL) {
+	if (m_nowEvent != nullptr) {
 		m_nowEvent->setWorld(m_world_p);
 	}
 	for (unsigned int i = 0; i < m_mustEvent.size(); i++) {

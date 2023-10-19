@@ -33,7 +33,7 @@ Object::Object(int x1, int y1, int x2, int y2, int hp) {
 
 	m_deleteFlag = false;
 
-	m_effectHandles_p = NULL;
+	m_effectHandles_p = nullptr;
 	m_soundHandle_p = -1;
 }
 
@@ -58,16 +58,16 @@ void Object::decreaseHp(int damageValue) {
 
 // アニメーション作成
 Animation* BulletObject::createAnimation(int x, int y, int flameCnt) {
-	if (m_effectHandles_p == NULL) {
-		return NULL;
+	if (m_effectHandles_p == nullptr) {
+		return nullptr;
 	}
 	return new Animation((m_x1 + m_x2) / 2, (m_y1 + m_y2) / 2, 3, m_effectHandles_p);
 }
 
 // アニメーション作成
 Animation* SlashObject::createAnimation(int x, int y, int flameCnt) {
-	if (m_effectHandles_p == NULL) {
-		return NULL;
+	if (m_effectHandles_p == nullptr) {
+		return nullptr;
 	}
 	// 座標の平均をとる
 	x = (x + (m_x1 + m_x2) / 2) / 2;
@@ -520,7 +520,7 @@ BulletObject::BulletObject(int x, int y, int color, int gx, int gy) :
 	m_v = 0;
 	m_vx = 0;
 	m_vy = 0;
-	m_effectHandles_p = NULL;
+	m_effectHandles_p = nullptr;
 	m_soundHandle_p = -1;
 	m_handle = nullptr;
 }
@@ -669,7 +669,7 @@ SlashObject::SlashObject(int x1, int y1, int x2, int y2, GraphHandle* handle, in
 	m_cnt = 0;
 	m_slashImpactX = 0;
 	m_slashImpactY = 0;
-	m_effectHandles_p = NULL;
+	m_effectHandles_p = nullptr;
 	m_soundHandle_p = -1;
 }
 

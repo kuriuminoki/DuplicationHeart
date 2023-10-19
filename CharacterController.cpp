@@ -40,73 +40,73 @@ CharacterController::CharacterController(Brain* brain, CharacterAction* characte
 	m_brain->setCharacterAction(m_characterAction);
 
 	// レコーダはデフォルトで使わない
-	m_stickRecorder = NULL;
-	m_jumpRecorder = NULL;
-	m_squatRecorder = NULL;
-	m_slashRecorder = NULL;
-	m_bulletRecorder = NULL;
-	m_damageRecorder = NULL;
+	m_stickRecorder = nullptr;
+	m_jumpRecorder = nullptr;
+	m_squatRecorder = nullptr;
+	m_slashRecorder = nullptr;
+	m_bulletRecorder = nullptr;
+	m_damageRecorder = nullptr;
 
 	m_duplicationFlag = false;
 }
 
 CharacterController::CharacterController() :
-	CharacterController(NULL, NULL)
+	CharacterController(nullptr, nullptr)
 {
 
 }
 
 // Actionインスタンスはここでのみデリートする
 CharacterController::~CharacterController() {
-	if (m_characterAction != NULL) {
+	if (m_characterAction != nullptr) {
 		delete m_characterAction;
 	}
-	if (m_brain != NULL) {
+	if (m_brain != nullptr) {
 		delete m_brain;
 	}
-	if (m_stickRecorder != NULL && !m_duplicationFlag) {
+	if (m_stickRecorder != nullptr && !m_duplicationFlag) {
 		delete m_stickRecorder;
 		delete m_jumpRecorder;
 		delete m_squatRecorder;
 		delete m_slashRecorder;
 		delete m_bulletRecorder;
 	}
-	if (m_damageRecorder != NULL && !m_duplicationFlag) {
+	if (m_damageRecorder != nullptr && !m_duplicationFlag) {
 		delete m_damageRecorder;
 	}
 }
 
 // レコーダを初期化
 void CharacterController::initRecorder() {
-	if (m_stickRecorder != NULL) {
+	if (m_stickRecorder != nullptr) {
 		m_stickRecorder->init();
 		m_jumpRecorder->init();
 		m_squatRecorder->init();
 		m_slashRecorder->init();
 		m_bulletRecorder->init();
 	}
-	if (m_damageRecorder != NULL) {
+	if (m_damageRecorder != nullptr) {
 		m_damageRecorder->init();
 	}
 }
 
 // レコードをやめる
 void CharacterController::eraseRecorder() { 
-	if (m_stickRecorder != NULL) { 
+	if (m_stickRecorder != nullptr) { 
 		delete m_stickRecorder;
 		delete m_jumpRecorder;
 		delete m_squatRecorder;
 		delete m_slashRecorder;
 		delete m_bulletRecorder;
-		m_stickRecorder = NULL;
-		m_jumpRecorder = NULL;
-		m_squatRecorder = NULL;
-		m_slashRecorder = NULL;
-		m_bulletRecorder = NULL;
+		m_stickRecorder = nullptr;
+		m_jumpRecorder = nullptr;
+		m_squatRecorder = nullptr;
+		m_slashRecorder = nullptr;
+		m_bulletRecorder = nullptr;
 	}
-	if (m_damageRecorder != NULL) {
+	if (m_damageRecorder != nullptr) {
 		delete m_damageRecorder;
-		m_damageRecorder = NULL;
+		m_damageRecorder = nullptr;
 	}
 }
 
@@ -231,7 +231,7 @@ CharacterController* NormalController::createCopy(std::vector<Character*> charac
 
 void NormalController::control() {
 	// ダメージのレコード（もし記録と現状が違えば以降のレコードを削除）
-	if (m_damageRecorder != NULL) {
+	if (m_damageRecorder != nullptr) {
 		bool flag = (m_characterAction->getState() == CHARACTER_STATE::DAMAGE);
 		if (m_damageRecorder->existRecord()) {
 			if ((bool)m_damageRecorder->checkInput() != flag) {
@@ -252,7 +252,7 @@ void NormalController::control() {
 
 	// 移動 stickなどの入力状態を更新する
 	int rightStick = 0, leftStick = 0, upStick = 0, downStick = 0;
-	if (m_stickRecorder != NULL) {
+	if (m_stickRecorder != nullptr) {
 		if (m_stickRecorder->existRecord()) {
 			int input = m_stickRecorder->checkInput();
 			if (((input >> 0) & 1) == 1) { 
@@ -284,7 +284,7 @@ void NormalController::control() {
 
 	// ジャンプ
 	int jump = 0;
-	if (m_jumpRecorder != NULL) {
+	if (m_jumpRecorder != nullptr) {
 		if (m_jumpRecorder->existRecord()) {
 			jump = m_jumpRecorder->checkInput();
 		}
@@ -304,7 +304,7 @@ void NormalController::control() {
 
 	// しゃがみ
 	int squat = 0;
-	if (m_squatRecorder != NULL) {
+	if (m_squatRecorder != nullptr) {
 		if (m_squatRecorder->existRecord()) {
 			squat = m_squatRecorder->checkInput();
 		}
@@ -328,7 +328,7 @@ Object* NormalController::bulletAttack() {
 
 	// 命令
 	int order = 0;
-	if (m_bulletRecorder != NULL) {
+	if (m_bulletRecorder != nullptr) {
 		if (m_bulletRecorder->existRecord()) {
 			order = m_bulletRecorder->checkInput();
 			// 攻撃目標を取得
@@ -356,7 +356,7 @@ Object* NormalController::bulletAttack() {
 		// 目標に向かって射撃
 		return m_characterAction->bulletAttack(targetX, targetY);
 	}
-	return NULL;
+	return nullptr;
 }
 
 Object* NormalController::slashAttack() {
@@ -367,7 +367,7 @@ Object* NormalController::slashAttack() {
 
 	// 命令
 	int order = 0;
-	if (m_slashRecorder != NULL) {
+	if (m_slashRecorder != nullptr) {
 		if (m_slashRecorder->existRecord()) {
 			order = m_slashRecorder->checkInput();
 			// 攻撃目標を取得
@@ -394,7 +394,7 @@ Object* NormalController::slashAttack() {
 	if (order == 1 || m_characterAction->getSlashCnt() > 0) {
 		return m_characterAction->slashAttack(targetX, targetY);
 	}
-	return NULL;
+	return nullptr;
 }
 
 void NormalController::damage(int vx, int vy, int damageValue) {
