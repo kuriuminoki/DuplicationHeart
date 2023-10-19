@@ -10,6 +10,9 @@ private:
 	
 	// 会話
 	const Conversation* m_conversation;
+
+	// テキストやフォントのサイズの倍率
+	double m_ex;
 	
 	// フォント（テキスト）
 	int m_textHandle;
