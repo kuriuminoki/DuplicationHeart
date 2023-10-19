@@ -83,10 +83,10 @@ World::World(int fromAreaNum, int toAreaNum, SoundPlayer* soundPlayer) {
 	m_soundPlayer_p = soundPlayer;
 
 	// 会話イベント
-	m_conversation_p = NULL;
+	m_conversation_p = nullptr;
 
 	// ムービー
-	m_movie_p = NULL;
+	m_movie_p = nullptr;
 
 	// スキル発動中
 	m_skillFlag = false;
@@ -140,8 +140,8 @@ World::~World() {
 World::World(const World* original) {
 	m_duplicationFlag = true;
 	m_brightValue = 255;
-	m_conversation_p = NULL;
-	m_movie_p = NULL;
+	m_conversation_p = nullptr;
+	m_movie_p = nullptr;
 	m_skillFlag = false;
 	m_areaNum = original->getAreaNum();
 
@@ -248,7 +248,7 @@ void World::popCharacter(int id) {
 		if (m_characters[i]->getId() == id) {
 			for (unsigned int j = 0; j < m_characterControllers.size(); j++) {
 				if (m_characterControllers[j]->getBrain()->getTargetId() == id) {
-					m_characterControllers[j]->setTarget(NULL);
+					m_characterControllers[j]->setTarget(nullptr);
 				}
 			}
 			//m_characters[i]->setHp(0);
@@ -698,11 +698,11 @@ void World::controlCharacter() {
 
 		// 射撃攻撃
 		Object* bulletAttack = controller->bulletAttack();
-		if (bulletAttack != NULL) { m_attackObjects.push_back(bulletAttack); }
+		if (bulletAttack != nullptr) { m_attackObjects.push_back(bulletAttack); }
 
 		// 斬撃攻撃
 		Object* slashAttack = controller->slashAttack();
-		if (slashAttack != NULL) { m_attackObjects.push_back(slashAttack); }
+		if (slashAttack != nullptr) { m_attackObjects.push_back(slashAttack); }
 
 		// 反映
 		if (!m_duplicationFlag || m_characterControllers[i]->getAction()->getCharacter()->getId() != m_playerId) {
@@ -782,22 +782,22 @@ void World::atariAttackAndAttack() {
 
 // 会話させる
 void World::talk() {
-	if (m_conversation_p != NULL) {
+	if (m_conversation_p != nullptr) {
 		m_conversation_p->play();
 		// 会話終了
 		if (m_conversation_p->getFinishFlag()) {
-			m_conversation_p = NULL;
+			m_conversation_p = nullptr;
 		}
 	}
 }
 
 // ムービーを流す
 void World::moviePlay() {
-	if (m_movie_p != NULL) {
+	if (m_movie_p != nullptr) {
 		m_movie_p->play();
 		// ムービー終了
 		if (m_movie_p->getFinishFlag()) {
-			m_movie_p = NULL;
+			m_movie_p = nullptr;
 		}
 	}
 }
@@ -809,7 +809,7 @@ Character* World::getCharacterWithName(string characterName) const {
 			return m_characters[i];
 		}
 	}
-	return NULL;
+	return nullptr;
 }
 
 Character* World::getCharacterWithId(int id) const {
@@ -818,7 +818,7 @@ Character* World::getCharacterWithId(int id) const {
 			return m_characters[i];
 		}
 	}
-	return NULL;
+	return nullptr;
 }
 
 void World::setBrainWithId(int id, Brain* brain) {
@@ -835,7 +835,7 @@ CharacterController* World::getControllerWithName(string characterName) const {
 			return m_characterControllers[i];
 		}
 	}
-	return NULL;
+	return nullptr;
 }
 
 // カメラの位置をリセット

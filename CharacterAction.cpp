@@ -69,7 +69,7 @@ CharacterAction::CharacterAction(Character* character, SoundPlayer* soundPlayer_
 }
 
 CharacterAction::CharacterAction() :
-	CharacterAction(NULL, NULL)
+	CharacterAction(nullptr, nullptr)
 {
 
 }
@@ -157,7 +157,7 @@ void CharacterAction::setGrand(bool grand) {
 		m_landCnt = LAND_TIME;
 		finishSlash();
 		// Œø‰Ê‰¹
-		if (m_soundPlayer_p != NULL) {
+		if (m_soundPlayer_p != nullptr) {
 			m_soundPlayer_p->pushSoundQueue(m_character_p->getLandSound(),
 				adjustPanSound(m_character_p->getCenterX(),
 					m_soundPlayer_p->getCameraX()));
@@ -280,7 +280,7 @@ StickAction::StickAction(Character* character, SoundPlayer* soundPlayer_p):
 }
 
 CharacterAction* StickAction::createCopy(vector<Character*> characters) {
-	CharacterAction* res = NULL;
+	CharacterAction* res = nullptr;
 	for (unsigned int i = 0; i < characters.size(); i++) {
 		if (m_character_p->getId() == characters[i]->getId()) {
 			res = new StickAction(characters[i], m_soundPlayer_p);
@@ -545,7 +545,7 @@ void StickAction::jump(int cnt) {
 				stopMoveLeft();
 				stopMoveRight();
 				// Œø‰Ê‰¹
-				if (m_soundPlayer_p != NULL) {
+				if (m_soundPlayer_p != nullptr) {
 					m_soundPlayer_p->pushSoundQueue(m_character_p->getPassiveSound(),
 						adjustPanSound(m_character_p->getCenterX(),
 							m_soundPlayer_p->getCameraX()));
@@ -580,7 +580,7 @@ void StickAction::jump(int cnt) {
 			m_preJumpCnt = -1;
 			setState(CHARACTER_STATE::STAND);
 			// Œø‰Ê‰¹
-			if (m_soundPlayer_p != NULL) {
+			if (m_soundPlayer_p != nullptr) {
 				m_soundPlayer_p->pushSoundQueue(m_character_p->getJumpSound(),
 					adjustPanSound(m_character_p->getCenterX(),
 						m_soundPlayer_p->getCameraX()));
@@ -597,7 +597,7 @@ void StickAction::jump(int cnt) {
 Object* StickAction::bulletAttack(int gx, int gy) {
 	if (damageFlag() && m_boostCnt == 0) {
 		m_bulletCnt = 0;
-		return NULL;
+		return nullptr;
 	}
 	// ŽËŒ‚‰Â”\ó‘Ô‚È‚ç
 	if (ableAttack()) {
@@ -610,14 +610,14 @@ Object* StickAction::bulletAttack(int gx, int gy) {
 		// UŒ‚‚ð•Ô‚·
 		return m_character_p->bulletAttack(gx, gy, m_soundPlayer_p);
 	}
-	return NULL;
+	return nullptr;
 }
 
 // ŽaŒ‚UŒ‚
 Object* StickAction::slashAttack(int gx, int gy) {
 	if (damageFlag() && m_boostCnt == 0) {
 		if (m_slashCnt > 0) { finishSlash(); }
-		return NULL;
+		return nullptr;
 	}
 	// UŒ‚ŠJŽn
 	if (ableAttack()) {
@@ -633,7 +633,7 @@ Object* StickAction::slashAttack(int gx, int gy) {
 		// ŽaŒ‚ŠJŽnŽž‚Ìˆ—
 		startSlash();
 	}
-	// UŒ‚‚Ìƒ^ƒCƒ~ƒ“ƒO‚¶‚á‚È‚¢‚È‚çNULL‚ª•Ô‚é
+	// UŒ‚‚Ìƒ^ƒCƒ~ƒ“ƒO‚¶‚á‚È‚¢‚È‚çnullptr‚ª•Ô‚é
 	return m_character_p->slashAttack(m_attackLeftDirection, m_slashCnt, m_soundPlayer_p);
 }
 
@@ -665,7 +665,7 @@ ValkiriaAction::ValkiriaAction(Character* character, SoundPlayer* soundPlayer_p)
 }
 
 CharacterAction* ValkiriaAction::createCopy(vector<Character*> characters) {
-	CharacterAction* res = NULL;
+	CharacterAction* res = nullptr;
 	for (unsigned int i = 0; i < characters.size(); i++) {
 		if (m_character_p->getId() == characters[i]->getId()) {
 			res = new ValkiriaAction(characters[i], m_soundPlayer_p);
@@ -682,7 +682,7 @@ void ValkiriaAction::setGrand(bool grand) {
 		if (m_slashCnt == 0) {
 			m_landCnt = LAND_TIME;
 			// Œø‰Ê‰¹
-			if (m_soundPlayer_p != NULL) {
+			if (m_soundPlayer_p != nullptr) {
 				m_soundPlayer_p->pushSoundQueue(m_character_p->getLandSound(),
 					adjustPanSound(m_character_p->getCenterX(),
 						m_soundPlayer_p->getCameraX()));
@@ -738,7 +738,7 @@ FlightAction::FlightAction(Character* character, SoundPlayer* soundPlayer_p):
 }
 
 CharacterAction* FlightAction::createCopy(std::vector<Character*> characters) {
-	CharacterAction* res = NULL;
+	CharacterAction* res = nullptr;
 	for (unsigned int i = 0; i < characters.size(); i++) {
 		if (m_character_p->getId() == characters[i]->getId()) {
 			res = new FlightAction(characters[i], m_soundPlayer_p);
@@ -976,7 +976,7 @@ void FlightAction::jump(int cnt) {
 Object* FlightAction::bulletAttack(int gx, int gy) {
 	if (damageFlag() && m_boostCnt == 0) {
 		m_bulletCnt = 0;
-		return NULL;
+		return nullptr;
 	}
 	// ŽËŒ‚‰Â”\ó‘Ô‚È‚ç
 	if (ableAttack()) {
@@ -989,14 +989,14 @@ Object* FlightAction::bulletAttack(int gx, int gy) {
 		// UŒ‚‚ð•Ô‚·
 		return m_character_p->bulletAttack(gx, gy, m_soundPlayer_p);
 	}
-	return NULL;
+	return nullptr;
 }
 
 // ŽaŒ‚UŒ‚
 Object* FlightAction::slashAttack(int gx, int gy) {
 	if (damageFlag() && m_boostCnt == 0) {
 		if (m_slashCnt > 0) { finishSlash(); }
-		return NULL;
+		return nullptr;
 	}
 	// UŒ‚ŠJŽn
 	if (ableAttack()) {
@@ -1007,7 +1007,7 @@ Object* FlightAction::slashAttack(int gx, int gy) {
 		// ŽaŒ‚ŠJŽnŽž‚Ìˆ—
 		startSlash();
 	}
-	// UŒ‚‚Ìƒ^ƒCƒ~ƒ“ƒO‚¶‚á‚È‚¢‚È‚çNULL‚ª•Ô‚é
+	// UŒ‚‚Ìƒ^ƒCƒ~ƒ“ƒO‚¶‚á‚È‚¢‚È‚çnullptr‚ª•Ô‚é
 	return m_character_p->slashAttack(m_attackLeftDirection, m_slashCnt, m_soundPlayer_p);
 }
 

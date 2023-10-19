@@ -13,7 +13,7 @@ using namespace std;
 
 
 Character* createCharacter(const char* characterName, int hp, int x, int y, int groupId) {
-	Character* character = NULL;
+	Character* character = nullptr;
 	string name = characterName;
 	if (name == "ƒeƒXƒg") {
 		character = new Heart(name.c_str(), hp, x, y, groupId);
@@ -161,28 +161,28 @@ Character::Character(int hp, int x, int y, int groupId) {
 
 	m_leftDirection = true;
 
-	m_characterInfo = NULL;
-	m_attackInfo = NULL;
-	m_graphHandle = NULL;
-	m_faceHandle = NULL;
+	m_characterInfo = nullptr;
+	m_attackInfo = nullptr;
+	m_graphHandle = nullptr;
+	m_faceHandle = nullptr;
 	m_duplicationFlag = false;
 }
 
 Character::~Character() {
 	// CharacterInfo‚Ìíœ
-	if (m_characterInfo != NULL) {
+	if (m_characterInfo != nullptr) {
 		delete m_characterInfo;
 	}
 	// AttackInfo‚Ìíœ
-	if (m_attackInfo != NULL && !m_duplicationFlag) {
+	if (m_attackInfo != nullptr && !m_duplicationFlag) {
 		delete m_attackInfo;
 	}
 	// GraphHandle‚Ìíœ
-	if (m_graphHandle != NULL) {
+	if (m_graphHandle != nullptr) {
 		delete m_graphHandle;
 	}
 	// FaceHandle‚Ìíœ
-	if (m_faceHandle != NULL) {
+	if (m_faceHandle != nullptr) {
 		delete m_faceHandle;
 	}
 }
@@ -358,7 +358,7 @@ Object* Heart::bulletAttack(int gx, int gy, SoundPlayer* soundPlayer) {
 	// ƒ`[ƒ€ƒLƒ‹–h~
 	attackObject->setGroupId(m_groupId);
 	// Œø‰Ê‰¹
-	if (soundPlayer != NULL) {
+	if (soundPlayer != nullptr) {
 		soundPlayer->pushSoundQueue(m_attackInfo->bulletStartSoundeHandle(),
 			adjustPanSound(getCenterX(),
 				soundPlayer->getCameraX()));
@@ -384,7 +384,7 @@ Object* Heart::slashAttack(bool leftDirection, int cnt, SoundPlayer* soundPlayer
 	cnt -= m_attackInfo->slashInterval();
 	int index = 0;
 	int slashCountSum = m_attackInfo->slashCountSum() / 3 + 1;
-	SlashObject* attackObject = NULL;
+	SlashObject* attackObject = nullptr;
 	GraphHandles* slashHandles = m_graphHandle->getSlashHandle();
 	// UŒ‚‚Ì•ûŒü
 	slashHandles->setReverseX(m_leftDirection);
@@ -394,7 +394,7 @@ Object* Heart::slashAttack(bool leftDirection, int cnt, SoundPlayer* soundPlayer
 		attackObject = new SlashObject(centerX, centerY - height, x2, centerY + height,
 			slashHandles->getGraphHandle(index), slashCountSum, m_attackInfo);
 		// Œø‰Ê‰¹
-		if (soundPlayer != NULL) {
+		if (soundPlayer != nullptr) {
 			soundPlayer->pushSoundQueue(m_attackInfo->slashStartSoundHandle(),
 				adjustPanSound(getCenterX(),
 					soundPlayer->getCameraX()));
@@ -410,7 +410,7 @@ Object* Heart::slashAttack(bool leftDirection, int cnt, SoundPlayer* soundPlayer
 		attackObject = new SlashObject(centerX, centerY - height, x2, centerY + height,
 			slashHandles->getGraphHandle(index), slashCountSum, m_attackInfo);
 	}
-	if (attackObject != NULL) {
+	if (attackObject != nullptr) {
 		// ©–Å–h~
 		attackObject->setCharacterId(m_id);
 		// ƒ`[ƒ€ƒLƒ‹–h~
@@ -448,7 +448,7 @@ Object* Siesta::bulletAttack(int gx, int gy, SoundPlayer* soundPlayer) {
 	// ƒ`[ƒ€ƒLƒ‹–h~
 	attackObject->setGroupId(m_groupId);
 	// Œø‰Ê‰¹
-	if (soundPlayer != NULL) {
+	if (soundPlayer != nullptr) {
 		soundPlayer->pushSoundQueue(m_attackInfo->bulletStartSoundeHandle(),
 			adjustPanSound(getCenterX(),
 				soundPlayer->getCameraX()));
@@ -476,7 +476,7 @@ Object* Siesta::slashAttack(bool leftDirection, int cnt, SoundPlayer* soundPlaye
 	cnt -= m_attackInfo->slashInterval();
 	int index = 0;
 	int slashCountSum = m_attackInfo->slashCountSum() / 3 + 1;
-	SlashObject* attackObject = NULL;
+	SlashObject* attackObject = nullptr;
 	GraphHandles* slashHandles = m_graphHandle->getSlashHandle();
 	// UŒ‚‚Ì•ûŒü
 	slashHandles->setReverseX(m_leftDirection);
@@ -486,7 +486,7 @@ Object* Siesta::slashAttack(bool leftDirection, int cnt, SoundPlayer* soundPlaye
 		attackObject = new SlashObject(x1, m_y, x2, m_y + height,
 			slashHandles->getGraphHandle(index), slashCountSum, m_attackInfo);
 		// Œø‰Ê‰¹
-		if (soundPlayer != NULL) {
+		if (soundPlayer != nullptr) {
 			soundPlayer->pushSoundQueue(m_attackInfo->slashStartSoundHandle(),
 				adjustPanSound(getCenterX(),
 					soundPlayer->getCameraX()));
@@ -502,7 +502,7 @@ Object* Siesta::slashAttack(bool leftDirection, int cnt, SoundPlayer* soundPlaye
 		attackObject = new SlashObject(x1, m_y, x2, m_y + height,
 			slashHandles->getGraphHandle(index), slashCountSum, m_attackInfo);
 	}
-	if (attackObject != NULL) {
+	if (attackObject != nullptr) {
 		// ©–Å–h~
 		attackObject->setCharacterId(m_id);
 		// ƒ`[ƒ€ƒLƒ‹–h~
@@ -540,7 +540,7 @@ Object* Hierarchy::bulletAttack(int gx, int gy, SoundPlayer* soundPlayer) {
 	// ƒ`[ƒ€ƒLƒ‹–h~
 	attackObject->setGroupId(m_groupId);
 	// Œø‰Ê‰¹
-	if (soundPlayer != NULL) {
+	if (soundPlayer != nullptr) {
 		soundPlayer->pushSoundQueue(m_attackInfo->bulletStartSoundeHandle(),
 			adjustPanSound(getCenterX(),
 				soundPlayer->getCameraX()));
@@ -603,7 +603,7 @@ Object* Valkyria::slashAttack(bool leftDirection, int cnt, SoundPlayer* soundPla
 	cnt -= m_attackInfo->slashInterval();
 	int index = 0;
 	int slashCountSum = m_attackInfo->slashCountSum() / 3 + 1;
-	SlashObject* attackObject = NULL;
+	SlashObject* attackObject = nullptr;
 	GraphHandles* slashHandles = m_graphHandle->getSlashHandle();
 	// UŒ‚‚Ì•ûŒü
 	slashHandles->setReverseX(m_leftDirection);
@@ -614,7 +614,7 @@ Object* Valkyria::slashAttack(bool leftDirection, int cnt, SoundPlayer* soundPla
 		attackObject = new SlashObject(x1, m_y, x2, m_y + height,
 			slashHandles->getGraphHandle(index), m_attackInfo->slashCountSum() - 12, m_attackInfo);
 		// Œø‰Ê‰¹
-		if (soundPlayer != NULL) {
+		if (soundPlayer != nullptr) {
 			soundPlayer->pushSoundQueue(m_attackInfo->slashStartSoundHandle(),
 				adjustPanSound(getCenterX(),
 					soundPlayer->getCameraX()));
@@ -628,7 +628,7 @@ Object* Valkyria::slashAttack(bool leftDirection, int cnt, SoundPlayer* soundPla
 		attackObject = new SlashObject(x1, m_y, x2, m_y + height,
 			slashHandles->getGraphHandle(index), m_attackInfo->slashCountSum() - 2 * slashCountSum, m_attackInfo);
 	}
-	if (attackObject != NULL) {
+	if (attackObject != nullptr) {
 		// ©–Å–h~
 		attackObject->setCharacterId(m_id);
 		// ƒ`[ƒ€ƒLƒ‹–h~

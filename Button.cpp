@@ -62,8 +62,8 @@ void Button::setString(std::string tag) {
 	//•¶š—ñ‚ªæ‚é•‚ğ•¶š‚Ì‘å‚«‚³‚Æ•¶š—ñ‚Ì’·‚³‚©‚çŒvZ
 	int m_font_size;//ˆê•¶š‚Ì‘å‚«‚³
 	int m_string_size;//•¶š—ñ‚ª‚Æ‚é•
-	GetFontStateToHandle(NULL, &m_font_size, NULL, m_font);
-	m_string_size = m_font_size * (m_tag.size() / 2);
-	m_dx = m_x + (m_wide - m_string_size) / 2 - (m_tag.size()/2);
+	GetFontStateToHandle(nullptr, &m_font_size, nullptr, m_font);
+	m_string_size = m_font_size * ((int)m_tag.size() / 2);
+	m_dx = m_x + (m_wide - m_string_size) / 2 - ((int)m_tag.size() / 2);
 	m_dy = m_y + (m_height - m_font_size) / 2;
 }

@@ -14,8 +14,8 @@ ConversationDrawer::ConversationDrawer(Conversation* conversation) {
 	m_conversation = conversation;
 
 	// フォントデータ
-	m_textHandle = CreateFontToHandle(NULL, TEXT_SIZE, 3);
-	m_nameHandle = CreateFontToHandle(NULL, NAME_SIZE, 5);
+	m_textHandle = CreateFontToHandle(nullptr, TEXT_SIZE, 3);
+	m_nameHandle = CreateFontToHandle(nullptr, NAME_SIZE, 5);
 
 	// 画像
 	m_frameHandle = LoadGraph("picture/textMaterial/frame.png");

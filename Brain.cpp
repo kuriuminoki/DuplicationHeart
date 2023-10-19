@@ -59,7 +59,7 @@ Brain* createBrain(const string brainName, const Camera* camera_p) {
 
 // Brainクラス
 Brain::Brain() {
-	m_characterAction_p = NULL;
+	m_characterAction_p = nullptr;
 }
 
 
@@ -120,7 +120,7 @@ int KeyboardBrain::bulletOrder() {
 * Normal AI
 */
 NormalAI::NormalAI() {
-	m_target_p = NULL;
+	m_target_p = nullptr;
 	m_gx = 0;
 	m_gy = 0;
 	m_rightKey = 0;
@@ -136,7 +136,7 @@ NormalAI::NormalAI() {
 Brain* NormalAI::createCopy(std::vector<Character*> characters, const Camera* camera) {
 	NormalAI* res = new NormalAI();
 
-	if (m_target_p != NULL) {
+	if (m_target_p != nullptr) {
 		for (unsigned int i = 0; i < characters.size(); i++) {
 			if (m_target_p->getId() == characters[i]->getId()) {
 				res->setTarget(characters[i]);
@@ -172,7 +172,7 @@ void NormalAI::setCharacterAction(const CharacterAction* characterAction) {
 }
 
 void NormalAI::bulletTargetPoint(int& x, int& y) {
-	if (m_target_p == NULL) {
+	if (m_target_p == nullptr) {
 		x = 0;
 		y = 0;
 	}
@@ -200,7 +200,7 @@ void NormalAI::moveOrder(int& right, int& left, int& up, int& down) {
 		m_gx = x, m_gy = y;
 	}
 	else if (alreadyGoal && GetRand(MOVE_RAND) == 0) {
-		if (m_target_p != NULL && abs(x - m_target_p->getCenterX()) < TARGET_DISTANCE) {
+		if (m_target_p != nullptr && abs(x - m_target_p->getCenterX()) < TARGET_DISTANCE) {
 			// targetについていく
 			m_gx = m_target_p->getCenterX() + GetRand(2000) - 1000;
 		}
@@ -339,7 +339,7 @@ int NormalAI::squatOrder() {
 }
 
 int NormalAI::slashOrder() {
-	if (m_target_p == NULL || m_target_p->getHp() == 0) {
+	if (m_target_p == nullptr || m_target_p->getHp() == 0) {
 		return 0;
 	}
 	// 遠距離の敵には斬撃しない
@@ -354,7 +354,7 @@ int NormalAI::slashOrder() {
 }
 
 int NormalAI::bulletOrder() {
-	if (m_target_p == NULL || m_target_p->getHp() == 0) {
+	if (m_target_p == nullptr || m_target_p->getHp() == 0) {
 		return 0;
 	}
 	int x = m_characterAction_p->getCharacter()->getCenterX();
@@ -388,7 +388,7 @@ void NormalAI::searchTarget(const Character* character) {
 // 攻撃対象を変更する必要があるならtrueでアピールする。
 bool NormalAI::needSearchTarget() const {
 	// ターゲットを決めていないから
-	if (m_target_p == NULL || m_target_p->getHp() == 0) {
+	if (m_target_p == nullptr || m_target_p->getHp() == 0) {
 		return true;
 	}
 	// 気まぐれで、or不適切な相手だから
@@ -408,7 +408,7 @@ const char*  NormalAI::getTargetName() const { return m_target_p == nullptr ? ""
 
 // 斜方投射の計算をする
 void setParabolaBulletTarget(int& x, int& y, const CharacterAction* characterAction_p, const Character* target_p) {
-	if (target_p == NULL) {
+	if (target_p == nullptr) {
 		x = 0;
 		y = 0;
 	}
@@ -463,12 +463,12 @@ void FollowParabolaAI::bulletTargetPoint(int& x, int& y) {
 FollowNormalAI::FollowNormalAI() :
 	NormalAI()
 {
-	m_follow_p = NULL;
+	m_follow_p = nullptr;
 }
 
 Brain* FollowNormalAI::createCopy(std::vector<Character*> characters, const Camera* camera) {
 	FollowNormalAI* res = new FollowNormalAI();
-	if (m_follow_p != NULL) {
+	if (m_follow_p != nullptr) {
 		for (unsigned int i = 0; i < characters.size(); i++) {
 			if (m_follow_p->getId() == characters[i]->getId()) {
 				res->setFollow(characters[i]);
@@ -476,7 +476,7 @@ Brain* FollowNormalAI::createCopy(std::vector<Character*> characters, const Came
 			}
 		}
 	}
-	if (m_target_p != NULL) {
+	if (m_target_p != nullptr) {
 		for (unsigned int i = 0; i < characters.size(); i++) {
 			if (m_target_p->getId() == characters[i]->getId()) {
 				res->setTarget(characters[i]);
@@ -519,7 +519,7 @@ void FollowNormalAI::moveOrder(int& right, int& left, int& up, int& down) {
 
 	// 目標地点設定
 	if ((alreadyGoal && GetRand(MOVE_RAND) == 0) || !alreadyFollow) {
-		if (m_follow_p != NULL) {
+		if (m_follow_p != nullptr) {
 			// followについていく
 			m_gx = m_follow_p->getCenterX() + GetRand(FOLLOW_X_ERROR * 2) - FOLLOW_X_ERROR;
 		}
@@ -544,7 +544,7 @@ void FollowNormalAI::searchFollow(const Character* character) {
 
 // 追跡対象を変更する必要があるならtrueでアピールする(AIクラスでオーバライドする)。
 bool FollowNormalAI::needSearchFollow() const {
-	if (m_follow_p == NULL || m_follow_p->getHp() == 0) {
+	if (m_follow_p == nullptr || m_follow_p->getHp() == 0) {
 		return true;
 	}
 	return false;
@@ -568,7 +568,7 @@ bool ValkiriaAI::checkAlreadyFollow() {
 }
 
 int ValkiriaAI::slashOrder() {
-	if (m_target_p == NULL || m_target_p->getHp() == 0) {
+	if (m_target_p == nullptr || m_target_p->getHp() == 0) {
 		return 0;
 	}
 	// 遠距離の敵には斬撃しない
@@ -613,7 +613,7 @@ void FlightAI::moveOrder(int& right, int& left, int& up, int& down) {
 		m_try = false;
 	}
 	else if (alreadyGoal && GetRand(MOVE_RAND) == 0) {
-		if (m_target_p != NULL && abs(x - m_target_p->getCenterX()) < TARGET_DISTANCE) {
+		if (m_target_p != nullptr && abs(x - m_target_p->getCenterX()) < TARGET_DISTANCE) {
 			// targetについていく
 			m_gx = m_target_p->getCenterX() + GetRand(2000) - 1000;
 			m_gy = m_target_p->getCenterY() + GetRand(800) - 700;
@@ -649,7 +649,7 @@ void FollowFlightAI::moveOrder(int& right, int& left, int& up, int& down) {
 		m_try = false;
 	}
 	else if ((alreadyGoal && GetRand(MOVE_RAND) == 0) || !alreadyFollow) {
-		if (m_follow_p != NULL) {
+		if (m_follow_p != nullptr) {
 			// followについていく
 			m_gx = m_follow_p->getCenterX() + GetRand(FOLLOW_X_ERROR * 2) - FOLLOW_X_ERROR;
 			m_gy = m_follow_p->getCenterY() + GetRand(800) - 700;

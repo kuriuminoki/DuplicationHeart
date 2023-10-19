@@ -70,22 +70,22 @@ void CharacterData::load(FILE* intFp, FILE* strFp) {
 	char* find;
 	char str[N];
 	fgets(str, N, strFp);
-	if ((find = strchr(str, '\n')) != NULL) { *find = '\0'; }
+	if ((find = strchr(str, '\n')) != nullptr) { *find = '\0'; }
 	m_name = str;
 	fgets(str, N, strFp);
-	if ((find = strchr(str, '\n')) != NULL) { *find = '\0'; }
+	if ((find = strchr(str, '\n')) != nullptr) { *find = '\0'; }
 	m_brainName = str;
 	fgets(str, N, strFp);
-	if ((find = strchr(str, '\n')) != NULL) { *find = '\0'; }
+	if ((find = strchr(str, '\n')) != nullptr) { *find = '\0'; }
 	m_targetName = str;
 	fgets(str, N, strFp);
-	if ((find = strchr(str, '\n')) != NULL) { *find = '\0'; }
+	if ((find = strchr(str, '\n')) != nullptr) { *find = '\0'; }
 	m_followName = str;
 	fgets(str, N, strFp);
-	if ((find = strchr(str, '\n')) != NULL) { *find = '\0'; }
+	if ((find = strchr(str, '\n')) != nullptr) { *find = '\0'; }
 	m_actionName = str;
 	fgets(str, N, strFp);
-	if ((find = strchr(str, '\n')) != NULL) { *find = '\0'; }
+	if ((find = strchr(str, '\n')) != nullptr) { *find = '\0'; }
 	m_controllerName = str;
 }
 
@@ -131,7 +131,7 @@ void DoorData::load(FILE* intFp, FILE* strFp) {
 	char* find;
 	char str[N];
 	fgets(str, N, strFp);
-	if ((find = strchr(str, '\n')) != NULL) { *find = '\0'; }
+	if ((find = strchr(str, '\n')) != nullptr) { *find = '\0'; }
 	m_fileName = str;
 }
 
@@ -203,7 +203,7 @@ bool GameData::save() {
 	for (unsigned int i = 0; i < m_characterData.size(); i++) {
 		m_characterData[i]->save(intFp, strFp);
 	}
-	unsigned int doorSum = m_doorData.size();
+	unsigned int doorSum = (unsigned int)m_doorData.size();
 	fwrite(&doorSum, sizeof(doorSum), 1, intFp);
 	for (unsigned int i = 0; i < m_doorData.size(); i++) {
 		m_doorData[i]->save(intFp, strFp);
@@ -230,7 +230,7 @@ bool GameData::load() {
 	}
 	int doorSum = 0;
 	fread(&doorSum, sizeof(doorSum), 1, intFp);
-	for (unsigned int i = 0; i < doorSum; i++) {
+	for (int i = 0; i < doorSum; i++) {
 		m_doorData.push_back(new DoorData(intFp, strFp));
 	}
 	// ファイルを閉じる
@@ -302,10 +302,10 @@ Game::Game() {
 	m_gameData->asignWorld(m_world);
 
 	// スキル
-	m_skill = NULL;
+	m_skill = nullptr;
 
 	// 一時停止画面
-	m_gamePause = NULL;
+	m_gamePause = nullptr;
 }
 
 Game::~Game() {
@@ -318,18 +318,18 @@ bool Game::play() {
 
 	// 一時停止
 	if (controlQ() == 1) {
-		if (m_gamePause == NULL) {
+		if (m_gamePause == nullptr) {
 			m_gamePause = new GamePause(m_soundPlayer);
 			// ここで音楽も止める
 			m_soundPlayer->stopBGM();
 		}
 		else {
 			delete m_gamePause;
-			m_gamePause = NULL;
+			m_gamePause = nullptr;
 			m_soundPlayer->playBGM();
 		}
 	}
-	if (m_gamePause != NULL) {
+	if (m_gamePause != nullptr) {
 		m_gamePause->play();
 		return false;
 	}
@@ -343,7 +343,7 @@ bool Game::play() {
 
 	// スキル発動 Fキーかつスキル未発動状態かつ発動可能なイベント中（もしくはイベント中でない）かつエリア移動中でない
 	if (m_gameData->getStoryNum() >= 4) { // ストーリーの最初は発動できない
-		if (controlF() == 1 && m_skill == NULL) { // Fキーで発動、ただしスキル身発動時
+		if (controlF() == 1 && m_skill == nullptr) { // Fキーで発動、ただしスキル身発動時
 			if (m_story->skillAble() && m_world->getBrightValue() == 255) { // 特定のイベント時やエリア移動中はダメ
 				if (m_world->getCharacterWithName("ハート")->getHp() > 0) {
 					m_world->setSkillFlag(true);
@@ -354,11 +354,11 @@ bool Game::play() {
 	}
 	
 	// スキル発動中
-	if (m_skill != NULL) {
+	if (m_skill != nullptr) {
 		if (m_skill->play()) {
 			// スキル終了
 			delete m_skill;
-			m_skill = NULL;
+			m_skill = nullptr;
 			m_world->setSkillFlag(false);
 		}
 	}
