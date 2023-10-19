@@ -4,6 +4,7 @@
 #include "GraphHandle.h"
 #include "Define.h"
 #include "Sound.h"
+#include "Game.h"
 #include "DxLib.h"
 #include <cstdlib>
 

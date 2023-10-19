@@ -748,7 +748,9 @@ DoorObject::DoorObject(int x1, int y1, int x2, int y2, const char* fileName, int
 	Object(x1, y1, x2, y2)
 {
 	m_fileName = fileName;
-	m_graph = new GraphHandle(fileName, 1.0, 0.0, true);
+	string filePath = "picture/stageMaterial/";
+	filePath += m_fileName;
+	m_graph = new GraphHandle(filePath.c_str(), 1.0, 0.0, true);
 	m_areaNum = areaNum;
 	m_text = "";
 }

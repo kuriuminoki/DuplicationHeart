@@ -25,6 +25,7 @@ void CharacterLoader::addCharacter(map<string, string> dataMap) {
 	if (dataMap.find("area") != dataMap.end()) {
 		areaNum = stoi(dataMap["area"]);
 	}
+	dataMap["initFlag"] = "false";
 	m_characters[areaNum].push_back(dataMap);
 }
 
@@ -34,6 +35,7 @@ pair<vector<Character*>, vector<CharacterController*> > CharacterLoader::getChar
 	pair<vector<Character*>, vector<CharacterController*> > res;
 
 	for (unsigned int i = 0; i < m_characters[areaNum].size(); i++) {
+		m_characters[areaNum][i]["initFlag"] = "true";
 		string name = m_characters[areaNum][i]["name"];
 		int x = stoi(m_characters[areaNum][i]["x"]);
 		int y = stoi(m_characters[areaNum][i]["y"]);
@@ -89,17 +91,16 @@ void CharacterLoader::saveCharacterData(CharacterData* characterData) {
 		int areaNum = it->first;
 		vector<map<string, string> > characters = it->second;
 		for (unsigned int i = 0; i < characters.size(); i++) {
+			if (characters[i]["initFlag"] == "true") { continue; }
 			if (characters[i]["name"] == characterData->name()) {
 				characterData->setInitFlag(false);
 				characterData->setAreaNum(areaNum);
 				characterData->setX(stoi(characters[i]["x"]));
 				characterData->setY(stoi(characters[i]["y"]));
 				characterData->setSoundFlag((bool)stoi(characters[i]["sound"]));
-				characterData->setGroupId(stoi(characters[i]["groupId"]));
 				characterData->setActionName(characters[i]["action"].c_str());
 				characterData->setBrainName(characters[i]["brain"].c_str());
 				characterData->setControllerName(characters[i]["controller"].c_str());
-				characterData->setActionName(characters[i]["action"].c_str());
 				return;
 			}
 		}
