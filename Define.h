@@ -11,12 +11,12 @@ static int MOUSE_DISP = FALSE;
 //‰æ–Ê‚Ì‘å‚«‚³
 //#define GAME_WIDE 3840
 //#define GAME_HEIGHT 2160
-#define GAME_WIDE 2560
-#define GAME_HEIGHT 1600
+//#define GAME_WIDE 2560
+//#define GAME_HEIGHT 1600
 //#define GAME_WIDE 2560
 //#define GAME_HEIGHT 1440
-//#define GAME_WIDE 1920
-//#define GAME_HEIGHT 1080
+#define GAME_WIDE 1920
+#define GAME_HEIGHT 1080
 //#define GAME_WIDE 1240
 //#define GAME_HEIGHT 1024
 
