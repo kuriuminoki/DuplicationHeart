@@ -1,0 +1,2 @@
+int GAME_WIDE = 1920;
+int GAME_HEIGHT = 1080;

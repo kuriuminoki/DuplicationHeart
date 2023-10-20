@@ -165,6 +165,7 @@
     <ClCompile Include="ControllerRecorder.cpp" />
     <ClCompile Include="CsvReader.cpp" />
     <ClCompile Include="Debug.cpp" />
+    <ClCompile Include="Define.cpp" />
     <ClCompile Include="Event.cpp" />
     <ClCompile Include="Game.cpp" />
     <ClCompile Include="GameDrawer.cpp" />
