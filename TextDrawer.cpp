@@ -64,7 +64,7 @@ void ConversationDrawer::draw() {
 	DrawExtendGraph(EDGE_X, Y1, GAME_WIDE - EDGE_X, GAME_HEIGHT - EDGE_DOWN, m_frameHandle, TRUE);
 
 	// 名前
-	DrawStringToHandle(EDGE_X + TEXT_GRAPH_EDGE + graphSize + NAME_SIZE, GAME_HEIGHT - EDGE_DOWN - NAME_SIZE - TEXT_GRAPH_EDGE - (int)(30 * m_ex), name.c_str(), BLACK, m_nameHandle);
+	DrawStringToHandle(EDGE_X + TEXT_GRAPH_EDGE + graphSize + NAME_SIZE * m_ex, GAME_HEIGHT - EDGE_DOWN - NAME_SIZE * m_ex - TEXT_GRAPH_EDGE, name.c_str(), BLACK, m_nameHandle);
 
 	// テキスト
 	int now = 0;
@@ -73,7 +73,7 @@ void ConversationDrawer::draw() {
 	while (now < text.size()) {
 		int next = now + min(MAX_TEXT_LEN, (int)text.size() - now);
 		string disp = text.substr(now, next - now);
-		DrawStringToHandle(EDGE_X + TEXT_GRAPH_EDGE * 2 + graphSize, Y1  + TEXT_GRAPH_EDGE + (i * (TEXT_SIZE + CHAR_EDGE)), disp.c_str(), BLACK, m_textHandle);
+		DrawStringToHandle(EDGE_X + TEXT_GRAPH_EDGE * 2 + graphSize, Y1  + TEXT_GRAPH_EDGE + (i * (TEXT_SIZE * m_ex + CHAR_EDGE)), disp.c_str(), BLACK, m_textHandle);
 		now = next;
 		i++;
 	}
