@@ -44,19 +44,30 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 	SetWindowSizeChangeEnableFlag(TRUE);//windowサイズ変更可能
 	SetUseDirectInputFlag(TRUE);
 	SetGraphMode(GAME_WIDE, GAME_HEIGHT, 16);
+
 	ChangeWindowMode(WINDOW), DxLib_Init(), SetDrawScreen(DX_SCREEN_BACK);
+	
 	//SetAlwaysRunFlag(TRUE);//画面を常にアクティブ
+
+	// ウィンドウの名前
 	SetMainWindowText("複製のHeart");
+
 	////マウス関連////
 	SetMouseDispFlag(MOUSE_DISP);//マウス表示
 	//SetMousePoint(320, 240);//マウスカーソルの初期位置
+	
+	// 画像の拡大処理方式
 	//SetDrawMode(DX_DRAWMODE_BILINEAR);
 	SetDrawMode(DX_DRAWMODE_NEAREST);
-	//ゲーム本体
+	SetFullScreenScalingMode(DX_DRAWMODE_NEAREST);
+
+	// ゲーム本体
 	Game game;
 	// ゲーム描画用
 	GameDrawer* gameDrawer = new GameDrawer(&game);
-	bool title_flag = false;//trueならタイトル画面終了
+
+	
+
 	while (ScreenFlip() == 0 && ProcessMessage() == 0 && ClearDrawScreen() == 0)
 	{
 		updateKey();
