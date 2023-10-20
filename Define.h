@@ -17,8 +17,12 @@ static int MOUSE_DISP = FALSE;
 //#define GAME_HEIGHT 1440
 //#define GAME_WIDE 1920
 //#define GAME_HEIGHT 1080
-#define GAME_WIDE 1240
-#define GAME_HEIGHT 1024
+#define GAME_WIDE_MAX 3840
+#define GAME_HEIGHT_MAX 2160
+#define GAME_WIDE_MIN 640
+#define GAME_HEIGHT_MIN 480
+extern int GAME_WIDE;
+extern int GAME_HEIGHT;
 
 // DrawFormatStringä÷êîÇ≈ï\é¶Ç≥ÇÍÇÈï∂éöÇÃëÂÇ´Ç≥ÇÕ20Ç≠ÇÁÇ¢
 #define DRAW_FORMAT_STRING_SIZE 20

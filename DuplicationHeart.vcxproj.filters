@@ -132,6 +132,9 @@
     <ClCompile Include="PausePage.cpp">
       <Filter>ソース ファイル\pages</Filter>
     </ClCompile>
+    <ClCompile Include="Define.cpp">
+      <Filter>ソース ファイル</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Define.h">
