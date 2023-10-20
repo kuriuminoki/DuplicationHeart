@@ -299,13 +299,8 @@ void World::asignedCharacter(Character* character, CharacterData* data) {
 	//character->setId(data.id());
 	character->setGroupId(data->groupId());
 	character->setX(data->x());
-	if (data->initFlag()) {
-		character->setY(data->y());
-	}
-	else {
-		// 座標が変更されたので身長に合わせて調整
-		character->setY(data->y() - character->getHeight());
-	}
+	// Y座標は身長に合わせて調整
+	character->setY(data->y() - character->getHeight());
 }
 
 // コントローラ1個の情報を世界に反映
@@ -371,13 +366,12 @@ void World::asignCharacterData(const char* name, CharacterData* data, int fromAr
 	for (unsigned i = 0; i < size; i++) {
 		if (m_characterControllers[i]->getAction()->getCharacter()->getName() == name) {
 			const Character* c = m_characterControllers[i]->getAction()->getCharacter();
-			data->setInitFlag(true);
 			data->setHp(c->getHp());
 			data->setId(c->getId());
 			data->setGroupId(c->getGroupId());
 			data->setAreaNum(fromAreaNum);
 			data->setX(c->getX());
-			data->setY(c->getY());
+			data->setY(c->getY() + c->getHeight()); // Y2座標を保存 ロード時は身長で補正
 			data->setBrainName(m_characterControllers[i]->getBrain()->getBrainName());
 			data->setTargetName(m_characterControllers[i]->getBrain()->getTargetName());
 			if (m_characterControllers[i]->getBrain()->getFollow() != nullptr) {

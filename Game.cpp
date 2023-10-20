@@ -20,7 +20,6 @@ using namespace std;
 * キャラのデータ
 */
 CharacterData::CharacterData(const char* name) {
-	m_initFlag = false;
 	m_name = name;
 	m_hp = -1;
 	// id=-1はデータなしを意味する
@@ -38,7 +37,6 @@ CharacterData::CharacterData(const char* name) {
 
 // セーブ
 void CharacterData::save(FILE* intFp, FILE* strFp) {
-	fwrite(&m_initFlag, sizeof(m_initFlag), 1, intFp);
 	fwrite(&m_hp, sizeof(m_hp), 1, intFp);
 	fwrite(&m_id, sizeof(m_id), 1, intFp);
 	fwrite(&m_groupId, sizeof(m_groupId), 1, intFp);
@@ -57,7 +55,6 @@ void CharacterData::save(FILE* intFp, FILE* strFp) {
 
 // ロード
 void CharacterData::load(FILE* intFp, FILE* strFp) {
-	fread(&m_initFlag, sizeof(m_initFlag), 1, intFp);
 	fread(&m_hp, sizeof(m_hp), 1, intFp);
 	fread(&m_id, sizeof(m_id), 1, intFp);
 	fread(&m_groupId, sizeof(m_groupId), 1, intFp);
