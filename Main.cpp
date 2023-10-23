@@ -2,6 +2,7 @@
 #include "Define.h"
 #include "Game.h"
 #include "GameDrawer.h"
+#include "Title.h"
 #include "DxLib.h"
 
 
@@ -62,11 +63,13 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 	SetFullScreenScalingMode(DX_DRAWMODE_NEAREST);
 
 	// ゲーム本体
-	Game game;
+	Game* game = nullptr;
 	// ゲーム描画用
-	GameDrawer* gameDrawer = new GameDrawer(&game);
-
-	
+	GameDrawer* gameDrawer = nullptr;
+	// タイトル画面
+	Title* title = new Title();
+	// ゲーム中ならtrue タイトル画面ならfalse
+	bool gamePlay = false;
 
 	while (ScreenFlip() == 0 && ProcessMessage() == 0 && ClearDrawScreen() == 0)
 	{
@@ -74,11 +77,23 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 		mouseClick();
 
 		/////メイン////
-		if (game.play()) {
-			delete gameDrawer;
-			gameDrawer = new GameDrawer(&game);
+		if (gamePlay) {
+			if (game->play()) {
+				delete gameDrawer;
+				gameDrawer = new GameDrawer(game);
+			}
+			gameDrawer->draw();
 		}
-		gameDrawer->draw();
+		else {
+			bool result = title->play();
+			title->draw();
+			if (result) {
+				game = new Game(title->useSaveFile());
+				gameDrawer = new GameDrawer(game);
+				delete title;
+				gamePlay = true;
+			}
+		}
 		///////////////
 
 		//FPS操作
@@ -90,7 +105,9 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 		// デバッグ
 		if (debug == TRUE) {
 			Draw(0, 0, BLACK);
-			game.debug(0, DRAW_FORMAT_STRING_SIZE, BLACK);
+			if (game != nullptr) {
+				game->debug(0, DRAW_FORMAT_STRING_SIZE, BLACK);
+			}
 		}
 		Wait();
 		if (controlEsc() == TRUE) { DxLib_End(); }

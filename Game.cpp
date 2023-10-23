@@ -174,7 +174,7 @@ GameData::GameData(const char* saveFilePath):
 	// セーブ場所
 	m_saveFilePath = saveFilePath;
 	// セーブデータを読み込んで初期状態のデータを上書き
-	load();
+	m_exist = load();
 }
 
 GameData::~GameData() {
@@ -277,10 +277,10 @@ void GameData::updateStory(Story* story) {
 /*
 * ゲーム本体
 */
-Game::Game() {
+Game::Game(const char* saveFilePath) {
 	// データ
 	//m_gameData = new GameData();
-	m_gameData = new GameData("savedata/test/");
+	m_gameData = new GameData(saveFilePath);
 
 	// サウンドプレイヤー
 	m_soundPlayer = new SoundPlayer();

@@ -6,7 +6,7 @@
 // フルスクリーンならFALSE
 static int WINDOW = TRUE;
 // マウスを表示するならFALSE
-static int MOUSE_DISP = FALSE;
+static int MOUSE_DISP = TRUE;
 
 //画面の大きさ
 //#define GAME_WIDE 3840
