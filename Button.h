@@ -45,6 +45,7 @@ public:
 	void setGraph(int handle, int ex);
 	void setString(std::string new_string);//タグをつけなおす
 	inline void setX(int x) { m_x = x; }
+	inline void setColor(int colorHandle) { m_color = colorHandle; }
 
 	// ボタンのon/off切り替え
 	void changeFlag(bool f, int new_color);

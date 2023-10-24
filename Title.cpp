@@ -20,6 +20,9 @@ using namespace std;
 * セーブデータ選択画面
 */
 SelectSaveData::SelectSaveData() {
+
+	m_initCnt = 0;
+
 	for (int i = 0; i < GAME_DATA_SUM; i++) {
 		ostringstream oss;
 		oss << "savedata/" << i + 1 << "/";
@@ -27,8 +30,8 @@ SelectSaveData::SelectSaveData() {
 	}
 
 	// ボタン
-	double exX = GAME_WIDE / 1920.0;
-	double exY = GAME_HEIGHT / 1080.0;
+	double exX, exY;
+	getGameEx(exX, exY);
 	m_font = CreateFontToHandle(nullptr, (int)(50 * exX), 3);
 	for (int i = 0; i < GAME_DATA_SUM; i++) {
 		string text;
@@ -40,9 +43,10 @@ SelectSaveData::SelectSaveData() {
 		else {
 			text = "New Game";
 		}
-		m_dataButton[i] = new Button(text, 100 * exX, 300 * exY + (i * 150 * exY), 800 * exX, 100 * exY, WHITE, GRAY2, m_font, BLACK);
+		m_dataButton[i] = new Button(text, (int)(100 * exX), (int)(300 * exY + (i * 150 * exY)), (int)(500 * exX), (int)(100 * exY), WHITE, GRAY2, m_font, BLACK);
+		m_dataInitButton[i] = new Button("削除", (int)(650 * exX), (int)(300 * exY + (i * 150 * exY)), (int)(100 * exX), (int)(100 * exY), LIGHT_RED, RED, m_font, BLACK);
 	}
-	m_cancelButton = new Button("Backward", 50 * exX, 50 * exY, 300 * exX, 100 * exY, GRAY2, WHITE, m_font, BLACK);
+	m_cancelButton = new Button("Backward", (int)(50 * exX), (int)(50 * exY), (int)(300 * exX), (int)(100 * exY), GRAY2, WHITE, m_font, BLACK);
 
 }
 
@@ -51,6 +55,7 @@ SelectSaveData::~SelectSaveData() {
 	for (int i = 0; i < GAME_DATA_SUM; i++) {
 		delete m_gameData[i];
 		delete m_dataButton[i];
+		delete m_dataInitButton[i];
 	}
 	delete m_cancelButton;
 }
@@ -73,6 +78,26 @@ bool SelectSaveData::play(int handX, int handY) {
 			m_useSaveDataIndex = i;
 			return true;
 		}
+		if (m_dataInitButton[i]->overlap(handX, handY) && leftClick() > 0) {
+			if (leftClick() == 1) { m_initCnt++; }
+			else if (m_initCnt > 0 && m_initCnt < 70) { 
+				m_initCnt++;
+				m_dataInitButton[i]->setColor(GetColor(255, 100 + m_initCnt * 2, 100 + m_initCnt * 2));
+			}
+			else { 
+				if (m_initCnt == 70) {
+					// セーブデータ削除
+					m_gameData[i]->removeSaveData();
+					m_dataButton[i]->setString("New Game");
+				}
+				m_initCnt = 0;
+				m_dataInitButton[i]->setColor(LIGHT_RED);
+			}
+		}
+		if (leftClick() == 0) { 
+			m_initCnt = 0;
+			m_dataInitButton[i]->setColor(LIGHT_RED);
+		}
 	}
 
 	// 戻るボタン
@@ -88,6 +113,7 @@ void SelectSaveData::draw(int handX, int handY) {
 	// ボタン
 	for (int i = 0; i < GAME_DATA_SUM; i++) {
 		m_dataButton[i]->draw(handX, handY);
+		m_dataInitButton[i]->draw(handX, handY);
 	}
 	m_cancelButton->draw(handX, handY);
 
@@ -124,11 +150,11 @@ Title::Title() {
 		m_movie = nullptr;
 	}
 
-	double exX = GAME_WIDE / 1920.0;
-	double exY = GAME_HEIGHT / 1080.0;
+	double exX, exY;
+	getGameEx(exX, exY);
 	m_font = CreateFontToHandle(nullptr, (int)(50 * exX), 3);
-	m_selectButton = new Button("Game Start", 500 * exX, 800 * exY, 920 * exX, 80 * exY, GRAY2, BLUE, m_font, BLACK);
-	m_optionButton = new Button("Setting", 500 * exX, 900 * exY, 920 * exX, 80 * exY, GRAY2, BLUE, m_font, BLACK);
+	m_selectButton = new Button("Game Start", (int)(500 * exX), (int)(800 * exY), (int)(920 * exX), (int)(80 * exY), GRAY2, BLUE, m_font, BLACK);
+	m_optionButton = new Button("Setting", (int)(500 * exX), (int)(900 * exY), (int)(920 * exX), (int)(80 * exY), GRAY2, BLUE, m_font, BLACK);
 
 }
 

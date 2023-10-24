@@ -182,6 +182,10 @@ public:
 
 	// ストーリーが進んだ時にセーブデータを更新する
 	void updateStory(Story* story);
+
+	// セーブデータ削除
+	void removeSaveData();
+
 };
 
 

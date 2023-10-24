@@ -24,6 +24,9 @@ static int MOUSE_DISP = TRUE;
 extern int GAME_WIDE;
 extern int GAME_HEIGHT;
 
+// ‰ğ‘œ“x‚Ì”{—¦
+void getGameEx(double& exX, double& exY);
+
 // DrawFormatStringŠÖ”‚Å•\¦‚³‚ê‚é•¶š‚Ì‘å‚«‚³‚Í20‚­‚ç‚¢
 #define DRAW_FORMAT_STRING_SIZE 20
 
@@ -33,6 +36,7 @@ const int GRAY = GetColor(100, 100, 100);
 const int GRAY2 = GetColor(200, 200, 200);
 const int WHITE = GetColor(255, 255, 255);
 const int RED = GetColor(255, 0, 0);
+const int LIGHT_RED = GetColor(255, 100, 100);
 const int BLUE = GetColor(0, 0, 255);
 const int LIGHT_BLUE = GetColor(100, 100, 255);
 

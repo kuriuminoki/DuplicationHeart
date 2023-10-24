@@ -27,6 +27,10 @@ private:
 
 	// セーブデータの選択ボタン
 	Button* m_dataButton[GAME_DATA_SUM];
+	
+	// セーブデータ削除ボタン
+	Button* m_dataInitButton[GAME_DATA_SUM];
+	int m_initCnt; // 長押しの時間
 
 	// 戻るボタン
 	Button* m_cancelButton;

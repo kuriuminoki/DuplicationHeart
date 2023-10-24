@@ -8,8 +8,7 @@
 
 ControlBar::ControlBar(int x1, int y1, int x2, int y2, int minValue, int maxValue, int initValue) {
 	
-	m_exX = GAME_WIDE / 1920.0;
-	m_exY = GAME_HEIGHT / 1080.0;
+	getGameEx(m_exX, m_exY);
 
 	m_drawX1 = (int)(x1 * m_exX);
 	m_drawY1 = (int)(y1 * m_exY);

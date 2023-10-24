@@ -13,11 +13,11 @@ ConversationDrawer::ConversationDrawer(Conversation* conversation) {
 
 	m_conversation = conversation;
 
-	m_ex = GAME_WIDE / 1920.0;
+	getGameEx(m_exX, m_exY);
 
 	// フォントデータ
-	m_textHandle = CreateFontToHandle(nullptr, (int)(TEXT_SIZE * m_ex), 3);
-	m_nameHandle = CreateFontToHandle(nullptr, (int)(NAME_SIZE * m_ex), 5);
+	m_textHandle = CreateFontToHandle(nullptr, (int)(TEXT_SIZE * m_exX), 3);
+	m_nameHandle = CreateFontToHandle(nullptr, (int)(NAME_SIZE * m_exX), 5);
 
 	// 吹き出し画像
 	m_frameHandle = LoadGraph("picture/textMaterial/frame.png");
@@ -39,14 +39,14 @@ void ConversationDrawer::draw() {
 	// キャラの顔画像は正方形を想定
 	int graphSize = 0;
 	GetGraphSize(graph->getHandle(), &graphSize, &graphSize);
-	graphSize = (int)(graphSize * m_ex);
+	graphSize = (int)(graphSize * m_exX);
 
 	// フキダシのフチの幅
-	static const int TEXT_GRAPH_EDGE = (int)(35 * m_ex);
+	static const int TEXT_GRAPH_EDGE = (int)(35 * m_exX);
 
 	// 端の余白
-	static const int EDGE_X = (int)(48 * m_ex);
-	static const int EDGE_DOWN = (int)(48 * m_ex);
+	static const int EDGE_X = (int)(48 * m_exX);
+	static const int EDGE_DOWN = (int)(48 * m_exX);
 
 	// 上端
 	static const int Y1 = GAME_HEIGHT - EDGE_DOWN - graphSize - (TEXT_GRAPH_EDGE * 2);
@@ -64,21 +64,21 @@ void ConversationDrawer::draw() {
 	DrawExtendGraph(EDGE_X, Y1, GAME_WIDE - EDGE_X, GAME_HEIGHT - EDGE_DOWN, m_frameHandle, TRUE);
 
 	// 名前
-	DrawStringToHandle(EDGE_X + TEXT_GRAPH_EDGE + graphSize + (int)(NAME_SIZE * m_ex), GAME_HEIGHT - EDGE_DOWN - (int)(NAME_SIZE * m_ex) - TEXT_GRAPH_EDGE, name.c_str(), BLACK, m_nameHandle);
+	DrawStringToHandle(EDGE_X + TEXT_GRAPH_EDGE + graphSize + (int)(NAME_SIZE * m_exX), GAME_HEIGHT - EDGE_DOWN - (int)(NAME_SIZE * m_exX) - TEXT_GRAPH_EDGE, name.c_str(), BLACK, m_nameHandle);
 
 	// テキスト
 	int now = 0;
 	int i = 0;
-	static const int CHAR_EDGE = (int)(30 * m_ex);
+	static const int CHAR_EDGE = (int)(30 * m_exX);
 	while (now < text.size()) {
 		int next = now + min(MAX_TEXT_LEN, (int)text.size() - now);
 		string disp = text.substr(now, next - now);
-		DrawStringToHandle(EDGE_X + TEXT_GRAPH_EDGE * 2 + graphSize, Y1  + TEXT_GRAPH_EDGE + (i * ((int)(TEXT_SIZE * m_ex) + CHAR_EDGE)), disp.c_str(), BLACK, m_textHandle);
+		DrawStringToHandle(EDGE_X + TEXT_GRAPH_EDGE * 2 + graphSize, Y1  + TEXT_GRAPH_EDGE + (i * ((int)(TEXT_SIZE * m_exX) + CHAR_EDGE)), disp.c_str(), BLACK, m_textHandle);
 		now = next;
 		i++;
 	}
 
 	// キャラの顔画像
-	graph->draw(EDGE_X + TEXT_GRAPH_EDGE + graphSize / 2, Y1 + TEXT_GRAPH_EDGE + graphSize / 2, m_ex);
+	graph->draw(EDGE_X + TEXT_GRAPH_EDGE + graphSize / 2, Y1 + TEXT_GRAPH_EDGE + graphSize / 2, m_exX);
 
 }

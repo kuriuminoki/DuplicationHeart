@@ -188,7 +188,18 @@ GameData::~GameData() {
 
 // セーブ
 bool GameData::save() {
-	FILE *intFp = nullptr, *strFp = nullptr;
+	FILE *intFp = nullptr, *strFp = nullptr, *commonFp = nullptr;
+	int r = fopen_s(&commonFp, "savedata/commonData.dat", "wb");
+	// 全セーブデータ共通
+	if (r != 0) {
+		return false;
+	}
+	fwrite(&m_soundVolume, sizeof(m_soundVolume), 1, commonFp);
+	fwrite(&GAME_WIDE, sizeof(GAME_WIDE), 1, commonFp);
+	fwrite(&GAME_HEIGHT, sizeof(GAME_HEIGHT), 1, commonFp);
+	fclose(commonFp);
+
+	// セーブデータ固有
 	string fileName = m_saveFilePath;
 	if (fopen_s(&intFp, (fileName + "intData.dat").c_str(), "wb") != 0 || fopen_s(&strFp, (fileName + "strData.dat").c_str(), "wb") != 0) {
 		return false;
@@ -196,7 +207,6 @@ bool GameData::save() {
 	// Write
 	fwrite(&m_areaNum, sizeof(m_areaNum), 1, intFp);
 	fwrite(&m_storyNum, sizeof(m_storyNum), 1, intFp);
-	fwrite(&m_soundVolume, sizeof(m_soundVolume), 1, intFp);
 	for (unsigned int i = 0; i < m_characterData.size(); i++) {
 		m_characterData[i]->save(intFp, strFp);
 	}
@@ -213,7 +223,18 @@ bool GameData::save() {
 
 // ロード
 bool GameData::load() {
-	FILE* intFp = nullptr, * strFp = nullptr;
+	FILE* intFp = nullptr, * strFp = nullptr, * commonFp = nullptr;
+
+	// 全セーブデータ共通
+	if (fopen_s(&commonFp, "savedata/commonData.dat", "rb") != 0) {
+		return false;
+	}
+	fread(&m_soundVolume, sizeof(m_soundVolume), 1, commonFp);
+	fread(&GAME_WIDE, sizeof(GAME_WIDE), 1, commonFp);
+	fread(&GAME_HEIGHT, sizeof(GAME_HEIGHT), 1, commonFp);
+	fclose(commonFp);
+
+	// セーブデータ固有
 	string fileName = m_saveFilePath;
 	if (fopen_s(&intFp, (fileName + "intData.dat").c_str(), "rb") != 0 || fopen_s(&strFp, (fileName + "strData.dat").c_str(), "rb") != 0) {
 		return false;
@@ -221,7 +242,6 @@ bool GameData::load() {
 	// Read
 	fread(&m_areaNum, sizeof(m_areaNum), 1, intFp);
 	fread(&m_storyNum, sizeof(m_storyNum), 1, intFp);
-	fread(&m_soundVolume, sizeof(m_soundVolume), 1, intFp);
 	for (unsigned int i = 0; i < m_characterData.size(); i++) {
 		m_characterData[i]->load(intFp, strFp);
 	}
@@ -271,6 +291,13 @@ void GameData::updateStory(Story* story) {
 	// ドアの情報も取得
 	ObjectLoader* objectLoader = story->getObjectLoader();
 	objectLoader->saveDoorData(m_doorData);
+}
+
+// セーブデータ削除
+void GameData::removeSaveData() {
+	string fileName = m_saveFilePath;
+	remove((fileName + "intData.dat").c_str());
+	remove((fileName + "strData.dat").c_str());
 }
 
 
