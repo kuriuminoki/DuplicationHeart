@@ -27,6 +27,8 @@ extern int GAME_HEIGHT;
 // ‰ğ‘œ“x‚Ì”{—¦
 void getGameEx(double& exX, double& exY);
 
+#define GAME_COLOR_BIT_NUM 16
+
 // DrawFormatStringŠÖ”‚Å•\¦‚³‚ê‚é•¶š‚Ì‘å‚«‚³‚Í20‚­‚ç‚¢
 #define DRAW_FORMAT_STRING_SIZE 20
 

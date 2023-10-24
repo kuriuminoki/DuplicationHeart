@@ -29,7 +29,7 @@ bool Update() {
 }
 
 void Draw(int x, int y, int color) {
-	DrawFormatString(0, 0, WHITE, "デバッグモード：%.1f FPS, 解像度：%d*%d", mFps, GAME_WIDE, GAME_HEIGHT);
+	DrawFormatString(0, 0, RED, "デバッグモード：%.1f FPS, 解像度：%d*%d", mFps, GAME_WIDE, GAME_HEIGHT);
 }
 
 void Wait() {
@@ -44,7 +44,9 @@ void Wait() {
 int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 	SetWindowSizeChangeEnableFlag(TRUE);//windowサイズ変更可能
 	SetUseDirectInputFlag(TRUE);
-	SetGraphMode(GAME_WIDE, GAME_HEIGHT, 16);
+	GameData* gameData = new GameData();
+	SetGraphMode(GAME_WIDE, GAME_HEIGHT, GAME_COLOR_BIT_NUM);
+	delete gameData;
 
 	ChangeWindowMode(WINDOW), DxLib_Init(), SetDrawScreen(DX_SCREEN_BACK);
 	
@@ -85,13 +87,19 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 			gameDrawer->draw();
 		}
 		else {
-			bool result = title->play();
+			Title::TITLE_RESULT result = title->play();
 			title->draw();
-			if (result) {
+			if (result == Title::START) {
 				game = new Game(title->useSaveFile());
 				gameDrawer = new GameDrawer(game);
 				delete title;
 				gamePlay = true;
+			}
+			else if (result == Title::REBOOT) {
+				// ゲームを再起動
+				delete title;
+				ChangeWindowMode(WINDOW), DxLib_Init(), SetDrawScreen(DX_SCREEN_BACK);
+				title = new Title();
 			}
 		}
 		///////////////

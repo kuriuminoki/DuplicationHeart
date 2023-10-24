@@ -46,7 +46,6 @@ SelectSaveData::SelectSaveData() {
 		m_dataButton[i] = new Button(text, (int)(100 * exX), (int)(300 * exY + (i * 150 * exY)), (int)(500 * exX), (int)(100 * exY), WHITE, GRAY2, m_font, BLACK);
 		m_dataInitButton[i] = new Button("削除", (int)(650 * exX), (int)(300 * exY + (i * 150 * exY)), (int)(100 * exX), (int)(100 * exY), LIGHT_RED, RED, m_font, BLACK);
 	}
-	m_cancelButton = new Button("Backward", (int)(50 * exX), (int)(50 * exY), (int)(300 * exX), (int)(100 * exY), GRAY2, WHITE, m_font, BLACK);
 
 }
 
@@ -57,7 +56,6 @@ SelectSaveData::~SelectSaveData() {
 		delete m_dataButton[i];
 		delete m_dataInitButton[i];
 	}
-	delete m_cancelButton;
 }
 
 // セーブデータが1つでも存在するか
@@ -100,11 +98,6 @@ bool SelectSaveData::play(int handX, int handY) {
 		}
 	}
 
-	// 戻るボタン
-	if (m_cancelButton->overlap(handX, handY) && leftClick() == 1) {
-		return true;
-	}
-
 	return false;
 }
 
@@ -115,7 +108,6 @@ void SelectSaveData::draw(int handX, int handY) {
 		m_dataButton[i]->draw(handX, handY);
 		m_dataInitButton[i]->draw(handX, handY);
 	}
-	m_cancelButton->draw(handX, handY);
 
 }
 
@@ -123,6 +115,11 @@ void SelectSaveData::draw(int handX, int handY) {
 const char* SelectSaveData::useDirName() {
 	if (m_useSaveDataIndex == NOT_DECIDE_DATA) { return ""; }
 	return m_gameData[m_useSaveDataIndex]->getSaveFilePath();
+}
+
+// 全セーブデータ共通のデータをセーブ(タイトル画面のオプション用)
+void SelectSaveData::saveCommon() {
+	m_gameData[0]->saveCommon(m_gameData[0]->getSoundVolume(), GAME_WIDE, GAME_HEIGHT);
 }
 
 
@@ -141,6 +138,8 @@ Title::Title() {
 
 	m_selectSaveData = new SelectSaveData();
 
+	m_option = new TitleOption(m_soundPlayer);
+
 	// セーブデータがあるならOP
 	if (m_selectSaveData->saveDataExist()) { 
 		m_movie = new OpMovie(m_soundPlayer);
@@ -155,6 +154,7 @@ Title::Title() {
 	m_font = CreateFontToHandle(nullptr, (int)(50 * exX), 3);
 	m_selectButton = new Button("Game Start", (int)(500 * exX), (int)(800 * exY), (int)(920 * exX), (int)(80 * exY), GRAY2, BLUE, m_font, BLACK);
 	m_optionButton = new Button("Setting", (int)(500 * exX), (int)(900 * exY), (int)(920 * exX), (int)(80 * exY), GRAY2, BLUE, m_font, BLACK);
+	m_cancelButton = new Button("Backward", (int)(50 * exX), (int)(50 * exY), (int)(300 * exX), (int)(100 * exY), GRAY2, WHITE, m_font, BLACK);
 
 }
 
@@ -165,15 +165,17 @@ Title::~Title() {
 	DeleteGraph(m_titleGraph);
 
 	delete m_selectSaveData;
+	delete m_option;
 
 	DeleteFontToHandle(m_font);
 	delete m_selectButton;
 	delete m_optionButton;
+	delete m_cancelButton;
 
 }
 
-// タイトル画面の処理 終了ならtrue
-bool Title::play() {
+// タイトル画面の処理
+Title::TITLE_RESULT Title::play() {
 	
 	// OP
 	if (m_movie != nullptr) { 
@@ -183,7 +185,7 @@ bool Title::play() {
 			delete m_movie;
 			m_movie = nullptr;
 		}
-		return false;
+		return CONTINUE;
 	}
 
 	// マウスカーソルの位置
@@ -193,20 +195,34 @@ bool Title::play() {
 	switch (m_state) {
 	case TITLE: // タイトル画面
 		if (m_selectButton->overlap(m_handX, m_handY) && leftClick() == 1) { m_state = SELECT; }
+		if (m_optionButton->overlap(m_handX, m_handY) && leftClick() == 1) { m_state = OPTION; }
 		break;
 	case SELECT: // セーブデータ選択画面
 		if (m_selectSaveData->play(m_handX, m_handY)) {
 			filePath = m_selectSaveData->useDirName();
 			if (filePath == "") { m_state = TITLE; }
-			else { return true; }
+			else { return START; }
+		}
+		// 戻るボタン
+		if (m_cancelButton->overlap(m_handX, m_handY) && leftClick() == 1) {
+			m_state = TITLE;
 		}
 		break;
-	case OPTION:
-
+	case OPTION: // オプション画面
+		m_option->play();
+		// 戻るボタン
+		if (m_cancelButton->overlap(m_handX, m_handY) && leftClick() == 1) {
+			// 解像度を更新して再起動
+			GAME_WIDE = m_option->getNewGameWide();
+			GAME_HEIGHT = m_option->getNewGameHeight();
+			m_selectSaveData->saveCommon();
+			SetGraphMode(GAME_WIDE, GAME_HEIGHT, GAME_COLOR_BIT_NUM);
+			return REBOOT;
+		}
 		break;
 	}
 
-	return false;
+	return CONTINUE;
 
 }
 
@@ -228,9 +244,11 @@ void Title::draw() {
 		break;
 	case SELECT: // セーブデータ選択画面
 		m_selectSaveData->draw(m_handX, m_handY);
+		m_cancelButton->draw(m_handX, m_handY);
 		break;
 	case OPTION:
-
+		m_option->draw();
+		m_cancelButton->draw(m_handX, m_handY);
 		break;
 	}
 

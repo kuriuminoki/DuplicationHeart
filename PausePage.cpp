@@ -5,10 +5,20 @@
 #include "Define.h"
 #include "DxLib.h"
 
+#include <sstream>
+#include <string>
 
-ControlBar::ControlBar(int x1, int y1, int x2, int y2, int minValue, int maxValue, int initValue) {
+
+using namespace std;
+
+
+ControlBar::ControlBar(int x1, int y1, int x2, int y2, int minValue, int maxValue, int initValue, string name) {
 	
+	m_name = name;
+
 	getGameEx(m_exX, m_exY);
+	m_fontSize = (int)(50 * m_exX);
+	m_font = CreateFontToHandle(nullptr, m_fontSize, 3);
 
 	m_drawX1 = (int)(x1 * m_exX);
 	m_drawY1 = (int)(y1 * m_exY);
@@ -27,6 +37,10 @@ ControlBar::ControlBar(int x1, int y1, int x2, int y2, int minValue, int maxValu
 	m_buttonWide /= 2;
 
 	m_controlFlag = false;
+}
+
+ControlBar::~ControlBar() {
+	DeleteFontToHandle(m_font);
 }
 
 // í≤êÆÇ∑ÇÈ
@@ -67,6 +81,10 @@ void ControlBar::play(int handX, int handY) {
 void ControlBar::draw(int handX, int handY) {
 	int d = (int)(10 * m_exX);
 
+	ostringstream oss;
+	oss << m_name << " : " << m_nowValue;
+	DrawStringToHandle(m_drawX1 - m_buttonWide - d, m_drawY1 - d - m_fontSize, oss.str().c_str(), WHITE, m_font);
+
 	// âπó í≤êﬂóÃàÊ
 	DrawBox(m_drawX1 - m_buttonWide - d, m_drawY1 - d, m_drawX2 + m_buttonWide + d, m_drawY2 + d, BLACK, TRUE);
 	DrawBox(m_drawX1 - m_buttonWide, m_drawY1, m_drawX2 + m_buttonWide, m_drawY2, GRAY2, TRUE);
@@ -87,7 +105,7 @@ void ControlBar::draw(int handX, int handY) {
 */
 GamePause::GamePause(SoundPlayer* soundPlayer) {
 	m_soundPlayer_p = soundPlayer;
-	m_soundController = new ControlBar(SOUND_X1, SOUND_Y1, SOUND_X2, SOUND_Y2, SOUND_MIN, SOUND_MAX, m_soundPlayer_p->getVolume());
+	m_soundController = new ControlBar(SOUND_X1, SOUND_Y1, SOUND_X2, SOUND_Y2, SOUND_MIN, SOUND_MAX, m_soundPlayer_p->getVolume(), "Sound Volume");
 	m_handX = 0;
 	m_handY = 0;
 }
@@ -120,10 +138,14 @@ void GamePause::draw() const {
 TitleOption::TitleOption(SoundPlayer* soundPlayer) :
 	GamePause(soundPlayer)
 {
-	m_gameWideController = new ControlBar(WIDE_X1, WIDE_Y1, WIDE_X2, WIDE_Y2, GAME_WIDE_MIN, GAME_WIDE_MAX, GAME_WIDE);
-	m_gameHeightController = new ControlBar(HEIGHT_X1, HEIGHT_Y1, HEIGHT_X2, HEIGHT_Y2, GAME_HEIGHT_MIN, GAME_HEIGHT_MAX, GAME_HEIGHT);
+	m_gameWideController = new ControlBar(WIDE_X1, WIDE_Y1, WIDE_X2, WIDE_Y2, GAME_WIDE_MIN, GAME_WIDE_MAX, GAME_WIDE, "Display resolution (wide)");
+	m_gameHeightController = new ControlBar(HEIGHT_X1, HEIGHT_Y1, HEIGHT_X2, HEIGHT_Y2, GAME_HEIGHT_MIN, GAME_HEIGHT_MAX, GAME_HEIGHT, "Display resolution (height)");
 	m_newWide = GAME_WIDE;
 	m_newHeight = GAME_HEIGHT;
+}
+
+TitleOption::~TitleOption() {
+
 }
 
 void TitleOption::play() {

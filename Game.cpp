@@ -138,6 +138,9 @@ void DoorData::load(FILE* intFp, FILE* strFp) {
 */
 // 初期状態のデータを作成
 GameData::GameData() {
+
+	loadCommon(&m_soundVolume, &GAME_WIDE, &GAME_HEIGHT);
+
 	m_saveFilePath = "";
 
 	const bool test = false;
@@ -188,16 +191,10 @@ GameData::~GameData() {
 
 // セーブ
 bool GameData::save() {
-	FILE *intFp = nullptr, *strFp = nullptr, *commonFp = nullptr;
-	int r = fopen_s(&commonFp, "savedata/commonData.dat", "wb");
+	FILE* intFp = nullptr, * strFp = nullptr;
+
 	// 全セーブデータ共通
-	if (r != 0) {
-		return false;
-	}
-	fwrite(&m_soundVolume, sizeof(m_soundVolume), 1, commonFp);
-	fwrite(&GAME_WIDE, sizeof(GAME_WIDE), 1, commonFp);
-	fwrite(&GAME_HEIGHT, sizeof(GAME_HEIGHT), 1, commonFp);
-	fclose(commonFp);
+	if (!saveCommon(m_soundVolume, GAME_WIDE, GAME_HEIGHT)) { return false; }
 
 	// セーブデータ固有
 	string fileName = m_saveFilePath;
@@ -226,13 +223,7 @@ bool GameData::load() {
 	FILE* intFp = nullptr, * strFp = nullptr, * commonFp = nullptr;
 
 	// 全セーブデータ共通
-	if (fopen_s(&commonFp, "savedata/commonData.dat", "rb") != 0) {
-		return false;
-	}
-	fread(&m_soundVolume, sizeof(m_soundVolume), 1, commonFp);
-	fread(&GAME_WIDE, sizeof(GAME_WIDE), 1, commonFp);
-	fread(&GAME_HEIGHT, sizeof(GAME_HEIGHT), 1, commonFp);
-	fclose(commonFp);
+	if (!loadCommon(&m_soundVolume, &GAME_WIDE, &GAME_HEIGHT)) { return false; }
 
 	// セーブデータ固有
 	string fileName = m_saveFilePath;
@@ -253,6 +244,32 @@ bool GameData::load() {
 	// ファイルを閉じる
 	fclose(intFp);
 	fclose(strFp);
+	return true;
+}
+
+// 全セーブデータ共通
+bool GameData::saveCommon(int soundVolume, int gameWide, int gameHeight) {
+
+	FILE* commonFp = nullptr;
+	if (fopen_s(&commonFp, "savedata/commonData.dat", "wb") != 0) {
+		return false;
+	}
+	fwrite(&soundVolume, sizeof(soundVolume), 1, commonFp);
+	fwrite(&gameWide, sizeof(gameWide), 1, commonFp);
+	fwrite(&gameHeight, sizeof(gameHeight), 1, commonFp);
+	fclose(commonFp);
+	return true;
+}
+bool GameData::loadCommon(int* soundVolume, int* gameWide, int* gameHeight) {
+
+	FILE* commonFp = nullptr;
+	if (fopen_s(&commonFp, "savedata/commonData.dat", "rb") != 0) {
+		return false;
+	}
+	fread(soundVolume, sizeof(*soundVolume), 1, commonFp);
+	fread(gameWide, sizeof(*gameWide), 1, commonFp);
+	fread(gameHeight, sizeof(*gameHeight), 1, commonFp);
+	fclose(commonFp);
 	return true;
 }
 

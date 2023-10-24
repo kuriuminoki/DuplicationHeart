@@ -2,12 +2,19 @@
 #define PAUSE_PAGE_H_INCLUDED
 
 
+#include <string>
+
 class Button;
 class SoundPlayer;
 
 
 // マウスでボタンを左右に動かして値を調整する機能
 class ControlBar {
+
+	// 設定する項目の名前
+	std::string m_name;
+	int m_font;
+	int m_fontSize;
 
 	// 1920を基準としたGAME_WIDEの倍率
 	double m_exX;
@@ -36,7 +43,8 @@ class ControlBar {
 	bool m_controlFlag;
 
 public:
-	ControlBar(int x1, int y1, int x2, int y2, int minValue, int maxValue, int initValue);
+	ControlBar(int x1, int y1, int x2, int y2, int minValue, int maxValue, int initValue, std::string name);
+	~ControlBar();
 
 	// 調整する
 	void play(int handX, int handY);
@@ -100,12 +108,13 @@ class TitleOption :
 	const int WIDE_Y2 = 600;
 
 	const int HEIGHT_X1 = 800;
-	const int HEIGHT_Y1 = 800;
+	const int HEIGHT_Y1 = 700;
 	const int HEIGHT_X2 = 1300;
-	const int HEIGHT_Y2 = 1000;
+	const int HEIGHT_Y2 = 900;
 
 public:
 	TitleOption(SoundPlayer* soundPlayer);
+	~TitleOption();
 
 	void play();
 

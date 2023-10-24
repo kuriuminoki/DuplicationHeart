@@ -32,9 +32,6 @@ private:
 	Button* m_dataInitButton[GAME_DATA_SUM];
 	int m_initCnt; // 長押しの時間
 
-	// 戻るボタン
-	Button* m_cancelButton;
-
 	// 使用するセーブデータが決まっていないとき
 	static const int NOT_DECIDE_DATA = -1;
 
@@ -58,6 +55,9 @@ public:
 
 	// 使用するセーブデータのディレクトリ名
 	const char* useDirName();
+
+	// 全セーブデータ共通のデータをセーブ(タイトル画面のオプション用)
+	void saveCommon();
 
 };
 
@@ -103,14 +103,22 @@ private:
 	Button* m_selectButton;
 	Button* m_optionButton;
 
+	// 戻るボタン
+	Button* m_cancelButton;
+
 public:
 
 	Title();
 
 	~Title();
 
-	// タイトル画面の処理 終了ならtrue
-	bool play();
+	// タイトル画面の処理 継続、再起動、ゲーム開始
+	enum TITLE_RESULT {
+		CONTINUE,
+		REBOOT,
+		START
+	};
+	TITLE_RESULT play();
 
 	// 描画
 	void draw();

@@ -161,6 +161,9 @@ public:
 	// セーブとロード
 	bool save();
 	bool load();
+	// 全セーブデータ共通
+	bool saveCommon(int soundVolume, int gameWide, int gameHeight);
+	bool loadCommon(int* soundVolume, int* gameWide, int* gameHeight);
 
 	// ゲッタ
 	inline bool getExist() const { return m_exist; }
