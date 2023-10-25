@@ -61,14 +61,21 @@ public:
 // 動画の基底クラス
 class Movie {
 protected:
+
+	// 解像度の変更に対応
+	double m_ex;
+
 	// 終了したらtrue
 	bool m_finishFlag;
 
 	// 開始からの経過時間
 	int m_cnt;
 
-	// 画像を入れて動かす
+	// 画像を入れて動かすメイン画像
 	Animation* m_animation;
+
+	// サブ画像 cntが0になったものはpopしていく
+	std::queue<Animation*> m_subAnimation;
 
 	// サウンドプレイヤー
 	SoundPlayer* m_soundPlayer_p;
@@ -80,10 +87,11 @@ public:
 	// ゲッタ
 	bool getFinishFlag() const { return m_finishFlag; }
 	Animation* getAnimation() const { return m_animation; }
+	std::queue<Animation*> getSubAnimation() const { return m_subAnimation; }
 	inline int getCnt() const { return m_cnt; }
 
 	// 再生
-	virtual void play() = 0;
+	virtual void play();
 };
 
 

@@ -142,10 +142,18 @@ TitleOption::TitleOption(SoundPlayer* soundPlayer) :
 	m_gameHeightController = new ControlBar(HEIGHT_X1, HEIGHT_Y1, HEIGHT_X2, HEIGHT_Y2, GAME_HEIGHT_MIN, GAME_HEIGHT_MAX, GAME_HEIGHT, "Display resolution (height)");
 	m_newWide = GAME_WIDE;
 	m_newHeight = GAME_HEIGHT;
+
+	getGameEx(m_exX, m_exY);
+	m_fontSize = (int)(50 * m_exX);
+	m_font = CreateFontToHandle(nullptr, m_fontSize, 3);
+	m_leftButton = new Button("←", m_gameWideController->getLeftX(), (int)((HEIGHT_Y2 + 50) * m_exY), (int)(100 * m_exX), (int)(100 * m_exY), WHITE, GRAY2, m_font, BLACK);
+	m_rightButton = new Button("→", m_gameWideController->getRightX() - (int)(100 * m_exX), (int)((HEIGHT_Y2 + 50) * m_exY), (int)(100 * m_exX), (int)(100 * m_exY), WHITE, GRAY2, m_font, BLACK);
+	m_tmpApplyButton = new Button("Apply", m_gameWideController->getLeftX(), (int)((HEIGHT_Y2 + 170) * m_exY), m_gameWideController->getRightX() - m_gameWideController->getLeftX(), (int)(100 * m_exY), WHITE, GRAY2, m_font, BLACK);
+	m_nowTmpIndex = 0;
 }
 
 TitleOption::~TitleOption() {
-
+	DeleteFontToHandle(m_font);
 }
 
 void TitleOption::play() {
@@ -156,6 +164,22 @@ void TitleOption::play() {
 	m_gameHeightController->play(m_handX, m_handY);
 	m_newWide = m_gameWideController->getNowValue();
 	m_newHeight = m_gameHeightController->getNowValue();
+	
+	if (m_leftButton->overlap(m_handX, m_handY) && leftClick() == 1) {
+		if (m_nowTmpIndex == 0) { 
+			m_nowTmpIndex = TMP_SUM - 1;
+		}
+		else {
+			m_nowTmpIndex = (m_nowTmpIndex - 1) % TMP_SUM;
+		}
+	}
+	if (m_rightButton->overlap(m_handX, m_handY) && leftClick() == 1) {
+		m_nowTmpIndex = (m_nowTmpIndex + 1) % TMP_SUM;
+	}
+	if (m_tmpApplyButton->overlap(m_handX, m_handY) && leftClick() == 1) {
+		m_gameWideController->setValue(TMP[m_nowTmpIndex][0]);
+		m_gameHeightController->setValue(TMP[m_nowTmpIndex][1]);
+	}
 }
 
 void TitleOption::draw() const {
@@ -164,5 +188,16 @@ void TitleOption::draw() const {
 
 	m_gameWideController->draw(m_handX, m_handY);
 	m_gameHeightController->draw(m_handX, m_handY);
+
+	// 解像度のテンプレート
+	m_tmpApplyButton->draw(m_handX, m_handY);
+	m_leftButton->draw(m_handX, m_handY);
+	ostringstream oss;
+	oss << TMP[m_nowTmpIndex][0] << " : " << TMP[m_nowTmpIndex][1];
+	DrawStringToHandle(m_gameWideController->getLeftX() + (int)(150 * m_exX), (int)((HEIGHT_Y2 + 75) * m_exY), oss.str().c_str(), WHITE, m_font);
+	m_rightButton->draw(m_handX, m_handY);
+	int x1 = m_gameWideController->getLeftX();
+	int y1 = (int)((HEIGHT_Y2 + 300) * m_exY);
+	DrawBox(x1, y1, x1 + (int)(TMP[m_nowTmpIndex][0] * m_exX) / 20, y1 + (int)(TMP[m_nowTmpIndex][1] * m_exY) / 20, LIGHT_BLUE, TRUE);
 
 }
