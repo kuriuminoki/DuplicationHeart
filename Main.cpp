@@ -2,6 +2,7 @@
 #include "Define.h"
 #include "Game.h"
 #include "GameDrawer.h"
+#include "Title.h"
 #include "DxLib.h"
 
 
@@ -28,7 +29,7 @@ bool Update() {
 }
 
 void Draw(int x, int y, int color) {
-	DrawFormatString(0, 0, WHITE, "デバッグモード：%.1f FPS", mFps);
+	DrawFormatString(0, 0, RED, "デバッグモード：%.1f FPS, 解像度：%d*%d", mFps, GAME_WIDE, GAME_HEIGHT);
 }
 
 void Wait() {
@@ -43,7 +44,9 @@ void Wait() {
 int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 	SetWindowSizeChangeEnableFlag(TRUE);//windowサイズ変更可能
 	SetUseDirectInputFlag(TRUE);
-	SetGraphMode(GAME_WIDE, GAME_HEIGHT, 16);
+	GameData* gameData = new GameData();
+	SetGraphMode(GAME_WIDE, GAME_HEIGHT, GAME_COLOR_BIT_NUM);
+	delete gameData;
 
 	ChangeWindowMode(WINDOW), DxLib_Init(), SetDrawScreen(DX_SCREEN_BACK);
 	
@@ -62,11 +65,13 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 	SetFullScreenScalingMode(DX_DRAWMODE_NEAREST);
 
 	// ゲーム本体
-	Game game;
+	Game* game = nullptr;
 	// ゲーム描画用
-	GameDrawer* gameDrawer = new GameDrawer(&game);
-
-	
+	GameDrawer* gameDrawer = nullptr;
+	// タイトル画面
+	Title* title = new Title();
+	// ゲーム中ならtrue タイトル画面ならfalse
+	bool gamePlay = false;
 
 	while (ScreenFlip() == 0 && ProcessMessage() == 0 && ClearDrawScreen() == 0)
 	{
@@ -74,11 +79,29 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 		mouseClick();
 
 		/////メイン////
-		if (game.play()) {
-			delete gameDrawer;
-			gameDrawer = new GameDrawer(&game);
+		if (gamePlay) {
+			if (game->play()) {
+				delete gameDrawer;
+				gameDrawer = new GameDrawer(game);
+			}
+			gameDrawer->draw();
 		}
-		gameDrawer->draw();
+		else {
+			Title::TITLE_RESULT result = title->play();
+			title->draw();
+			if (result == Title::START) {
+				game = new Game(title->useSaveFile());
+				gameDrawer = new GameDrawer(game);
+				delete title;
+				gamePlay = true;
+			}
+			else if (result == Title::REBOOT) {
+				// ゲームを再起動
+				delete title;
+				ChangeWindowMode(WINDOW), DxLib_Init(), SetDrawScreen(DX_SCREEN_BACK);
+				title = new Title();
+			}
+		}
 		///////////////
 
 		//FPS操作
@@ -90,7 +113,9 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 		// デバッグ
 		if (debug == TRUE) {
 			Draw(0, 0, BLACK);
-			game.debug(0, DRAW_FORMAT_STRING_SIZE, BLACK);
+			if (game != nullptr) {
+				game->debug(0, DRAW_FORMAT_STRING_SIZE, BLACK);
+			}
 		}
 		Wait();
 		if (controlEsc() == TRUE) { DxLib_End(); }

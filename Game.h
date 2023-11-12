@@ -133,7 +133,10 @@ public:
 class GameData {
 private:
 	// セーブする場所
-	const char* m_saveFilePath;
+	std::string m_saveFilePath;
+
+	// セーブデータが存在するか
+	bool m_exist;
 
 	// キャラのデータ
 	std::vector<CharacterData*> m_characterData;
@@ -158,11 +161,16 @@ public:
 	// セーブとロード
 	bool save();
 	bool load();
+	// 全セーブデータ共通
+	bool saveCommon(int soundVolume, int gameWide, int gameHeight);
+	bool loadCommon(int* soundVolume, int* gameWide, int* gameHeight);
 
 	// ゲッタ
+	inline bool getExist() const { return m_exist; }
 	inline int getAreaNum() const { return m_areaNum; }
 	inline int getStoryNum() const { return m_storyNum; }
 	inline int getSoundVolume() const { return m_soundVolume; }
+	inline const char* getSaveFilePath() const { return m_saveFilePath.c_str(); }
 
 	// セッタ
 	inline void setAreaNum(int areaNum) { m_areaNum = areaNum; }
@@ -177,6 +185,10 @@ public:
 
 	// ストーリーが進んだ時にセーブデータを更新する
 	void updateStory(Story* story);
+
+	// セーブデータ削除
+	void removeSaveData();
+
 };
 
 
@@ -254,7 +266,7 @@ private:
 	GamePause* m_gamePause;
 
 public:
-	Game();
+	Game(const char* saveFilePath = "savedata/test/");
 	~Game();
 
 	// ゲッタ

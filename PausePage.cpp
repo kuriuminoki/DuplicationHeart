@@ -5,11 +5,20 @@
 #include "Define.h"
 #include "DxLib.h"
 
+#include <sstream>
+#include <string>
 
-ControlBar::ControlBar(int x1, int y1, int x2, int y2, int minValue, int maxValue, int initValue) {
+
+using namespace std;
+
+
+ControlBar::ControlBar(int x1, int y1, int x2, int y2, int minValue, int maxValue, int initValue, string name) {
 	
-	m_exX = GAME_WIDE / 1920.0;
-	m_exY = GAME_HEIGHT / 1080.0;
+	m_name = name;
+
+	getGameEx(m_exX, m_exY);
+	m_fontSize = (int)(50 * m_exX);
+	m_font = CreateFontToHandle(nullptr, m_fontSize, 3);
 
 	m_drawX1 = (int)(x1 * m_exX);
 	m_drawY1 = (int)(y1 * m_exY);
@@ -28,6 +37,10 @@ ControlBar::ControlBar(int x1, int y1, int x2, int y2, int minValue, int maxValu
 	m_buttonWide /= 2;
 
 	m_controlFlag = false;
+}
+
+ControlBar::~ControlBar() {
+	DeleteFontToHandle(m_font);
 }
 
 // 調整する
@@ -68,6 +81,10 @@ void ControlBar::play(int handX, int handY) {
 void ControlBar::draw(int handX, int handY) {
 	int d = (int)(10 * m_exX);
 
+	ostringstream oss;
+	oss << m_name << " : " << m_nowValue;
+	DrawStringToHandle(m_drawX1 - m_buttonWide - d, m_drawY1 - d - m_fontSize, oss.str().c_str(), WHITE, m_font);
+
 	// 音量調節領域
 	DrawBox(m_drawX1 - m_buttonWide - d, m_drawY1 - d, m_drawX2 + m_buttonWide + d, m_drawY2 + d, BLACK, TRUE);
 	DrawBox(m_drawX1 - m_buttonWide, m_drawY1, m_drawX2 + m_buttonWide, m_drawY2, GRAY2, TRUE);
@@ -88,7 +105,7 @@ void ControlBar::draw(int handX, int handY) {
 */
 GamePause::GamePause(SoundPlayer* soundPlayer) {
 	m_soundPlayer_p = soundPlayer;
-	m_soundController = new ControlBar(SOUND_X1, SOUND_Y1, SOUND_X2, SOUND_Y2, SOUND_MIN, SOUND_MAX, m_soundPlayer_p->getVolume());
+	m_soundController = new ControlBar(SOUND_X1, SOUND_Y1, SOUND_X2, SOUND_Y2, SOUND_MIN, SOUND_MAX, m_soundPlayer_p->getVolume(), "Sound Volume");
 	m_handX = 0;
 	m_handY = 0;
 }
@@ -121,10 +138,22 @@ void GamePause::draw() const {
 TitleOption::TitleOption(SoundPlayer* soundPlayer) :
 	GamePause(soundPlayer)
 {
-	m_gameWideController = new ControlBar(WIDE_X1, WIDE_Y1, WIDE_X2, WIDE_Y2, GAME_WIDE_MIN, GAME_WIDE_MAX, GAME_WIDE);
-	m_gameHeightController = new ControlBar(HEIGHT_X1, HEIGHT_Y1, HEIGHT_X2, HEIGHT_Y2, GAME_HEIGHT_MIN, GAME_HEIGHT_MAX, GAME_HEIGHT);
+	m_gameWideController = new ControlBar(WIDE_X1, WIDE_Y1, WIDE_X2, WIDE_Y2, GAME_WIDE_MIN, GAME_WIDE_MAX, GAME_WIDE, "Display resolution (wide)");
+	m_gameHeightController = new ControlBar(HEIGHT_X1, HEIGHT_Y1, HEIGHT_X2, HEIGHT_Y2, GAME_HEIGHT_MIN, GAME_HEIGHT_MAX, GAME_HEIGHT, "Display resolution (height)");
 	m_newWide = GAME_WIDE;
 	m_newHeight = GAME_HEIGHT;
+
+	getGameEx(m_exX, m_exY);
+	m_fontSize = (int)(50 * m_exX);
+	m_font = CreateFontToHandle(nullptr, m_fontSize, 3);
+	m_leftButton = new Button("←", m_gameWideController->getLeftX(), (int)((HEIGHT_Y2 + 50) * m_exY), (int)(100 * m_exX), (int)(100 * m_exY), WHITE, GRAY2, m_font, BLACK);
+	m_rightButton = new Button("→", m_gameWideController->getRightX() - (int)(100 * m_exX), (int)((HEIGHT_Y2 + 50) * m_exY), (int)(100 * m_exX), (int)(100 * m_exY), WHITE, GRAY2, m_font, BLACK);
+	m_tmpApplyButton = new Button("Apply", m_gameWideController->getLeftX(), (int)((HEIGHT_Y2 + 170) * m_exY), m_gameWideController->getRightX() - m_gameWideController->getLeftX(), (int)(100 * m_exY), WHITE, GRAY2, m_font, BLACK);
+	m_nowTmpIndex = 0;
+}
+
+TitleOption::~TitleOption() {
+	DeleteFontToHandle(m_font);
 }
 
 void TitleOption::play() {
@@ -135,6 +164,22 @@ void TitleOption::play() {
 	m_gameHeightController->play(m_handX, m_handY);
 	m_newWide = m_gameWideController->getNowValue();
 	m_newHeight = m_gameHeightController->getNowValue();
+	
+	if (m_leftButton->overlap(m_handX, m_handY) && leftClick() == 1) {
+		if (m_nowTmpIndex == 0) { 
+			m_nowTmpIndex = TMP_SUM - 1;
+		}
+		else {
+			m_nowTmpIndex = (m_nowTmpIndex - 1) % TMP_SUM;
+		}
+	}
+	if (m_rightButton->overlap(m_handX, m_handY) && leftClick() == 1) {
+		m_nowTmpIndex = (m_nowTmpIndex + 1) % TMP_SUM;
+	}
+	if (m_tmpApplyButton->overlap(m_handX, m_handY) && leftClick() == 1) {
+		m_gameWideController->setValue(TMP[m_nowTmpIndex][0]);
+		m_gameHeightController->setValue(TMP[m_nowTmpIndex][1]);
+	}
 }
 
 void TitleOption::draw() const {
@@ -143,5 +188,16 @@ void TitleOption::draw() const {
 
 	m_gameWideController->draw(m_handX, m_handY);
 	m_gameHeightController->draw(m_handX, m_handY);
+
+	// 解像度のテンプレート
+	m_tmpApplyButton->draw(m_handX, m_handY);
+	m_leftButton->draw(m_handX, m_handY);
+	ostringstream oss;
+	oss << TMP[m_nowTmpIndex][0] << " : " << TMP[m_nowTmpIndex][1];
+	DrawStringToHandle(m_gameWideController->getLeftX() + (int)(150 * m_exX), (int)((HEIGHT_Y2 + 75) * m_exY), oss.str().c_str(), WHITE, m_font);
+	m_rightButton->draw(m_handX, m_handY);
+	int x1 = m_gameWideController->getLeftX();
+	int y1 = (int)((HEIGHT_Y2 + 300) * m_exY);
+	DrawBox(x1, y1, x1 + (int)(TMP[m_nowTmpIndex][0] * m_exX) / 20, y1 + (int)(TMP[m_nowTmpIndex][1] * m_exY) / 20, LIGHT_BLUE, TRUE);
 
 }

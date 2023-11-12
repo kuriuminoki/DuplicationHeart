@@ -138,6 +138,9 @@ void DoorData::load(FILE* intFp, FILE* strFp) {
 */
 // 初期状態のデータを作成
 GameData::GameData() {
+
+	loadCommon(&m_soundVolume, &GAME_WIDE, &GAME_HEIGHT);
+
 	m_saveFilePath = "";
 
 	const bool test = false;
@@ -174,7 +177,7 @@ GameData::GameData(const char* saveFilePath):
 	// セーブ場所
 	m_saveFilePath = saveFilePath;
 	// セーブデータを読み込んで初期状態のデータを上書き
-	load();
+	m_exist = load();
 }
 
 GameData::~GameData() {
@@ -188,7 +191,12 @@ GameData::~GameData() {
 
 // セーブ
 bool GameData::save() {
-	FILE *intFp = nullptr, *strFp = nullptr;
+	FILE* intFp = nullptr, * strFp = nullptr;
+
+	// 全セーブデータ共通
+	if (!saveCommon(m_soundVolume, GAME_WIDE, GAME_HEIGHT)) { return false; }
+
+	// セーブデータ固有
 	string fileName = m_saveFilePath;
 	if (fopen_s(&intFp, (fileName + "intData.dat").c_str(), "wb") != 0 || fopen_s(&strFp, (fileName + "strData.dat").c_str(), "wb") != 0) {
 		return false;
@@ -196,7 +204,6 @@ bool GameData::save() {
 	// Write
 	fwrite(&m_areaNum, sizeof(m_areaNum), 1, intFp);
 	fwrite(&m_storyNum, sizeof(m_storyNum), 1, intFp);
-	fwrite(&m_soundVolume, sizeof(m_soundVolume), 1, intFp);
 	for (unsigned int i = 0; i < m_characterData.size(); i++) {
 		m_characterData[i]->save(intFp, strFp);
 	}
@@ -213,7 +220,12 @@ bool GameData::save() {
 
 // ロード
 bool GameData::load() {
-	FILE* intFp = nullptr, * strFp = nullptr;
+	FILE* intFp = nullptr, * strFp = nullptr, * commonFp = nullptr;
+
+	// 全セーブデータ共通
+	if (!loadCommon(&m_soundVolume, &GAME_WIDE, &GAME_HEIGHT)) { return false; }
+
+	// セーブデータ固有
 	string fileName = m_saveFilePath;
 	if (fopen_s(&intFp, (fileName + "intData.dat").c_str(), "rb") != 0 || fopen_s(&strFp, (fileName + "strData.dat").c_str(), "rb") != 0) {
 		return false;
@@ -221,7 +233,6 @@ bool GameData::load() {
 	// Read
 	fread(&m_areaNum, sizeof(m_areaNum), 1, intFp);
 	fread(&m_storyNum, sizeof(m_storyNum), 1, intFp);
-	fread(&m_soundVolume, sizeof(m_soundVolume), 1, intFp);
 	for (unsigned int i = 0; i < m_characterData.size(); i++) {
 		m_characterData[i]->load(intFp, strFp);
 	}
@@ -233,6 +244,32 @@ bool GameData::load() {
 	// ファイルを閉じる
 	fclose(intFp);
 	fclose(strFp);
+	return true;
+}
+
+// 全セーブデータ共通
+bool GameData::saveCommon(int soundVolume, int gameWide, int gameHeight) {
+
+	FILE* commonFp = nullptr;
+	if (fopen_s(&commonFp, "savedata/commonData.dat", "wb") != 0) {
+		return false;
+	}
+	fwrite(&soundVolume, sizeof(soundVolume), 1, commonFp);
+	fwrite(&gameWide, sizeof(gameWide), 1, commonFp);
+	fwrite(&gameHeight, sizeof(gameHeight), 1, commonFp);
+	fclose(commonFp);
+	return true;
+}
+bool GameData::loadCommon(int* soundVolume, int* gameWide, int* gameHeight) {
+
+	FILE* commonFp = nullptr;
+	if (fopen_s(&commonFp, "savedata/commonData.dat", "rb") != 0) {
+		return false;
+	}
+	fread(soundVolume, sizeof(*soundVolume), 1, commonFp);
+	fread(gameWide, sizeof(*gameWide), 1, commonFp);
+	fread(gameHeight, sizeof(*gameHeight), 1, commonFp);
+	fclose(commonFp);
 	return true;
 }
 
@@ -273,14 +310,21 @@ void GameData::updateStory(Story* story) {
 	objectLoader->saveDoorData(m_doorData);
 }
 
+// セーブデータ削除
+void GameData::removeSaveData() {
+	string fileName = m_saveFilePath;
+	remove((fileName + "intData.dat").c_str());
+	remove((fileName + "strData.dat").c_str());
+}
+
 
 /*
 * ゲーム本体
 */
-Game::Game() {
+Game::Game(const char* saveFilePath) {
 	// データ
 	//m_gameData = new GameData();
-	m_gameData = new GameData("savedata/test/");
+	m_gameData = new GameData(saveFilePath);
 
 	// サウンドプレイヤー
 	m_soundPlayer = new SoundPlayer();

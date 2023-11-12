@@ -179,6 +179,7 @@
     <ClCompile Include="Story.cpp" />
     <ClCompile Include="Text.cpp" />
     <ClCompile Include="TextDrawer.cpp" />
+    <ClCompile Include="Title.cpp" />
     <ClCompile Include="World.cpp" />
     <ClCompile Include="WorldDrawer.cpp" />
   </ItemGroup>
@@ -209,6 +210,7 @@
     <ClInclude Include="Story.h" />
     <ClInclude Include="Text.h" />
     <ClInclude Include="TextDrawer.h" />
+    <ClInclude Include="Title.h" />
     <ClInclude Include="World.h" />
     <ClInclude Include="WorldDrawer.h" />
   </ItemGroup>

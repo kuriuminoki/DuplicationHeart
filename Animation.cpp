@@ -63,6 +63,9 @@ GraphHandle* Animation::getHandle() const {
 * 動画の基底クラス
 */
 Movie::Movie(SoundPlayer* soundPlayer_p) {
+	double exX, exY;
+	getGameEx(exX, exY);
+	m_ex = min(exX, exY);
 	m_finishFlag = false;
 	m_cnt = 0;
 	m_animation = nullptr;
@@ -75,6 +78,25 @@ Movie::~Movie() {
 	}
 }
 
+void Movie::play() {
+
+	m_cnt++;
+
+	// メイン画像
+	m_animation->count();
+
+	// サブ画像
+	unsigned int size = (unsigned int)m_subAnimation.size();
+	for (unsigned int i = 0; i < size; i++) {
+		Animation* subAnimation = m_subAnimation.front();
+		m_subAnimation.pop();
+		subAnimation->count();
+		if (!subAnimation->getFinishFlag()) {
+			m_subAnimation.push(subAnimation);
+		}
+	}
+}
+
 
 // オープニング
 OpMovie::OpMovie(SoundPlayer* soundPlayer_p):
@@ -82,34 +104,34 @@ OpMovie::OpMovie(SoundPlayer* soundPlayer_p):
 {
 	string path = "picture/movie/op/";
 	// タイトル
-	m_titleH = new GraphHandles((path + "title/" + "h").c_str(), 4);
-	m_title = new GraphHandles((path + "title/" + "title").c_str(), 8);
-	m_titleChara = new GraphHandles((path + "title/" + "キャラ").c_str(), 5);
-	m_titleBlue = new GraphHandles((path + "title/" + "titleBlue").c_str(), 1);
-	m_titleOrange = new GraphHandles((path + "title/" + "titleOrange").c_str(), 1);
-	m_titleHeart = new GraphHandles((path + "title/" + "heart").c_str(), 1);
+	m_titleH = new GraphHandles((path + "title/" + "h").c_str(), 4, m_ex);
+	m_title = new GraphHandles((path + "title/" + "title").c_str(), 8, m_ex);
+	m_titleChara = new GraphHandles((path + "title/" + "キャラ").c_str(), 5, m_ex);
+	m_titleBlue = new GraphHandles((path + "title/" + "titleBlue").c_str(), 1, m_ex);
+	m_titleOrange = new GraphHandles((path + "title/" + "titleOrange").c_str(), 1, m_ex);
+	m_titleHeart = new GraphHandles((path + "title/" + "heart").c_str(), 1, m_ex);
 	// キャラ
-	m_archive = new GraphHandles((path + "アーカイブ").c_str(), 1);
-	m_aigis = new GraphHandles((path + "アイギス").c_str(), 1);
-	m_assault = new GraphHandles((path + "アサルト03").c_str(), 1);
-	m_vermelia = new GraphHandles((path + "ヴェルメリア").c_str(), 1);
-	m_exlucina = new GraphHandles((path + "エクスルキナ").c_str(), 1);
-	m_msadi = new GraphHandles((path + "エムサディ").c_str(), 1);
-	m_elnino = new GraphHandles((path + "エルニーニョ").c_str(), 1);
-	m_onyx = new GraphHandles((path + "オニュクス").c_str(), 1);
-	m_courir = new GraphHandles((path + "クーリール").c_str(), 1);
-	m_cornein = new GraphHandles((path + "コーネイン").c_str(), 1);
-	m_koharu = new GraphHandles((path + "コハル").c_str(), 1);
-	m_siesta = new GraphHandles((path + "シエスタ").c_str(), 5);
-	m_chocola = new GraphHandles((path + "ショコラ").c_str(), 1);
-	m_titius = new GraphHandles((path + "ティティウス").c_str(), 1);
-	m_heart = new GraphHandles((path + "ハート").c_str(), 1);
-	m_fred = new GraphHandles((path + "フレッド").c_str(), 1);
-	m_french = new GraphHandles((path + "フレンチ").c_str(), 1);
-	m_mascara = new GraphHandles((path + "マスカーラ").c_str(), 1);
-	m_yuri = new GraphHandles((path + "ユーリ").c_str(), 1);
-	m_rabbi = new GraphHandles((path + "ラビ―").c_str(), 1);
-	m_tank = new GraphHandles((path + "棒タンク").c_str(), 1);
+	m_archive = new GraphHandles((path + "アーカイブ").c_str(), 1, m_ex);
+	m_aigis = new GraphHandles((path + "アイギス").c_str(), 1, m_ex);
+	m_assault = new GraphHandles((path + "アサルト03").c_str(), 1, m_ex);
+	m_vermelia = new GraphHandles((path + "ヴェルメリア").c_str(), 1, m_ex);
+	m_exlucina = new GraphHandles((path + "エクスルキナ").c_str(), 1, m_ex);
+	m_msadi = new GraphHandles((path + "エムサディ").c_str(), 1, m_ex);
+	m_elnino = new GraphHandles((path + "エルニーニョ").c_str(), 1, m_ex);
+	m_onyx = new GraphHandles((path + "オニュクス").c_str(), 1, m_ex);
+	m_courir = new GraphHandles((path + "クーリール").c_str(), 1, m_ex);
+	m_cornein = new GraphHandles((path + "コーネイン").c_str(), 1, m_ex);
+	m_koharu = new GraphHandles((path + "コハル").c_str(), 1, m_ex);
+	m_siesta = new GraphHandles((path + "シエスタ").c_str(), 5, m_ex);
+	m_chocola = new GraphHandles((path + "ショコラ").c_str(), 1, m_ex);
+	m_titius = new GraphHandles((path + "ティティウス").c_str(), 1, m_ex);
+	m_heart = new GraphHandles((path + "ハート").c_str(), 1, m_ex);
+	m_fred = new GraphHandles((path + "フレッド").c_str(), 1, m_ex);
+	m_french = new GraphHandles((path + "フレンチ").c_str(), 1, m_ex);
+	m_mascara = new GraphHandles((path + "マスカーラ").c_str(), 1, m_ex);
+	m_yuri = new GraphHandles((path + "ユーリ").c_str(), 1, m_ex);
+	m_rabbi = new GraphHandles((path + "ラビ―").c_str(), 1, m_ex);
+	m_tank = new GraphHandles((path + "棒タンク").c_str(), 1, m_ex);
 
 	// 表示する順にpush
 	characterQueue.push(make_pair(m_koharu, 30));
@@ -178,8 +200,9 @@ OpMovie::~OpMovie() {
 }
 
 void OpMovie::play() {
-	m_cnt++;
-	m_animation->count();
+
+	// カウント
+	Movie::play();
 
 	// 画像を設定
 	if (m_cnt == 45) {
@@ -196,7 +219,7 @@ void OpMovie::play() {
 	}
 	else if (m_cnt < 600 && m_cnt >= 440) {
 		m_animation->changeGraph(m_titleHeart, 60);
-		m_animation->setX(m_animation->getX() + 8);
+		m_animation->setX(m_animation->getX() + (int)(8 * m_ex));
 	}
 	else if (m_cnt < 690 && m_cnt >= 600) {
 		m_animation->setX(GAME_WIDE / 2);

@@ -12,7 +12,8 @@ private:
 	const Conversation* m_conversation;
 
 	// テキストやフォントのサイズの倍率
-	double m_ex;
+	double m_exX;
+	double m_exY;
 	
 	// フォント（テキスト）
 	int m_textHandle;
