@@ -44,6 +44,8 @@ public:
 
 	~SelectSaveData();
 
+	int getSoundVolume();
+
 	// セーブデータが1つでも存在するか
 	bool saveDataExist();
 
@@ -57,7 +59,7 @@ public:
 	const char* useDirName();
 
 	// 全セーブデータ共通のデータをセーブ(タイトル画面のオプション用)
-	void saveCommon();
+	void saveCommon(int soundVolume);
 
 };
 
