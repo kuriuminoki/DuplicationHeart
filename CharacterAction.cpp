@@ -16,16 +16,31 @@ const char* FlightAction::ACTION_NAME = "FlightAction";
 
 // クラス名からCharacterActionを作成する関数
 CharacterAction* createAction(const string actionName, Character* character, SoundPlayer* soundPlayer_p) {
+
+	string tmp = actionName;
+
+	bool heavy = false;
+	if (tmp.size() >= 2) {
+		string last = tmp.substr(tmp.size() - 2);
+		if (last == "_x") {
+			heavy = true;
+			tmp.erase(tmp.size() - 2, 2);
+		}
+	}
+
 	CharacterAction* action = nullptr;
-	if (actionName == StickAction::ACTION_NAME) {
+	if (tmp == StickAction::ACTION_NAME) {
 		action = new StickAction(character, soundPlayer_p);
 	}
-	else if(actionName == ValkiriaAction::ACTION_NAME) {
+	else if(tmp == ValkiriaAction::ACTION_NAME) {
 		action = new ValkiriaAction(character, soundPlayer_p);
 	}
-	else if (actionName == FlightAction::ACTION_NAME) {
+	else if (tmp == FlightAction::ACTION_NAME) {
 		action = new FlightAction(character, soundPlayer_p);
 	}
+
+	action->setHeavy(heavy);
+
 	return action;
 }
 
@@ -66,6 +81,7 @@ CharacterAction::CharacterAction(Character* character, SoundPlayer* soundPlayer_
 	m_landCnt = 0;
 	m_boostCnt = 0;
 	m_damageCnt = 0;
+	m_heavy = false;
 }
 
 CharacterAction::CharacterAction() :
@@ -639,16 +655,18 @@ Object* StickAction::slashAttack(int gx, int gy) {
 
 // ダメージを受ける
 void StickAction::damage(int vx, int vy, int damageValue) {
-	setState(CHARACTER_STATE::DAMAGE);
-	m_vx += vx;
-	m_vy += vy;
-	// 地面についていても少しはダメージモーション
-	if(m_vy >= 0 && m_grand){ m_damageCnt = 20; }
-	m_character_p->setLeftDirection(m_vx > 0);
-	// 宙に浮かせる
-	m_grand = false;
-	m_grandRightSlope = false;
-	m_grandLeftSlope = false;
+	if (!m_heavy) {
+		setState(CHARACTER_STATE::DAMAGE);
+		m_vx += vx;
+		m_vy += vy;
+		// 地面についていても少しはダメージモーション
+		if (m_vy >= 0 && m_grand) { m_damageCnt = 20; }
+		m_character_p->setLeftDirection(m_vx > 0);
+		// 宙に浮かせる
+		m_grand = false;
+		m_grandRightSlope = false;
+		m_grandLeftSlope = false;
+	}
 	// HP減少
 	m_character_p->damageHp(damageValue);
 	m_boostCnt = 0;
@@ -1013,16 +1031,18 @@ Object* FlightAction::slashAttack(int gx, int gy) {
 
 // ダメージ
 void FlightAction::damage(int vx, int vy, int damageValue) {
-	setState(CHARACTER_STATE::DAMAGE);
-	m_vx += vx;
-	m_vy += vy;
-	// ダメージモーションの時間
-	m_damageCnt = 20;
-	m_character_p->setLeftDirection(m_vx > 0);
-	// 宙に浮かせる
-	m_grand = false;
-	m_grandRightSlope = false;
-	m_grandLeftSlope = false;
+	if (!m_heavy) {
+		setState(CHARACTER_STATE::DAMAGE);
+		m_vx += vx;
+		m_vy += vy;
+		// ダメージモーションの時間
+		m_damageCnt = 20;
+		m_character_p->setLeftDirection(m_vx > 0);
+		// 宙に浮かせる
+		m_grand = false;
+		m_grandRightSlope = false;
+		m_grandLeftSlope = false;
+	}
 	// HP減少
 	m_character_p->damageHp(damageValue);
 	m_boostCnt = 0;

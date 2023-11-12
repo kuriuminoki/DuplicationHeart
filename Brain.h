@@ -292,7 +292,7 @@ public:
 	const char* getBrainName() const { return this->BRAIN_NAME; }
 
 	int slashOrder();
-	int bulletOrder();
+	int bulletOrder() { return 0; }
 	void moveOrder(int& right, int& left, int& up, int& down);
 
 	// ’ÇÕ‘ÎÛ‚Ì‹ß‚­‚É‚¢‚é‚©”»’è
@@ -329,6 +329,45 @@ public:
 	static const char* BRAIN_NAME;
 	const char* getBrainName() const { return this->BRAIN_NAME; }
 	void moveOrder(int& right, int& left, int& up, int& down);
+};
+
+
+/*
+* ŽËŒ‚‚Ì‚Ý‚ð‚·‚éNormalAI
+*/
+class BulletOnlyAI :
+	public NormalAI
+{
+public:
+	static const char* BRAIN_NAME;
+	const char* getBrainName() const { return this->BRAIN_NAME; }
+
+	int slashOrder() { return 0; }
+};
+
+
+/*
+* ŽaŒ‚‚Ì‚Ý‚ð‚·‚éNormalAI
+*/
+class SlashOnlyAI :
+	public NormalAI
+{
+public:
+	static const char* BRAIN_NAME;
+	const char* getBrainName() const { return this->BRAIN_NAME; }
+
+	int bulletOrder() { return 0; }
+};
+
+
+class ParabolaOnlyAI :
+	public ParabolaAI
+{
+public:
+	static const char* BRAIN_NAME;
+	const char* getBrainName() const { return this->BRAIN_NAME; }
+
+	int slashOrder() { return 0; }
 };
 
 

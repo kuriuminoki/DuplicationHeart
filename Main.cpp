@@ -99,6 +99,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 				// ゲームを再起動
 				delete title;
 				ChangeWindowMode(WINDOW), DxLib_Init(), SetDrawScreen(DX_SCREEN_BACK);
+				SetMouseDispFlag(MOUSE_DISP);//マウス表示
 				title = new Title();
 			}
 		}

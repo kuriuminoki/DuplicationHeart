@@ -22,6 +22,9 @@ const char* FollowParabolaAI::BRAIN_NAME = "FollowParabolaAI";
 const char* ValkiriaAI::BRAIN_NAME = "ValkiriaAI";
 const char* FlightAI::BRAIN_NAME = "FlightAI";
 const char* FollowFlightAI::BRAIN_NAME = "FollowFlightAI";
+const char* BulletOnlyAI::BRAIN_NAME = "BulletOnlyAI";
+const char* SlashOnlyAI::BRAIN_NAME = "SlashOnlyAI";
+const char* ParabolaOnlyAI::BRAIN_NAME = "ParabolaOnlyAI";
 
 // ÉNÉâÉXñºÇ©ÇÁBrainÇçÏê¨Ç∑ÇÈä÷êî
 Brain* createBrain(const string brainName, const Camera* camera_p) {
@@ -52,6 +55,15 @@ Brain* createBrain(const string brainName, const Camera* camera_p) {
 	}
 	else if (brainName == FollowFlightAI::BRAIN_NAME) {
 		brain = new FollowFlightAI();
+	}
+	else if (brainName == BulletOnlyAI::BRAIN_NAME) {
+		brain = new BulletOnlyAI();
+	}
+	else if (brainName == SlashOnlyAI::BRAIN_NAME) {
+		brain = new SlashOnlyAI();
+	}
+	else if (brainName == ParabolaOnlyAI::BRAIN_NAME) {
+		brain = new ParabolaOnlyAI();
 	}
 	return brain;
 }
@@ -579,10 +591,6 @@ int ValkiriaAI::slashOrder() {
 	if (GetRand(30) == 0) {
 		return 1;
 	}
-	return 0;
-}
-
-int ValkiriaAI::bulletOrder() {
 	return 0;
 }
 

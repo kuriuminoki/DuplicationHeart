@@ -33,6 +33,15 @@ Character* createCharacter(const char* characterName, int hp, int x, int y, int 
 	else if (name == "ƒgƒƒC") {
 		character = new Troy(name.c_str(), hp, x, y, groupId);
 	}
+	else if (name == "–_lŠÔ" || name == "ƒNƒlŠÔ") {
+		character = new SlashOnly(name.c_str(), hp, x, y, groupId);
+	}
+	else if (name == "—ÎlŠÔ" || name == "ƒtƒF[ƒŒ[ƒX") {
+		character = new BulletOnly(name.c_str(), hp, x, y, groupId);
+	}
+	else if (name == "‘å–C") {
+		character = new ParabolaOnly(name.c_str(), hp, x, y, groupId);
+	}
 	else {
 		character = new Heart(name.c_str(), hp, x, y, groupId);
 	}
@@ -661,4 +670,82 @@ Character* Troy::createCopy() {
 // ŽaŒ‚UŒ‚‚ð‚·‚é(ƒLƒƒƒ‰‚²‚Æ‚Éˆá‚¤)
 Object* Troy::slashAttack(bool leftDirection, int cnt, SoundPlayer* soundPlayer) {
 	return nullptr;
+}
+
+
+/*
+* •’Ê‚ÌŽËŒ‚‚Ì‚Ý‚ð‚·‚éƒLƒƒƒ‰
+*/
+BulletOnly::BulletOnly(const char* name, int hp, int x, int y, int groupId) :
+	Heart(name, hp, x, y, groupId)
+{
+
+}
+BulletOnly::BulletOnly(const char* name, int hp, int x, int y, int groupId, AttackInfo* attackInfo) :
+	Heart(name, hp, x, y, groupId, attackInfo)
+{
+
+}
+
+Character* BulletOnly::createCopy() {
+	Character* res = new BulletOnly(m_characterInfo->name().c_str(), m_hp, m_x, m_y, m_groupId, m_attackInfo);
+	setParam(res);
+	return res;
+}
+
+/*
+* •’Ê‚ÌŽaŒ‚‚Ì‚Ý‚ð‚·‚éƒLƒƒƒ‰
+*/
+SlashOnly::SlashOnly(const char* name, int hp, int x, int y, int groupId) :
+	Heart(name, hp, x, y, groupId)
+{
+
+}
+SlashOnly::SlashOnly(const char* name, int hp, int x, int y, int groupId, AttackInfo* attackInfo) :
+	Heart(name, hp, x, y, groupId, attackInfo)
+{
+
+}
+
+Character* SlashOnly::createCopy() {
+	Character* res = new SlashOnly(m_characterInfo->name().c_str(), m_hp, m_x, m_y, m_groupId, m_attackInfo);
+	setParam(res);
+	return res;
+}
+
+
+/*
+* ParabolaBullet‚Ì‚Ý‚ðŒ‚‚ÂƒLƒƒƒ‰
+*/
+ParabolaOnly::ParabolaOnly(const char* name, int hp, int x, int y, int groupId) :
+	Heart(name, hp, x, y, groupId)
+{
+
+}
+ParabolaOnly::ParabolaOnly(const char* name, int hp, int x, int y, int groupId, AttackInfo* attackInfo) :
+	Heart(name, hp, x, y, groupId, attackInfo)
+{
+
+}
+
+Character* ParabolaOnly::createCopy() {
+	Character* res = new ParabolaOnly(m_characterInfo->name().c_str(), m_hp, m_x, m_y, m_groupId, m_attackInfo);
+	setParam(res);
+	return res;
+}
+
+// ŽËŒ‚UŒ‚‚ð‚·‚é(ƒLƒƒƒ‰‚²‚Æ‚Éˆá‚¤)
+Object* ParabolaOnly::bulletAttack(int gx, int gy, SoundPlayer* soundPlayer) {
+	ParabolaBullet* attackObject = new ParabolaBullet(getCenterX(), getCenterY(), m_bulletColor, gx, gy, m_attackInfo);
+	// Ž©–Å–hŽ~
+	attackObject->setCharacterId(m_id);
+	// ƒ`[ƒ€ƒLƒ‹–hŽ~
+	attackObject->setGroupId(m_groupId);
+	// Œø‰Ê‰¹
+	if (soundPlayer != nullptr) {
+		soundPlayer->pushSoundQueue(m_attackInfo->bulletStartSoundeHandle(),
+			adjustPanSound(getCenterX(),
+				soundPlayer->getCameraX()));
+	}
+	return attackObject;
 }

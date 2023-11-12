@@ -589,6 +589,11 @@ void BulletObject::action() {
 }
 
 
+ParabolaBullet::ParabolaBullet(int x, int y, int color, int gx, int gy, AttackInfo* attackInfo):
+	BulletObject(x, y, color, gx, gy, attackInfo)
+{
+
+}
 ParabolaBullet::ParabolaBullet(int x, int y, GraphHandle* handle, int gx, int gy, AttackInfo* attackInfo):
 	BulletObject(x, y, -1, gx, gy, attackInfo)
 {
