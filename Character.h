@@ -440,4 +440,58 @@ public:
 };
 
 
+/*
+* 普通の射撃のみをするキャラ
+*/
+class BulletOnly :
+	public Heart
+{
+public:
+	// コンストラクタ
+	BulletOnly(const char* name, int hp, int x, int y, int groupId);
+	BulletOnly(const char* name, int hp, int x, int y, int groupId, AttackInfo* attackInfo);
+
+	Character* createCopy();
+
+	// 斬撃攻撃をする(キャラごとに違う)
+	Object* slashAttack(bool leftDirection, int cnt, SoundPlayer* soundPlayer) { return nullptr; }
+};
+
+
+/*
+* 普通の斬撃のみをするキャラ
+*/
+class SlashOnly :
+	public Heart
+{
+public:
+	// コンストラクタ
+	SlashOnly(const char* name, int hp, int x, int y, int groupId);
+	SlashOnly(const char* name, int hp, int x, int y, int groupId, AttackInfo* attackInfo);
+
+	Character* createCopy();
+
+	// 射撃攻撃をする(キャラごとに違う)
+	Object* bulletAttack(int gx, int gy, SoundPlayer* soundPlayer) { return nullptr; }
+};
+
+
+/*
+* ParabolaBulletのみを撃つキャラ
+*/
+class ParabolaOnly :
+	public Heart
+{
+public:
+	// コンストラクタ
+	ParabolaOnly(const char* name, int hp, int x, int y, int groupId);
+	ParabolaOnly(const char* name, int hp, int x, int y, int groupId, AttackInfo* attackInfo);
+
+	Character* createCopy();
+
+	// 射撃攻撃をする(キャラごとに違う)
+	Object* bulletAttack(int gx, int gy, SoundPlayer* soundPlayer);
+};
+
+
 #endif

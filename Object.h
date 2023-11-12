@@ -291,6 +291,7 @@ class ParabolaBullet :
 public:
 	static const int G = 2;
 
+	ParabolaBullet(int x, int y, int color, int gx, int gy, AttackInfo* attackInfo);
 	ParabolaBullet(int x, int y, GraphHandle* handle, int gx, int gy, AttackInfo* attackInfo);
 	ParabolaBullet(int x, int y, GraphHandle* handle, int gx, int gy);
 

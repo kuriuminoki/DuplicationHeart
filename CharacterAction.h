@@ -67,6 +67,9 @@ protected:
 	int m_boostCnt;
 	const int BOOST_TIME = 10;
 
+	// ノックバックなしのキャラならtrue
+	bool m_heavy = false;
+
 	// 移動中
 	bool m_moveRight;
 	bool m_moveLeft;
@@ -157,6 +160,7 @@ public:
 	void setLandCnt(int landCnt) { m_landCnt = landCnt; }
 	void setBoostCnt(int boostCnt) { m_boostCnt = boostCnt; }
 	void setDamageCnt(int damageCnt) { m_damageCnt = damageCnt; }
+	void setHeavy(bool heavy) { m_heavy = heavy; }
 
 	// 今ダメージを受けていて動けない
 	inline bool damageFlag() const { return m_state == CHARACTER_STATE::DAMAGE; }
