@@ -58,6 +58,10 @@ SelectSaveData::~SelectSaveData() {
 	}
 }
 
+int SelectSaveData::getSoundVolume() {
+	return m_gameData[0]->getSoundVolume();
+}
+
 // セーブデータが1つでも存在するか
 bool SelectSaveData::saveDataExist() {
 	for (int i = 0; i < GAME_DATA_SUM; i++) {
@@ -118,8 +122,8 @@ const char* SelectSaveData::useDirName() {
 }
 
 // 全セーブデータ共通のデータをセーブ(タイトル画面のオプション用)
-void SelectSaveData::saveCommon() {
-	m_gameData[0]->saveCommon(m_gameData[0]->getSoundVolume(), GAME_WIDE, GAME_HEIGHT);
+void SelectSaveData::saveCommon(int soundVolume) {
+	m_gameData[0]->saveCommon(soundVolume, GAME_WIDE, GAME_HEIGHT);
 }
 
 
@@ -136,12 +140,12 @@ Title::Title() {
 
 	m_titleGraph = LoadGraph("picture/movie/op/title/titleBlue.png");
 
+	// セーブデータ選択画面
 	m_selectSaveData = new SelectSaveData();
 
-	m_option = new TitleOption(m_soundPlayer);
-
-	// セーブデータがあるならOP
+	// セーブデータがあるならOP用意と音量セット
 	if (m_selectSaveData->saveDataExist()) { 
+		m_soundPlayer->setVolume(m_selectSaveData->getSoundVolume());
 		m_movie = new OpMovie(m_soundPlayer);
 		m_animationDrawer = new AnimationDrawer(nullptr);
 	}
@@ -155,6 +159,9 @@ Title::Title() {
 	m_selectButton = new Button("Game Start", (int)(500 * exX), (int)(800 * exY), (int)(920 * exX), (int)(80 * exY), GRAY2, BLUE, m_font, BLACK);
 	m_optionButton = new Button("Setting", (int)(500 * exX), (int)(900 * exY), (int)(920 * exX), (int)(80 * exY), GRAY2, BLUE, m_font, BLACK);
 	m_cancelButton = new Button("Backward", (int)(50 * exX), (int)(50 * exY), (int)(300 * exX), (int)(100 * exY), GRAY2, WHITE, m_font, BLACK);
+
+	// オプション画面
+	m_option = new TitleOption(m_soundPlayer);
 
 }
 
@@ -215,7 +222,7 @@ Title::TITLE_RESULT Title::play() {
 			// 解像度を更新して再起動
 			GAME_WIDE = m_option->getNewGameWide();
 			GAME_HEIGHT = m_option->getNewGameHeight();
-			m_selectSaveData->saveCommon();
+			m_selectSaveData->saveCommon(m_option->getNewSoundVolume());
 			SetGraphMode(GAME_WIDE, GAME_HEIGHT, GAME_COLOR_BIT_NUM);
 			return REBOOT;
 		}

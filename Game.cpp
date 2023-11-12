@@ -139,6 +139,8 @@ void DoorData::load(FILE* intFp, FILE* strFp) {
 // 初期状態のデータを作成
 GameData::GameData() {
 
+	m_soundVolume = 50;
+
 	loadCommon(&m_soundVolume, &GAME_WIDE, &GAME_HEIGHT);
 
 	m_saveFilePath = "";
@@ -152,8 +154,6 @@ GameData::GameData() {
 		m_areaNum = 0;
 		m_storyNum = 0;
 	}
-
-	m_soundVolume = 50;
 
 	// 主要キャラを設定
 	const int mainSum = 6;

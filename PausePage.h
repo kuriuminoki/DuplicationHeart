@@ -88,6 +88,8 @@ public:
 	GamePause(SoundPlayer* soundPlayer);
 	~GamePause();
 
+	int getNewSoundVolume();
+
 	void play();
 
 	void draw() const;

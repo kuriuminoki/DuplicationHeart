@@ -114,6 +114,10 @@ GamePause::~GamePause() {
 	delete m_soundController;
 }
 
+int GamePause::getNewSoundVolume() {
+	return m_soundPlayer_p->getVolume();
+}
+
 void GamePause::play() {
 
 	// マウスカーソルの位置取得
