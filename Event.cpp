@@ -115,7 +115,7 @@ Event::~Event() {
 		delete m_eventFire[i];
 	}
 	for (unsigned int i = 0; i < m_eventElement.size(); i++) {
-		delete m_eventElement[i];
+		delete (m_eventElement[i]);
 	}
 }
 
@@ -202,6 +202,10 @@ void CharacterPointFire::setWorld(World* world) {
 */
 EventElement::EventElement(World* world) {
 	m_world_p = world;
+}
+
+EventElement::~EventElement() {
+	int test = 0;
 }
 
 

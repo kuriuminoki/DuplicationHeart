@@ -84,6 +84,9 @@ protected:
 	// BGM‚ÌƒpƒX
 	std::string m_bgmPath;
 
+	// ‚à‚Æ‚à‚Æ—¬‚µ‚Ä‚¢‚½BGM
+	std::string m_originalBgmPath;
+
 public:
 	Movie(SoundPlayer* soundPlayer_p);
 	~Movie();

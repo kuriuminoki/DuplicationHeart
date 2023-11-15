@@ -49,6 +49,7 @@ protected:
 
 public:
 	EventElement(World* world);
+	virtual ~EventElement();
 
 	// ‰Šú‰»
 	virtual void init(){}

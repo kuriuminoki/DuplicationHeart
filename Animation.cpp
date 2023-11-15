@@ -71,12 +71,14 @@ Movie::Movie(SoundPlayer* soundPlayer_p) {
 	m_animation = nullptr;
 	m_soundPlayer_p = soundPlayer_p;
 	m_bgmPath = "";
+	m_originalBgmPath = m_soundPlayer_p->getBgmName();
 }
 
 Movie::~Movie() {
 	if (m_animation != nullptr) {
 		delete m_animation;
 	}
+	m_soundPlayer_p->setBGM(m_originalBgmPath);
 }
 
 void Movie::play() {
