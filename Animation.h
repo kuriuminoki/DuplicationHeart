@@ -89,7 +89,7 @@ protected:
 
 public:
 	Movie(SoundPlayer* soundPlayer_p);
-	~Movie();
+	virtual ~Movie();
 
 	// ƒQƒbƒ^
 	bool getFinishFlag() const { return m_finishFlag; }
