@@ -2,6 +2,7 @@
 #define ANIMATION_H_INCLUDED
 
 #include <queue>
+#include <string>
 
 class GraphHandle;
 class GraphHandles;
@@ -79,6 +80,9 @@ protected:
 
 	// サウンドプレイヤー
 	SoundPlayer* m_soundPlayer_p;
+
+	// BGMのパス
+	std::string m_bgmPath;
 
 public:
 	Movie(SoundPlayer* soundPlayer_p);

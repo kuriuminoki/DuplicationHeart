@@ -151,6 +151,7 @@ EVENT_RESULT Event::play() {
 		}
 		else { 
 			// ‚Ü‚¾ƒCƒxƒ“ƒg‘±‚­
+			m_eventElement[m_nowElement]->init();
 			return EVENT_RESULT::NOW;
 		}
 	}
@@ -322,11 +323,14 @@ MovieEvent::MovieEvent(World* world, SoundPlayer* soundPlayer, std::vector<std::
 {
 	//int textNum = stoi(param[1]);
 	m_movie = new OpMovie(soundPlayer);
-	m_world_p->setMovie(m_movie);
 }
 
 MovieEvent::~MovieEvent() {
 	delete m_movie;
+}
+
+void MovieEvent::init() {
+	m_world_p->setMovie(m_movie);
 }
 
 EVENT_RESULT MovieEvent::play() {
