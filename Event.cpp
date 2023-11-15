@@ -115,7 +115,7 @@ Event::~Event() {
 		delete m_eventFire[i];
 	}
 	for (unsigned int i = 0; i < m_eventElement.size(); i++) {
-		delete m_eventElement[i];
+		delete (m_eventElement[i]);
 	}
 }
 
@@ -151,6 +151,7 @@ EVENT_RESULT Event::play() {
 		}
 		else { 
 			// ‚Ü‚¾ƒCƒxƒ“ƒg‘±‚­
+			m_eventElement[m_nowElement]->init();
 			return EVENT_RESULT::NOW;
 		}
 	}
@@ -201,6 +202,10 @@ void CharacterPointFire::setWorld(World* world) {
 */
 EventElement::EventElement(World* world) {
 	m_world_p = world;
+}
+
+EventElement::~EventElement() {
+	int test = 0;
 }
 
 
@@ -322,11 +327,14 @@ MovieEvent::MovieEvent(World* world, SoundPlayer* soundPlayer, std::vector<std::
 {
 	//int textNum = stoi(param[1]);
 	m_movie = new OpMovie(soundPlayer);
-	m_world_p->setMovie(m_movie);
 }
 
 MovieEvent::~MovieEvent() {
 	delete m_movie;
+}
+
+void MovieEvent::init() {
+	m_world_p->setMovie(m_movie);
 }
 
 EVENT_RESULT MovieEvent::play() {

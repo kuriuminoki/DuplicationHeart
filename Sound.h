@@ -28,9 +28,13 @@ public:
 	SoundPlayer();
 	~SoundPlayer();
 
-	void setVolume(int volume);
+	// ゲッタ
 	inline int getVolume() const { return m_volume; }
 	inline int getCameraX() const { return m_cameraX; }
+	const char* getBgmName() const { return m_bgmName.c_str(); }
+
+	// セッタ
+	void setVolume(int volume);
 	inline void setCameraX(int cameraX) { m_cameraX = cameraX; }
 
 	// BGMをセット（変更）

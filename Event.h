@@ -49,11 +49,18 @@ protected:
 
 public:
 	EventElement(World* world);
+	virtual ~EventElement();
+
+	// 初期化
+	virtual void init(){}
+
+	// プレイ
 	virtual EVENT_RESULT play() = 0;
 
 	// ハートのスキル発動が可能かどうか
 	virtual bool skillAble() = 0;
 
+	// セッタ
 	virtual void setWorld(World* world) { m_world_p = world; }
 };
 
@@ -157,6 +164,7 @@ private:
 public:
 	ChangeBrainEvent(World* world, std::vector<std::string> param);
 
+	// プレイ
 	EVENT_RESULT play();
 
 	// ハートのスキル発動が可能かどうか
@@ -183,6 +191,7 @@ private:
 public:
 	ChangeGroupEvent(World* world, std::vector<std::string> param);
 
+	// プレイ
 	EVENT_RESULT play();
 
 	// ハートのスキル発動が可能かどうか
@@ -207,6 +216,7 @@ private:
 public:
 	DeadCharacterEvent(World* world, std::vector<std::string> param);
 
+	// プレイ
 	EVENT_RESULT play();
 
 	// ハートのスキル発動が可能かどうか
@@ -231,6 +241,7 @@ private:
 public:
 	DeadGroupEvent(World* world, std::vector<std::string> param);
 
+	// プレイ
 	EVENT_RESULT play();
 
 	// ハートのスキル発動が可能かどうか
@@ -249,6 +260,7 @@ public:
 	TalkEvent(World* world, SoundPlayer* soundPlayer, std::vector<std::string> param);
 	~TalkEvent();
 
+	// プレイ
 	EVENT_RESULT play();
 
 	// ハートのスキル発動が可能かどうか
@@ -267,6 +279,10 @@ public:
 	MovieEvent(World* world, SoundPlayer* soundPlayer, std::vector<std::string> param);
 	~MovieEvent();
 
+	// 初期化
+	void init();
+
+	// プレイ
 	EVENT_RESULT play();
 
 	// ハートのスキル発動が可能かどうか

@@ -70,15 +70,24 @@ Movie::Movie(SoundPlayer* soundPlayer_p) {
 	m_cnt = 0;
 	m_animation = nullptr;
 	m_soundPlayer_p = soundPlayer_p;
+	m_bgmPath = "";
+	m_originalBgmPath = m_soundPlayer_p->getBgmName();
 }
 
 Movie::~Movie() {
 	if (m_animation != nullptr) {
 		delete m_animation;
 	}
+	m_soundPlayer_p->setBGM(m_originalBgmPath);
 }
 
 void Movie::play() {
+
+	if (m_cnt == 0) {
+		// 音楽開始
+		m_soundPlayer_p->setBGM(m_bgmPath.c_str());
+		m_soundPlayer_p->clearSoundQueue();
+	}
 
 	m_cnt++;
 
@@ -158,9 +167,8 @@ OpMovie::OpMovie(SoundPlayer* soundPlayer_p):
 	// 最初の画像
 	m_animation = new Animation(GAME_WIDE / 2, GAME_HEIGHT / 2, 120, m_titleH);
 
-	// 音楽
-	m_soundPlayer_p->setBGM("sound/movie/kobune.mp3");
-	m_soundPlayer_p->clearSoundQueue();
+	// BGM
+	m_bgmPath = "sound/movie/kobune.mp3";
 }
 
 OpMovie::~OpMovie() {
