@@ -41,6 +41,7 @@ protected:
 public:
 	Object();
 	Object(int x1, int y1, int x2, int y2, int hp = -1);
+	virtual ~Object() { }
 
 	virtual Object* createCopy() = 0;
 	void setParam(Object* object);

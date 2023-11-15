@@ -86,7 +86,7 @@ private:
 
 public:
 	GamePause(SoundPlayer* soundPlayer);
-	~GamePause();
+	virtual ~GamePause();
 
 	int getNewSoundVolume();
 

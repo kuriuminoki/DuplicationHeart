@@ -202,7 +202,7 @@ public:
 	// コンストラクタ
 	Character();
 	Character(int hp, int x, int y, int groupId);
-	~Character();
+	virtual ~Character();
 
 	virtual Character* createCopy() = 0;
 	void setParam(Character* character);
