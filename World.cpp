@@ -681,6 +681,7 @@ void World::controlCharacter() {
 		// オブジェクトとの当たり判定
 		atariCharacterAndObject(controller, m_stageObjects);
 		atariCharacterAndObject(controller, m_attackObjects);
+		atariCharacterAndObject(controller, m_stageObjects);
 		if (controller->getAction()->getCharacter()->getId() == m_playerId) {
 			atariCharacterAndDoor(controller, m_doorObjects);
 		}

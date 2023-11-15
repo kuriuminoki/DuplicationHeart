@@ -122,7 +122,7 @@ class BoxObject :
 {
 private:
 	// 段差とみなして自動で乗り越えられる高さ
-	const int STAIR_HEIGHT = 50;
+	const int STAIR_HEIGHT = 200;
 
 	// オブジェクトの色
 	int m_color;
