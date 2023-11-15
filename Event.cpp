@@ -205,7 +205,7 @@ EventElement::EventElement(World* world) {
 }
 
 EventElement::~EventElement() {
-	int test = 0;
+
 }
 
 
