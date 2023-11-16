@@ -191,8 +191,8 @@ public:
 	// 斬撃攻撃
 	virtual Object* slashAttack(int gx, int gy) = 0;
 
-	// ダメージ
-	virtual void damage(int vx, int vy, int damageValue) = 0;
+	// ダメージ 必要に応じてオーバーライド
+	virtual void damage(int vx, int vy, int damageValue);
 
 	// 斬撃開始の処理 必要に応じてオーバーライド
 	virtual void startSlash();
@@ -266,9 +266,6 @@ public:
 
 	// 斬撃攻撃
 	Object* slashAttack(int gx, int gy);
-
-	// ダメージ
-	void damage(int vx, int vy, int damageValue);
 };
 
 
@@ -347,9 +344,6 @@ public:
 
 	// 斬撃攻撃
 	Object* slashAttack(int gx, int gy);
-
-	// ダメージ
-	void damage(int vx, int vy, int damageValue);
 };
 
 

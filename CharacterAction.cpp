@@ -147,6 +147,24 @@ void CharacterAction::setCharacterLeftDirection(bool leftDirection) {
 	m_character_p->setLeftDirection(leftDirection);
 }
 
+// ダメージ
+void CharacterAction::damage(int vx, int vy, int damageValue) {
+	m_damageCnt = 20;
+	setState(CHARACTER_STATE::DAMAGE);
+	if (!m_heavy) {
+		m_vx += vx;
+		m_vy += vy;
+		m_character_p->setLeftDirection(m_vx > 0);
+		// 宙に浮かせる
+		m_grand = false;
+		m_grandRightSlope = false;
+		m_grandLeftSlope = false;
+	}
+	// HP減少
+	m_character_p->damageHp(damageValue);
+	m_boostCnt = 0;
+}
+
 void CharacterAction::startSlash() {
 
 }
@@ -189,9 +207,11 @@ void CharacterAction::setGrand(bool grand) {
 
 void CharacterAction::setSquat(bool squat) {
 	if (squat && m_grand && m_state != CHARACTER_STATE::DAMAGE && m_state != CHARACTER_STATE::SLASH && m_state != CHARACTER_STATE::PREJUMP) {
+		// しゃがめる状態なのでしゃがむ
 		m_squat = true;
 	}
 	else {
+		// しゃがめない状態
 		m_squat = false;
 	}
 }
@@ -653,25 +673,6 @@ Object* StickAction::slashAttack(int gx, int gy) {
 	return m_character_p->slashAttack(m_attackLeftDirection, m_slashCnt, m_soundPlayer_p);
 }
 
-// ダメージを受ける
-void StickAction::damage(int vx, int vy, int damageValue) {
-	if (!m_heavy) {
-		setState(CHARACTER_STATE::DAMAGE);
-		m_vx += vx;
-		m_vy += vy;
-		// 地面についていても少しはダメージモーション
-		if (m_vy >= 0 && m_grand) { m_damageCnt = 20; }
-		m_character_p->setLeftDirection(m_vx > 0);
-		// 宙に浮かせる
-		m_grand = false;
-		m_grandRightSlope = false;
-		m_grandLeftSlope = false;
-	}
-	// HP減少
-	m_character_p->damageHp(damageValue);
-	m_boostCnt = 0;
-}
-
 
 /*
 * ヴァルキリア用Action 斬撃時に移動する
@@ -694,7 +695,7 @@ CharacterAction* ValkiriaAction::createCopy(vector<Character*> characters) {
 	return res;
 }
 
-// 着地
+// 着地 ヴァルキリアは斬撃中に着地しても着地モーションにならない
 void ValkiriaAction::setGrand(bool grand) {
 	if (m_vy > 0) { // 着地モーションになる
 		if (m_slashCnt == 0) {
@@ -734,14 +735,14 @@ void ValkiriaAction::finishSlash() {
 	m_slashCnt = 0;
 }
 
-// ダメージを受ける
+// ダメージを受ける ヴァルキリアは斬撃中はHPが減るだけ
 void ValkiriaAction::damage(int vx, int vy, int damageValue) {
 	if (m_slashCnt > 0) {
 		// HP減少
 		m_character_p->damageHp(damageValue / 2);
 	}
 	else {
-		StickAction::damage(vx, vy, damageValue);
+		CharacterAction::damage(vx, vy, damageValue);
 	}
 }
 
@@ -1027,23 +1028,4 @@ Object* FlightAction::slashAttack(int gx, int gy) {
 	}
 	// 攻撃のタイミングじゃないならnullptrが返る
 	return m_character_p->slashAttack(m_attackLeftDirection, m_slashCnt, m_soundPlayer_p);
-}
-
-// ダメージ
-void FlightAction::damage(int vx, int vy, int damageValue) {
-	if (!m_heavy) {
-		setState(CHARACTER_STATE::DAMAGE);
-		m_vx += vx;
-		m_vy += vy;
-		// ダメージモーションの時間
-		m_damageCnt = 20;
-		m_character_p->setLeftDirection(m_vx > 0);
-		// 宙に浮かせる
-		m_grand = false;
-		m_grandRightSlope = false;
-		m_grandLeftSlope = false;
-	}
-	// HP減少
-	m_character_p->damageHp(damageValue);
-	m_boostCnt = 0;
 }
