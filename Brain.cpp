@@ -628,8 +628,7 @@ void FlightAI::moveOrder(int& right, int& left, int& up, int& down) {
 		}
 		else {
 			// ƒ‰ƒ“ƒ_ƒ€‚Éİ’è
-			m_gx = GetRand(200) - 400;
-			m_gx += x;
+			m_gx = x + (GetRand(200) - 400);
 			m_gy = y + (GetRand(200) - 100);
 		}
 		if (abs(x - m_gx) < 50) { m_gx = x; }
@@ -664,8 +663,7 @@ void FollowFlightAI::moveOrder(int& right, int& left, int& up, int& down) {
 		}
 		else {
 			// ƒ‰ƒ“ƒ_ƒ€‚Éİ’è
-			m_gx = GetRand(200) - 400;
-			m_gx += x;
+			m_gx = x + (GetRand(200) - 400);
 			m_gy = y + (GetRand(200) - 100);
 		}
 		if (abs(x - m_gx) < 50) { m_gx = x; }

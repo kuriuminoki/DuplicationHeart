@@ -149,7 +149,7 @@ void CharacterAction::setCharacterLeftDirection(bool leftDirection) {
 
 // É_ÉÅÅ[ÉW
 void CharacterAction::damage(int vx, int vy, int damageValue) {
-	m_damageCnt = 20;
+	m_damageCnt = DAMAGE_TIME;
 	setState(CHARACTER_STATE::DAMAGE);
 	if (!m_heavy) {
 		m_vx += vx;
