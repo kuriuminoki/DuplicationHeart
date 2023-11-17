@@ -115,6 +115,7 @@ void CharacterAction::setParam(CharacterAction* action) {
 	action->setLandCnt(m_landCnt);
 	action->setBoostCnt(m_boostCnt);
 	action->setDamageCnt(m_damageCnt);
+	action->setHeavy(m_heavy);
 }
 
 void CharacterAction::setState(CHARACTER_STATE state) {
