@@ -504,13 +504,18 @@ const Character* FollowNormalAI::getFollow() const {
 bool FollowNormalAI::checkAlreadyFollow() {
 	// 追跡対象がいない
 	if (m_follow_p == nullptr) { return true; }
-	// ハートがスキル発動中で動かないなら無視
-	if (m_follow_p->getFreeze()) { return true; }
 	int followX = m_follow_p->getCenterX();
 	return  m_gx < followX + FOLLOW_X_ERROR && m_gx > followX - FOLLOW_X_ERROR;
 }
 
 void FollowNormalAI::moveOrder(int& right, int& left, int& up, int& down) {
+
+	// ハートがスキル発動中で動かないなら無視
+	if (m_follow_p != nullptr && m_follow_p->getFreeze()) { 
+		NormalAI::moveOrder(right, left, up, down);
+		return;
+	}
+
 	// 現在地
 	int x = m_characterAction_p->getCharacter()->getCenterX();
 	int y = m_characterAction_p->getCharacter()->getCenterY();
@@ -686,6 +691,13 @@ int ValkiriaAI::slashOrder() {
 }
 
 void ValkiriaAI::moveOrder(int& right, int& left, int& up, int& down) {
+
+	// ハートがスキル発動中で動かないなら無視
+	if (m_follow_p != nullptr && m_follow_p->getFreeze()) {
+		NormalAI::moveOrder(right, left, up, down);
+		return;
+	}
+
 	if (m_characterAction_p->getSlashCnt() > 0) {
 		// 攻撃中は移動しない
 		right = 0; left = 0; up = 0; down = 0;
@@ -798,6 +810,13 @@ Brain* FollowFlightAI::createCopy(std::vector<Character*> characters, const Came
 }
 
 void FollowFlightAI::moveOrder(int& right, int& left, int& up, int& down) {
+
+	// ハートがスキル発動中で動かないなら無視
+	if (m_follow_p != nullptr && m_follow_p->getFreeze()) {
+		NormalAI::moveOrder(right, left, up, down);
+		return;
+	}
+
 	// 現在地
 	int x = m_characterAction_p->getCharacter()->getCenterX();
 	int y = m_characterAction_p->getCharacter()->getCenterY();
