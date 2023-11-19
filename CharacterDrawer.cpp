@@ -3,6 +3,7 @@
 #include "Character.h"
 #include "CharacterAction.h"
 #include "GraphHandle.h"
+#include "Define.h"
 #include "DxLib.h"
 
 
@@ -23,6 +24,7 @@ int CharacterDrawer::DAMAGE_COLOR = GetColor(0, 0, 0);
 CharacterDrawer::CharacterDrawer(const CharacterAction* const characterAction) {
 	m_characterAction = characterAction;
 	m_cnt = 0;
+	getGameEx(m_exX, m_exY);
 }
 
 // キャラを描画する
@@ -56,14 +58,38 @@ void CharacterDrawer::drawCharacter(const Camera* const camera, int bright) {
 		graphHandle->draw(x, y, ex);
 	}
 
-	// 体力バーの座標をカメラで調整
-	x = character->getX() + (character->getWide() / 2);
-	y = character->getY();
-	ex = graphHandle->getEx();
-	camera->setCamera(&x, &y, &ex);
-	int wide = (int)(HP_BAR_WIDE / 2 * camera->getEx());
-	int height = (int)(HP_BAR_HEIGHT * camera->getEx());
-	y -= (int)(10 * camera->getEx());
+	// 体力バー
+	if (character->getDispHpCnt() > 0 && character->getName() != "ハート") {
+		// 座標をカメラで調整
+		x = character->getX() + (character->getWide() / 2);
+		y = character->getY();
+		ex = graphHandle->getEx();
+		camera->setCamera(&x, &y, &ex);
+		int wide = (int)(HP_BAR_WIDE / 2 * camera->getEx());
+		int height = (int)(HP_BAR_HEIGHT * camera->getEx());
+		y -= (int)(10 * camera->getEx());
+		// 体力の描画
+		drawHpBar(x - wide, y - height, x + wide, y, character->getHp(), character->getPrevHp(), character->getMaxHp(), DAMAGE_COLOR, PREV_HP_COLOR, HP_COLOR);
+	}
+}
+
+void CharacterDrawer::drawPlayerHpBar(const Character* player) {
+
+	// 座標
+	int x, y, wide, height;
+
+	x = 30;
+	y = 30;
+	wide = 300;
+	height = 50;
+
+	// 解像度変更に対応
+	x = (int)(x * m_exX);
+	y = (int)(y * m_exY);
+	wide = (int)(wide * m_exX);
+	height = (int)(height * m_exY);
+
 	// 体力の描画
-	drawHpBar(x - wide, y - height, x + wide, y, character->getHp(), character->getPrevHp(), character->getMaxHp(), DAMAGE_COLOR, PREV_HP_COLOR, HP_COLOR);
+	drawHpBar(x, y, x + wide, y + height, player->getHp(), player->getPrevHp(), player->getMaxHp(), DAMAGE_COLOR, PREV_HP_COLOR, HP_COLOR);
+
 }

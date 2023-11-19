@@ -3,6 +3,7 @@
 #include "Camera.h"
 #include "CharacterDrawer.h"
 #include "CharacterAction.h"
+#include "Character.h"
 #include "ObjectDrawer.h"
 #include "AnimationDrawer.h"
 #include "Animation.h"
@@ -121,6 +122,15 @@ void WorldDrawer::draw() {
 		m_animationDrawer->drawAnimation(camera);
 	}
 
+	// ハートの情報
+	size = m_world->getCharacters().size();
+	for (unsigned int i = 0; i < size; i++) {
+		if (m_world->getCharacters()[i]->getName() == "ハート") {
+			m_characterDrawer->drawPlayerHpBar(m_world->getCharacters()[i]);
+		}
+	}
+
+	// ターゲット
 	m_targetDrawer.setEx(camera->getEx());
 	m_targetDrawer.draw();
 	SetDrawBright(255, 255, 255);

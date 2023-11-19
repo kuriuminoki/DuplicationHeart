@@ -166,6 +166,7 @@ Character::Character(int hp, int x, int y, int groupId) {
 
 	m_hp = hp;
 	m_prevHp = m_hp;
+	m_dispHpCnt = 0;
 	m_x = x;
 	m_y = y;
 
@@ -238,6 +239,7 @@ void Character::setLeftDirection(bool leftDirection) {
 // HPŒ¸­
 void Character::damageHp(int value) {
 	m_hp = max(0, m_hp - value);
+	m_dispHpCnt = 60;
 }
 
 // ˆÚ“®‚·‚éiÀ•W‚ğ“®‚©‚·j
