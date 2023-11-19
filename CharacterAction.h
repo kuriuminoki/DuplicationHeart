@@ -178,7 +178,7 @@ public:
 	void setCharacterFreeze(bool freeze);
 
 	// 行動前の処理 毎フレーム行う
-	virtual void init() = 0;
+	virtual void init();
 
 	// 物理演算 毎フレーム行う
 	virtual void action() = 0;
@@ -252,9 +252,6 @@ public:
 	CharacterAction* createCopy(std::vector<Character*> characters);
 
 	void debug(int x, int y, int color) const;
-
-	//行動前の処理 毎フレーム行う
-	void init();
 
 	// 物理演算 毎フレーム行う
 	void action();
@@ -330,9 +327,6 @@ public:
 	CharacterAction* createCopy(std::vector<Character*> characters);
 
 	void debug(int x, int y, int color) const;
-
-	//行動前の処理 毎フレーム行う
-	void init();
 
 	// 物理演算 毎フレーム行う
 	void action();

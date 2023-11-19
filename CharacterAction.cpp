@@ -151,6 +151,23 @@ void CharacterAction::setCharacterFreeze(bool freeze) {
 	m_character_p->setFreeze(freeze);
 }
 
+// 行動前の処理 毎フレーム行う
+void CharacterAction::init() {
+	// いったん全方向に動けるようにする
+	m_rightLock = false;
+	m_leftLock = false;
+	m_upLock = false;
+	m_downLock = false;
+
+	// いったん宙に浮かせる
+	m_grand = false;
+	m_grandRightSlope = false;
+	m_grandLeftSlope = false;
+
+	// prevHpをhpに追いつかせる
+	m_character_p->setPrevHp(m_character_p->getPrevHp() - 1);
+}
+
 // ダメージ
 void CharacterAction::damage(int vx, int vy, int damageValue) {
 	m_damageCnt = DAMAGE_TIME;
@@ -329,20 +346,6 @@ CharacterAction* StickAction::createCopy(vector<Character*> characters) {
 		}
 	}
 	return res;
-}
-
-// 行動前の処理
-void StickAction::init() {
-	// いったん全方向に動けるようにする
-	m_rightLock = false;
-	m_leftLock = false;
-	m_upLock = false;
-	m_downLock = false;
-
-	// いったん宙に浮かせる
-	m_grand = false;
-	m_grandRightSlope = false;
-	m_grandLeftSlope = false;
 }
 
 void StickAction::action() {
@@ -832,20 +835,6 @@ void FlightAction::switchHandle() {
 	afterChangeGraph(wide, height, afterWide, afterHeight);
 
 	m_character_p->setLeftDirection(m_character_p->getLeftDirection());
-}
-
-//行動前の処理 毎フレーム行う
-void FlightAction::init() {
-	// いったん全方向に動けるようにする
-	m_rightLock = false;
-	m_leftLock = false;
-	m_upLock = false;
-	m_downLock = false;
-
-	// いったん宙に浮かせる
-	m_grand = false;
-	m_grandRightSlope = false;
-	m_grandLeftSlope = false;
 }
 
 // 物理演算 毎フレーム行う
