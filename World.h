@@ -106,7 +106,7 @@ public:
 	inline SoundPlayer* getSoundPlayer() const { return m_soundPlayer_p; }
 
 	// セッタ
-	inline void setSkillFlag(bool skillFlag) { m_skillFlag = skillFlag; }
+	void setSkillFlag(bool skillFlag);
 	inline void setFocusId(int id) { m_focusId = id; }
 
 	// ストーリーやイベントによる追加

@@ -181,6 +181,9 @@ void CharacterController::setCharacterX(int x) {
 void CharacterController::setCharacterY(int y) {
 	m_characterAction->setCharacterY(y);
 }
+void CharacterController::setCharacterFreeze(bool freeze) {
+	m_characterAction->setCharacterFreeze(freeze);
+}
 
 // s“®‘O‚Ìˆ—
 void CharacterController::init() {
@@ -363,7 +366,7 @@ Object* NormalController::slashAttack() {
 
 	// UŒ‚–Ú•W
 	int targetX = 0, targetY = 0;
-	m_brain->bulletTargetPoint(targetX, targetY);
+	m_brain->slashTargetPoint(targetX, targetY);
 
 	// –½—ß
 	int order = 0;

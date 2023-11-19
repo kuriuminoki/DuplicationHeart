@@ -186,6 +186,9 @@ protected:
 	// 左を向いている
 	bool m_leftDirection;
 
+	// 一時的に動けない状態（ハートのスキル発動など）
+	bool m_freeze;
+
 	// キャラの情報
 	CharacterInfo* m_characterInfo;
 
@@ -218,6 +221,7 @@ public:
 	inline int getX() const { return m_x; }
 	inline int getY() const { return m_y; }
 	inline bool getLeftDirection() const { return m_leftDirection; }
+	inline int getFreeze() const { return m_freeze; }
 	FaceGraphHandle* getFaceHandle() const { return m_faceHandle; }
 	inline CharacterGraphHandle* getCharacterGraphHandle() const { return m_graphHandle; }
 	inline AttackInfo* getAttackInfo() const { return m_attackInfo; }
@@ -229,6 +233,7 @@ public:
 	inline void setY(int y) { m_y = y; }
 	inline void setId(int id) { m_id = id; }
 	inline void setGroupId(int id) { m_groupId = id; }
+	inline void setFreeze(bool freeze) { m_freeze = freeze; }
 	// キャラの向き変更は、画像の反転も行う
 	void setLeftDirection(bool leftDirection);
 	inline void setDuplicationFlag(bool flag) { m_duplicationFlag = flag; }

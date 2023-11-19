@@ -175,6 +175,7 @@ public:
 	void setCharacterX(int x);
 	void setCharacterY(int y);
 	void setCharacterLeftDirection(bool leftDirection);
+	void setCharacterFreeze(bool freeze);
 
 	// 行動前の処理 毎フレーム行う
 	virtual void init() = 0;

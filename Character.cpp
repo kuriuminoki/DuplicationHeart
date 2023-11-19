@@ -169,6 +169,7 @@ Character::Character(int hp, int x, int y, int groupId) {
 	m_y = y;
 
 	m_leftDirection = true;
+	m_freeze = false;
 
 	m_characterInfo = nullptr;
 	m_attackInfo = nullptr;

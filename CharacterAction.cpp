@@ -147,6 +147,9 @@ void CharacterAction::setCharacterY(int y) {
 void CharacterAction::setCharacterLeftDirection(bool leftDirection) {
 	m_character_p->setLeftDirection(leftDirection);
 }
+void CharacterAction::setCharacterFreeze(bool freeze) {
+	m_character_p->setFreeze(freeze);
+}
 
 // ƒ_ƒ[ƒW
 void CharacterAction::damage(int vx, int vy, int damageValue) {

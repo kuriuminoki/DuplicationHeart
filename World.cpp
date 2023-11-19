@@ -187,6 +187,16 @@ World::World(const World* original) {
 	m_backGroundColor = original->getBackGroundColor();
 }
 
+// スキル発動
+void World::setSkillFlag(bool skillFlag) { 
+	m_skillFlag = skillFlag;
+	for (unsigned int i = 0; i < m_characterControllers.size(); i++) {
+		if (m_characterControllers[i]->getAction()->getCharacter()->getName() == "ハート") {
+			m_characterControllers[i]->setCharacterFreeze(skillFlag);
+		}
+	}
+}
+
 // ストーリーやイベントによる追加キャラクター
 void World::addCharacter(CharacterLoader* characterLoader) {
 	pair<vector<Character*>, vector<CharacterController*> > p = characterLoader->getCharacters(m_camera, m_soundPlayer_p, m_areaNum);

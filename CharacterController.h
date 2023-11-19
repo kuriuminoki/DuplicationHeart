@@ -95,6 +95,7 @@ public:
 	// キャラクターのセッタ
 	void setCharacterX(int x);
 	void setCharacterY(int y);
+	void setCharacterFreeze(bool freeze);
 
 	// 行動前の処理 毎フレーム行う
 	void init();
