@@ -165,6 +165,8 @@ Character::Character(int hp, int x, int y, int groupId) {
 	m_groupId = groupId;
 
 	m_hp = hp;
+	m_prevHp = m_hp;
+	m_dispHpCnt = 0;
 	m_x = x;
 	m_y = y;
 
@@ -202,6 +204,7 @@ void Character::setParam(Character* character) {
 	character->setId(m_id);
 	character->setLeftDirection(m_leftDirection);
 	character->setHp(m_hp);
+	character->setPrevHp(m_prevHp);
 	character->getCharacterGraphHandle()->setGraph(getGraphHandle());
 }
 
@@ -236,6 +239,7 @@ void Character::setLeftDirection(bool leftDirection) {
 // HP減少
 void Character::damageHp(int value) {
 	m_hp = max(0, m_hp - value);
+	m_dispHpCnt = 60;
 }
 
 // 移動する（座標を動かす）
@@ -295,6 +299,7 @@ Heart::Heart(const char* name, int hp, int x, int y, int groupId) :
 	m_attackInfo = new AttackInfo(name, m_characterInfo->handleEx());
 
 	m_hp = m_characterInfo->maxHp();
+	m_prevHp = m_hp;
 
 	// 各画像のロード
 	m_graphHandle = new CharacterGraphHandle(name, m_characterInfo->handleEx());
@@ -314,6 +319,7 @@ Heart::Heart(const char* name, int hp, int x, int y, int groupId, AttackInfo* at
 	m_attackInfo = attackInfo;
 	m_characterInfo = new CharacterInfo(name);
 	m_hp = m_characterInfo->maxHp();
+	m_prevHp = m_hp;
 	// 各画像のロード
 	m_graphHandle = new CharacterGraphHandle(name, m_characterInfo->handleEx());
 	m_faceHandle = new FaceGraphHandle(name, 1.0);

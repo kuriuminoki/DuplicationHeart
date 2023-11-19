@@ -180,6 +180,12 @@ protected:
 	// 残り体力
 	int m_hp;
 
+	// ダメージを受ける前の体力
+	int m_prevHp;
+
+	// HPバーを表示する残り時間
+	int m_dispHpCnt;
+
 	// X座標、Y座標
 	int m_x, m_y;
 
@@ -218,6 +224,8 @@ public:
 	inline int getId() const { return m_id; }
 	inline int getGroupId() const { return m_groupId; }
 	inline int getHp() const { return m_hp; }
+	inline int getPrevHp() const { return m_prevHp; }
+	inline int getDispHpCnt() const { return m_dispHpCnt; }
 	inline int getX() const { return m_x; }
 	inline int getY() const { return m_y; }
 	inline bool getLeftDirection() const { return m_leftDirection; }
@@ -228,7 +236,11 @@ public:
 	inline CharacterInfo* getCharacterInfo() const { return m_characterInfo; }
 
 	// セッタ
-	inline void setHp(int hp) { m_hp = (hp > m_characterInfo->maxHp()) ? m_characterInfo->maxHp() : hp; }
+	inline void setHp(int hp) { m_hp = (hp > m_characterInfo->maxHp()) ? m_characterInfo->maxHp() : hp; m_prevHp = m_hp; }
+	inline void setPrevHp(int prevHp) { 
+		m_prevHp = (prevHp < m_hp) ? m_hp : prevHp;
+		if (m_prevHp == m_hp && m_dispHpCnt > 0) { m_dispHpCnt--; }
+	}
 	inline void setX(int x) { m_x = x; }
 	inline void setY(int y) { m_y = y; }
 	inline void setId(int id) { m_id = id; }
