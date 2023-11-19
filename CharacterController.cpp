@@ -235,8 +235,10 @@ CharacterController* NormalController::createCopy(std::vector<Character*> charac
 void NormalController::control() {
 	// ダメージのレコード（もし記録と現状が違えば以降のレコードを削除）
 	if (m_damageRecorder != nullptr) {
+		// 現状
 		bool flag = (m_characterAction->getState() == CHARACTER_STATE::DAMAGE);
 		if (m_damageRecorder->existRecord()) {
+			// 記録と比較
 			if ((bool)m_damageRecorder->checkInput() != flag) {
 				m_stickRecorder->discardRecord();
 				m_jumpRecorder->discardRecord();
