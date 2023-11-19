@@ -273,7 +273,11 @@ FaceGraphHandle::FaceGraphHandle(const char* characterName, double drawEx) {
 	CsvReader reader("data/faceGraph.csv");
 	// キャラ名でデータを検索
 	map<string, string> data = reader.findOne("name", characterName);
-	if (data.size() == 0) { data = reader.findOne("name", "テスト"); }
+	// 見つからなかったらテストで再検索
+	if (data.size() == 0) { 
+		characterName = "テスト";
+		data = reader.findOne("name", characterName);
+	}
 
 	// ロード
 	const char* dir = "picture/face/";
