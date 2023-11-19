@@ -735,7 +735,7 @@ int ValkiriaAI::jumpOrder() {
 bool ValkiriaAI::needSearchTarget() const {
 	// 今のターゲットは距離が遠いから
 	if (m_target_p != nullptr && m_target_p->getHp() > 0) {
-		if (abs(m_target_p->getCenterX() - m_characterAction_p->getCharacter()->getCenterX()) > SLASH_REACH) {
+		if (abs(m_target_p->getCenterX() - m_characterAction_p->getCharacter()->getCenterX()) > SLASH_REACH * 2) {
 			return true;
 		}
 	}
