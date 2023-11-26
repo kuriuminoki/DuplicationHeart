@@ -3,6 +3,7 @@
 
 
 class Conversation;
+class AnimationDrawer;
 
 
 class ConversationDrawer {
@@ -10,6 +11,9 @@ private:
 	
 	// 会話
 	const Conversation* m_conversation;
+
+	// アニメイベント用
+	AnimationDrawer* m_animationDrawer;
 
 	// テキストやフォントのサイズの倍率
 	double m_exX;

@@ -6,12 +6,50 @@
 #include <vector>
 
 
+class Animation;
 class SoundPlayer;
 class World;
 class GraphHandle;
 class GraphHandles;
 
 
+/*
+* イベント中に挿入される画像
+*/
+class EventAnime {
+
+private:
+
+	// アニメのスピード
+	int m_speed = 5;
+
+	// 挿絵
+	GraphHandles* m_handles;
+	Animation* m_animation;
+
+	bool m_finishFlag;
+
+public:
+
+	EventAnime(const char* filePath, int sum, int speed = -1);
+
+	~EventAnime();
+
+	// ゲッタ
+	const Animation* getAnime() const { return m_animation; }
+
+	// アニメの再生が終わったか
+	bool getFinishAnime() const;
+
+	// falseの間は操作不可
+	void play();
+
+};
+
+
+/*
+* 会話イベント
+*/
 class Conversation {
 private:
 
@@ -32,12 +70,20 @@ private:
 	// ファイルポインタ
 	int m_fp;
 
+	// 世界
 	World* m_world_p;
 
+	// 世界のサウンドプレイヤー
 	SoundPlayer* m_soundPlayer_p;
+
+	// アニメイベント
+	EventAnime* m_eventAnime;
 
 	// 発言者の名前
 	std::string m_speakerName;
+
+	// 発言者の顔画像がない
+	bool m_noFace;
 
 	// 発言者の顔画像
 	GraphHandles* m_speakerGraph;
@@ -66,17 +112,25 @@ public:
 	inline std::string getFullText() const { return m_text; }
 	int getTextSize() const;
 	GraphHandle* getGraph() const;
+	inline bool getNoFace() const { return m_noFace; }
 	inline 	std::string getSpeakerName() const { return m_speakerName; }
 	inline int getFinishCnt() const { return m_finishCnt; }
 	inline bool getFinishFlag() const { return m_finishFlag; }
 	inline int getTextNow() const { return m_textNow; }
 	inline int getCnt() const { return m_cnt; }
+	inline const Animation* getAnime() const { 
+		if (m_eventAnime == nullptr) { return nullptr; }
+		return m_eventAnime->getAnime();
+	}
+
+	// 今アニメ再生中か
+	bool animePlayNow() const { return m_eventAnime == nullptr ? false : !m_eventAnime->getFinishAnime(); }
 
 	// 会話を行う
 	bool play();
 
 private:
-	void setNextText();
+	void loadNextBlock();
 	void setSpeakerGraph(const char* faceName);
 };
 

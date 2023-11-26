@@ -8,7 +8,7 @@ class AnimationDrawer {
 private:
 	const Animation* m_animation;
 public:
-	AnimationDrawer(Animation* animation);
+	AnimationDrawer(const Animation* animation);
 
 	inline void setAnimation(const Animation* animation) { m_animation = animation; };
 

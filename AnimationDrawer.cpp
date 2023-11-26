@@ -4,7 +4,7 @@
 #include "GraphHandle.h"
 
 
-AnimationDrawer::AnimationDrawer(Animation* animation) {
+AnimationDrawer::AnimationDrawer(const Animation* animation) {
 	m_animation = animation;
 }
 
