@@ -58,6 +58,7 @@ pair<vector<Character*>, vector<CharacterController*> > CharacterLoader::getChar
 		if (playerFlag && m_playerId == -1 && character != nullptr) {
 			m_playerId = character->getId();
 			m_playerCharacter_p = character;
+			m_playerCharacter_p->setLeftDirection(false); // プレイヤーだけ右向き
 		}
 
 		// アクションを作成

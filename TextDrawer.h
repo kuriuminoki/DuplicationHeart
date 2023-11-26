@@ -2,6 +2,8 @@
 #define TEXT_DRAWER_H_INCLUDED
 
 
+#include <string>
+
 class Conversation;
 class AnimationDrawer;
 
@@ -40,6 +42,8 @@ public:
 	void setConversation(const Conversation* conversation) { m_conversation = conversation; }
 
 	void draw();
+
+	void drawText(int x, int y, int height, std::string text, int color, int font);
 };
 
 

@@ -41,9 +41,12 @@ void ConversationDrawer::draw() {
 	// アニメ
 	const Animation* anime = m_conversation->getAnime();
 	if (anime != nullptr) {
+		int bright = m_conversation->getAnimeBright();
+		SetDrawBright(bright, bright, bright);
 		m_animationDrawer->setAnimation(anime);
 		m_animationDrawer->drawAnimation();
 		if (m_conversation->animePlayNow()) { return; }
+		SetDrawBright(255, 255, 255);
 	}
 
 	string text = m_conversation->getText();
@@ -86,27 +89,43 @@ void ConversationDrawer::draw() {
 		// 名前
 		DrawStringToHandle(x, GAME_HEIGHT - EDGE_DOWN - (int)(NAME_SIZE * m_exX) - TEXT_GRAPH_EDGE, name.c_str(), BLACK, m_nameHandle);
 		// セリフ
-		while (now < text.size()) {
-			int next = now + min(MAX_TEXT_LEN, (int)text.size() - now);
-			string disp = text.substr(now, next - now);
-			DrawStringToHandle(x, Y1 + TEXT_GRAPH_EDGE + (i * ((int)(TEXT_SIZE * m_exX) + CHAR_EDGE)), disp.c_str(), BLACK, m_textHandle);
-			now = next;
-			i++;
-		}
+		drawText(x, Y1 + TEXT_GRAPH_EDGE, (int)(TEXT_SIZE * m_exX) + CHAR_EDGE, text, BLACK, m_textHandle);
 	}
 	else { // 顔画像がある場合
 		// 名前
 		DrawStringToHandle(EDGE_X + TEXT_GRAPH_EDGE + graphSize + (int)(NAME_SIZE * m_exX), GAME_HEIGHT - EDGE_DOWN - (int)(NAME_SIZE * m_exX) - TEXT_GRAPH_EDGE, name.c_str(), BLACK, m_nameHandle);
 		// セリフ
-		while (now < text.size()) { 
-			int next = now + min(MAX_TEXT_LEN, (int)text.size() - now);
-			string disp = text.substr(now, next - now);
-			DrawStringToHandle(EDGE_X + TEXT_GRAPH_EDGE * 2 + graphSize, Y1 + TEXT_GRAPH_EDGE + (i * ((int)(TEXT_SIZE * m_exX) + CHAR_EDGE)), disp.c_str(), BLACK, m_textHandle);
-			now = next;
-			i++;
-		}
+		drawText(EDGE_X + TEXT_GRAPH_EDGE * 2 + graphSize, Y1 + TEXT_GRAPH_EDGE, (int)(TEXT_SIZE * m_exX) + CHAR_EDGE, text, BLACK, m_textHandle);
 		// キャラの顔画像
 		graph->draw(EDGE_X + TEXT_GRAPH_EDGE + graphSize / 2, Y1 + TEXT_GRAPH_EDGE + graphSize / 2, m_exX);
 	}
 
+}
+
+void ConversationDrawer::drawText(int x, int y,int height, std::string text, int color, int font) {
+	int now = 0;
+	int i = 0;
+	int size = (int)(text.size());
+	// セリフ
+	while (now < size) {
+
+		// 次は何文字目まで表示するか
+		int next = now + min(MAX_TEXT_LEN, (int)text.size() - now);
+
+		string disp = text.substr(now, next - now);
+		size_t br = disp.find("｜");
+		if (br != string::npos) {
+			disp = disp.substr(0, br);
+			now += (int)br + 2;
+		}
+		else {
+			now = next;
+		}
+
+		// セリフを描画
+		DrawStringToHandle(x, y + (i * height), disp.c_str(), BLACK, m_textHandle);
+
+		// 次の行
+		i++;
+	}
 }

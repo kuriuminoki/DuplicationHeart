@@ -42,6 +42,9 @@ public:
 
 	bool play();
 
+	// イベントの発火確認
+	void checkFire();
+
 	// ハートのスキル発動が可能かどうか
 	bool skillAble();
 
