@@ -36,6 +36,9 @@ EventAnime::EventAnime(const char* filePath, int sum, int speed) {
 	// アニメ
 	m_animation = new Animation(GAME_WIDE / 2, GAME_HEIGHT / 2, m_speed, m_handles);
 
+	m_bright = 255;
+	m_toDark = false;
+
 	m_finishFlag = false;
 }
 
@@ -46,11 +49,15 @@ EventAnime::~EventAnime() {
 
 // アニメの再生が終わったか
 bool EventAnime::getFinishAnime() const {
+	if (m_bright > 0 && m_toDark) { return false; }
+	if (m_bright < 255 && !m_toDark) { return false; }
 	return m_finishFlag;
 }
 
 // falseの間は操作不可
 void EventAnime::play() {
+	if (m_bright < 255 && !m_toDark) { m_bright++; return; }
+	else if (m_bright > 0 && m_toDark) { m_bright--; return; }
 	m_animation->count();
 	if (m_animation->getFinishFlag() && leftClick() == 1) {
 		m_finishFlag = true;
@@ -68,8 +75,8 @@ Conversation::Conversation(int textNum, World* world, SoundPlayer* soundPlayer) 
 	m_finishFlag = false;
 	m_world_p = world;
 	m_soundPlayer_p = soundPlayer;
-	m_speakerName = "";
-	m_speakerGraph = nullptr;
+	m_speakerName = "ハート";
+	setSpeakerGraph("通常");
 	m_noFace = true;
 	m_text = "";
 	m_textNow = 0;
@@ -80,6 +87,9 @@ Conversation::Conversation(int textNum, World* world, SoundPlayer* soundPlayer) 
 	// 効果音
 	m_displaySound = LoadSoundMem("sound/text/display.wav");
 	m_nextSound = LoadSoundMem("sound/text/next.wav");
+
+	// BGM
+	m_originalBgmPath = m_soundPlayer_p->getBgmName();
 
 	// 対象のファイルを開く
 	ostringstream oss;
@@ -96,6 +106,8 @@ Conversation::~Conversation() {
 	// ファイルを閉じる
 	FileRead_close(m_fp);
 	if (m_eventAnime != nullptr) { delete m_eventAnime; }
+	// BGMを戻す
+	m_soundPlayer_p->setBGM(m_originalBgmPath);
 }
 
 // テキストを返す（描画用）
@@ -130,6 +142,11 @@ bool Conversation::play() {
 	// アニメイベント
 	if (m_eventAnime != nullptr && !m_eventAnime->getFinishAnime()) {
 		m_eventAnime->play();
+		if (m_eventAnime->getFinishAnime()) {
+			// 次のテキストへ移る
+			loadNextBlock();
+		}
+		return false;
 	}
 
 	// プレイヤーからのアクション（スペースキー入力）
@@ -168,14 +185,15 @@ void Conversation::loadNextBlock() {
 	const int size = 512;
 	char buff[size];
 	// ブロックの1行目
-	string str;
+	string str = "";
 	while (FileRead_eof(m_fp) == 0) {
 		// 空行以外が来るまでループ
 		FileRead_gets(buff, size, m_fp);
 		str = buff;
 		if (str != "") { break; }
 	}
-	if (str == "@eventStart") { // 挿絵の始まり
+	if (str == "@eventStart" || str == "@eventPic" || str == "@eventToDark" || str == "@eventToClear") { // 挿絵の始まり
+		if (m_eventAnime != nullptr) { delete m_eventAnime; }
 		FileRead_gets(buff, size, m_fp);
 		string path = buff;
 		FileRead_gets(buff, size, m_fp);
@@ -188,16 +206,47 @@ void Conversation::loadNextBlock() {
 		else {
 			m_eventAnime = new EventAnime(path.c_str(), stoi(sum), stoi(speed));
 		}
+		if (str == "@eventPic") {
+			m_eventAnime->setFinishFlag(true);
+			loadNextBlock();
+		}
+		else if (str == "@eventToDark") {
+			m_eventAnime->setFinishFlag(true);
+			m_eventAnime->setToDark(true);
+		}
+		else if (str == "@eventToClear") {
+			m_eventAnime->setFinishFlag(true);
+			m_eventAnime->setBright(0);
+		}
 	}
 	else if (str == "@eventEnd") { // 挿絵の終わり
 		delete m_eventAnime;
 		m_eventAnime = nullptr;
 		loadNextBlock();
 	}
+	else if (str == "@same") { // セリフだけ更新
+		setNextText(size, buff);
+	}
+	else if (str == "@setBGM") {
+		// BGMを変更
+		FileRead_gets(buff, size, m_fp);
+		string path = "sound/";
+		path += buff;
+		m_soundPlayer_p->setBGM(path);
+		loadNextBlock();
+	}
+	else if (str == "@stopBGM") {
+		// BGMを止める
+		m_soundPlayer_p->stopBGM();
+		loadNextBlock();
+	}
+	else if (str == "@resetBGM") {
+		// BGMを戻す
+		m_soundPlayer_p->setBGM(m_originalBgmPath);
+		loadNextBlock();
+	}
 	else { // 発言
-		m_cnt = 0;
-		m_textNow = 0;
-		if (str == "@null" || str == "???") { // ナレーション
+		if (str == "@null" || str == "???" || str == "ひとみ") { // ナレーション
 			// 発言者
 			m_speakerName = str == "@null" ? "" : str;
 			m_noFace = true;
@@ -210,24 +259,31 @@ void Conversation::loadNextBlock() {
 			setSpeakerGraph(buff);
 			m_noFace = false;
 		}
-		// テキスト
-		FileRead_gets(buff, size, m_fp);
-		m_text = buff;
+		setNextText(size, buff);
+	}
+}
 
-		if (FileRead_eof(m_fp) == 0) {
-			FileRead_gets(buff, size, m_fp);
-			string s = buff;
-			if (s == "") {
-				m_textSpeed = TEXT_SPEED;
-			}
-			else {
-				m_textSpeed = stoi(s);
-				FileRead_gets(buff, size, m_fp);
-			}
-		}
-		else {
+
+void Conversation::setNextText(const int size, char* buff) {
+	m_cnt = 0;
+	m_textNow = 0;
+
+	FileRead_gets(buff, size, m_fp);
+	m_text = buff;
+
+	if (FileRead_eof(m_fp) == 0) {
+		FileRead_gets(buff, size, m_fp);
+		string s = buff;
+		if (s == "") {
 			m_textSpeed = TEXT_SPEED;
 		}
+		else {
+			m_textSpeed = stoi(s);
+			FileRead_gets(buff, size, m_fp);
+		}
+	}
+	else {
+		m_textSpeed = TEXT_SPEED;
 	}
 }
 

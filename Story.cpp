@@ -42,6 +42,9 @@ Story::Story(int storyNum, World* world, SoundPlayer* soundPlayer) {
 	for (unsigned int i = 0; i < objectData.size(); i++) {
 		m_objectLoader->addObject(objectData[i]);
 	}
+
+	// イベントの発火確認
+	checkFire();
 }
 
 Story::~Story() {
@@ -60,22 +63,7 @@ bool Story::play() {
 		// 普通に世界を動かす
 		m_world_p->battle();
 		// イベントの発火確認
-		for (unsigned int i = 0; i < m_mustEvent.size(); i++) {
-			if (m_mustEvent[i]->fire()) {
-				m_nowEvent = m_mustEvent[i];
-				m_mustEvent[i] = m_mustEvent.back();
-				m_mustEvent.pop_back();
-				i--;
-			}
-		}
-		for (unsigned int i = 0; i < m_subEvent.size(); i++) {
-			if (m_subEvent[i]->fire()) {
-				m_nowEvent = m_subEvent[i];
-				m_subEvent[i] = m_subEvent.back();
-				m_subEvent.pop_back();
-				i--;
-			}
-		}
+		checkFire();
 	}
 	else {
 		// イベント進行中
@@ -92,6 +80,26 @@ bool Story::play() {
 		return true;
 	}
 	return false;
+}
+
+// イベントの発火確認
+void Story::checkFire() {
+	for (unsigned int i = 0; i < m_mustEvent.size(); i++) {
+		if (m_mustEvent[i]->fire()) {
+			m_nowEvent = m_mustEvent[i];
+			m_mustEvent[i] = m_mustEvent.back();
+			m_mustEvent.pop_back();
+			i--;
+		}
+	}
+	for (unsigned int i = 0; i < m_subEvent.size(); i++) {
+		if (m_subEvent[i]->fire()) {
+			m_nowEvent = m_subEvent[i];
+			m_subEvent[i] = m_subEvent.back();
+			m_subEvent.pop_back();
+			i--;
+		}
+	}
 }
 
 // ハートのスキル発動が可能かどうか

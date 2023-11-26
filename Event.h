@@ -142,6 +142,22 @@ public:
 	void setWorld(World* world);
 };
 
+// Ÿè‚É”­‰Î
+class AutoFire :
+	public EventFire
+{
+public:
+
+	AutoFire(World* world_p) :
+		EventFire(world_p)
+	{
+
+	}
+
+	bool fire() { return true; }
+
+};
+
 
 /*
 * EventElement‚Ì”h¶ƒNƒ‰ƒX

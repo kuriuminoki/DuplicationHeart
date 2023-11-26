@@ -79,6 +79,9 @@ void Event::createFire(vector<string> param, World* world, SoundPlayer* soundPla
 	if (param0 == "CharacterPoint") {
 		fire = new CharacterPointFire(world, param);
 	}
+	else if (param0 == "Auto") {
+		fire = new AutoFire(world);
+	}
 
 	if (fire != nullptr) { m_eventFire.push_back(fire); }
 }

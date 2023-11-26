@@ -304,6 +304,8 @@ Heart::Heart(const char* name, int hp, int x, int y, int groupId) :
 	// 各画像のロード
 	m_graphHandle = new CharacterGraphHandle(name, m_characterInfo->handleEx());
 	m_faceHandle = new FaceGraphHandle(name, 1.0);
+	// 画像の反転
+	setLeftDirection(m_leftDirection);
 
 	m_bulletColor = WHITE;
 
@@ -323,6 +325,8 @@ Heart::Heart(const char* name, int hp, int x, int y, int groupId, AttackInfo* at
 	// 各画像のロード
 	m_graphHandle = new CharacterGraphHandle(name, m_characterInfo->handleEx());
 	m_faceHandle = new FaceGraphHandle(name, 1.0);
+	// 画像の反転
+	setLeftDirection(m_leftDirection);
 
 	m_bulletColor = WHITE;
 

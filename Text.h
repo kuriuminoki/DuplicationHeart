@@ -27,6 +27,12 @@ private:
 	GraphHandles* m_handles;
 	Animation* m_animation;
 
+	// 画像の明るさ
+	int m_bright;
+
+	// 暗くなっていく方向 明るくなるならfalse
+	bool m_toDark;
+
 	bool m_finishFlag;
 
 public:
@@ -36,7 +42,14 @@ public:
 	~EventAnime();
 
 	// ゲッタ
-	const Animation* getAnime() const { return m_animation; }
+	inline const bool getToDark() const { return m_toDark; }
+	inline const int getBright() const { return m_bright; }
+	inline const Animation* getAnime() const { return m_animation; }
+
+	// セッタ
+	inline void setToDark(bool toDark) { m_toDark = toDark; }
+	inline void setBright(int bright) { m_bright = bright; }
+	inline void setFinishFlag(bool flag) { m_finishFlag = flag; }
 
 	// アニメの再生が終わったか
 	bool getFinishAnime() const;
@@ -103,6 +116,9 @@ private:
 	// 決定効果音
 	int m_nextSound;
 
+	// BGMを変更しても戻せるよう
+	std::string m_originalBgmPath;
+
 public:
 	Conversation(int textNum, World* world, SoundPlayer* soundPlayer);
 	~Conversation();
@@ -122,6 +138,7 @@ public:
 		if (m_eventAnime == nullptr) { return nullptr; }
 		return m_eventAnime->getAnime();
 	}
+	inline int getAnimeBright() const { return m_eventAnime->getBright(); }
 
 	// 今アニメ再生中か
 	bool animePlayNow() const { return m_eventAnime == nullptr ? false : !m_eventAnime->getFinishAnime(); }
@@ -131,6 +148,7 @@ public:
 
 private:
 	void loadNextBlock();
+	void setNextText(const int size, char* buff);
 	void setSpeakerGraph(const char* faceName);
 };
 
