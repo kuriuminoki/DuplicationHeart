@@ -1,6 +1,8 @@
 #include "TextDrawer.h"
 #include "Text.h"
 #include "GraphHandle.h"
+#include "Animation.h"
+#include "AnimationDrawer.h"
 #include "Define.h"
 #include "DxLib.h"
 #include <string>
@@ -13,6 +15,8 @@ ConversationDrawer::ConversationDrawer(Conversation* conversation) {
 
 	m_conversation = conversation;
 
+	m_animationDrawer = new AnimationDrawer(nullptr);
+
 	getGameEx(m_exX, m_exY);
 
 	// フォントデータ
@@ -24,6 +28,7 @@ ConversationDrawer::ConversationDrawer(Conversation* conversation) {
 }
 
 ConversationDrawer::~ConversationDrawer() {
+	delete m_animationDrawer;
 	// フォントデータ削除
 	DeleteFontToHandle(m_textHandle);
 	DeleteFontToHandle(m_nameHandle);
@@ -32,6 +37,15 @@ ConversationDrawer::~ConversationDrawer() {
 }
 
 void ConversationDrawer::draw() {
+
+	// アニメ
+	const Animation* anime = m_conversation->getAnime();
+	if (anime != nullptr) {
+		m_animationDrawer->setAnimation(anime);
+		m_animationDrawer->drawAnimation();
+		if (m_conversation->animePlayNow()) { return; }
+	}
+
 	string text = m_conversation->getText();
 	string name = m_conversation->getSpeakerName();
 	GraphHandle* graph = m_conversation->getGraph();
@@ -63,22 +77,36 @@ void ConversationDrawer::draw() {
 	// フキダシ
 	DrawExtendGraph(EDGE_X, Y1, GAME_WIDE - EDGE_X, GAME_HEIGHT - EDGE_DOWN, m_frameHandle, TRUE);
 
-	// 名前
-	DrawStringToHandle(EDGE_X + TEXT_GRAPH_EDGE + graphSize + (int)(NAME_SIZE * m_exX), GAME_HEIGHT - EDGE_DOWN - (int)(NAME_SIZE * m_exX) - TEXT_GRAPH_EDGE, name.c_str(), BLACK, m_nameHandle);
-
-	// テキスト
+	// 発言者の名前、セリフ顔画像
 	int now = 0;
 	int i = 0;
 	static const int CHAR_EDGE = (int)(30 * m_exX);
-	while (now < text.size()) {
-		int next = now + min(MAX_TEXT_LEN, (int)text.size() - now);
-		string disp = text.substr(now, next - now);
-		DrawStringToHandle(EDGE_X + TEXT_GRAPH_EDGE * 2 + graphSize, Y1  + TEXT_GRAPH_EDGE + (i * ((int)(TEXT_SIZE * m_exX) + CHAR_EDGE)), disp.c_str(), BLACK, m_textHandle);
-		now = next;
-		i++;
+	if (m_conversation->getNoFace()) { // 顔画像がない場合
+		int x = EDGE_X + TEXT_GRAPH_EDGE + graphSize / 2;
+		// 名前
+		DrawStringToHandle(x, GAME_HEIGHT - EDGE_DOWN - (int)(NAME_SIZE * m_exX) - TEXT_GRAPH_EDGE, name.c_str(), BLACK, m_nameHandle);
+		// セリフ
+		while (now < text.size()) {
+			int next = now + min(MAX_TEXT_LEN, (int)text.size() - now);
+			string disp = text.substr(now, next - now);
+			DrawStringToHandle(x, Y1 + TEXT_GRAPH_EDGE + (i * ((int)(TEXT_SIZE * m_exX) + CHAR_EDGE)), disp.c_str(), BLACK, m_textHandle);
+			now = next;
+			i++;
+		}
 	}
-
-	// キャラの顔画像
-	graph->draw(EDGE_X + TEXT_GRAPH_EDGE + graphSize / 2, Y1 + TEXT_GRAPH_EDGE + graphSize / 2, m_exX);
+	else { // 顔画像がある場合
+		// 名前
+		DrawStringToHandle(EDGE_X + TEXT_GRAPH_EDGE + graphSize + (int)(NAME_SIZE * m_exX), GAME_HEIGHT - EDGE_DOWN - (int)(NAME_SIZE * m_exX) - TEXT_GRAPH_EDGE, name.c_str(), BLACK, m_nameHandle);
+		// セリフ
+		while (now < text.size()) { 
+			int next = now + min(MAX_TEXT_LEN, (int)text.size() - now);
+			string disp = text.substr(now, next - now);
+			DrawStringToHandle(EDGE_X + TEXT_GRAPH_EDGE * 2 + graphSize, Y1 + TEXT_GRAPH_EDGE + (i * ((int)(TEXT_SIZE * m_exX) + CHAR_EDGE)), disp.c_str(), BLACK, m_textHandle);
+			now = next;
+			i++;
+		}
+		// キャラの顔画像
+		graph->draw(EDGE_X + TEXT_GRAPH_EDGE + graphSize / 2, Y1 + TEXT_GRAPH_EDGE + graphSize / 2, m_exX);
+	}
 
 }

@@ -1,9 +1,11 @@
 #include "Text.h"
+#include "Animation.h"
 #include "World.h"
 #include "GraphHandle.h"
 #include "Control.h"
 #include "Sound.h"
 #include "Character.h"
+#include "Define.h"
 #include "DxLib.h"
 #include <algorithm>
 #include <string>
@@ -13,6 +15,53 @@
 using namespace std;
 
 
+
+/*
+* イベント中に挿入される画像
+*/
+EventAnime::EventAnime(const char* filePath, int sum, int speed) {
+
+	// ゲームの解像度を考慮して拡大率決定
+	double exX, exY;
+	getGameEx(exX, exY);
+	double ex = min(exX, exY);
+
+	// 画像ロード
+	string path = "picture/event/";
+	m_handles = new GraphHandles((path + filePath).c_str(), sum, ex);
+
+	// アニメのスピード
+	m_speed = speed == -1 ? m_speed : speed;
+
+	// アニメ
+	m_animation = new Animation(GAME_WIDE / 2, GAME_HEIGHT / 2, m_speed, m_handles);
+
+	m_finishFlag = false;
+}
+
+EventAnime::~EventAnime() {
+	delete m_handles;
+	delete m_animation;
+}
+
+// アニメの再生が終わったか
+bool EventAnime::getFinishAnime() const {
+	return m_finishFlag;
+}
+
+// falseの間は操作不可
+void EventAnime::play() {
+	m_animation->count();
+	if (m_animation->getFinishFlag() && leftClick() == 1) {
+		m_finishFlag = true;
+	}
+}
+
+
+
+/*
+* 会話イベント
+*/
 Conversation::Conversation(int textNum, World* world, SoundPlayer* soundPlayer) {
 
 	m_finishCnt = 0;
@@ -21,10 +70,12 @@ Conversation::Conversation(int textNum, World* world, SoundPlayer* soundPlayer) 
 	m_soundPlayer_p = soundPlayer;
 	m_speakerName = "";
 	m_speakerGraph = nullptr;
+	m_noFace = true;
 	m_text = "";
 	m_textNow = 0;
 	m_cnt = 0;
 	m_textSpeed = TEXT_SPEED;
+	m_eventAnime = nullptr;
 
 	// 効果音
 	m_displaySound = LoadSoundMem("sound/text/display.wav");
@@ -34,7 +85,7 @@ Conversation::Conversation(int textNum, World* world, SoundPlayer* soundPlayer) 
 	ostringstream oss;
 	oss << "data/text/text" << textNum << ".txt";
 	m_fp = FileRead_open(oss.str().c_str());
-	setNextText();
+	loadNextBlock();
 
 }
 
@@ -44,6 +95,7 @@ Conversation::~Conversation() {
 	DeleteSoundMem(m_nextSound);
 	// ファイルを閉じる
 	FileRead_close(m_fp);
+	if (m_eventAnime != nullptr) { delete m_eventAnime; }
 }
 
 // テキストを返す（描画用）
@@ -75,6 +127,11 @@ bool Conversation::play() {
 		return false;
 	}
 
+	// アニメイベント
+	if (m_eventAnime != nullptr && !m_eventAnime->getFinishAnime()) {
+		m_eventAnime->play();
+	}
+
 	// プレイヤーからのアクション（スペースキー入力）
 	if (controlSpace() == 1 || leftClick() == 1) {
 		if (m_textNow == m_text.size()) {
@@ -84,7 +141,7 @@ bool Conversation::play() {
 				return false;
 			}
 			// 次のテキストへ移る
-			setNextText();
+			loadNextBlock();
 			// 効果音
 			m_soundPlayer_p->pushSoundQueue(m_nextSound);
 		}
@@ -106,37 +163,74 @@ bool Conversation::play() {
 	return false;
 }
 
-void Conversation::setNextText() {
-	m_cnt = 0;
-	m_textNow = 0;
+void Conversation::loadNextBlock() {
 	// バッファ
 	const int size = 512;
 	char buff[size];
-	// 発言者
-	FileRead_gets(buff, size, m_fp);
-	m_speakerName = buff;
-	// 画像
-	FileRead_gets(buff, size, m_fp);
-	setSpeakerGraph(buff);
-	// テキスト
-	FileRead_gets(buff, size, m_fp);
-	m_text = buff;
-
-	if (FileRead_eof(m_fp) == 0) {
+	// ブロックの1行目
+	string str;
+	while (FileRead_eof(m_fp) == 0) {
+		// 空行以外が来るまでループ
 		FileRead_gets(buff, size, m_fp);
-		string s = buff;
-		if (s == "") {
-			m_textSpeed = TEXT_SPEED;
+		str = buff;
+		if (str != "") { break; }
+	}
+	if (str == "@eventStart") { // 挿絵の始まり
+		FileRead_gets(buff, size, m_fp);
+		string path = buff;
+		FileRead_gets(buff, size, m_fp);
+		string sum = buff;
+		FileRead_gets(buff, size, m_fp);
+		string speed = buff;
+		if (speed == "") {
+			m_eventAnime = new EventAnime(path.c_str(), stoi(sum));
 		}
 		else {
-			m_textSpeed = stoi(s);
-			FileRead_gets(buff, size, m_fp);
+			m_eventAnime = new EventAnime(path.c_str(), stoi(sum), stoi(speed));
 		}
 	}
-	else {
-		m_textSpeed = TEXT_SPEED;
+	else if (str == "@eventEnd") { // 挿絵の終わり
+		delete m_eventAnime;
+		m_eventAnime = nullptr;
+		loadNextBlock();
+	}
+	else { // 発言
+		m_cnt = 0;
+		m_textNow = 0;
+		if (str == "@null" || str == "???") { // ナレーション
+			// 発言者
+			m_speakerName = str == "@null" ? "" : str;
+			m_noFace = true;
+		}
+		else {
+			// 発言者
+			m_speakerName = buff;
+			// 画像
+			FileRead_gets(buff, size, m_fp);
+			setSpeakerGraph(buff);
+			m_noFace = false;
+		}
+		// テキスト
+		FileRead_gets(buff, size, m_fp);
+		m_text = buff;
+
+		if (FileRead_eof(m_fp) == 0) {
+			FileRead_gets(buff, size, m_fp);
+			string s = buff;
+			if (s == "") {
+				m_textSpeed = TEXT_SPEED;
+			}
+			else {
+				m_textSpeed = stoi(s);
+				FileRead_gets(buff, size, m_fp);
+			}
+		}
+		else {
+			m_textSpeed = TEXT_SPEED;
+		}
 	}
 }
+
 
 void Conversation::setSpeakerGraph(const char* faceName) {
 	Character* c = m_world_p->getCharacterWithName(m_speakerName);

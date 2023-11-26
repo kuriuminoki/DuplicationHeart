@@ -37,6 +37,7 @@ public:
 	inline int getX() const { return m_x; }
 	inline int getY() const { return m_y; }
 	inline bool getFinishFlag() const { return m_finishFlag; }
+	inline int getCnt() const { return m_cnt; }
 
 	// ƒZƒbƒ^
 	inline void setX(int x) { m_x = x; }

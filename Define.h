@@ -9,14 +9,6 @@ static int WINDOW = TRUE;
 static int MOUSE_DISP = TRUE;
 
 //‰æ–Ê‚Ì‘å‚«‚³
-//#define GAME_WIDE 3840
-//#define GAME_HEIGHT 2160
-//#define GAME_WIDE 2560
-//#define GAME_HEIGHT 1600
-//#define GAME_WIDE 2560
-//#define GAME_HEIGHT 1440
-//#define GAME_WIDE 1920
-//#define GAME_HEIGHT 1080
 #define GAME_WIDE_MAX 3840
 #define GAME_HEIGHT_MAX 2160
 #define GAME_WIDE_MIN 640
