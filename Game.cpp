@@ -260,6 +260,7 @@ bool GameData::saveCommon(int soundVolume, int gameWide, int gameHeight) {
 	fclose(commonFp);
 	return true;
 }
+// 全セーブデータ共通の項目だけをロード
 bool GameData::loadCommon(int* soundVolume, int* gameWide, int* gameHeight) {
 
 	FILE* commonFp = nullptr;
@@ -273,8 +274,15 @@ bool GameData::loadCommon(int* soundVolume, int* gameWide, int* gameHeight) {
 	return true;
 }
 
+// セーブデータ削除
+void GameData::removeSaveData() {
+	string fileName = m_saveFilePath;
+	remove((fileName + "intData.dat").c_str());
+	remove((fileName + "strData.dat").c_str());
+}
+
 // 自身のデータをWorldにデータ反映させる
-void GameData::asignWorld(World* world) {
+void GameData::asignWorld(World* world, bool playerHpReset) {
 	size_t size = m_characterData.size();
 	for (unsigned int i = 0; i < size; i++) {
 		world->asignedCharacterData(m_characterData[i]->name(), m_characterData[i]);
@@ -282,6 +290,9 @@ void GameData::asignWorld(World* world) {
 	size = m_doorData.size();
 	for (unsigned int i = 0; i < size; i++) {
 		world->asignedDoorData(m_doorData[i]);
+	}
+	if (playerHpReset) {
+		world->playerHpReset();
 	}
 }
 
@@ -310,13 +321,6 @@ void GameData::updateStory(Story* story) {
 	objectLoader->saveDoorData(m_doorData);
 }
 
-// セーブデータ削除
-void GameData::removeSaveData() {
-	string fileName = m_saveFilePath;
-	remove((fileName + "intData.dat").c_str());
-	remove((fileName + "strData.dat").c_str());
-}
-
 
 /*
 * ゲーム本体
@@ -340,13 +344,21 @@ Game::Game(const char* saveFilePath) {
 	m_gameData->updateStory(m_story);
 
 	// データを世界に反映
-	m_gameData->asignWorld(m_world);
+	m_gameData->asignWorld(m_world, true);
 
 	// スキル
 	m_skill = nullptr;
 
 	// 一時停止画面
 	m_gamePause = nullptr;
+
+	// ゲームの再起動（タイトルへ戻る）を要求
+	m_rebootFlag = false;
+
+	// 初期データをセーブ
+	if (!m_gameData->getExist()) {
+		m_gameData->save();
+	}
 }
 
 Game::~Game() {
@@ -423,6 +435,19 @@ bool Game::play() {
 	// 音
 	m_soundPlayer->play();
 
+	// 前のセーブポイントへ戻ることが要求された
+	if (m_story->getBackPrevSaveFlag()) {
+		backPrevSave();
+		m_story->doneBackPrevSave();
+		return true;
+	}
+	// ゲームオーバー
+	else if (m_world->playerDead() && m_world->getBrightValue() == 0) {
+		// storyからハートがやられたことを伝えられたらタイトルへ戻る
+		// やられるのがイベントの成功条件なら前のif文(m_story->getBackPrevSaveFlag())にひっかかるはず
+		m_rebootFlag = true;
+	}
+
 	// エリア移動
 	if (m_world->getBrightValue() == 0) {
 		int fromAreaNum = m_gameData->getAreaNum();
@@ -438,6 +463,18 @@ bool Game::play() {
 		return true;
 	}
 	return false;
+}
+
+// セーブデータをロード（前のセーブポイントへ戻る）
+void Game::backPrevSave() {
+	// 前のセーブデータをロード
+	m_gameData->load();
+	// これまでのWorldを削除
+	delete m_world;
+	// 以前のAreaNumでロード
+	m_world = new World(-1, m_gameData->getAreaNum(), m_soundPlayer);
+	m_gameData->asignWorld(m_world, true);
+	m_story->setWorld(m_world);
 }
 
 

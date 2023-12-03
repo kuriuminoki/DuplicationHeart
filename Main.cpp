@@ -81,10 +81,18 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 		/////メイン////
 		if (gamePlay) {
 			if (game->play()) {
+				//InitGraphが実行されたのでDrawerも作り直し
 				delete gameDrawer;
 				gameDrawer = new GameDrawer(game);
 			}
-			gameDrawer->draw();
+			if (game->getRebootFlag()) {
+				// ゲームを再起動、タイトルへ戻る
+				delete game;
+				gamePlay = false;
+				SetMouseDispFlag(MOUSE_DISP);//マウス表示
+				title = new Title();
+			}
+			else{ gameDrawer->draw(); }
 		}
 		else {
 			Title::TITLE_RESULT result = title->play();

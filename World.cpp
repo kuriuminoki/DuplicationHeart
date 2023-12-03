@@ -105,6 +105,14 @@ World::World(int fromAreaNum, int toAreaNum, SoundPlayer* soundPlayer) {
 	m_stageObjects = data.getObjects();
 	m_doorObjects = data.getDoorObjects();
 	data.getBackGround(m_backGroundGraph, m_backGroundColor);
+
+	// プレイヤーをセット
+	for (unsigned int i = 0; i < m_characters.size(); i++) {
+		if (m_playerId == m_characters[i]->getId()) {
+			m_player = m_characters[i];
+			break;
+		}
+	}
 }
 
 World::~World() {
@@ -155,6 +163,7 @@ World::World(const World* original) {
 		Character* copy;
 		copy = original->getCharacters()[i]->createCopy();
 		m_characters.push_back(copy);
+		if (copy->getId() == m_playerId) { m_player = copy; }
 	}
 	// コントローラをコピー
 	for (unsigned int i = 0; i < original->getCharacterControllers().size(); i++) {
@@ -451,13 +460,9 @@ void World::setPlayerOnDoor(int from) {
 		}
 	}
 	// プレイヤー
-	for (unsigned int i = 0; i < m_characters.size(); i++) {
-		if (m_playerId == m_characters[i]->getId()) {
-			m_characters[i]->setX(doorX1);
-			m_characters[i]->setY(doorY2 - m_characters[i]->getHeight());
-			break;
-		}
-	}
+	m_player->setX(doorX1);
+	m_player->setY(doorY2 - m_player->getHeight());
+
 	// プレイヤーの仲間
 	for (unsigned int i = 0; i < m_characterControllers.size(); i++) {
 		const Character* follow = m_characterControllers[i]->getBrain()->getFollow();
@@ -514,10 +519,12 @@ vector<const Animation*> World::getConstAnimations() const {
 	return allAnimations;
 }
 
-// 戦わせる
+/*
+*  戦わせる
+*/
 void World::battle() {
-	// 画面暗転中
-	if (m_brightValue != 255) {
+	// 画面暗転中 エリア移動かプレイヤーやられ時
+	if (m_brightValue != 255 || playerDead()) {
 		m_brightValue = max(0, m_brightValue - 10);
 		return;
 	}
@@ -696,7 +703,7 @@ void World::controlCharacter() {
 			atariCharacterAndDoor(controller, m_doorObjects);
 		}
 
-		// 操作
+		// 操作 originalのハートはフリーズ
 		if (!m_duplicationFlag || m_characterControllers[i]->getAction()->getCharacter()->getId() != m_playerId) {
 			controller->control();
 		}
@@ -709,7 +716,7 @@ void World::controlCharacter() {
 		Object* slashAttack = controller->slashAttack();
 		if (slashAttack != nullptr) { m_attackObjects.push_back(slashAttack); }
 
-		// 反映
+		// 反映 originalのハートはフリーズ
 		if (!m_duplicationFlag || m_characterControllers[i]->getAction()->getCharacter()->getId() != m_playerId) {
 			controller->action();
 		}
@@ -851,4 +858,14 @@ void World::cameraPointInit() {
 			break;
 		}
 	}
+}
+
+// プレイヤーのHPが0ならtrue
+bool World::playerDead() {
+	return m_player->getHp() <= 0;
+}
+
+// プレイヤーのHPをMAXにする
+void World::playerHpReset() {
+	m_player->setHp(m_player->getMaxHp());
 }

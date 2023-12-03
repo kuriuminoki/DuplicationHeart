@@ -68,7 +68,12 @@ bool Story::play() {
 	else {
 		// イベント進行中
 		EVENT_RESULT result = m_nowEvent->play();
-		// イベント終了
+		
+		// イベント失敗
+		if (result == EVENT_RESULT::FAILURE) {
+			// mustのイベントならタイトルへ戻る
+		}
+		// 成功または失敗したのでイベント終了
 		if (result != EVENT_RESULT::NOW) {
 			delete m_nowEvent;
 			m_nowEvent = nullptr;
@@ -122,4 +127,14 @@ void Story::setWorld(World* world) {
 	for (unsigned int i = 0; i < m_subEvent.size(); i++) {
 		m_subEvent[i]->setWorld(m_world_p);
 	}
+}
+
+// 前のセーブポイントへ戻る必要があるか
+bool Story::getBackPrevSaveFlag() const {
+	return m_nowEvent != nullptr ? m_nowEvent->getBackPrevSaveFlag() : false;
+}
+
+// 前のセーブポイントへ戻ったことを教えてもらう
+void Story::doneBackPrevSave() {
+	m_nowEvent->doneBackPrevSave();
 }

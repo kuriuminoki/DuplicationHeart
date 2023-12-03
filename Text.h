@@ -140,6 +140,9 @@ public:
 	}
 	inline int getAnimeBright() const { return m_eventAnime->getBright(); }
 
+	// セッタ
+	void setWorld(World* world);
+
 	// 今アニメ再生中か
 	bool animePlayNow() const { return m_eventAnime == nullptr ? false : !m_eventAnime->getFinishAnime(); }
 
