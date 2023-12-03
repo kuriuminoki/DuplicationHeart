@@ -135,6 +135,47 @@ void GamePause::draw() const {
 }
 
 
+/*
+* ゲーム中に開くオプション画面 タイトルに戻るボタンやチュートリアルがある
+*/
+BattleOption::BattleOption(SoundPlayer* soundPlayer):
+	GamePause(soundPlayer)
+{
+	getGameEx(m_exX, m_exY);
+	m_fontSize = (int)(50 * m_exX);
+	m_font = CreateFontToHandle(nullptr, m_fontSize, 3);
+
+	int x = (int)(TITLE_X1 * m_exX);
+	int y = (int)(TITLE_Y1 * m_exY);
+	int wide = (int)((TITLE_X2 - TITLE_X1) * m_exX);
+	int height = (int)((TITLE_Y2 - TITLE_Y1) * m_exY);
+	m_titleButton = new Button("Back to the title", x, y, wide, height, GRAY, RED, m_font, BLACK);
+	m_titleFlag = false;
+}
+BattleOption::~BattleOption() {
+	DeleteFontToHandle(m_font);
+}
+
+void BattleOption::play() {
+
+	GamePause::play();
+
+	if (leftClick() == 1) {
+		if (m_titleButton->overlap(m_handX, m_handY)) {
+			m_titleFlag = true;
+		}
+	}
+
+}
+
+void BattleOption::draw() const {
+
+	GamePause::draw();
+
+	m_titleButton->draw(m_handX, m_handY);
+
+}
+
 
 /*
 * タイトル画面からいけるオプション画面　GamePauseの機能＋解像度の変更もできる。
@@ -158,6 +199,9 @@ TitleOption::TitleOption(SoundPlayer* soundPlayer) :
 
 TitleOption::~TitleOption() {
 	DeleteFontToHandle(m_font);
+	delete m_leftButton;
+	delete m_rightButton;
+	delete m_tmpApplyButton;
 }
 
 void TitleOption::play() {
@@ -203,5 +247,6 @@ void TitleOption::draw() const {
 	int x1 = m_gameWideController->getLeftX();
 	int y1 = (int)((HEIGHT_Y2 + 300) * m_exY);
 	DrawBox(x1, y1, x1 + (int)(TMP[m_nowTmpIndex][0] * m_exX) / 20, y1 + (int)(TMP[m_nowTmpIndex][1] * m_exY) / 20, LIGHT_BLUE, TRUE);
+	DrawBox(x1, y1, x1 + (int)(GAME_WIDE * m_exX) / 20, y1 + (int)(GAME_HEIGHT * m_exY) / 20, RED, FALSE);
 
 }

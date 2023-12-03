@@ -62,7 +62,9 @@ public:
 };
 
 
-// ポーズ画面
+/*
+* オプション画面
+*/
 class GamePause {
 protected:
 
@@ -93,6 +95,46 @@ public:
 	void play();
 
 	void draw() const;
+};
+
+
+/*
+* ゲーム中に開くオプション画面 タイトルに戻るボタンやチュートリアルがある
+*/
+class BattleOption :
+	public GamePause
+{
+private:
+
+    // フォント
+	int m_font;
+	int m_fontSize;
+
+	// 1920を基準としたGAME_WIDEの倍率
+	double m_exX;
+	// 1080を基準としたGAME_HEIGHTの倍率
+	double m_exY;
+
+	// ボタンの座標
+	const int TITLE_X1 = 100;
+	const int TITLE_Y1 = 800;
+	const int TITLE_X2 = 600;
+	const int TITLE_Y2 = 1000;
+
+	// タイトルへ戻るボタン
+	Button* m_titleButton;
+	bool m_titleFlag;
+
+public:
+	BattleOption(SoundPlayer* soundPlayer);
+	~BattleOption();
+
+	void play();
+
+	void draw() const;
+
+	// ゲッタ
+	bool getTitleFlag() { return m_titleFlag; }
 };
 
 

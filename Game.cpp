@@ -350,7 +350,7 @@ Game::Game(const char* saveFilePath) {
 	m_skill = nullptr;
 
 	// 一時停止画面
-	m_gamePause = nullptr;
+	m_battleOption = nullptr;
 
 	// ゲームの再起動（タイトルへ戻る）を要求
 	m_rebootFlag = false;
@@ -371,19 +371,23 @@ bool Game::play() {
 
 	// 一時停止
 	if (controlQ() == 1) {
-		if (m_gamePause == nullptr) {
-			m_gamePause = new GamePause(m_soundPlayer);
+		if (m_battleOption == nullptr) {
+			m_battleOption = new BattleOption(m_soundPlayer);
 			// ここで音楽も止める
 			m_soundPlayer->stopBGM();
 		}
 		else {
-			delete m_gamePause;
-			m_gamePause = nullptr;
+			delete m_battleOption;
+			m_battleOption = nullptr;
 			m_soundPlayer->playBGM();
 		}
 	}
-	if (m_gamePause != nullptr) {
-		m_gamePause->play();
+	if (m_battleOption != nullptr) {
+		m_battleOption->play();
+		if (m_battleOption->getTitleFlag()) {
+			// タイトルへ戻る
+			m_rebootFlag = true;
+		}
 		return false;
 	}
 

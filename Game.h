@@ -8,7 +8,7 @@ class SoundPlayer;
 class World;
 class Story;
 class Character;
-class GamePause;
+class BattleOption;
 
 
 // キャラのセーブデータ
@@ -263,7 +263,7 @@ private:
 	HeartSkill* m_skill;
 
 	// 一時停止画面
-	GamePause* m_gamePause;
+	BattleOption* m_battleOption;
 
 	// ゲームの再起動（タイトルへ戻る）を要求
 	bool m_rebootFlag;
@@ -275,7 +275,7 @@ public:
 	// ゲッタ
 	World* getWorld() const { return m_world; }
 	HeartSkill* getSkill() const { return m_skill; }
-	GamePause* getGamePause() const { return m_gamePause; }
+	BattleOption* getGamePause() const { return m_battleOption; }
 	bool getRebootFlag() const { return m_rebootFlag; }
 
 	// デバッグ
