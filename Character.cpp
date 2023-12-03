@@ -7,6 +7,7 @@
 #include "Game.h"
 #include "DxLib.h"
 #include <cstdlib>
+#include <sstream>
 
 
 using namespace std;
@@ -63,12 +64,8 @@ CharacterInfo::CharacterInfo(const char* characterName) {
 	if (data.size() == 0) { data = reader.findOne("name", "テスト"); }
 
 	// パラメータを設定
+	setParam(data);
 	m_name = data["name"];
-	m_maxHp = stoi(data["maxHp"]);
-	m_handleEx = stod(data["handleEx"]);
-	m_moveSpeed = stoi(data["moveSpeed"]);
-	m_jumpHeight = stoi(data["jumpHeight"]);
-	m_sameBulletDirection = (bool)stoi(data["sameBulletDirection"]);
 
 	// 効果音をロード
 	string filePath = "sound/stick/";
@@ -89,6 +86,31 @@ CharacterInfo::~CharacterInfo() {
 	DeleteSoundMem(m_landSound);
 }
 
+// バージョン変更
+void CharacterInfo::changeVersion(int version) {
+	ostringstream oss;
+	oss << "v" << version << ":" << m_name;
+
+	CsvReader reader("data/characterInfo.csv");
+
+	// キャラ名でデータを検索
+	map<string, string> data = reader.findOne("name", oss.str().c_str());
+	if (data.size() == 0) { data = reader.findOne("name", m_name.c_str()); }
+	if (data.size() == 0) { data = reader.findOne("name", "テスト"); }
+
+	// パラメータを設定
+	setParam(data);
+}
+
+void CharacterInfo::setParam(map<string, string>& data) {
+	m_maxHp = stoi(data["maxHp"]);
+	m_handleEx = stod(data["handleEx"]);
+	m_moveSpeed = stoi(data["moveSpeed"]);
+	m_jumpHeight = stoi(data["jumpHeight"]);
+	m_sameBulletDirection = (bool)stoi(data["sameBulletDirection"]);
+}
+
+
 
 AttackInfo::AttackInfo():
 	AttackInfo("test", 1.0)
@@ -104,23 +126,7 @@ AttackInfo::AttackInfo(const char* characterName, double drawEx) {
 	if (data.size() == 0) { data = reader.findOne("name", "テスト"); }
 
 	// パラメータを設定
-	m_bulletHp = stoi(data["bulletHp"]);
-	m_bulletDamage = stoi(data["bulletDamage"]);
-	m_bulletRx = stoi(data["bulletRx"]);
-	m_bulletRy = stoi(data["bulletRy"]);
-	m_bulletSpeed = stoi(data["bulletSpeed"]);
-	m_bulletRapid = stoi(data["bulletRapid"]);
-	m_bulletDistance = stoi(data["bulletDistance"]);
-	m_bulletImpactX = stoi(data["bulletImpactX"]);
-	m_bulletImpactY = stoi(data["bulletImpactY"]);
-	m_slashHp = stoi(data["slashHp"]);
-	m_slashDamage = stoi(data["slashDamage"]);
-	m_slashLenX = stoi(data["slashLenX"]);
-	m_slashLenY = stoi(data["slashLenY"]);
-	m_slashCountSum = stoi(data["slashCountSum"]);
-	m_slashInterval = stoi(data["slashInterval"]);
-	m_slashImpactX = stoi(data["slashImpactX"]);
-	m_slashImpactY = stoi(data["slashImpactY"]);
+	setParam(data);
 
 	// 攻撃のエフェクト
 	string path = "picture/effect/";
@@ -145,6 +151,42 @@ AttackInfo::~AttackInfo() {
 	DeleteSoundMem(m_slashStartSoundHandle);
 }
 
+// バージョン変更
+void AttackInfo::changeVersion(const char* characterName, int version) {
+	ostringstream oss;
+	oss << "v" << version << ":" << characterName;
+
+	CsvReader reader("data/attackInfo.csv");
+
+	// キャラ名でデータを検索
+	map<string, string> data = reader.findOne("name", oss.str().c_str());
+	if (data.size() == 0) { data = reader.findOne("name", characterName); }
+	if (data.size() == 0) { data = reader.findOne("name", "テスト"); }
+
+	// パラメータを設定
+	setParam(data);
+}
+
+void AttackInfo::setParam(map<string, string>& data) {
+	m_bulletHp = stoi(data["bulletHp"]);
+	m_bulletDamage = stoi(data["bulletDamage"]);
+	m_bulletRx = stoi(data["bulletRx"]);
+	m_bulletRy = stoi(data["bulletRy"]);
+	m_bulletSpeed = stoi(data["bulletSpeed"]);
+	m_bulletRapid = stoi(data["bulletRapid"]);
+	m_bulletDistance = stoi(data["bulletDistance"]);
+	m_bulletImpactX = stoi(data["bulletImpactX"]);
+	m_bulletImpactY = stoi(data["bulletImpactY"]);
+	m_slashHp = stoi(data["slashHp"]);
+	m_slashDamage = stoi(data["slashDamage"]);
+	m_slashLenX = stoi(data["slashLenX"]);
+	m_slashLenY = stoi(data["slashLenY"]);
+	m_slashCountSum = stoi(data["slashCountSum"]);
+	m_slashInterval = stoi(data["slashInterval"]);
+	m_slashImpactX = stoi(data["slashImpactX"]);
+	m_slashImpactY = stoi(data["slashImpactY"]);
+}
+
 
 /*
 * Characterクラス
@@ -164,6 +206,7 @@ Character::Character(int hp, int x, int y, int groupId) {
 
 	m_groupId = groupId;
 
+	m_version = 1;
 	m_hp = hp;
 	m_prevHp = m_hp;
 	m_dispHpCnt = 0;
@@ -200,6 +243,7 @@ Character::~Character() {
 }
 
 void Character::setParam(Character* character) {
+	character->changeInfoVersion(m_version);
 	character->setY(m_y);
 	character->setId(m_id);
 	character->setLeftDirection(m_leftDirection);
@@ -216,6 +260,13 @@ void Character::getHandleSize(int& wide, int& height) const {
 	// 今セットしている画像の縦幅と横幅を取得する。
 	wide = getWide();
 	height = getHeight();
+}
+
+// Infoのバージョンを変更する
+void Character::changeInfoVersion(int version) {
+	m_version = version;
+	m_characterInfo->changeVersion(version);
+	m_attackInfo->changeVersion(m_characterInfo->name().c_str(), version);
 }
 
 int Character::getCenterX() const { 

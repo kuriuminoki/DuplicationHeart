@@ -3,6 +3,7 @@
 
 
 #include<string>
+#include<map>
 
 class Object;
 class GraphHandle;
@@ -49,7 +50,7 @@ public:
 
 	~CharacterInfo();
 
-	// ゲッタのみを持つ
+	// ゲッタのみを持つ、セッタは持たない
 	inline std::string name() const { return m_name; }
 	inline int maxHp() const { return m_maxHp; }
 	inline double handleEx() const { return m_handleEx; }
@@ -59,6 +60,14 @@ public:
 	inline int jumpSound() const { return m_jumpSound; }
 	inline int passiveSound() const { return m_passiveSound; }
 	inline int landSound() const { return m_landSound; }
+
+	// バージョン変更
+	void changeVersion(int version);
+
+private:
+
+	void setParam(std::map<std::string, std::string>& data);
+
 };
 
 
@@ -135,7 +144,7 @@ public:
 
 	~AttackInfo();
 	
-	// ゲッタのみを持つ
+	// ゲッタのみを持つ、セッタは持たない
 	int bulletHp() const { return m_bulletHp; }
 	int bulletDamage() const { return m_bulletDamage; }
 	int bulletRx() const { return m_bulletRx; }
@@ -159,6 +168,14 @@ public:
 	int slashSoundHandle() const { return m_slashSoundHandle; }
 	int bulletStartSoundeHandle() const { return m_bulletStartSoundHandle; }
 	int slashStartSoundHandle() const { return m_slashStartSoundHandle; }
+
+	// バージョン変更
+	void changeVersion(const char* characterName, int version);
+
+private:
+
+	void setParam(std::map<std::string, std::string>& data);
+
 };
 
 
@@ -176,6 +193,9 @@ protected:
 
 	// グループID 味方識別用
 	int m_groupId;
+
+	// Infoのバージョン
+	int m_version;
 
 	// 残り体力
 	int m_hp;
@@ -223,6 +243,7 @@ public:
 	// ゲッタ
 	inline int getId() const { return m_id; }
 	inline int getGroupId() const { return m_groupId; }
+	inline int getVersion() const { return m_version; }
 	inline int getHp() const { return m_hp; }
 	inline int getPrevHp() const { return m_prevHp; }
 	inline int getDispHpCnt() const { return m_dispHpCnt; }
@@ -265,6 +286,9 @@ public:
 	inline int getBulletRapid() const { return m_attackInfo->bulletRapid(); }
 	inline int getSlashCountSum() const { return m_attackInfo->slashCountSum(); }
 	inline int getSlashInterval() const { return m_attackInfo->slashInterval(); }
+
+	// Infoのバージョンを変更する
+	void changeInfoVersion(int version);
 
 	// 画像の情報を取得
 	int getCenterX() const;

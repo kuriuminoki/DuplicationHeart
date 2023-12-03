@@ -311,6 +311,7 @@ void World::eraseRecorder() {
 
 // ƒLƒƒƒ‰1‘Ì‚Ìî•ñ‚ð¢ŠE‚É”½‰f
 void World::asignedCharacter(Character* character, CharacterData* data) {
+	character->changeInfoVersion(data->version());
 	if (data->id() != -1) {
 		// ‚±‚ÌƒQ[ƒ€‚Å‰“oê‚¶‚á‚È‚¢
 		character->setHp(data->hp());
@@ -385,6 +386,7 @@ void World::asignCharacterData(const char* name, CharacterData* data, int fromAr
 	for (unsigned i = 0; i < size; i++) {
 		if (m_characterControllers[i]->getAction()->getCharacter()->getName() == name) {
 			const Character* c = m_characterControllers[i]->getAction()->getCharacter();
+			data->setVersion(c->getVersion());
 			data->setHp(c->getHp());
 			data->setId(c->getId());
 			data->setGroupId(c->getGroupId());
