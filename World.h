@@ -149,6 +149,9 @@ public:
 	// プレイヤーのHPが0ならtrue
 	bool playerDead();
 
+	// プレイヤーのHPをMAXにする
+	void playerHpReset();
+
 	/*
 	* イベント用
 	*/

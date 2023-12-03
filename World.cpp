@@ -864,3 +864,8 @@ void World::cameraPointInit() {
 bool World::playerDead() {
 	return m_player->getHp() <= 0;
 }
+
+// ƒvƒŒƒCƒ„[‚ÌHP‚ðMAX‚É‚·‚é
+void World::playerHpReset() {
+	m_player->setHp(m_player->getMaxHp());
+}

@@ -177,17 +177,17 @@ public:
 	inline void setStoryNum(int storyNum) { m_storyNum = storyNum; }
 	inline void setSoundVolume(int soundVolume) { m_soundVolume = soundVolume; }
 
+	// セーブデータ削除
+	void removeSaveData();
+
 	// 自身のデータをWorldにデータ反映させる
-	void asignWorld(World* world);
+	void asignWorld(World* world, bool playerHpReset = false);
 
 	// Worldのデータを自身に反映させる
 	void asignedWorld(const World* world);
 
 	// ストーリーが進んだ時にセーブデータを更新する
 	void updateStory(Story* story);
-
-	// セーブデータ削除
-	void removeSaveData();
 
 };
 

@@ -274,8 +274,15 @@ bool GameData::loadCommon(int* soundVolume, int* gameWide, int* gameHeight) {
 	return true;
 }
 
+// セーブデータ削除
+void GameData::removeSaveData() {
+	string fileName = m_saveFilePath;
+	remove((fileName + "intData.dat").c_str());
+	remove((fileName + "strData.dat").c_str());
+}
+
 // 自身のデータをWorldにデータ反映させる
-void GameData::asignWorld(World* world) {
+void GameData::asignWorld(World* world, bool playerHpReset) {
 	size_t size = m_characterData.size();
 	for (unsigned int i = 0; i < size; i++) {
 		world->asignedCharacterData(m_characterData[i]->name(), m_characterData[i]);
@@ -283,6 +290,9 @@ void GameData::asignWorld(World* world) {
 	size = m_doorData.size();
 	for (unsigned int i = 0; i < size; i++) {
 		world->asignedDoorData(m_doorData[i]);
+	}
+	if (playerHpReset) {
+		world->playerHpReset();
 	}
 }
 
@@ -311,13 +321,6 @@ void GameData::updateStory(Story* story) {
 	objectLoader->saveDoorData(m_doorData);
 }
 
-// セーブデータ削除
-void GameData::removeSaveData() {
-	string fileName = m_saveFilePath;
-	remove((fileName + "intData.dat").c_str());
-	remove((fileName + "strData.dat").c_str());
-}
-
 
 /*
 * ゲーム本体
@@ -341,7 +344,7 @@ Game::Game(const char* saveFilePath) {
 	m_gameData->updateStory(m_story);
 
 	// データを世界に反映
-	m_gameData->asignWorld(m_world);
+	m_gameData->asignWorld(m_world, true);
 
 	// スキル
 	m_skill = nullptr;
@@ -470,7 +473,7 @@ void Game::backPrevSave() {
 	delete m_world;
 	// 以前のAreaNumでロード
 	m_world = new World(-1, m_gameData->getAreaNum(), m_soundPlayer);
-	m_gameData->asignWorld(m_world);
+	m_gameData->asignWorld(m_world, true);
 	m_story->setWorld(m_world);
 }
 
