@@ -14,9 +14,9 @@ class Movie;
 
 
 enum class EVENT_RESULT {
-	NOW,
-	SUCCESS,
-	FAILURE
+	NOW,			// 進行中
+	SUCCESS,		// クリア
+	FAILURE			// 失敗
 };
 
 
@@ -58,7 +58,10 @@ public:
 	virtual EVENT_RESULT play() = 0;
 
 	// ハートのスキル発動が可能かどうか
-	virtual bool skillAble() = 0;
+	virtual bool skillAble() { return true; }
+
+	// クリア時に前のセーブポイントへ戻る必要があるか
+	virtual bool needBackPrevSave() { return false; }
 
 	// セッタ
 	virtual void setWorld(World* world) { m_world_p = world; }
@@ -88,6 +91,9 @@ private:
 	// イベントの進捗(EventElementのインデックス)
 	int m_nowElement;
 
+	// 前のセーブポイントへ戻る要求
+	bool m_backPrevSaveFlag;
+
 public:
 	Event(int eventNum, World* world, SoundPlayer* soundPlayer);
 	~Event();
@@ -103,6 +109,11 @@ public:
 
 	// Worldを設定しなおす
 	void setWorld(World* world);
+
+	bool getBackPrevSaveFlag() const { return m_backPrevSaveFlag; }
+
+	// 前のセーブポイントへ戻ったことを教えてもらう
+	void doneBackPrevSave() { m_backPrevSaveFlag = false; }
 
 private:
 	void createFire(std::vector<std::string> param, World* world, SoundPlayer* soundPlayer);
@@ -235,9 +246,6 @@ public:
 	// プレイ
 	EVENT_RESULT play();
 
-	// ハートのスキル発動が可能かどうか
-	bool skillAble() { return true; }
-
 	// 世界を設定しなおす
 	void setWorld(World* world);
 };
@@ -259,9 +267,6 @@ public:
 
 	// プレイ
 	EVENT_RESULT play();
-
-	// ハートのスキル発動が可能かどうか
-	bool skillAble() { return true; }
 };
 
 // 会話イベント
@@ -281,6 +286,9 @@ public:
 
 	// ハートのスキル発動が可能かどうか
 	bool skillAble() { return false; }
+
+	// セッタ
+	void setWorld(World* world);
 };
 
 // ムービーイベント
@@ -303,6 +311,24 @@ public:
 
 	// ハートのスキル発動が可能かどうか
 	bool skillAble() { return false; }
+};
+
+// 特定のエリアでプレイヤーがやられるイベント
+class PlayerDeadEvent :
+	public EventElement
+{
+private:
+	
+	int m_areaNum;
+
+public:
+	PlayerDeadEvent(World* world, std::vector<std::string> param);
+
+	// プレイ
+	EVENT_RESULT play();
+
+	// クリア時に前のセーブポイントへ戻る必要があるか
+	bool needBackPrevSave() { return true; }
 };
 
 #endif

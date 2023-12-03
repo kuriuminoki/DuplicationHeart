@@ -58,6 +58,9 @@ private:
 	// 世界に存在するキャラクター Worldがデリートする
 	std::vector<Character*> m_characters;
 
+	// プレイヤー 毎回for文でID検索しない用
+	Character* m_player;
+
 	// 戦闘のためにキャラを動かすコントローラ Worldがデリートする
 	std::vector<CharacterController*> m_characterControllers;
 
@@ -142,6 +145,9 @@ public:
 
 	// カメラの位置をリセット
 	void cameraPointInit();
+
+	// プレイヤーのHPが0ならtrue
+	bool playerDead();
 
 	/*
 	* イベント用

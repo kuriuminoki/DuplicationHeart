@@ -117,6 +117,7 @@ private:
 	GraphHandles* m_titleBlue;
 	GraphHandles* m_titleOrange;
 	GraphHandles* m_titleHeart;
+	GraphHandles* m_heartHide;
 	// ƒLƒƒƒ‰
 	GraphHandles* m_archive;
 	GraphHandles* m_aigis;

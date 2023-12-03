@@ -53,9 +53,13 @@ public:
 	inline CharacterLoader* getCharacterLoader() const { return m_characterLoader; }
 	inline ObjectLoader* getObjectLoader() const { return m_objectLoader; }
 	inline const World* getWorld() const { return m_world_p; }
+	bool getBackPrevSaveFlag() const;
 
 	// セッタ
 	void setWorld(World* world);
+
+	// 前のセーブポイントへ戻ったことを教えてもらう
+	void doneBackPrevSave();
 };
 
 

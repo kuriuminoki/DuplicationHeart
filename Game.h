@@ -265,6 +265,9 @@ private:
 	// 一時停止画面
 	GamePause* m_gamePause;
 
+	// ゲームの再起動（タイトルへ戻る）を要求
+	bool m_rebootFlag;
+
 public:
 	Game(const char* saveFilePath = "savedata/test/");
 	~Game();
@@ -273,12 +276,16 @@ public:
 	World* getWorld() const { return m_world; }
 	HeartSkill* getSkill() const { return m_skill; }
 	GamePause* getGamePause() const { return m_gamePause; }
+	bool getRebootFlag() const { return m_rebootFlag; }
 
 	// デバッグ
 	void debug(int x, int y, int color) const;
 
 	// ゲームをプレイする
 	bool play();
+
+	// セーブデータをロード（前のセーブポイントへ戻る）
+	void backPrevSave();
 };
 
 #endif

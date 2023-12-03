@@ -95,7 +95,6 @@ Conversation::Conversation(int textNum, World* world, SoundPlayer* soundPlayer) 
 	ostringstream oss;
 	oss << "data/text/text" << textNum << ".txt";
 	m_fp = FileRead_open(oss.str().c_str());
-	loadNextBlock();
 
 }
 
@@ -147,6 +146,10 @@ bool Conversation::play() {
 			loadNextBlock();
 		}
 		return false;
+	}
+
+	if (m_text == "") {
+		loadNextBlock();
 	}
 
 	// プレイヤーからのアクション（スペースキー入力）
@@ -291,4 +294,11 @@ void Conversation::setNextText(const int size, char* buff) {
 void Conversation::setSpeakerGraph(const char* faceName) {
 	Character* c = m_world_p->getCharacterWithName(m_speakerName);
 	m_speakerGraph = c->getFaceHandle()->getGraphHandle(faceName);
+}
+
+// セッタ
+void Conversation::setWorld(World* world) {
+	m_world_p = world;
+	m_speakerName = "ハート";
+	setSpeakerGraph("通常");
 }

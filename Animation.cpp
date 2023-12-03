@@ -119,6 +119,7 @@ OpMovie::OpMovie(SoundPlayer* soundPlayer_p):
 	m_titleBlue = new GraphHandles((path + "title/" + "titleBlue").c_str(), 1, m_ex);
 	m_titleOrange = new GraphHandles((path + "title/" + "titleOrange").c_str(), 1, m_ex);
 	m_titleHeart = new GraphHandles((path + "title/" + "heart").c_str(), 1, m_ex);
+	m_heartHide = new GraphHandles((path + "title/" + "ハート隠し").c_str(), 2, m_ex);
 	// キャラ
 	m_archive = new GraphHandles((path + "アーカイブ").c_str(), 1, m_ex);
 	m_aigis = new GraphHandles((path + "アイギス").c_str(), 1, m_ex);
@@ -143,26 +144,27 @@ OpMovie::OpMovie(SoundPlayer* soundPlayer_p):
 	m_tank = new GraphHandles((path + "棒タンク").c_str(), 1, m_ex);
 
 	// 表示する順にpush
-	characterQueue.push(make_pair(m_koharu, 30));
-	characterQueue.push(make_pair(m_assault, 30));
-	characterQueue.push(make_pair(m_msadi, 30));
-	characterQueue.push(make_pair(m_exlucina, 30));
-	characterQueue.push(make_pair(m_yuri, 30));
-	characterQueue.push(make_pair(m_titius, 30));
-	characterQueue.push(make_pair(m_tank, 30));
-	characterQueue.push(make_pair(m_chocola, 30));
-	characterQueue.push(make_pair(m_vermelia, 30));
-	characterQueue.push(make_pair(m_french, 30));
-	characterQueue.push(make_pair(m_courir, 30));
-	characterQueue.push(make_pair(m_cornein, 30));
-	characterQueue.push(make_pair(m_aigis, 30));
-	characterQueue.push(make_pair(m_elnino, 30));
-	characterQueue.push(make_pair(m_onyx, 30));
-	characterQueue.push(make_pair(m_fred, 30));
-	characterQueue.push(make_pair(m_mascara, 30));
-	characterQueue.push(make_pair(m_rabbi, 30));
-	characterQueue.push(make_pair(m_archive, 30));
-	characterQueue.push(make_pair(m_siesta, 30));
+	const int CHARA_TIME = 32;
+	characterQueue.push(make_pair(m_koharu, CHARA_TIME));
+	characterQueue.push(make_pair(m_assault, CHARA_TIME));
+	characterQueue.push(make_pair(m_msadi, CHARA_TIME));
+	characterQueue.push(make_pair(m_exlucina, CHARA_TIME));
+	characterQueue.push(make_pair(m_yuri, CHARA_TIME));
+	characterQueue.push(make_pair(m_titius, CHARA_TIME));
+	characterQueue.push(make_pair(m_tank, CHARA_TIME));
+	characterQueue.push(make_pair(m_chocola, CHARA_TIME));
+	characterQueue.push(make_pair(m_vermelia, CHARA_TIME));
+	characterQueue.push(make_pair(m_french, CHARA_TIME));
+	characterQueue.push(make_pair(m_courir, CHARA_TIME));
+	characterQueue.push(make_pair(m_cornein, CHARA_TIME));
+	characterQueue.push(make_pair(m_aigis, CHARA_TIME));
+	characterQueue.push(make_pair(m_elnino, CHARA_TIME));
+	characterQueue.push(make_pair(m_onyx, CHARA_TIME));
+	characterQueue.push(make_pair(m_fred, CHARA_TIME));
+	characterQueue.push(make_pair(m_mascara, CHARA_TIME));
+	characterQueue.push(make_pair(m_rabbi, CHARA_TIME));
+	characterQueue.push(make_pair(m_archive, CHARA_TIME));
+	characterQueue.push(make_pair(m_siesta, CHARA_TIME));
 
 	// 最初の画像
 	m_animation = new Animation(GAME_WIDE / 2, GAME_HEIGHT / 2, 120, m_titleH);
@@ -180,6 +182,7 @@ OpMovie::~OpMovie() {
 	delete m_titleBlue;
 	delete m_titleOrange;
 	delete m_titleHeart;
+	delete m_heartHide;
 	// キャラ
 	delete m_archive;
 	delete m_aigis;
@@ -225,9 +228,12 @@ void OpMovie::play() {
 	else if (m_cnt < 440 && m_animation->getFinishFlag()) {
 		m_animation->changeGraph(m_title, 30);
 	}
-	else if (m_cnt < 600 && m_cnt >= 440) {
+	else if (m_cnt == 440) {
+		m_animation->changeGraph(m_heartHide, 60);
+	}
+	else if (m_cnt < 600 && m_cnt >= 560) {
 		m_animation->changeGraph(m_titleHeart, 60);
-		m_animation->setX(m_animation->getX() + (int)(8 * m_ex));
+		m_animation->setX(m_animation->getX() + (int)(15 * m_ex));
 	}
 	else if (m_cnt < 690 && m_cnt >= 600) {
 		m_animation->setX(GAME_WIDE / 2);
@@ -241,14 +247,14 @@ void OpMovie::play() {
 	else if (m_cnt < 700 && m_cnt >= 690) {
 		m_animation->changeGraph(m_titleOrange, 60);
 	}
-	else if (m_cnt >= 2130 && m_cnt < 2740) {
+	else if (m_cnt >= 2130 && !characterQueue.empty()) {
 		if (m_animation->getFinishFlag() && !characterQueue.empty()) {
 			GraphHandles* next = characterQueue.front().first;
 			m_animation->changeGraph(next, characterQueue.front().second / next->getSize());
 			characterQueue.pop();
 		}
 	}
-	else if (m_cnt == 2760) {
+	if (m_animation->getFinishFlag() && characterQueue.empty()) {
 		m_animation->changeGraph(m_heart);
 	}
 

@@ -109,6 +109,9 @@ void Event::createElement(vector<string> param, World* world, SoundPlayer* sound
 	else if (param0 == "Movie") {
 		element = new MovieEvent(world, soundPlayer, param);
 	}
+	else if (param0 == "PlayerDeadEvent") {
+		element = new PlayerDeadEvent(world, param);
+	}
 
 	if (element != nullptr) { m_eventElement.push_back(element); }
 }
@@ -142,24 +145,32 @@ bool Event::fire() {
 
 EVENT_RESULT Event::play() {
 
-	EVENT_RESULT result = m_eventElement[m_nowElement]->play();
+	EVENT_RESULT elementResult = m_eventElement[m_nowElement]->play();
 
 	// Elementが一つ成功した
-	if (result == EVENT_RESULT::SUCCESS) {
+	if (elementResult == EVENT_RESULT::SUCCESS) {
+
+		// Storyに前のセーブポイントへ戻るよう要求
+		if (m_eventElement[m_nowElement]->needBackPrevSave()) {
+			m_backPrevSaveFlag = true;
+		}
+
 		// 次のエレメントへ
 		m_nowElement++;
+
 		if (m_nowElement == m_eventElement.size()) { 
-			// イベントおわり
+			// EventElementが残っていないのでイベントおわり
 			return EVENT_RESULT::SUCCESS;
 		}
 		else { 
-			// まだイベント続く
+			// EventElementは残っているのでまだイベント続く
 			m_eventElement[m_nowElement]->init();
 			return EVENT_RESULT::NOW;
 		}
 	}
 
-	return result;
+	// FAILUREまたはNOW
+	return elementResult;
 }
 
 
@@ -324,6 +335,11 @@ EVENT_RESULT TalkEvent::play() {
 	return EVENT_RESULT::NOW;
 }
 
+void TalkEvent::setWorld(World* world) { 
+	EventElement::setWorld(world);
+	m_conversation->setWorld(world);
+}
+
 
 MovieEvent::MovieEvent(World* world, SoundPlayer* soundPlayer, std::vector<std::string> param) :
 	EventElement(world)
@@ -343,6 +359,22 @@ void MovieEvent::init() {
 EVENT_RESULT MovieEvent::play() {
 	m_world_p->moviePlay();
 	if (m_movie->getFinishFlag()) {
+		return EVENT_RESULT::SUCCESS;
+	}
+	return EVENT_RESULT::NOW;
+}
+
+
+// 特定のエリアでプレイヤーがやられるイベント
+PlayerDeadEvent::PlayerDeadEvent(World* world, std::vector<std::string> param) :
+	EventElement(world)
+{
+	m_areaNum = stoi(param[1]);
+}
+EVENT_RESULT PlayerDeadEvent::play() {
+	m_world_p->battle();
+	// 対象のキャラのHPをチェックする
+	if (m_world_p->getAreaNum() == m_areaNum && m_world_p->playerDead() && m_world_p->getBrightValue() == 0) {
 		return EVENT_RESULT::SUCCESS;
 	}
 	return EVENT_RESULT::NOW;
