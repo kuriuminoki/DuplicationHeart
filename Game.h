@@ -18,6 +18,9 @@ private:
 	// 名前
 	std::string m_name;
 
+	// Infoのバージョン
+	int m_version;
+
 	// HP
 	int m_hp;
 
@@ -60,6 +63,7 @@ public:
 
 	// ゲッタ
 	inline const char* name() const { return m_name.c_str(); }
+	inline const int version() const { return m_version; }
 	inline int hp() const { return m_hp; }
 	inline int id() const { return m_id; }
 	inline int groupId() const { return m_groupId; }
@@ -74,6 +78,7 @@ public:
 	inline std::string controllerName() const { return m_controllerName; }
 
 	// セッタ
+	inline void setVersion(int version) { m_version = version; }
 	inline void setHp(int hp) { m_hp = hp; }
 	inline void setId(int id) { m_id = id; }
 	inline void setGroupId(int groupId) { m_groupId = groupId; }

@@ -36,6 +36,10 @@ protected:
 	// 動かすキャラクター
 	Character* m_character_p;
 
+	// キャラのバージョン イベントでrunSpeedの変更した場合に対処するため
+	int m_characterVersion;
+	int m_characterMoveSpeed;
+
 	// キャラが地面にいる
 	bool m_grand;
 
@@ -140,6 +144,8 @@ public:
 
 	// セッタ
 	void setState(CHARACTER_STATE state);
+	inline void setCharacterVersion(int version) { m_characterVersion = version; }
+	inline void setCharacterMoveSpeed(int moveSpeed) { m_characterMoveSpeed = moveSpeed; }
 	inline void setSimpleGrand(bool grand) { m_grand = grand; }
 	virtual void setGrand(bool grand);
 	void setRightLock(bool lock);
@@ -209,6 +215,12 @@ public:
 
 	// 今攻撃可能状態
 	bool ableAttack() const;
+
+	// 歩き始める
+	void startMoveLeft();
+	void startMoveRight();
+	void startMoveUp();
+	void startMoveDown();
 
 	// 歩くのをやめる
 	void stopMoveLeft();

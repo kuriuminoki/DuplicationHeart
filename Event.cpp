@@ -97,6 +97,9 @@ void Event::createElement(vector<string> param, World* world, SoundPlayer* sound
 	else if (param0 == "ChangeGroup") {
 		element = new ChangeGroupEvent(world, param);
 	}
+	else if (param0 == "ChangeInfoVersionEvent") {
+		element = new ChangeInfoVersionEvent(world, param);
+	}
 	else if (param0 == "DeadCharacter") {
 		element = new DeadCharacterEvent(world, param);
 	}
@@ -267,6 +270,24 @@ EVENT_RESULT ChangeGroupEvent::play() {
 	return EVENT_RESULT::SUCCESS;
 }
 void ChangeGroupEvent::setWorld(World* world) {
+	EventElement::setWorld(world);
+	m_character_p = m_world_p->getCharacterWithName(m_param[2]);
+}
+
+// キャラのversionを変更する
+ChangeInfoVersionEvent::ChangeInfoVersionEvent(World* world, std::vector<string> param) :
+	EventElement(world)
+{
+	m_param = param;
+	m_version = stoi(param[1]);
+	m_character_p = m_world_p->getCharacterWithName(param[2]);
+}
+EVENT_RESULT ChangeInfoVersionEvent::play() {
+	// 対象のキャラのGroupIdを変更する
+	m_character_p->changeInfoVersion(m_version);
+	return EVENT_RESULT::SUCCESS;
+}
+void ChangeInfoVersionEvent::setWorld(World* world) {
 	EventElement::setWorld(world);
 	m_character_p = m_world_p->getCharacterWithName(m_param[2]);
 }

@@ -54,6 +54,8 @@ CharacterAction::CharacterAction(Character* character, SoundPlayer* soundPlayer_
 
 	//初期状態
 	m_state = CHARACTER_STATE::STAND;
+	m_characterVersion = character->getVersion();
+	m_characterMoveSpeed = character->getMoveSpeed();
 	m_grand = false;
 	m_runCnt = -1;
 	m_squat = false;
@@ -92,6 +94,8 @@ CharacterAction::CharacterAction() :
 
 void CharacterAction::setParam(CharacterAction* action) {
 	action->setState(m_state);
+	action->setCharacterVersion(m_characterVersion);
+	action->setCharacterMoveSpeed(m_characterMoveSpeed);
 	action->setSimpleGrand(m_grand);
 	action->setGrandLeftSlope(m_grandLeftSlope);
 	action->setGrandRightSlope(m_grandRightSlope);
@@ -166,6 +170,16 @@ void CharacterAction::init() {
 
 	// prevHpをhpに追いつかせる
 	m_character_p->setPrevHp(m_character_p->getPrevHp() - 1);
+
+	// キャラのバージョンが変化した場合
+	if (m_characterVersion != m_character_p->getVersion()) {
+		if (m_moveLeft) { m_vx += m_characterMoveSpeed; m_vx -= m_character_p->getMoveSpeed(); }
+		if (m_moveRight) { m_vx -= m_characterMoveSpeed; m_vx += m_character_p->getMoveSpeed(); }
+		if (m_moveUp) { m_vy += m_characterMoveSpeed; m_vy -= m_character_p->getMoveSpeed(); }
+		if (m_moveDown) { m_vy -= m_characterMoveSpeed; m_vy += m_character_p->getMoveSpeed(); }
+		m_characterVersion = m_character_p->getVersion();
+		m_characterMoveSpeed = m_character_p->getMoveSpeed();
+	}
 }
 
 // ダメージ
@@ -235,6 +249,28 @@ void CharacterAction::setSquat(bool squat) {
 		// しゃがめない状態
 		m_squat = false;
 	}
+}
+
+// 歩き始める
+void CharacterAction::startMoveLeft() {
+	// 左へ歩き始める
+	m_moveLeft = true;
+	m_vx -= m_character_p->getMoveSpeed();
+}
+void CharacterAction::startMoveRight() {
+	// 右へ歩き始める
+	m_moveRight = true;
+	m_vx += m_character_p->getMoveSpeed();
+}
+void CharacterAction::startMoveUp() {
+	// 上へ歩き始める
+	m_moveUp = true;
+	m_vy -= m_character_p->getMoveSpeed();
+}
+void CharacterAction::startMoveDown() {
+	// 下へ歩き始める
+	m_moveDown = true;
+	m_vy += m_character_p->getMoveSpeed();
 }
 
 // 歩くのをやめる
@@ -545,13 +581,11 @@ void StickAction::walk(bool right, bool left) {
 
 	// 右へ歩き始める
 	if (!m_rightLock && !m_moveRight && !m_moveLeft && right && (!left || !m_character_p->getLeftDirection()) && !m_squat) { // 右へ歩く
-		m_vx += m_character_p->getMoveSpeed();
-		m_moveRight = true;
+		startMoveRight();
 	}
 	// 左へ歩き始める
 	if (!m_leftLock && !m_moveRight && !m_moveLeft && left && (!right || m_character_p->getLeftDirection()) && !m_squat) { // 左へ歩く
-		m_vx -= m_character_p->getMoveSpeed();
-		m_moveLeft = true;
+		startMoveLeft();
 	}
 	// アニメーション用にカウント
 	if (m_moveLeft || m_moveRight) {
@@ -932,31 +966,25 @@ void FlightAction::walk(bool right, bool left, bool up, bool down) {
 	}
 	// 右へ歩き始める
 	if (!m_rightLock && !m_moveRight && !m_moveLeft && right && (!left || !m_character_p->getLeftDirection()) && !m_squat) { // 右へ歩く
-		m_vx += m_character_p->getMoveSpeed();
-		m_moveRight = true;
+		startMoveRight();
 		if(m_grand){
-			m_vy -= m_character_p->getMoveSpeed();
-			m_moveUp = true;
+			startMoveUp();
 		}
 	}
 	// 左へ歩き始める
 	if (!m_leftLock && !m_moveRight && !m_moveLeft && left && (!right || m_character_p->getLeftDirection()) && !m_squat) { // 左へ歩く
-		m_vx -= m_character_p->getMoveSpeed();
-		m_moveLeft = true;
+		startMoveLeft();
 		if (m_grand) {
-			m_vy -= m_character_p->getMoveSpeed();
-			m_moveUp = true;
+			startMoveUp();
 		}
 	}
 	// 上へ歩き始める
 	if (!m_upLock && !m_moveDown && !m_moveUp && up && !down) { // 上へ歩く
-		m_vy -= m_character_p->getMoveSpeed();
-		m_moveUp = true;
+		startMoveUp();
 	}
 	// 下へ歩き始める
 	if (!m_downLock && !m_moveUp && !m_moveDown && down && !up) { // 下へ歩く
-		m_vy += m_character_p->getMoveSpeed();
-		m_moveDown = true;
+		startMoveDown();
 	}
 	// アニメーション用にカウント
 	if (m_moveLeft || m_moveRight) {
