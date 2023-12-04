@@ -100,6 +100,9 @@ void Event::createElement(vector<string> param, World* world, SoundPlayer* sound
 	else if (param0 == "ChangeInfoVersionEvent") {
 		element = new ChangeInfoVersionEvent(world, param);
 	}
+	else if (param0 == "ChangeCharacterPointEvent") {
+		element = new ChangeCharacterPointEvent(world, param);
+	}
 	else if (param0 == "DeadCharacter") {
 		element = new DeadCharacterEvent(world, param);
 	}
@@ -288,6 +291,26 @@ EVENT_RESULT ChangeInfoVersionEvent::play() {
 	return EVENT_RESULT::SUCCESS;
 }
 void ChangeInfoVersionEvent::setWorld(World* world) {
+	EventElement::setWorld(world);
+	m_character_p = m_world_p->getCharacterWithName(m_param[2]);
+}
+
+// キャラの座標を変える
+ChangeCharacterPointEvent::ChangeCharacterPointEvent(World* world, std::vector<string> param) :
+	EventElement(world)
+{
+	m_param = param;
+	m_x = stoi(param[1]);
+	m_y = stoi(param[2]);
+	m_character_p = m_world_p->getCharacterWithName(param[3]);
+}
+EVENT_RESULT ChangeCharacterPointEvent::play() {
+	// 対象のキャラの座標を変更する
+	m_character_p->setX(m_x);
+	m_character_p->setY(m_y - m_character_p->getHeight());
+	return EVENT_RESULT::SUCCESS;
+}
+void ChangeCharacterPointEvent::setWorld(World* world) {
 	EventElement::setWorld(world);
 	m_character_p = m_world_p->getCharacterWithName(m_param[2]);
 }

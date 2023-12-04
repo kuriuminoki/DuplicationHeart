@@ -255,6 +255,33 @@ public:
 	void setWorld(World* world);
 };
 
+// キャラの座標を変える
+class ChangeCharacterPointEvent :
+	public EventElement
+{
+private:
+
+	// パラメータ
+	std::vector<std::string> m_param;
+
+	int m_x, m_y;
+
+	// 対象のキャラ
+	Character* m_character_p;
+
+public:
+	ChangeCharacterPointEvent(World* world, std::vector<std::string> param);
+
+	// プレイ
+	EVENT_RESULT play();
+
+	// ハートのスキル発動が可能かどうか
+	bool skillAble() { return false; }
+
+	// 世界を設定しなおす
+	void setWorld(World* world);
+};
+
 // 特定のキャラのHPが0になるまで戦う
 class DeadCharacterEvent :
 	public EventElement

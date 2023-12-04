@@ -189,7 +189,7 @@ public:
 	void asignWorld(World* world, bool playerHpReset = false);
 
 	// Worldのデータを自身に反映させる
-	void asignedWorld(const World* world);
+	void asignedWorld(const World* world, bool notCharacterPoint);
 
 	// ストーリーが進んだ時にセーブデータを更新する
 	void updateStory(Story* story);
