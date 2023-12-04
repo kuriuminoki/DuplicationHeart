@@ -300,10 +300,10 @@ void GameData::asignWorld(World* world, bool playerHpReset) {
 }
 
 // Worldのデータを自身に反映させる
-void GameData::asignedWorld(const World* world) {
+void GameData::asignedWorld(const World* world, bool notCharacterPoint) {
 	size_t size = m_characterData.size();
 	for (unsigned int i = 0; i < size; i++) {
-		world->asignCharacterData(m_characterData[i]->name(), m_characterData[i], m_areaNum);
+		world->asignCharacterData(m_characterData[i]->name(), m_characterData[i], m_areaNum, notCharacterPoint);
 	}
 	world->asignDoorData(m_doorData, m_areaNum);
 }
@@ -431,7 +431,7 @@ bool Game::play() {
 		// ストーリーの影響でオブジェクトが追加される（一度追加されると今後GameDataでデータは保持され続ける）
 		// セーブデータに上書き
 		m_gameData->updateStory(m_story);
-		m_gameData->asignedWorld(m_world);
+		m_gameData->asignedWorld(m_world, false);
 		// Worldに反映
 		m_world->addCharacter(m_story->getCharacterLoader());
 		m_world->addObject(m_story->getObjectLoader());
@@ -459,7 +459,7 @@ bool Game::play() {
 	if (m_world->getBrightValue() == 0) {
 		int fromAreaNum = m_gameData->getAreaNum();
 		int toAreaNum = m_world->getAreaNum();
-		m_gameData->asignedWorld(m_world);
+		m_gameData->asignedWorld(m_world, false);
 		delete m_world;
 		InitGraph();
 		m_world = new World(fromAreaNum, toAreaNum, m_soundPlayer);
@@ -474,13 +474,15 @@ bool Game::play() {
 
 // セーブデータをロード（前のセーブポイントへ戻る）
 void Game::backPrevSave() {
-	// 前のセーブデータをロード
-	m_gameData->load();
+	m_gameData->asignedWorld(m_world, true);
 	// これまでのWorldを削除
 	delete m_world;
+	// 前のセーブデータをロード
+	GameData prevData(m_gameData->getSaveFilePath());
 	// 以前のAreaNumでロード
-	m_world = new World(-1, m_gameData->getAreaNum(), m_soundPlayer);
+	m_world = new World(-1, prevData.getAreaNum(), m_soundPlayer);
 	m_gameData->asignWorld(m_world, true);
+	m_world->setPlayerOnDoor(m_gameData->getAreaNum());
 	m_story->setWorld(m_world);
 }
 

@@ -132,7 +132,7 @@ public:
 	void asignedCharacterData(const char* name, CharacterData* data);
 
 	// キャラの状態を教える
-	void asignCharacterData(const char* name, CharacterData* data, int fromAreaNum) const;
+	void asignCharacterData(const char* name, CharacterData* data, int fromAreaNum, bool notCharacterPoint) const;
 
 	// Doorの状態を変更する いないなら作成する
 	void asignedDoorData(DoorData* data);
@@ -199,7 +199,7 @@ private:
 	void atariAttackAndAttack();
 
 	// キャラのセーブデータを自身に反映させる
-	void asignedCharacter(Character* character, CharacterData* data);
+	void asignedCharacter(Character* character, CharacterData* data, bool changePosition);
 	CharacterController* createControllerWithData(const Character* character, CharacterData* data);
 };
 
