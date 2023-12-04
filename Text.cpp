@@ -89,7 +89,7 @@ Conversation::Conversation(int textNum, World* world, SoundPlayer* soundPlayer) 
 	m_nextSound = LoadSoundMem("sound/text/next.wav");
 
 	// BGM
-	m_originalBgmPath = m_soundPlayer_p->getBgmName();
+	m_originalBgmPath = "";
 
 	// 対象のファイルを開く
 	ostringstream oss;
@@ -128,6 +128,8 @@ int Conversation::getTextSize() const {
 
 bool Conversation::play() {
 
+	if (leftClick() == 60) { m_finishFlag = true; return true; }
+
 	// 終了処理
 	if (m_finishCnt > 0) {
 		m_finishCnt++;
@@ -149,6 +151,7 @@ bool Conversation::play() {
 	}
 
 	if (m_text == "") {
+		m_originalBgmPath = m_soundPlayer_p->getBgmName();
 		loadNextBlock();
 	}
 
