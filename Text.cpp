@@ -128,6 +128,8 @@ int Conversation::getTextSize() const {
 
 bool Conversation::play() {
 
+	if (leftClick() == 60) { m_finishFlag = true; return true; }
+
 	// I—¹ˆ—
 	if (m_finishCnt > 0) {
 		m_finishCnt++;
