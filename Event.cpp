@@ -39,12 +39,13 @@ Event::Event(int eventNum, World* world, SoundPlayer* soundPlayer) {
 
 	m_eventNum = eventNum;
 	m_nowElement = 0;
+	m_eventElement = nullptr;
 
 	m_world_p = world;
 	m_soundPlayer = soundPlayer;
 
 	ostringstream oss;
-	oss << "data/event/event" << eventNum << ".csv";
+	oss << "data/event/event" << m_eventNum << ".csv";
 	CsvReader2 csvReader2(oss.str().c_str());
 
 	// 発火条件
@@ -53,11 +54,20 @@ Event::Event(int eventNum, World* world, SoundPlayer* soundPlayer) {
 		createFire(mapParam2vector(fireData[i]), world, soundPlayer);
 	}
 
+	m_elementsData = csvReader2.getDomainData("ELEMENT:");
+
+}
+
+Event::~Event() {
+	for (unsigned int i = 0; i < m_eventFire.size(); i++) {
+		delete m_eventFire[i];
+	}
+	delete m_eventElement;
 }
 
 bool Event::skillAble() {
-	if (m_eventElement.size() == 0) { return true; }
-	return m_eventElement[m_nowElement]->skillAble();
+	if (m_eventElement == nullptr) { return true; }
+	return m_eventElement->skillAble();
 }
 
 // Worldを設定しなおす
@@ -66,8 +76,8 @@ void Event::setWorld(World* world) {
 	for (unsigned int i = 0; i < m_eventFire.size(); i++) {
 		m_eventFire[i]->setWorld(m_world_p);
 	}
-	for (unsigned int i = 0; i < m_eventElement.size(); i++) {
-		m_eventElement[i]->setWorld(m_world_p);
+	if (m_eventElement != nullptr) {
+		m_eventElement->setWorld(m_world_p);
 	}
 }
 
@@ -119,15 +129,9 @@ void Event::createElement(vector<string> param, World* world, SoundPlayer* sound
 		element = new PlayerDeadEvent(world, param);
 	}
 
-	if (element != nullptr) { m_eventElement.push_back(element); }
-}
-
-Event::~Event() {
-	for (unsigned int i = 0; i < m_eventFire.size(); i++) {
-		delete m_eventFire[i];
-	}
-	for (unsigned int i = 0; i < m_eventElement.size(); i++) {
-		delete (m_eventElement[i]);
+	if (element != nullptr) { 
+		m_eventElement = element;
+		m_eventElement->init();
 	}
 }
 
@@ -137,40 +141,32 @@ bool Event::fire() {
 			return false;
 		}
 	}
-	ostringstream oss;
-	oss << "data/event/event" << m_eventNum << ".csv";
-	CsvReader2 csvReader2(oss.str().c_str());
-	// イベントの内容
-	vector<map<string, string> > elementsData = csvReader2.getDomainData("ELEMENT:");
+	
 	// 発火して初めてイベントを作る
-	for (unsigned int i = 0; i < elementsData.size(); i++) {
-		createElement(mapParam2vector(elementsData[i]), m_world_p, m_soundPlayer);
-	}
+	createElement(mapParam2vector(m_elementsData[m_nowElement++]), m_world_p, m_soundPlayer);
 	return true;
 }
 
 EVENT_RESULT Event::play() {
 
-	EVENT_RESULT elementResult = m_eventElement[m_nowElement]->play();
+	EVENT_RESULT elementResult = m_eventElement->play();
 
 	// Elementが一つ成功した
 	if (elementResult == EVENT_RESULT::SUCCESS) {
 
 		// Storyに前のセーブポイントへ戻るよう要求
-		if (m_eventElement[m_nowElement]->needBackPrevSave()) {
+		if (m_eventElement->needBackPrevSave()) {
 			m_backPrevSaveFlag = true;
 		}
 
-		// 次のエレメントへ
-		m_nowElement++;
-
-		if (m_nowElement == m_eventElement.size()) { 
+		if (m_nowElement == m_elementsData.size()) { 
 			// EventElementが残っていないのでイベントおわり
 			return EVENT_RESULT::SUCCESS;
 		}
 		else { 
 			// EventElementは残っているのでまだイベント続く
-			m_eventElement[m_nowElement]->init();
+			delete m_eventElement;
+			createElement(mapParam2vector(m_elementsData[m_nowElement++]), m_world_p, m_soundPlayer);
 			return EVENT_RESULT::NOW;
 		}
 	}

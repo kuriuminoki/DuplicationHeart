@@ -89,7 +89,7 @@ Conversation::Conversation(int textNum, World* world, SoundPlayer* soundPlayer) 
 	m_nextSound = LoadSoundMem("sound/text/next.wav");
 
 	// BGM
-	m_originalBgmPath = m_soundPlayer_p->getBgmName();
+	m_originalBgmPath = "";
 
 	// 対象のファイルを開く
 	ostringstream oss;
@@ -149,6 +149,7 @@ bool Conversation::play() {
 	}
 
 	if (m_text == "") {
+		m_originalBgmPath = m_soundPlayer_p->getBgmName();
 		loadNextBlock();
 	}
 

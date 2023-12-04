@@ -3,6 +3,7 @@
 
 #include <vector>
 #include <string>
+#include <map>
 
 
 class World;
@@ -86,7 +87,10 @@ private:
 	std::vector<EventFire*> m_eventFire;
 
 	// イベントの要素
-	std::vector<EventElement*> m_eventElement;
+	EventElement* m_eventElement;
+
+	// イベントの内容
+	std::vector<std::map<std::string, std::string> > m_elementsData;
 
 	// イベントの進捗(EventElementのインデックス)
 	int m_nowElement;
