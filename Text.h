@@ -69,6 +69,7 @@ private:
 	// 終了時、少しだけ待機時間
 	const int FINISH_COUNT = 30;
 	int m_finishCnt;
+	int m_startCnt;
 
 	// イベント終了したか
 	bool m_finishFlag;
@@ -131,6 +132,7 @@ public:
 	inline bool getNoFace() const { return m_noFace; }
 	inline 	std::string getSpeakerName() const { return m_speakerName; }
 	inline int getFinishCnt() const { return m_finishCnt; }
+	inline int getStartCnt() const { return m_startCnt; }
 	inline bool getFinishFlag() const { return m_finishFlag; }
 	inline int getTextNow() const { return m_textNow; }
 	inline int getCnt() const { return m_cnt; }

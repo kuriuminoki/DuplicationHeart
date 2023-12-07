@@ -113,6 +113,13 @@ World::World(int fromAreaNum, int toAreaNum, SoundPlayer* soundPlayer) {
 			break;
 		}
 	}
+
+	// ƒJƒƒ‰‚Ì”{—¦‚ÌÅ‘åEÅ¬’l‚ð‰ð‘œ“x‚©‚çŒˆ’è
+	getGameEx(m_exX, m_exY);
+	m_cameraMaxEx *= m_exX;
+	m_cameraMinEx *= m_exX;
+	m_camera->setEx(m_cameraMaxEx);
+
 }
 
 World::~World() {
@@ -619,20 +626,24 @@ void World::updateCamera() {
 	double nowEx = m_camera->getEx();
 	int leftShift = controlLeftShift();
 	if (leftShift > 0) {
-		m_camera->setEx(max(nowEx - 0.01, 0.1));
+		if (nowEx > m_cameraMinEx) {
+			m_camera->setEx(max(nowEx - 0.01, 0.1));
+		}
 	}
 	else {
 		int nowWide = (int)(GAME_WIDE / 2 / nowEx);
 		int nowHeight = (int)(GAME_HEIGHT / 2 / nowEx);
-		max_dx = (int)(max_dx * nowEx);
-		max_dy = (int)(max_dy + nowEx);
-		if (nowEx > 0.5 && (max_dx > nowWide || max_dy > nowHeight)) {
+		max_dx = (int)(max_dx * nowEx / m_exX);
+		max_dy = (int)(max_dy * nowEx / m_exY);
+		if (nowEx > m_cameraMinEx && (max_dx > nowWide || max_dy > nowHeight)) {
+			// k¬
 			double d = double(max(max_dx - nowWide, max_dy - nowHeight));
-			m_camera->setEx(nowEx - min(0.05, d / 200000));
+			m_camera->setEx(nowEx - min(0.08, d / 100000));
 		}
-		else if (nowEx < 1.5 && (max_dx < nowWide && max_dy < nowHeight)) {
+		else if (nowEx < m_cameraMaxEx && (max_dx < nowWide && max_dy < nowHeight)) {
+			// Šg‘å
 			double d = double(max(nowWide - max_dx, nowHeight - max_dy));
-			m_camera->setEx(nowEx + min(0.05, d / 200000));
+			m_camera->setEx(nowEx + min(0.08, d / 100000));
 		}
 	}
 }

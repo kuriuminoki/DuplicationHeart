@@ -64,8 +64,10 @@ WorldDrawer::~WorldDrawer() {
 
 // 描画する
 void WorldDrawer::draw() {
+	
 	int bright = m_world->getBrightValue();
 	SetDrawBright(bright, bright, bright);
+
 	// 背景
 	int groundGraph = m_world->getBackGroundGraph();
 	if (groundGraph != -1) {
@@ -130,11 +132,6 @@ void WorldDrawer::draw() {
 		}
 	}
 
-	// ターゲット
-	m_targetDrawer.setEx(camera->getEx());
-	m_targetDrawer.draw();
-	SetDrawBright(255, 255, 255);
-
 	// ムービー
 	const Movie* movie = m_world->getMovie();
 	if (movie != nullptr) {
@@ -148,4 +145,12 @@ void WorldDrawer::draw() {
 		m_conversationDrawer->setConversation(conversation);
 		m_conversationDrawer->draw();
 	}
+
+	if (movie == nullptr && conversation == nullptr) {
+		// ターゲット
+		m_targetDrawer.setEx(camera->getEx());
+		m_targetDrawer.draw();
+	}
+
+	SetDrawBright(255, 255, 255);
 }

@@ -1,5 +1,7 @@
 #include "GraphHandle.h"
+#include "Camera.h"
 #include "CsvReader.h"
+#include "Define.h"
 #include "DxLib.h"
 #include <string>
 #include <sstream>
@@ -27,7 +29,7 @@ void GraphHandle::draw(int x, int y, double ex) const {
 	DrawRotaGraph(x, y, ex, m_angle, m_handle, m_trans, m_reverseX, m_reverseY);
 }
 
-// ”ÍˆÍ‚ðŽw’è‚µ‚Ä•`‰æ‚·‚é
+// ”ÍˆÍ‚ðŽw’è‚µ‚Ä•ÏŒ`•`‰æ‚·‚é
 void GraphHandle::extendDraw(int x1, int y1, int x2, int y2) const {
 	if (m_reverseX) {
 		swap(x1, x2);
@@ -36,6 +38,41 @@ void GraphHandle::extendDraw(int x1, int y1, int x2, int y2) const {
 		swap(y1, y2);
 	}
 	DrawExtendGraph(x1, y1, x2, y2, m_handle, m_trans);
+}
+
+// ”ÍˆÍ‚ðŽw’è‚µ‚Ä•~‚«‹l‚ß‚é‚æ‚¤‚É•`‰æ‚·‚é
+void GraphHandle::lineUpDraw(int x1, int y1, int x2, int y2, const Camera* camera) const {
+
+	if (x1 > x2) { swap(x1, x2); }
+	if (y1 > y2) { swap(y1, y2); }
+
+	int wide = 0, height = 0;
+	GetGraphSize(m_handle, &wide, &height);
+
+	wide = (int)(wide * m_ex);
+	height = (int)(height * m_ex);
+
+	int xi = (x2 - x1) / wide;
+	wide += ((x2 - x1) % wide) / xi + 1;
+	int yi = (y2 - y1) / height;
+	height += ((y2 - y1) % height) / yi + 1;
+	
+	int x = x1;
+	for (int i = 0; i < xi; i++, x += wide) {
+		int nextX = x + wide > x2 ? x2 : x + wide;
+		int y = y1;
+		for (int j = 0; j < yi; j++, y += height) {
+			int nextY = y + height > y2 ? y2 : y + height;
+			int drawX1 = x, drawY1 = y, drawX2 = nextX, drawY2 = nextY;
+			double ex = 0;
+			camera->setCamera(&drawX1, &drawY1, &ex);
+			camera->setCamera(&drawX2, &drawY2, &ex);
+			if (drawX1 > GAME_WIDE || drawX2 < 0) { continue; }
+			if (drawY1 > GAME_HEIGHT || drawY2 < 0) { continue; }
+			DrawExtendGraph(drawX1, drawY1, drawX2, drawY2, m_handle, m_trans);
+		}
+	}
+
 }
 
 

@@ -45,8 +45,8 @@ void ConversationDrawer::draw() {
 		SetDrawBright(bright, bright, bright);
 		m_animationDrawer->setAnimation(anime);
 		m_animationDrawer->drawAnimation();
-		if (m_conversation->animePlayNow()) { return; }
 		SetDrawBright(255, 255, 255);
+		if (m_conversation->animePlayNow() && m_conversation->getFinishCnt() == 0) { return; }
 	}
 
 	string text = m_conversation->getText();
@@ -59,21 +59,29 @@ void ConversationDrawer::draw() {
 	graphSize = (int)(graphSize * m_exX);
 
 	// フキダシのフチの幅
-	static const int TEXT_GRAPH_EDGE = (int)(35 * m_exX);
+	const int TEXT_GRAPH_EDGE = (int)(35 * m_exX);
 
 	// 端の余白
-	static const int EDGE_X = (int)(48 * m_exX);
-	static const int EDGE_DOWN = (int)(48 * m_exX);
+	const int EDGE_X = (int)(48 * m_exX);
+	const int EDGE_DOWN = (int)(48 * m_exX);
 
 	// 上端
-	static const int Y1 = GAME_HEIGHT - EDGE_DOWN - graphSize - (TEXT_GRAPH_EDGE * 2);
+	const int Y1 = GAME_HEIGHT - EDGE_DOWN - graphSize - (TEXT_GRAPH_EDGE * 2);
 
 	// 会話終了時
-	int finishCnt = m_conversation->getFinishCnt() * 8;
+	int finishCnt = m_conversation->getFinishCnt() * 8 * m_exY;
 	if ((Y1 + finishCnt) > (GAME_HEIGHT - EDGE_DOWN - finishCnt)) { return; }
 	if (finishCnt > 0) {
 		// フキダシ
 		DrawExtendGraph(EDGE_X, Y1 + finishCnt, GAME_WIDE - EDGE_X, GAME_HEIGHT - EDGE_DOWN - finishCnt, m_frameHandle, TRUE);
+		return;
+	}
+
+	int startCnt = m_conversation->getStartCnt() * 8 * m_exY;
+	if ((Y1 + startCnt) > (GAME_HEIGHT - EDGE_DOWN - startCnt)) { return; }
+	if (startCnt > 0) {
+		// フキダシ
+		DrawExtendGraph(EDGE_X, Y1 + startCnt, GAME_WIDE - EDGE_X, GAME_HEIGHT - EDGE_DOWN - startCnt, m_frameHandle, TRUE);
 		return;
 	}
 
@@ -83,7 +91,7 @@ void ConversationDrawer::draw() {
 	// 発言者の名前、セリフ顔画像
 	int now = 0;
 	int i = 0;
-	static const int CHAR_EDGE = (int)(30 * m_exX);
+	const int CHAR_EDGE = (int)(30 * m_exX);
 	if (m_conversation->getNoFace()) { // 顔画像がない場合
 		int x = EDGE_X + TEXT_GRAPH_EDGE + graphSize / 2;
 		// 名前

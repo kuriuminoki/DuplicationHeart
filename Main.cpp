@@ -88,6 +88,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 			if (game->getRebootFlag()) {
 				// ゲームを再起動、タイトルへ戻る
 				delete game;
+				delete gameDrawer;
 				gamePlay = false;
 				SetMouseDispFlag(MOUSE_DISP);//マウス表示
 				title = new Title();

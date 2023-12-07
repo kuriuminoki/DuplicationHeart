@@ -72,6 +72,7 @@ void EventAnime::play() {
 Conversation::Conversation(int textNum, World* world, SoundPlayer* soundPlayer) {
 
 	m_finishCnt = 0;
+	m_startCnt = FINISH_COUNT;
 	m_finishFlag = false;
 	m_world_p = world;
 	m_soundPlayer_p = soundPlayer;
@@ -134,8 +135,16 @@ bool Conversation::play() {
 	if (m_finishCnt > 0) {
 		m_finishCnt++;
 		if (m_finishCnt == FINISH_COUNT) {
-			m_finishFlag = true;
-			return true;
+			if (FileRead_eof(m_fp) != 0) {
+				// ファイルを読み終えたから
+				m_finishFlag = true;
+				return true;
+			}
+			else {
+				// ファイルを読み終えてないから
+				m_finishCnt = 0;
+				m_startCnt = FINISH_COUNT;
+			}
 		}
 		return false;
 	}
@@ -175,12 +184,17 @@ bool Conversation::play() {
 	}
 
 	// 表示文字を増やす
-	m_cnt++;
-	if (m_cnt % m_textSpeed == 0 && m_textNow < m_text.size()) {
-		// 日本語表示は１文字がサイズ２分
-		m_textNow = min(m_textNow + 2, (unsigned int)m_text.size());
-		// 効果音
-		m_soundPlayer_p->pushSoundQueue(m_displaySound);
+	if (m_startCnt > 0) {
+		m_startCnt--;
+	}
+	else {
+		m_cnt++;
+		if (m_cnt % m_textSpeed == 0 && m_textNow < m_text.size()) {
+			// 日本語表示は１文字がサイズ２分
+			m_textNow = min(m_textNow + 2, (unsigned int)m_text.size());
+			// 効果音
+			m_soundPlayer_p->pushSoundQueue(m_displaySound);
+		}
 	}
 
 	return false;
@@ -249,6 +263,16 @@ void Conversation::loadNextBlock() {
 	else if (str == "@resetBGM") {
 		// BGMを戻す
 		m_soundPlayer_p->setBGM(m_originalBgmPath);
+		loadNextBlock();
+	}
+	else if (str == "@startCnt") {
+		// startCnt = FINISH_COUNTに戻し、フキダシを大きくする
+		m_startCnt = FINISH_COUNT;
+		loadNextBlock();
+	}
+	else if (str == "@finishCnt") {
+		// finishCntを加算していき、フキダシを小さくする
+		m_finishCnt = 1;
 		loadNextBlock();
 	}
 	else { // 発言

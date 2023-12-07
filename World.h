@@ -25,6 +25,10 @@ class Movie;
 
 class World {
 private:
+
+	// 解像度の倍率
+	double m_exX, m_exY;
+
 	// 複製ならtrue 背景をデリートしないため
 	bool m_duplicationFlag;
 
@@ -54,6 +58,10 @@ private:
 
 	// 描画用のカメラ Worldがデリートする
 	Camera* m_camera;
+
+	// カメラの最大・最小倍率
+	double m_cameraMaxEx = 1.5;
+	double m_cameraMinEx = 0.5;
 
 	// 世界に存在するキャラクター Worldがデリートする
 	std::vector<Character*> m_characters;
@@ -107,6 +115,8 @@ public:
 	inline const Conversation* getConversation() const { return m_conversation_p; }
 	inline const Movie* getMovie() const { return m_movie_p; }
 	inline SoundPlayer* getSoundPlayer() const { return m_soundPlayer_p; }
+	inline double getCameraMaxEx() const { return m_cameraMaxEx; }
+	inline double getCameraMinEx() const { return m_cameraMinEx; }
 
 	// セッタ
 	void setSkillFlag(bool skillFlag);

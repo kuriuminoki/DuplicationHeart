@@ -1,6 +1,8 @@
 #ifndef GRAPH_HANDLE_H_INCLUDED
 #define GRAPH_HANDLE_H_INCLUDED
 
+class Camera;
+
 /*
 * 画像データ(ハンドル、画像固有の拡大率、向き)をまとめて扱うためのクラス
 */
@@ -41,7 +43,11 @@ public:
 	// 描画する
 	void draw(int x, int y, double ex = 1.0) const;
 
-	void extendDraw(int x1, int y1, int x2, int y2) const ;
+	// 範囲を指定して変形描画する
+	void extendDraw(int x1, int y1, int x2, int y2) const;
+
+	// 範囲を指定して敷き詰めるように描画する
+	void lineUpDraw(int x1, int y1, int x2, int y2, const Camera* camera) const;
 };
 
 
