@@ -51,6 +51,9 @@ private:
 	// マウスカーソル代わり
 	TargetDrawer m_targetDrawer;
 
+	// HPバー
+	int m_hpBarGraph;
+
 	// 会話イベント
 	ConversationDrawer* m_conversationDrawer;
 

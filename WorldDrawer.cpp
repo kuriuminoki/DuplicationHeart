@@ -53,6 +53,7 @@ WorldDrawer::WorldDrawer(const World* world) {
 	m_objectDrawer = new ObjectDrawer(nullptr);
 	m_animationDrawer = new AnimationDrawer(nullptr);
 	m_conversationDrawer = new ConversationDrawer(nullptr);
+	m_hpBarGraph = LoadGraph("picture/battleMaterial/hpBar.png");
 }
 
 WorldDrawer::~WorldDrawer() {
@@ -60,6 +61,7 @@ WorldDrawer::~WorldDrawer() {
 	delete m_objectDrawer;
 	delete m_animationDrawer;
 	delete m_conversationDrawer;
+	DeleteGraph(m_hpBarGraph);
 }
 
 // •`‰æ‚·‚é
@@ -128,7 +130,7 @@ void WorldDrawer::draw() {
 	size = m_world->getCharacters().size();
 	for (unsigned int i = 0; i < size; i++) {
 		if (m_world->getCharacters()[i]->getName() == "ƒn[ƒg") {
-			m_characterDrawer->drawPlayerHpBar(m_world->getCharacters()[i]);
+			m_characterDrawer->drawPlayerHpBar(m_world->getCharacters()[i], m_hpBarGraph);
 		}
 	}
 

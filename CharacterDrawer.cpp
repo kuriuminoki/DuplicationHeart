@@ -73,15 +73,15 @@ void CharacterDrawer::drawCharacter(const Camera* const camera, int bright) {
 	}
 }
 
-void CharacterDrawer::drawPlayerHpBar(const Character* player) {
+void CharacterDrawer::drawPlayerHpBar(const Character* player, int hpBarGraph) {
 
 	// À•W
 	int x, y, wide, height;
 
 	x = 30;
 	y = 30;
-	wide = 300;
-	height = 50;
+	wide = 525;
+	height = 150;
 
 	// ‰ð‘œ“x•ÏX‚É‘Î‰ž
 	x = (int)(x * m_exX);
@@ -89,7 +89,13 @@ void CharacterDrawer::drawPlayerHpBar(const Character* player) {
 	wide = (int)(wide * m_exX);
 	height = (int)(height * m_exY);
 
+	DrawExtendGraph(x, y, x + wide, y + height, hpBarGraph, TRUE);
+
+	int dx = (int)(40 * m_exX);
+	int dy1 = (int)(80 * m_exY);
+	int dy2 = (int)(15 * m_exY);
+
 	// ‘Ì—Í‚Ì•`‰æ
-	drawHpBar(x, y, x + wide, y + height, player->getHp(), player->getPrevHp(), player->getMaxHp(), DAMAGE_COLOR, PREV_HP_COLOR, HP_COLOR);
+	drawHpBar(x + dx, y + dy1, x + wide - dx, y + height - dy2, player->getHp(), player->getPrevHp(), player->getMaxHp(), DAMAGE_COLOR, PREV_HP_COLOR, HP_COLOR);
 
 }
