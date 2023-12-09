@@ -54,10 +54,9 @@ void ObjectDrawer::drawObject(const Camera* const camera) {
 		}
 	}
 	if (m_object->getText() != "") {
-		int halfStrSize = m_fontSize * m_object->getText().size() / 4;
+		int halfStrSize = m_fontSize * (int)(m_object->getText().size()) / 4;
 		int centerX = (x1 + x2) / 2;
 		DrawBox(centerX - halfStrSize, y1 - m_fontSize, centerX + halfStrSize, y1, WHITE, TRUE);
 		DrawStringToHandle(centerX - halfStrSize, y1 - m_fontSize, m_object->getText().c_str(), BLACK, m_font);
-		//DrawFormatString(x1, y1 - (int)(40 * m_exY), BLACK, "%s", m_object->getText().c_str());
 	}
 }

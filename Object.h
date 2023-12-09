@@ -258,9 +258,6 @@ public:
 
 	void debug(int x, int y, int color) const;
 
-	// 画像を敷き詰めて表示するならtrue
-	bool lineUpType() const { return true; }
-
 	// オブジェクト描画（画像がないときに使う）
 	void drawObject(int x1, int y1, int x2, int y2) const;
 
