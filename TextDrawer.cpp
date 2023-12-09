@@ -115,8 +115,8 @@ void ConversationDrawer::draw() {
 	}
 	
 	bool textFinish = m_conversation->finishText() && m_conversation->getFinishCnt() == 0 && m_conversation->getStartCnt() == 0;
-	bool eventFinish = anime != nullptr && m_conversation->getEventAnime()->getAnime()->getFinishFlag() && m_conversation->getEventAnime()->getFinishAnimeEvent();
-	if (textFinish || eventFinish) {
+	bool eventFinish = !(m_conversation->animePlayNow()) || (m_conversation->getEventAnime()->getAnime()->getFinishFlag());
+	if (textFinish &&eventFinish) {
 		int dy = (int)(((m_conversation->getCnt() / 3) % 20 - 10) * m_exY);
 		m_conversation->getTextFinishGraph()->draw(GAME_WIDE - EDGE_X - (int)(100 * m_exX), GAME_HEIGHT - EDGE_DOWN - (int)(50 * m_exY) + dy - TEXT_GRAPH_EDGE, m_conversation->getTextFinishGraph()->getEx());
 	}
