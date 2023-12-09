@@ -137,6 +137,7 @@ void WorldDrawer::draw() {
 	// ƒ€[ƒr[
 	const Movie* movie = m_world->getMovie();
 	if (movie != nullptr) {
+		DrawBox(0, 0, GAME_WIDE, GAME_HEIGHT, BLACK, TRUE);
 		m_animationDrawer->setAnimation(movie->getAnimation());
 		m_animationDrawer->drawAnimation();
 	}

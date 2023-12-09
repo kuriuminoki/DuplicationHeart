@@ -38,11 +38,29 @@ ConversationDrawer::~ConversationDrawer() {
 
 void ConversationDrawer::draw() {
 
+	// アニメのみを表示してテキストは表示しないならtrue
 	bool animeOnly = false;
+
+	// 座標等の準備
+	string text = m_conversation->getText();
+	string name = m_conversation->getSpeakerName();
+	GraphHandle* graph = m_conversation->getGraph();
+	// キャラの顔画像は正方形を想定
+	int graphSize = 0;
+	GetGraphSize(graph->getHandle(), &graphSize, &graphSize);
+	graphSize = (int)(graphSize * m_exX);
+	// フキダシのフチの幅
+	const int TEXT_GRAPH_EDGE = (int)(35 * m_exX);
+	// 端の余白
+	const int EDGE_X = (int)(48 * m_exX);
+	const int EDGE_DOWN = (int)(48 * m_exX);
+	// 上端
+	const int Y1 = GAME_HEIGHT - EDGE_DOWN - graphSize - (TEXT_GRAPH_EDGE * 2);
 
 	// アニメ
 	const Animation* anime = m_conversation->getAnime();
 	if (anime != nullptr) {
+		DrawBox(0, 0, GAME_WIDE, GAME_HEIGHT, BLACK, TRUE);
 		int bright = m_conversation->getAnimeBright();
 		SetDrawBright(bright, bright, bright);
 		m_animationDrawer->setAnimation(anime);
@@ -53,25 +71,6 @@ void ConversationDrawer::draw() {
 
 	// アニメ以外
 	if (!animeOnly) {
-		string text = m_conversation->getText();
-		string name = m_conversation->getSpeakerName();
-		GraphHandle* graph = m_conversation->getGraph();
-
-		// キャラの顔画像は正方形を想定
-		int graphSize = 0;
-		GetGraphSize(graph->getHandle(), &graphSize, &graphSize);
-		graphSize = (int)(graphSize * m_exX);
-
-		// フキダシのフチの幅
-		const int TEXT_GRAPH_EDGE = (int)(35 * m_exX);
-
-		// 端の余白
-		const int EDGE_X = (int)(48 * m_exX);
-		const int EDGE_DOWN = (int)(48 * m_exX);
-
-		// 上端
-		const int Y1 = GAME_HEIGHT - EDGE_DOWN - graphSize - (TEXT_GRAPH_EDGE * 2);
-
 		// 会話終了時
 		if (m_conversation->getFinishCnt() > 0) {
 			int finishCnt = m_conversation->getFinishCnt() * 8 * m_exY;
@@ -115,6 +114,12 @@ void ConversationDrawer::draw() {
 		}
 	}
 	
+	bool textFinish = m_conversation->finishText() && m_conversation->getFinishCnt() == 0 && m_conversation->getStartCnt() == 0;
+	bool eventFinish = anime != nullptr && m_conversation->getEventAnime()->getAnime()->getFinishFlag() && m_conversation->getEventAnime()->getFinishAnimeEvent();
+	if (textFinish || eventFinish) {
+		int dy = (int)(((m_conversation->getCnt() / 3) % 20 - 10) * m_exY);
+		m_conversation->getTextFinishGraph()->draw(GAME_WIDE - EDGE_X - (int)(100 * m_exX), GAME_HEIGHT - EDGE_DOWN - (int)(50 * m_exY) + dy - TEXT_GRAPH_EDGE, m_conversation->getTextFinishGraph()->getEx());
+	}
 
 	// クリックエフェクト
 	const vector<Animation*> animations = m_conversation->getAnimations();

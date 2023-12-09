@@ -47,8 +47,8 @@ EventAnime::~EventAnime() {
 	delete m_animation;
 }
 
-// アニメの再生が終わったか
-bool EventAnime::getFinishAnime() const {
+// アニメイベントが終わったか
+bool EventAnime::getFinishAnimeEvent() const {
 	if (m_bright > 0 && m_toDark) { return false; }
 	if (m_bright < 255 && !m_toDark) { return false; }
 	return m_finishFlag;
@@ -97,8 +97,14 @@ Conversation::Conversation(int textNum, World* world, SoundPlayer* soundPlayer) 
 	oss << "data/text/text" << textNum << ".txt";
 	m_fp = FileRead_open(oss.str().c_str());
 
+	double exX = 0, exY = 0;
+	getGameEx(exX, exY);
+
 	// クリックエフェクト
-	m_clickGraph = new GraphHandles("picture/system/clickEffect", 4, 0.5, 0, true);
+	m_clickGraph = new GraphHandles("picture/system/clickEffect", 4, 0.5 * exX, 0, true);
+
+	// セリフを最後まで表示したときの画像
+	m_textFinishGraph = new GraphHandle("picture/system/textFinish.png", 0.5 * exX, 0, true);
 
 }
 
@@ -116,6 +122,7 @@ Conversation::~Conversation() {
 	for (unsigned i = 0; i < m_animations.size(); i++) {
 		delete m_animations[i];
 	}
+	delete m_textFinishGraph;
 }
 
 // テキストを返す（描画用）
@@ -136,6 +143,11 @@ int Conversation::getTextSize() const {
 	return (int)m_text.size();
 }
 
+// セリフを最後まで表示したか
+bool Conversation::finishText() const {
+	return m_textNow == m_text.size();
+}
+
 // 会話イベントの処理
 bool Conversation::play() {
 
@@ -153,7 +165,7 @@ bool Conversation::play() {
 	if (leftClick() == 1) {
 		int handX = 0, handY = 0;
 		GetMousePoint(&handX, &handY);
-		m_animations.push_back(new Animation(handX, handY, 3, m_clickGraph));
+		m_animations.push_back(new Animation(handX, handY, 4, m_clickGraph));
 	}
 
 	// クリック長押しで終了
@@ -178,9 +190,10 @@ bool Conversation::play() {
 	}
 
 	// アニメイベント
-	if (m_eventAnime != nullptr && !m_eventAnime->getFinishAnime()) {
+	if (m_eventAnime != nullptr && !m_eventAnime->getFinishAnimeEvent()) {
+		m_cnt++;
 		m_eventAnime->play();
-		if (m_eventAnime->getFinishAnime()) {
+		if (m_eventAnime->getFinishAnimeEvent()) {
 			// 次のテキストへ移る
 			loadNextBlock();
 		}
@@ -194,7 +207,7 @@ bool Conversation::play() {
 
 	// プレイヤーからのアクション（スペースキー入力）
 	if (leftClick() == 1) {
-		if (m_textNow == m_text.size()) {
+		if (finishText()) {
 			// 全ての会話が終わった
 			if (FileRead_eof(m_fp) != 0) {
 				m_finishCnt++;
@@ -217,7 +230,7 @@ bool Conversation::play() {
 	}
 	else {
 		m_cnt++;
-		if (m_cnt % m_textSpeed == 0 && m_textNow < m_text.size()) {
+		if (m_cnt % m_textSpeed == 0 && !finishText()) {
 			// 日本語表示は１文字がサイズ２分
 			m_textNow = min(m_textNow + 2, (unsigned int)m_text.size());
 			// 効果音
