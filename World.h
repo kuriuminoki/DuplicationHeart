@@ -89,10 +89,10 @@ private:
 	int m_backGroundColor;
 
 public:
+	World();
 	World(int fromAreaNum, int toAreaNum, SoundPlayer* soundPlayer);
-	~World();
-
 	World(const World* original);
+	~World();
 
 	// ƒQƒbƒ^
 	inline int getFocusId() const { return m_focusId; }

@@ -97,6 +97,9 @@ Conversation::Conversation(int textNum, World* world, SoundPlayer* soundPlayer) 
 	oss << "data/text/text" << textNum << ".txt";
 	m_fp = FileRead_open(oss.str().c_str());
 
+	// クリックエフェクト
+	m_clickGraph = new GraphHandles("picture/system/clickEffect", 4, 0.5, 0, true);
+
 }
 
 Conversation::~Conversation() {
@@ -108,6 +111,11 @@ Conversation::~Conversation() {
 	if (m_eventAnime != nullptr) { delete m_eventAnime; }
 	// BGMを戻す
 	m_soundPlayer_p->setBGM(m_originalBgmPath);
+	// クリックエフェクト削除
+	delete m_clickGraph;
+	for (unsigned i = 0; i < m_animations.size(); i++) {
+		delete m_animations[i];
+	}
 }
 
 // テキストを返す（描画用）
@@ -123,12 +131,32 @@ GraphHandle* Conversation::getGraph() const {
 	return m_speakerGraph->getGraphHandle(index);
 }
 
+// セリフの長さ
 int Conversation::getTextSize() const {
 	return (int)m_text.size();
 }
 
+// 会話イベントの処理
 bool Conversation::play() {
 
+	// クリックアニメーションの再生
+	for (unsigned int i = 0; i < m_animations.size(); i++) {
+		m_animations[i]->count();
+		if (m_animations[i]->getFinishFlag()) {
+			delete m_animations[i];
+			m_animations[i] = m_animations.back();
+			m_animations.pop_back();
+			i--;
+		}
+	}
+
+	if (leftClick() == 1) {
+		int handX = 0, handY = 0;
+		GetMousePoint(&handX, &handY);
+		m_animations.push_back(new Animation(handX, handY, 3, m_clickGraph));
+	}
+
+	// クリック長押しで終了
 	if (leftClick() == 60) { m_finishFlag = true; return true; }
 
 	// 終了処理
@@ -165,7 +193,7 @@ bool Conversation::play() {
 	}
 
 	// プレイヤーからのアクション（スペースキー入力）
-	if (controlSpace() == 1 || leftClick() == 1) {
+	if (leftClick() == 1) {
 		if (m_textNow == m_text.size()) {
 			// 全ての会話が終わった
 			if (FileRead_eof(m_fp) != 0) {

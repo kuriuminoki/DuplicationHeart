@@ -38,6 +38,8 @@ ConversationDrawer::~ConversationDrawer() {
 
 void ConversationDrawer::draw() {
 
+	bool animeOnly = false;
+
 	// アニメ
 	const Animation* anime = m_conversation->getAnime();
 	if (anime != nullptr) {
@@ -46,66 +48,83 @@ void ConversationDrawer::draw() {
 		m_animationDrawer->setAnimation(anime);
 		m_animationDrawer->drawAnimation();
 		SetDrawBright(255, 255, 255);
-		if (m_conversation->animePlayNow() && m_conversation->getFinishCnt() == 0) { return; }
+		if (m_conversation->animePlayNow() && m_conversation->getFinishCnt() == 0) { animeOnly = true; }
 	}
 
-	string text = m_conversation->getText();
-	string name = m_conversation->getSpeakerName();
-	GraphHandle* graph = m_conversation->getGraph();
+	// アニメ以外
+	if (!animeOnly) {
+		string text = m_conversation->getText();
+		string name = m_conversation->getSpeakerName();
+		GraphHandle* graph = m_conversation->getGraph();
 
-	// キャラの顔画像は正方形を想定
-	int graphSize = 0;
-	GetGraphSize(graph->getHandle(), &graphSize, &graphSize);
-	graphSize = (int)(graphSize * m_exX);
+		// キャラの顔画像は正方形を想定
+		int graphSize = 0;
+		GetGraphSize(graph->getHandle(), &graphSize, &graphSize);
+		graphSize = (int)(graphSize * m_exX);
 
-	// フキダシのフチの幅
-	const int TEXT_GRAPH_EDGE = (int)(35 * m_exX);
+		// フキダシのフチの幅
+		const int TEXT_GRAPH_EDGE = (int)(35 * m_exX);
 
-	// 端の余白
-	const int EDGE_X = (int)(48 * m_exX);
-	const int EDGE_DOWN = (int)(48 * m_exX);
+		// 端の余白
+		const int EDGE_X = (int)(48 * m_exX);
+		const int EDGE_DOWN = (int)(48 * m_exX);
 
-	// 上端
-	const int Y1 = GAME_HEIGHT - EDGE_DOWN - graphSize - (TEXT_GRAPH_EDGE * 2);
+		// 上端
+		const int Y1 = GAME_HEIGHT - EDGE_DOWN - graphSize - (TEXT_GRAPH_EDGE * 2);
 
-	// 会話終了時
-	int finishCnt = m_conversation->getFinishCnt() * 8 * m_exY;
-	if ((Y1 + finishCnt) > (GAME_HEIGHT - EDGE_DOWN - finishCnt)) { return; }
-	if (finishCnt > 0) {
-		// フキダシ
-		DrawExtendGraph(EDGE_X, Y1 + finishCnt, GAME_WIDE - EDGE_X, GAME_HEIGHT - EDGE_DOWN - finishCnt, m_frameHandle, TRUE);
-		return;
+		// 会話終了時
+		if (m_conversation->getFinishCnt() > 0) {
+			int finishCnt = m_conversation->getFinishCnt() * 8 * m_exY;
+			if ((Y1 + finishCnt) <= (GAME_HEIGHT - EDGE_DOWN - finishCnt)) { 
+				// フキダシ
+				DrawExtendGraph(EDGE_X, Y1 + finishCnt, GAME_WIDE - EDGE_X, GAME_HEIGHT - EDGE_DOWN - finishCnt, m_frameHandle, TRUE);
+			}
+		}
+		// 会話開始時
+		else if (m_conversation->getStartCnt() > 0) {
+			int startCnt = m_conversation->getStartCnt() * 8 * m_exY;
+			if ((Y1 + startCnt) <= (GAME_HEIGHT - EDGE_DOWN - startCnt)) { 
+				// フキダシ
+				DrawExtendGraph(EDGE_X, Y1 + startCnt, GAME_WIDE - EDGE_X, GAME_HEIGHT - EDGE_DOWN - startCnt, m_frameHandle, TRUE);
+			}
+		}
+		// 会話中
+		else {
+			// フキダシ
+			DrawExtendGraph(EDGE_X, Y1, GAME_WIDE - EDGE_X, GAME_HEIGHT - EDGE_DOWN, m_frameHandle, TRUE);
+
+			// 発言者の名前、セリフ顔画像
+			int now = 0;
+			int i = 0;
+			const int CHAR_EDGE = (int)(30 * m_exX);
+			if (m_conversation->getNoFace()) { // 顔画像がない場合
+				int x = EDGE_X + TEXT_GRAPH_EDGE + graphSize / 2;
+				// 名前
+				DrawStringToHandle(x, GAME_HEIGHT - EDGE_DOWN - (int)(NAME_SIZE * m_exX) - TEXT_GRAPH_EDGE, name.c_str(), BLACK, m_nameHandle);
+				// セリフ
+				drawText(x, Y1 + TEXT_GRAPH_EDGE, (int)(TEXT_SIZE * m_exX) + CHAR_EDGE, text, BLACK, m_textHandle);
+			}
+			else { // 顔画像がある場合
+				// 名前
+				DrawStringToHandle(EDGE_X + TEXT_GRAPH_EDGE + graphSize + (int)(NAME_SIZE * m_exX), GAME_HEIGHT - EDGE_DOWN - (int)(NAME_SIZE * m_exX) - TEXT_GRAPH_EDGE, name.c_str(), BLACK, m_nameHandle);
+				// セリフ
+				drawText(EDGE_X + TEXT_GRAPH_EDGE * 2 + graphSize, Y1 + TEXT_GRAPH_EDGE, (int)(TEXT_SIZE * m_exX) + CHAR_EDGE, text, BLACK, m_textHandle);
+				// キャラの顔画像
+				graph->draw(EDGE_X + TEXT_GRAPH_EDGE + graphSize / 2, Y1 + TEXT_GRAPH_EDGE + graphSize / 2, m_exX);
+			}
+		}
 	}
+	
 
-	int startCnt = m_conversation->getStartCnt() * 8 * m_exY;
-	if ((Y1 + startCnt) > (GAME_HEIGHT - EDGE_DOWN - startCnt)) { return; }
-	if (startCnt > 0) {
-		// フキダシ
-		DrawExtendGraph(EDGE_X, Y1 + startCnt, GAME_WIDE - EDGE_X, GAME_HEIGHT - EDGE_DOWN - startCnt, m_frameHandle, TRUE);
-		return;
-	}
+	// クリックエフェクト
+	const vector<Animation*> animations = m_conversation->getAnimations();
+	size_t size = animations.size();
+	for (unsigned int i = 0; i < size; i++) {
+		// AnimationをDrawerにセット
+		m_animationDrawer->setAnimation(animations[i]);
 
-	// フキダシ
-	DrawExtendGraph(EDGE_X, Y1, GAME_WIDE - EDGE_X, GAME_HEIGHT - EDGE_DOWN, m_frameHandle, TRUE);
-
-	// 発言者の名前、セリフ顔画像
-	int now = 0;
-	int i = 0;
-	const int CHAR_EDGE = (int)(30 * m_exX);
-	if (m_conversation->getNoFace()) { // 顔画像がない場合
-		int x = EDGE_X + TEXT_GRAPH_EDGE + graphSize / 2;
-		// 名前
-		DrawStringToHandle(x, GAME_HEIGHT - EDGE_DOWN - (int)(NAME_SIZE * m_exX) - TEXT_GRAPH_EDGE, name.c_str(), BLACK, m_nameHandle);
-		// セリフ
-		drawText(x, Y1 + TEXT_GRAPH_EDGE, (int)(TEXT_SIZE * m_exX) + CHAR_EDGE, text, BLACK, m_textHandle);
-	}
-	else { // 顔画像がある場合
-		// 名前
-		DrawStringToHandle(EDGE_X + TEXT_GRAPH_EDGE + graphSize + (int)(NAME_SIZE * m_exX), GAME_HEIGHT - EDGE_DOWN - (int)(NAME_SIZE * m_exX) - TEXT_GRAPH_EDGE, name.c_str(), BLACK, m_nameHandle);
-		// セリフ
-		drawText(EDGE_X + TEXT_GRAPH_EDGE * 2 + graphSize, Y1 + TEXT_GRAPH_EDGE, (int)(TEXT_SIZE * m_exX) + CHAR_EDGE, text, BLACK, m_textHandle);
-		// キャラの顔画像
-		graph->draw(EDGE_X + TEXT_GRAPH_EDGE + graphSize / 2, Y1 + TEXT_GRAPH_EDGE + graphSize / 2, m_exX);
+		// カメラを使ってキャラを描画
+		m_animationDrawer->drawAnimation();
 	}
 
 }

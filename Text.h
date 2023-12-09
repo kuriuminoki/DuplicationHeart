@@ -68,7 +68,9 @@ private:
 
 	// 終了時、少しだけ待機時間
 	const int FINISH_COUNT = 30;
+	// 0 -> FINISH_COUNTで発言終了
 	int m_finishCnt;
+	// FINISH_CINT -> 0で発言開始
 	int m_startCnt;
 
 	// イベント終了したか
@@ -120,6 +122,10 @@ private:
 	// BGMを変更しても戻せるよう
 	std::string m_originalBgmPath;
 
+	// クリックエフェクト等のアニメーション このクラスがデリートする
+	GraphHandles* m_clickGraph;
+	std::vector<Animation*> m_animations;
+
 public:
 	Conversation(int textNum, World* world, SoundPlayer* soundPlayer);
 	~Conversation();
@@ -141,6 +147,7 @@ public:
 		return m_eventAnime->getAnime();
 	}
 	inline int getAnimeBright() const { return m_eventAnime->getBright(); }
+	const std::vector<Animation*> getAnimations() const { return m_animations; }
 
 	// セッタ
 	void setWorld(World* world);

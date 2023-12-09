@@ -432,7 +432,6 @@ Object* Heart::bulletAttack(int gx, int gy, SoundPlayer* soundPlayer) {
 	else {
 		attackObject = new BulletObject(getCenterX(), getCenterY(), m_bulletColor, gx, gy, m_attackInfo);
 	}
-	attackObject = new BulletObject(getCenterX(), getCenterY(), m_bulletColor, gx, gy, m_attackInfo);
 	// ©–Å–h~
 	attackObject->setCharacterId(m_id);
 	// ƒ`[ƒ€ƒLƒ‹–h~

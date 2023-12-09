@@ -52,7 +52,6 @@ void Object::setParam(Object* object) {
 	object->setDeleteFlag(m_deleteFlag);
 	object->setEffectHandles(m_effectHandles_p);
 	object->setSoundHandle(m_soundHandle_p);
-	object->setHandle(m_handle);
 }
 
 // HP‚ğŒ¸‚ç‚·

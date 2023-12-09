@@ -72,15 +72,12 @@ void penetrationCharacterAndObject(CharacterController* controller, vector<Objec
 
 
 /*
-* オブジェクトのロードなど
+* コンストラクタ
 */
-World::World(int fromAreaNum, int toAreaNum, SoundPlayer* soundPlayer) {
+World::World() {
 	m_duplicationFlag = false;
 
 	m_brightValue = 255;
-
-	// サウンドプレイヤー
-	m_soundPlayer_p = soundPlayer;
 
 	// 会話イベント
 	m_conversation_p = nullptr;
@@ -90,6 +87,23 @@ World::World(int fromAreaNum, int toAreaNum, SoundPlayer* soundPlayer) {
 
 	// スキル発動中
 	m_skillFlag = false;
+
+	// カメラの倍率の最大・最小値を解像度から決定
+	getGameEx(m_exX, m_exY);
+	m_cameraMaxEx *= m_exX;
+	m_cameraMinEx *= m_exX;
+
+}
+
+/*
+* オブジェクトのロードなど
+*/
+World::World(int fromAreaNum, int toAreaNum, SoundPlayer* soundPlayer) :
+	World()
+{
+
+	// サウンドプレイヤー
+	m_soundPlayer_p = soundPlayer;
 
 	// 主人公のスタート地点
 	m_areaNum = toAreaNum;
@@ -114,50 +128,12 @@ World::World(int fromAreaNum, int toAreaNum, SoundPlayer* soundPlayer) {
 		}
 	}
 
-	// カメラの倍率の最大・最小値を解像度から決定
-	getGameEx(m_exX, m_exY);
-	m_cameraMaxEx *= m_exX;
-	m_cameraMinEx *= m_exX;
-	m_camera->setEx(m_cameraMaxEx);
-
 }
 
-World::~World() {
-	// カメラを削除する
-	delete m_camera;
-
-	// 全オブジェクトを削除する。
-	deleteAllObject(m_stageObjects);
-	deleteAllObject(m_attackObjects);
-	deleteAllObject(m_doorObjects);
-
-	// 攻撃エフェクト削除
-	for (unsigned i = 0; i < m_animations.size(); i++) {
-		delete m_animations[i];
-	}
-
-	// 全コントローラを削除する。
-	for (unsigned int i = 0; i < m_characterControllers.size(); i++) {
-		delete m_characterControllers[i];
-	}
-
-	// 全キャラクターを削除する。
-	for (unsigned int i = 0; i < m_characters.size(); i++) {
-		delete m_characters[i];
-	}
-
-	// 背景
-	if (!m_duplicationFlag) {
-		DeleteGraph(m_backGroundGraph);
-	}
-}
-
-World::World(const World* original) {
+World::World(const World* original) :
+	World()
+{
 	m_duplicationFlag = true;
-	m_brightValue = 255;
-	m_conversation_p = nullptr;
-	m_movie_p = nullptr;
-	m_skillFlag = false;
 	m_areaNum = original->getAreaNum();
 
 	// エリアをコピー
@@ -201,6 +177,37 @@ World::World(const World* original) {
 	}
 	m_backGroundGraph = original->getBackGroundGraph();
 	m_backGroundColor = original->getBackGroundColor();
+
+}
+
+World::~World() {
+	// カメラを削除する
+	delete m_camera;
+
+	// 全オブジェクトを削除する。
+	deleteAllObject(m_stageObjects);
+	deleteAllObject(m_attackObjects);
+	deleteAllObject(m_doorObjects);
+
+	// 攻撃エフェクト削除
+	for (unsigned i = 0; i < m_animations.size(); i++) {
+		delete m_animations[i];
+	}
+
+	// 全コントローラを削除する。
+	for (unsigned int i = 0; i < m_characterControllers.size(); i++) {
+		delete m_characterControllers[i];
+	}
+
+	// 全キャラクターを削除する。
+	for (unsigned int i = 0; i < m_characters.size(); i++) {
+		delete m_characters[i];
+	}
+
+	// 背景
+	if (!m_duplicationFlag) {
+		DeleteGraph(m_backGroundGraph);
+	}
 }
 
 // スキル発動
