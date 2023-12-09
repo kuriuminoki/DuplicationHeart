@@ -270,6 +270,9 @@ private:
 	// 一時停止画面
 	BattleOption* m_battleOption;
 
+	// 一時停止画面音
+	int m_pauseSound;
+
 	// ゲームの再起動（タイトルへ戻る）を要求
 	bool m_rebootFlag;
 

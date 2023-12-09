@@ -72,15 +72,12 @@ void penetrationCharacterAndObject(CharacterController* controller, vector<Objec
 
 
 /*
-* オブジェクトのロードなど
+* コンストラクタ
 */
-World::World(int fromAreaNum, int toAreaNum, SoundPlayer* soundPlayer) {
+World::World() {
 	m_duplicationFlag = false;
 
 	m_brightValue = 255;
-
-	// サウンドプレイヤー
-	m_soundPlayer_p = soundPlayer;
 
 	// 会話イベント
 	m_conversation_p = nullptr;
@@ -90,6 +87,23 @@ World::World(int fromAreaNum, int toAreaNum, SoundPlayer* soundPlayer) {
 
 	// スキル発動中
 	m_skillFlag = false;
+
+	// カメラの倍率の最大・最小値を解像度から決定
+	getGameEx(m_exX, m_exY);
+	m_cameraMaxEx *= m_exX;
+	m_cameraMinEx *= m_exX;
+
+}
+
+/*
+* オブジェクトのロードなど
+*/
+World::World(int fromAreaNum, int toAreaNum, SoundPlayer* soundPlayer) :
+	World()
+{
+
+	// サウンドプレイヤー
+	m_soundPlayer_p = soundPlayer;
 
 	// 主人公のスタート地点
 	m_areaNum = toAreaNum;
@@ -113,44 +127,13 @@ World::World(int fromAreaNum, int toAreaNum, SoundPlayer* soundPlayer) {
 			break;
 		}
 	}
+
 }
 
-World::~World() {
-	// カメラを削除する
-	delete m_camera;
-
-	// 全オブジェクトを削除する。
-	deleteAllObject(m_stageObjects);
-	deleteAllObject(m_attackObjects);
-	deleteAllObject(m_doorObjects);
-
-	// 攻撃エフェクト削除
-	for (unsigned i = 0; i < m_animations.size(); i++) {
-		delete m_animations[i];
-	}
-
-	// 全コントローラを削除する。
-	for (unsigned int i = 0; i < m_characterControllers.size(); i++) {
-		delete m_characterControllers[i];
-	}
-
-	// 全キャラクターを削除する。
-	for (unsigned int i = 0; i < m_characters.size(); i++) {
-		delete m_characters[i];
-	}
-
-	// 背景
-	if (!m_duplicationFlag) {
-		DeleteGraph(m_backGroundGraph);
-	}
-}
-
-World::World(const World* original) {
+World::World(const World* original) :
+	World()
+{
 	m_duplicationFlag = true;
-	m_brightValue = 255;
-	m_conversation_p = nullptr;
-	m_movie_p = nullptr;
-	m_skillFlag = false;
 	m_areaNum = original->getAreaNum();
 
 	// エリアをコピー
@@ -194,6 +177,37 @@ World::World(const World* original) {
 	}
 	m_backGroundGraph = original->getBackGroundGraph();
 	m_backGroundColor = original->getBackGroundColor();
+
+}
+
+World::~World() {
+	// カメラを削除する
+	delete m_camera;
+
+	// 全オブジェクトを削除する。
+	deleteAllObject(m_stageObjects);
+	deleteAllObject(m_attackObjects);
+	deleteAllObject(m_doorObjects);
+
+	// 攻撃エフェクト削除
+	for (unsigned i = 0; i < m_animations.size(); i++) {
+		delete m_animations[i];
+	}
+
+	// 全コントローラを削除する。
+	for (unsigned int i = 0; i < m_characterControllers.size(); i++) {
+		delete m_characterControllers[i];
+	}
+
+	// 全キャラクターを削除する。
+	for (unsigned int i = 0; i < m_characters.size(); i++) {
+		delete m_characters[i];
+	}
+
+	// 背景
+	if (!m_duplicationFlag) {
+		DeleteGraph(m_backGroundGraph);
+	}
 }
 
 // スキル発動
@@ -619,20 +633,24 @@ void World::updateCamera() {
 	double nowEx = m_camera->getEx();
 	int leftShift = controlLeftShift();
 	if (leftShift > 0) {
-		m_camera->setEx(max(nowEx - 0.01, 0.1));
+		if (nowEx > m_cameraMinEx) {
+			m_camera->setEx(max(nowEx - 0.01, 0.1));
+		}
 	}
 	else {
 		int nowWide = (int)(GAME_WIDE / 2 / nowEx);
 		int nowHeight = (int)(GAME_HEIGHT / 2 / nowEx);
-		max_dx = (int)(max_dx * nowEx);
-		max_dy = (int)(max_dy + nowEx);
-		if (nowEx > 0.5 && (max_dx > nowWide || max_dy > nowHeight)) {
+		max_dx = (int)(max_dx * nowEx / m_exX);
+		max_dy = (int)(max_dy * nowEx / m_exY);
+		if (nowEx > m_cameraMinEx && (max_dx > nowWide || max_dy > nowHeight)) {
+			// 縮小
 			double d = double(max(max_dx - nowWide, max_dy - nowHeight));
-			m_camera->setEx(nowEx - min(0.05, d / 200000));
+			m_camera->setEx(nowEx - min(0.08, d / 100000));
 		}
-		else if (nowEx < 1.5 && (max_dx < nowWide && max_dy < nowHeight)) {
+		else if (nowEx < m_cameraMaxEx && (max_dx < nowWide && max_dy < nowHeight)) {
+			// 拡大
 			double d = double(max(nowWide - max_dx, nowHeight - max_dy));
-			m_camera->setEx(nowEx + min(0.05, d / 200000));
+			m_camera->setEx(nowEx + min(0.08, d / 100000));
 		}
 	}
 }
@@ -713,6 +731,7 @@ void World::controlCharacter() {
 		// 操作 originalのハートはフリーズ
 		if (!m_duplicationFlag || m_characterControllers[i]->getAction()->getCharacter()->getId() != m_playerId) {
 			controller->control();
+			controller->setPlayerDirection(m_player);
 		}
 
 		// 射撃攻撃

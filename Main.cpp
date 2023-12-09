@@ -29,7 +29,7 @@ bool Update() {
 }
 
 void Draw(int x, int y, int color) {
-	DrawFormatString(0, 0, RED, "デバッグモード：%.1f FPS, 解像度：%d*%d", mFps, GAME_WIDE, GAME_HEIGHT);
+	DrawFormatString(0, 0, BLUE, "デバッグモード：%.1f FPS, 解像度：%d*%d", mFps, GAME_WIDE, GAME_HEIGHT);
 }
 
 void Wait() {
@@ -88,6 +88,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 			if (game->getRebootFlag()) {
 				// ゲームを再起動、タイトルへ戻る
 				delete game;
+				delete gameDrawer;
 				gamePlay = false;
 				SetMouseDispFlag(MOUSE_DISP);//マウス表示
 				title = new Title();

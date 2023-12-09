@@ -2,6 +2,7 @@
 #include "Object.h"
 #include "CsvReader.h"
 #include "Game.h"
+#include "Define.h"
 
 
 using namespace std;
@@ -21,7 +22,7 @@ void ObjectLoader::addObject(map<string, string> dataMap) {
 	m_objects[areaNum].push_back(dataMap);
 }
 
-// 特定のエリアの追加オブジェクトのvectorを取得
+// 特定のエリアの追加オブジェクトのvectorを取得 pair<Objectのリスト, Doorのリスト>
 pair<vector<Object*>, vector<Object*> > ObjectLoader::getObjects(int areaNum) {
 
 	pair<vector<Object*>, vector<Object*> > res;
@@ -39,14 +40,24 @@ pair<vector<Object*>, vector<Object*> > ObjectLoader::getObjects(int areaNum) {
 		int colorHandle = str2color(color);
 		Object* object = nullptr;
 		if (name == "Box") {
-			object = new BoxObject(x1, y1, x2, y2, colorHandle, hp);
+			object = new BoxObject(x1, y1, x2, y2, graph.c_str(), colorHandle, hp);
 		}
 		else if (name == "Triangle") {
 			bool leftDown = false;
 			if (other == "leftDown") { leftDown = true; }
-			object = new TriangleObject(x1, y1, x2, y2, colorHandle, leftDown, hp);
+			object = new TriangleObject(x1, y1, x2, y2, graph.c_str(), colorHandle, leftDown, hp);
 		}
 		if (object != nullptr) { res.first.push_back(object); }
+		else if (name == "Area") {
+			// 左
+			res.first.push_back(new BoxObject(x1 - GAME_WIDE, y1 - GAME_HEIGHT, x1, y2, graph.c_str(), colorHandle, -1));
+			// 右
+			res.first.push_back(new BoxObject(x2, y1 - GAME_HEIGHT, x2 + GAME_WIDE, y2, graph.c_str(), colorHandle, -1));
+			// 上
+			res.first.push_back(new BoxObject(x1, y1 - GAME_HEIGHT, x2, y1, graph.c_str(), colorHandle, -1));
+			// 下
+			res.first.push_back(new BoxObject(x1 - GAME_WIDE, y2, x2 + GAME_WIDE, y2 + GAME_HEIGHT, graph.c_str(), colorHandle, -1));
+		}
 
 		// 扉オブジェクトは別に分ける
 		if (name == "Door") {

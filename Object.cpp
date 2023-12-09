@@ -13,6 +13,9 @@
 using namespace std;
 
 
+const double OBJECT_DEFAULT_SIZE = 0.3;
+
+
 Object::Object() :
 	Object(0, 0, 0, 0, -1)
 {
@@ -27,6 +30,8 @@ Object::Object(int x1, int y1, int x2, int y2, int hp) {
 	// 大小関係は 1 <= 2
 	if (m_x1 > m_x2) { std::swap(m_x1, m_x2); }
 	if (m_y1 > m_y2) { std::swap(m_y1, m_y2); }
+
+	m_handle = nullptr;
 
 	m_hp = hp;
 	m_damageCnt = 0;
@@ -78,10 +83,22 @@ Animation* SlashObject::createAnimation(int x, int y, int flameCnt) {
 /*
 * 四角形のオブジェクト
 */
-BoxObject::BoxObject(int x1, int y1, int x2, int y2, int color, int hp) :
+BoxObject::BoxObject(int x1, int y1, int x2, int y2, const char* fileName, int color, int hp) :
 	Object(x1, y1, x2, y2, hp)
 {
+	m_fileName = fileName;
+	if (m_fileName != "null") {
+		string filePath = "picture/stageMaterial/";
+		filePath += m_fileName;
+		m_handle = new GraphHandle(filePath.c_str(), OBJECT_DEFAULT_SIZE, 0.0, true);
+	}
 	m_color = color;
+}
+
+BoxObject::~BoxObject() {
+	if (m_handle != nullptr) {
+		delete m_handle;
+	}
 }
 
 // キャラクターとの当たり判定
@@ -228,11 +245,23 @@ void BoxObject::action() {
 	if (m_damageCnt > 0) { m_damageCnt--; }
 }
 
-TriangleObject::TriangleObject(int x1, int y1, int x2, int y2, int color, bool leftDown, int hp):
+TriangleObject::TriangleObject(int x1, int y1, int x2, int y2, const char* fileName, int color, bool leftDown, int hp):
 	Object(x1, y1, x2, y2, hp)
 {
 	m_color = color;
+	m_fileName = fileName;
+	if (m_fileName != "null") {
+		string filePath = "picture/stageMaterial/";
+		filePath += m_fileName;
+		m_handle = new GraphHandle(filePath.c_str(), OBJECT_DEFAULT_SIZE, 0.0, true);
+	}
 	m_leftDown = leftDown;
+}
+
+TriangleObject::~TriangleObject() {
+	if (m_handle != nullptr) {
+		delete m_handle;
+	}
 }
 
 // 座標XにおけるY座標（傾きから算出する）
@@ -756,13 +785,13 @@ DoorObject::DoorObject(int x1, int y1, int x2, int y2, const char* fileName, int
 	m_fileName = fileName;
 	string filePath = "picture/stageMaterial/";
 	filePath += m_fileName;
-	m_graph = new GraphHandle(filePath.c_str(), 1.0, 0.0, true);
+	m_handle = new GraphHandle(filePath.c_str(), 1.0, 0.0, true);
 	m_areaNum = areaNum;
 	m_text = "";
 }
 
 DoorObject::~DoorObject() {
-	delete m_graph;
+	delete m_handle;
 }
 
 bool DoorObject::atari(CharacterController* characterController) {
@@ -788,12 +817,12 @@ bool DoorObject::atari(CharacterController* characterController) {
 
 // コピー作成
 Object* BoxObject::createCopy() {
-	Object* res = new BoxObject(m_x1, m_y1, m_x2, m_y2, m_color, m_hp);
+	Object* res = new BoxObject(m_x1, m_y1, m_x2, m_y2, m_fileName.c_str(), m_color, m_hp);
 	setParam(res);
 	return res;
 }
 Object* TriangleObject::createCopy() {
-	Object* res = new TriangleObject(m_x1, m_y1, m_x2, m_y2, m_color, m_leftDown, m_hp);
+	Object* res = new TriangleObject(m_x1, m_y1, m_x2, m_y2, m_fileName.c_str(), m_color, m_leftDown, m_hp);
 	setParam(res);
 	return res;
 }

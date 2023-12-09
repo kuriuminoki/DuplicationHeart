@@ -51,8 +51,8 @@ public:
 	inline void setBright(int bright) { m_bright = bright; }
 	inline void setFinishFlag(bool flag) { m_finishFlag = flag; }
 
-	// アニメの再生が終わったか
-	bool getFinishAnime() const;
+	// アニメイベントが終わったか
+	bool getFinishAnimeEvent() const;
 
 	// falseの間は操作不可
 	void play();
@@ -68,7 +68,10 @@ private:
 
 	// 終了時、少しだけ待機時間
 	const int FINISH_COUNT = 30;
+	// 0 -> FINISH_COUNTで発言終了
 	int m_finishCnt;
+	// FINISH_CINT -> 0で発言開始
+	int m_startCnt;
 
 	// イベント終了したか
 	bool m_finishFlag;
@@ -119,6 +122,13 @@ private:
 	// BGMを変更しても戻せるよう
 	std::string m_originalBgmPath;
 
+	// クリックエフェクト等のアニメーション このクラスがデリートする
+	GraphHandles* m_clickGraph;
+	std::vector<Animation*> m_animations;
+
+	// 発言終了時の印画像
+	GraphHandle* m_textFinishGraph;
+
 public:
 	Conversation(int textNum, World* world, SoundPlayer* soundPlayer);
 	~Conversation();
@@ -131,6 +141,7 @@ public:
 	inline bool getNoFace() const { return m_noFace; }
 	inline 	std::string getSpeakerName() const { return m_speakerName; }
 	inline int getFinishCnt() const { return m_finishCnt; }
+	inline int getStartCnt() const { return m_startCnt; }
 	inline bool getFinishFlag() const { return m_finishFlag; }
 	inline int getTextNow() const { return m_textNow; }
 	inline int getCnt() const { return m_cnt; }
@@ -139,15 +150,21 @@ public:
 		return m_eventAnime->getAnime();
 	}
 	inline int getAnimeBright() const { return m_eventAnime->getBright(); }
+	const std::vector<Animation*> getAnimations() const { return m_animations; }
+	const GraphHandle* getTextFinishGraph() const { return m_textFinishGraph; }
+	const EventAnime* getEventAnime() const { return m_eventAnime; }
 
 	// セッタ
 	void setWorld(World* world);
 
 	// 今アニメ再生中か
-	bool animePlayNow() const { return m_eventAnime == nullptr ? false : !m_eventAnime->getFinishAnime(); }
+	bool animePlayNow() const { return m_eventAnime == nullptr ? false : !m_eventAnime->getFinishAnimeEvent(); }
 
 	// 会話を行う
 	bool play();
+
+	// 最後までセリフ表示したか
+	bool finishText() const;
 
 private:
 	void loadNextBlock();

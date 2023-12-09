@@ -22,6 +22,9 @@ protected:
 	// 右下の座標+1
 	int m_x2, m_y2;
 
+	// オブジェクトの画像
+	GraphHandle* m_handle;
+
 	// HP -1なら無敵
 	int m_hp;
 
@@ -87,7 +90,10 @@ public:
 	virtual inline int getAreaNum() const { return -1; }
 
 	// 画像を返す　ないならnullptr
-	virtual GraphHandle* getHandle() const { return nullptr; }
+	virtual GraphHandle* getHandle() const { return m_handle; }
+
+	// 画像を敷き詰めて表示するならtrue
+	virtual bool lineUpType() const { return false; }
 
 	// 画像の大きさを自動調節する
 	virtual bool extendGraph() const { return true; }
@@ -128,12 +134,20 @@ private:
 	// オブジェクトの色
 	int m_color;
 
+	// ファイルネームを保存しておく
+	std::string m_fileName;
+
 public:
-	BoxObject(int x1, int y1, int x2, int y2, int color, int hp = -1);
+	BoxObject(int x1, int y1, int x2, int y2, const char* fileName, int color, int hp = -1);
+
+	~BoxObject();
 
 	Object* createCopy();
 
 	void debug(int x, int y, int color) const;
+
+	// 画像を敷き詰めて表示するならtrue
+	bool lineUpType() const { return true; }
 
 	// オブジェクト描画（画像がないときに使う）
 	void drawObject(int x1, int y1, int x2, int y2) const;
@@ -162,13 +176,18 @@ private:
 	// オブジェクトの色
 	int m_color;
 
+	// ファイルネームを保存しておく
+	std::string m_fileName;
+
 	// 左向きに下がっている坂
 	bool m_leftDown;
 
 	// 座標XにおけるY座標（傾きから算出する）
 	int getY(int x) const;
 public:
-	TriangleObject(int x1, int y1, int x2, int y2, int color, bool leftDown, int hp = -1);
+	TriangleObject(int x1, int y1, int x2, int y2, const char* fileName, int color, bool leftDown, int hp = -1);
+
+	~TriangleObject();
 
 	Object* createCopy();
 
@@ -199,9 +218,6 @@ class BulletObject :
 	public Object
 {
 protected:
-
-	// 弾
-	GraphHandle* m_handle;
 
 	// この攻撃を出したキャラのＩＤ 自滅防止用
 	int m_characterId;
@@ -323,9 +339,6 @@ private:
 	// この攻撃が当たらないグループのID チームキル防止用
 	int m_groupId;
 
-	// オブジェクトの画像
-	GraphHandle* m_handle;
-
 	// ダメージ
 	int m_damage;
 
@@ -355,9 +368,6 @@ public:
 	void setSlashParam(SlashObject* object);
 
 	void debug(int x, int y, int color) const;
-
-	// 画像を返す　ないならnullptr
-	GraphHandle* getHandle() const { return m_handle; }
 
 	// ゲッタ
 	inline int getGroupId() const { return m_groupId; }
@@ -397,9 +407,6 @@ private:
 	// ファイルネームを保存しておく
 	std::string m_fileName;
 
-	// 画像
-	GraphHandle* m_graph;
-
 	// 行先のエリア番号
 	int m_areaNum;
 
@@ -415,7 +422,6 @@ public:
 	void debug(int x, int y, int color) const;
 
 	// ゲッタ
-	GraphHandle* getHandle() const { return m_graph; }
 	inline int getAreaNum() const { return m_areaNum; }
 	inline std::string getText() const { return m_text; }
 	const char* getFileName() const { return m_fileName.c_str(); }

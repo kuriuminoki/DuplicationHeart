@@ -38,7 +38,7 @@ public:
 
 	void drawCharacter(const Camera* const camera, int bright = 255);
 
-	void drawPlayerHpBar(const Character* player);
+	void drawPlayerHpBar(const Character* player, int hpBarGraph);
 
 };
 

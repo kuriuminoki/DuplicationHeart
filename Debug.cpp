@@ -1,3 +1,4 @@
+#include "Camera.h"
 #include "CharacterController.h"
 #include "CharacterAction.h"
 #include "Character.h"
@@ -22,7 +23,7 @@ void Game::debug(int x, int y, int color) const {
 	DrawFormatString(x, y, color, "**GAME**");
 	DrawFormatString(x, y + DRAW_FORMAT_STRING_SIZE, color, "StoryNum=%d, soundVolume=%d", m_gameData->getStoryNum(), m_soundPlayer->getVolume());
 	//m_story->debug(x + DRAW_FORMAT_STRING_SIZE, y + DRAW_FORMAT_STRING_SIZE * 2, color);
-	m_world->debug(x + DRAW_FORMAT_STRING_SIZE, y + DRAW_FORMAT_STRING_SIZE * 3, color);
+	//m_world->debug(x + DRAW_FORMAT_STRING_SIZE, y + DRAW_FORMAT_STRING_SIZE * 3, color);
 }
 
 
@@ -38,7 +39,7 @@ void debugObjects(int x, int y, int color, std::vector<Object*> objects) {
 // Worldクラスのデバッグ
 void World::debug(int x, int y, int color) const {
 	DrawFormatString(x, y, color, "**World**");
-	DrawFormatString(x, y + DRAW_FORMAT_STRING_SIZE, color, "CharacterSum=%d, ControllerSum=%d, anime=%d", m_characters.size(), m_characterControllers.size(), m_animations.size());
+	DrawFormatString(x, y + DRAW_FORMAT_STRING_SIZE, color, "CharacterSum=%d, ControllerSum=%d, cameraEx=%f", m_characters.size(), m_characterControllers.size(), m_camera->getEx());
 	debugObjects(x, y + DRAW_FORMAT_STRING_SIZE * 2, color, m_attackObjects);
 	m_characterControllers[0]->debug(x + DRAW_FORMAT_STRING_SIZE, y + DRAW_FORMAT_STRING_SIZE * 3, color);
 	if (m_movie_p != nullptr) {

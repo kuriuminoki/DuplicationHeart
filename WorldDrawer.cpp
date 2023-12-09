@@ -53,6 +53,7 @@ WorldDrawer::WorldDrawer(const World* world) {
 	m_objectDrawer = new ObjectDrawer(nullptr);
 	m_animationDrawer = new AnimationDrawer(nullptr);
 	m_conversationDrawer = new ConversationDrawer(nullptr);
+	m_hpBarGraph = LoadGraph("picture/battleMaterial/hpBar.png");
 }
 
 WorldDrawer::~WorldDrawer() {
@@ -60,12 +61,15 @@ WorldDrawer::~WorldDrawer() {
 	delete m_objectDrawer;
 	delete m_animationDrawer;
 	delete m_conversationDrawer;
+	DeleteGraph(m_hpBarGraph);
 }
 
 // 描画する
 void WorldDrawer::draw() {
+	
 	int bright = m_world->getBrightValue();
 	SetDrawBright(bright, bright, bright);
+
 	// 背景
 	int groundGraph = m_world->getBackGroundGraph();
 	if (groundGraph != -1) {
@@ -126,18 +130,14 @@ void WorldDrawer::draw() {
 	size = m_world->getCharacters().size();
 	for (unsigned int i = 0; i < size; i++) {
 		if (m_world->getCharacters()[i]->getName() == "ハート") {
-			m_characterDrawer->drawPlayerHpBar(m_world->getCharacters()[i]);
+			m_characterDrawer->drawPlayerHpBar(m_world->getCharacters()[i], m_hpBarGraph);
 		}
 	}
-
-	// ターゲット
-	m_targetDrawer.setEx(camera->getEx());
-	m_targetDrawer.draw();
-	SetDrawBright(255, 255, 255);
 
 	// ムービー
 	const Movie* movie = m_world->getMovie();
 	if (movie != nullptr) {
+		DrawBox(0, 0, GAME_WIDE, GAME_HEIGHT, BLACK, TRUE);
 		m_animationDrawer->setAnimation(movie->getAnimation());
 		m_animationDrawer->drawAnimation();
 	}
@@ -148,4 +148,12 @@ void WorldDrawer::draw() {
 		m_conversationDrawer->setConversation(conversation);
 		m_conversationDrawer->draw();
 	}
+
+	if (movie == nullptr && conversation == nullptr) {
+		// ターゲット
+		m_targetDrawer.setEx(camera->getEx());
+		m_targetDrawer.draw();
+	}
+
+	SetDrawBright(255, 255, 255);
 }

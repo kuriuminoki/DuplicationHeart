@@ -47,8 +47,8 @@ EventAnime::~EventAnime() {
 	delete m_animation;
 }
 
-// アニメの再生が終わったか
-bool EventAnime::getFinishAnime() const {
+// アニメイベントが終わったか
+bool EventAnime::getFinishAnimeEvent() const {
 	if (m_bright > 0 && m_toDark) { return false; }
 	if (m_bright < 255 && !m_toDark) { return false; }
 	return m_finishFlag;
@@ -72,6 +72,7 @@ void EventAnime::play() {
 Conversation::Conversation(int textNum, World* world, SoundPlayer* soundPlayer) {
 
 	m_finishCnt = 0;
+	m_startCnt = FINISH_COUNT;
 	m_finishFlag = false;
 	m_world_p = world;
 	m_soundPlayer_p = soundPlayer;
@@ -96,6 +97,15 @@ Conversation::Conversation(int textNum, World* world, SoundPlayer* soundPlayer) 
 	oss << "data/text/text" << textNum << ".txt";
 	m_fp = FileRead_open(oss.str().c_str());
 
+	double exX = 0, exY = 0;
+	getGameEx(exX, exY);
+
+	// クリックエフェクト
+	m_clickGraph = new GraphHandles("picture/system/clickEffect", 4, 0.5 * exX, 0, true);
+
+	// セリフを最後まで表示したときの画像
+	m_textFinishGraph = new GraphHandle("picture/system/textFinish.png", 0.5 * exX, 0, true);
+
 }
 
 Conversation::~Conversation() {
@@ -107,6 +117,12 @@ Conversation::~Conversation() {
 	if (m_eventAnime != nullptr) { delete m_eventAnime; }
 	// BGMを戻す
 	m_soundPlayer_p->setBGM(m_originalBgmPath);
+	// クリックエフェクト削除
+	delete m_clickGraph;
+	for (unsigned i = 0; i < m_animations.size(); i++) {
+		delete m_animations[i];
+	}
+	delete m_textFinishGraph;
 }
 
 // テキストを返す（描画用）
@@ -122,28 +138,62 @@ GraphHandle* Conversation::getGraph() const {
 	return m_speakerGraph->getGraphHandle(index);
 }
 
+// セリフの長さ
 int Conversation::getTextSize() const {
 	return (int)m_text.size();
 }
 
+// セリフを最後まで表示したか
+bool Conversation::finishText() const {
+	return m_textNow == m_text.size();
+}
+
+// 会話イベントの処理
 bool Conversation::play() {
 
+	// クリックアニメーションの再生
+	for (unsigned int i = 0; i < m_animations.size(); i++) {
+		m_animations[i]->count();
+		if (m_animations[i]->getFinishFlag()) {
+			delete m_animations[i];
+			m_animations[i] = m_animations.back();
+			m_animations.pop_back();
+			i--;
+		}
+	}
+
+	if (leftClick() == 1) {
+		int handX = 0, handY = 0;
+		GetMousePoint(&handX, &handY);
+		m_animations.push_back(new Animation(handX, handY, 4, m_clickGraph));
+	}
+
+	// クリック長押しで終了
 	if (leftClick() == 60) { m_finishFlag = true; return true; }
 
 	// 終了処理
 	if (m_finishCnt > 0) {
 		m_finishCnt++;
 		if (m_finishCnt == FINISH_COUNT) {
-			m_finishFlag = true;
-			return true;
+			if (FileRead_eof(m_fp) != 0) {
+				// ファイルを読み終えたから
+				m_finishFlag = true;
+				return true;
+			}
+			else {
+				// ファイルを読み終えてないから
+				m_finishCnt = 0;
+				m_startCnt = FINISH_COUNT;
+			}
 		}
 		return false;
 	}
 
 	// アニメイベント
-	if (m_eventAnime != nullptr && !m_eventAnime->getFinishAnime()) {
+	if (m_eventAnime != nullptr && !m_eventAnime->getFinishAnimeEvent()) {
+		m_cnt++;
 		m_eventAnime->play();
-		if (m_eventAnime->getFinishAnime()) {
+		if (m_eventAnime->getFinishAnimeEvent()) {
 			// 次のテキストへ移る
 			loadNextBlock();
 		}
@@ -156,8 +206,8 @@ bool Conversation::play() {
 	}
 
 	// プレイヤーからのアクション（スペースキー入力）
-	if (controlSpace() == 1 || leftClick() == 1) {
-		if (m_textNow == m_text.size()) {
+	if (leftClick() == 1) {
+		if (finishText()) {
 			// 全ての会話が終わった
 			if (FileRead_eof(m_fp) != 0) {
 				m_finishCnt++;
@@ -175,12 +225,17 @@ bool Conversation::play() {
 	}
 
 	// 表示文字を増やす
-	m_cnt++;
-	if (m_cnt % m_textSpeed == 0 && m_textNow < m_text.size()) {
-		// 日本語表示は１文字がサイズ２分
-		m_textNow = min(m_textNow + 2, (unsigned int)m_text.size());
-		// 効果音
-		m_soundPlayer_p->pushSoundQueue(m_displaySound);
+	if (m_startCnt > 0) {
+		m_startCnt--;
+	}
+	else {
+		m_cnt++;
+		if (m_cnt % m_textSpeed == 0 && !finishText()) {
+			// 日本語表示は１文字がサイズ２分
+			m_textNow = min(m_textNow + 2, (unsigned int)m_text.size());
+			// 効果音
+			m_soundPlayer_p->pushSoundQueue(m_displaySound);
+		}
 	}
 
 	return false;
@@ -249,6 +304,16 @@ void Conversation::loadNextBlock() {
 	else if (str == "@resetBGM") {
 		// BGMを戻す
 		m_soundPlayer_p->setBGM(m_originalBgmPath);
+		loadNextBlock();
+	}
+	else if (str == "@startCnt") {
+		// startCnt = FINISH_COUNTに戻し、フキダシを大きくする
+		m_startCnt = FINISH_COUNT;
+		loadNextBlock();
+	}
+	else if (str == "@finishCnt") {
+		// finishCntを加算していき、フキダシを小さくする
+		m_finishCnt = 1;
 		loadNextBlock();
 	}
 	else { // 発言

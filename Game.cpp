@@ -355,6 +355,9 @@ Game::Game(const char* saveFilePath) {
 	// 一時停止画面
 	m_battleOption = nullptr;
 
+	// 一時停止音
+	m_pauseSound = LoadSoundMem("sound/system/pause.wav");
+
 	// ゲームの再起動（タイトルへ戻る）を要求
 	m_rebootFlag = false;
 
@@ -368,6 +371,7 @@ Game::~Game() {
 	delete m_gameData;
 	delete m_soundPlayer;
 	delete m_world;
+	DeleteSoundMem(m_pauseSound);
 }
 
 bool Game::play() {
@@ -384,6 +388,7 @@ bool Game::play() {
 			m_battleOption = nullptr;
 			m_soundPlayer->playBGM();
 		}
+		m_soundPlayer->pushSoundQueue(m_pauseSound);
 	}
 	if (m_battleOption != nullptr) {
 		m_battleOption->play();
@@ -391,6 +396,8 @@ bool Game::play() {
 			// タイトルへ戻る
 			m_rebootFlag = true;
 		}
+		// 音
+		m_soundPlayer->play();
 		return false;
 	}
 

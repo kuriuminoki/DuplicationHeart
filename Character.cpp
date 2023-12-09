@@ -423,7 +423,15 @@ void Heart::switchPreJump(int cnt) {
 
 // ËŒ‚UŒ‚‚ğ‚·‚é(ƒLƒƒƒ‰‚²‚Æ‚Éˆá‚¤)
 Object* Heart::bulletAttack(int gx, int gy, SoundPlayer* soundPlayer) {
-	BulletObject* attackObject = new BulletObject(getCenterX(), getCenterY(), m_bulletColor, gx, gy, m_attackInfo);
+
+	// ’e‚Ìì¬
+	BulletObject* attackObject;
+	if (m_graphHandle->getBulletHandle() != nullptr) {
+		attackObject = new BulletObject(getCenterX(), getCenterY(), m_graphHandle->getBulletHandle()->getGraphHandle(), gx, gy, m_attackInfo);
+	}
+	else {
+		attackObject = new BulletObject(getCenterX(), getCenterY(), m_bulletColor, gx, gy, m_attackInfo);
+	}
 	// ©–Å–h~
 	attackObject->setCharacterId(m_id);
 	// ƒ`[ƒ€ƒLƒ‹–h~

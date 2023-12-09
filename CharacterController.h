@@ -120,6 +120,9 @@ public:
 
 	// ダメージ
 	virtual void damage(int vx, int vy, int damageValue) = 0;
+
+	// BrainがFreezeならプレイヤーの方向を向かせる
+	void setPlayerDirection(Character* player_p);
 };
 
 

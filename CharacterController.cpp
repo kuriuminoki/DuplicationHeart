@@ -206,9 +206,15 @@ void CharacterController::action() {
 	m_characterAction->action();
 }
 
+// BrainがFreezeならプレイヤーの方向を向かせる
+void CharacterController::setPlayerDirection(Character* player_p) {
+	if (m_brain->getBrainName() != "Freeze") { return; }
+	m_characterAction->setCharacterLeftDirection(player_p->getCenterX() < m_characterAction->getCharacter()->getCenterX());
+}
+
 
 /*
-* キーボードによるキャラコントロール マウスも使うのでCameraが必要
+* キャラコントロール マウスを使う可能性もあるのでCameraが必要
 */
 NormalController::NormalController(Brain* brain, CharacterAction* characterAction):
 	CharacterController(brain, characterAction)

@@ -106,6 +106,9 @@ class BattleOption :
 {
 private:
 
+	// ”wŒi‰æ‘œ
+	int m_backgroundGraph;
+
     // ƒtƒHƒ“ƒg
 	int m_font;
 	int m_fontSize;
