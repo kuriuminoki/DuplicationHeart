@@ -23,7 +23,7 @@ void Game::debug(int x, int y, int color) const {
 	DrawFormatString(x, y, color, "**GAME**");
 	DrawFormatString(x, y + DRAW_FORMAT_STRING_SIZE, color, "StoryNum=%d, soundVolume=%d", m_gameData->getStoryNum(), m_soundPlayer->getVolume());
 	//m_story->debug(x + DRAW_FORMAT_STRING_SIZE, y + DRAW_FORMAT_STRING_SIZE * 2, color);
-	m_world->debug(x + DRAW_FORMAT_STRING_SIZE, y + DRAW_FORMAT_STRING_SIZE * 3, color);
+	//m_world->debug(x + DRAW_FORMAT_STRING_SIZE, y + DRAW_FORMAT_STRING_SIZE * 3, color);
 }
 
 

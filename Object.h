@@ -76,6 +76,7 @@ public:
 	void setDamageCnt(int damageCnt) { m_damageCnt = damageCnt; }
 	void setEffectHandles(GraphHandles* effectHandles_p) { m_effectHandles_p = effectHandles_p; }
 	void setSoundHandle(int soundHandle_p) { m_soundHandle_p = soundHandle_p; }
+	void setHandle(GraphHandle* handle) { m_handle = handle; }
 
 	// HP‚ðŒ¸‚ç‚·
 	void decreaseHp(int damageValue);

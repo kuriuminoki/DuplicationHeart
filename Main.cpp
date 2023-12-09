@@ -29,7 +29,7 @@ bool Update() {
 }
 
 void Draw(int x, int y, int color) {
-	DrawFormatString(0, 0, RED, "デバッグモード：%.1f FPS, 解像度：%d*%d", mFps, GAME_WIDE, GAME_HEIGHT);
+	DrawFormatString(0, 0, BLUE, "デバッグモード：%.1f FPS, 解像度：%d*%d", mFps, GAME_WIDE, GAME_HEIGHT);
 }
 
 void Wait() {
