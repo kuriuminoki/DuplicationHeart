@@ -724,6 +724,7 @@ void World::controlCharacter() {
 		// 操作 originalのハートはフリーズ
 		if (!m_duplicationFlag || m_characterControllers[i]->getAction()->getCharacter()->getId() != m_playerId) {
 			controller->control();
+			controller->setPlayerDirection(m_player);
 		}
 
 		// 射撃攻撃

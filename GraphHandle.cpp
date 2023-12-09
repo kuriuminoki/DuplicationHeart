@@ -49,11 +49,11 @@ void GraphHandle::lineUpDraw(int x1, int y1, int x2, int y2, const Camera* camer
 	int wide = 0, height = 0;
 	GetGraphSize(m_handle, &wide, &height);
 
-	wide = (int)(wide * m_ex) + 1;
-	height = (int)(height * m_ex) + 1;
+	wide = (int)(wide * m_ex);
+	height = (int)(height * m_ex);
 
 	int xi = (x2 - x1) / wide;
-	if (xi == 0) { xi = 1; }
+	wide += ((x2 - x1) % wide) / xi + 1;
 	int yi = (y2 - y1) / height;
 	height += ((y2 - y1) % height) / yi + 1;
 	

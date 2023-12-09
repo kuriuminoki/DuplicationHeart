@@ -141,6 +141,8 @@ void GamePause::draw() const {
 BattleOption::BattleOption(SoundPlayer* soundPlayer):
 	GamePause(soundPlayer)
 {
+	m_backgroundGraph = LoadGraph("picture/event/black.png");
+
 	getGameEx(m_exX, m_exY);
 	m_fontSize = (int)(50 * m_exX);
 	m_font = CreateFontToHandle(nullptr, m_fontSize, 3);
@@ -153,6 +155,7 @@ BattleOption::BattleOption(SoundPlayer* soundPlayer):
 	m_titleFlag = false;
 }
 BattleOption::~BattleOption() {
+	DeleteGraph(m_backgroundGraph);
 	DeleteFontToHandle(m_font);
 }
 
@@ -169,6 +172,10 @@ void BattleOption::play() {
 }
 
 void BattleOption::draw() const {
+
+	SetDrawBlendMode(DX_BLENDMODE_ALPHA, 200);
+	DrawExtendGraph(0, 0, GAME_WIDE, GAME_HEIGHT, m_backgroundGraph, TRUE);
+	SetDrawBlendMode(DX_BLENDMODE_NOBLEND, 0);
 
 	GamePause::draw();
 
