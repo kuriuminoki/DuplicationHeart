@@ -274,6 +274,15 @@ void World::popCharacterController(int id) {
 			i--;
 		}
 	}
+	// TargetにしているAIは外してもらいたいのでHP=0にする。
+	for (unsigned int i = 0; i < m_characters.size(); i++) {
+		if (m_characters[i]->getName() == "ハート") {
+			continue;
+		}
+		if (m_characters[i]->getId() == id) {
+			m_characters[i]->setHp(0);
+		}
+	}
 }
 
 

@@ -148,12 +148,12 @@ GameData::GameData() {
 
 	m_saveFilePath = "";
 
-	const bool test = true;
-
 	m_areaNum = 1;
 	m_storyNum = 1;
 
-	if (test) {
+	// エリア0でデバッグするときはtrueにする
+	const bool TEST_MODE = false;
+	if (TEST_MODE) {
 		m_areaNum = 0;
 		m_storyNum = 0;
 	}

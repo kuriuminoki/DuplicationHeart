@@ -22,9 +22,6 @@ const char* FollowParabolaAI::BRAIN_NAME = "FollowParabolaAI";
 const char* ValkiriaAI::BRAIN_NAME = "ValkiriaAI";
 const char* FlightAI::BRAIN_NAME = "FlightAI";
 const char* FollowFlightAI::BRAIN_NAME = "FollowFlightAI";
-const char* BulletOnlyAI::BRAIN_NAME = "BulletOnlyAI";
-const char* SlashOnlyAI::BRAIN_NAME = "SlashOnlyAI";
-const char* ParabolaOnlyAI::BRAIN_NAME = "ParabolaOnlyAI";
 
 // ƒNƒ‰ƒX–¼‚©‚çBrain‚ğì¬‚·‚éŠÖ”
 Brain* createBrain(const string brainName, const Camera* camera_p) {
@@ -55,15 +52,6 @@ Brain* createBrain(const string brainName, const Camera* camera_p) {
 	}
 	else if (brainName == FollowFlightAI::BRAIN_NAME) {
 		brain = new FollowFlightAI();
-	}
-	else if (brainName == BulletOnlyAI::BRAIN_NAME) {
-		brain = new BulletOnlyAI();
-	}
-	else if (brainName == SlashOnlyAI::BRAIN_NAME) {
-		brain = new SlashOnlyAI();
-	}
-	else if (brainName == ParabolaOnlyAI::BRAIN_NAME) {
-		brain = new ParabolaOnlyAI();
 	}
 	return brain;
 }
@@ -227,6 +215,12 @@ void NormalAI::slashTargetPoint(int& x, int& y) {
 }
 
 void NormalAI::moveOrder(int& right, int& left, int& up, int& down) {
+
+	// “®‚©‚È‚¢ƒLƒƒƒ‰
+	if (m_characterAction_p->getCharacter()->getCharacterInfo()->moveSpeed() == 0) { 
+		return;
+	}
+
 	// Œ»İ’n
 	int x = m_characterAction_p->getCharacter()->getCenterX();
 	int y = m_characterAction_p->getCharacter()->getCenterY();
@@ -246,7 +240,11 @@ void NormalAI::moveOrder(int& right, int& left, int& up, int& down) {
 	else if (alreadyGoal && GetRand(MOVE_RAND) == 0) {
 		if (m_target_p != nullptr && abs(x - m_target_p->getCenterX()) < TARGET_DISTANCE) {
 			// target‚É‚Â‚¢‚Ä‚¢‚­
-			m_gx = m_target_p->getCenterX() + GetRand(2000) - 1000;
+			int NEAR_TARGET = 2000;
+			if (!m_characterAction_p->getCharacter()->haveBulletAttack()) {
+				NEAR_TARGET = 500; // ‹ß‹——£UŒ‚‚µ‚©‚È‚¢‚©‚ç‚æ‚è‹ß‚Ã‚­
+			}
+			m_gx = m_target_p->getCenterX() + GetRand(NEAR_TARGET) - NEAR_TARGET / 2;
 		}
 		else {
 			// ƒ‰ƒ“ƒ_ƒ€‚Éİ’è
@@ -386,6 +384,11 @@ int NormalAI::squatOrder() {
 }
 
 int NormalAI::slashOrder() {
+	// aŒ‚UŒ‚‚ğ‚Á‚Ä‚¢‚È‚¢
+	if (!m_characterAction_p->getCharacter()->haveSlashAttack()) {
+		return 0;
+	}
+	// ƒ^[ƒQƒbƒg‚ª‚¢‚È‚¢
 	if (m_target_p == nullptr || m_target_p->getHp() == 0) {
 		return 0;
 	}
@@ -401,9 +404,15 @@ int NormalAI::slashOrder() {
 }
 
 int NormalAI::bulletOrder() {
+	// ËŒ‚UŒ‚‚ğ‚Á‚Ä‚¢‚È‚¢
+	if (!m_characterAction_p->getCharacter()->haveBulletAttack()) {
+		return 0;
+	}
+	// ƒ^[ƒQƒbƒg‚ª‚¢‚È‚¢
 	if (m_target_p == nullptr || m_target_p->getHp() == 0) {
 		return 0;
 	}
+	// ‰“‹——£‚Ì“G‚É‚ÍËŒ‚‚µ‚È‚¢
 	int x = m_characterAction_p->getCharacter()->getCenterX();
 	if (abs(x - m_target_p->getCenterX()) > TARGET_DISTANCE) {
 		return 0;
@@ -777,8 +786,13 @@ void FlightAI::moveOrder(int& right, int& left, int& up, int& down) {
 	else if (alreadyGoal && GetRand(MOVE_RAND) == 0) {
 		if (m_target_p != nullptr && abs(x - m_target_p->getCenterX()) < TARGET_DISTANCE) {
 			// target‚É‚Â‚¢‚Ä‚¢‚­
-			m_gx = m_target_p->getCenterX() + GetRand(2000) - 1000;
-			m_gy = m_target_p->getCenterY() + GetRand(800) - 700;
+			int NEAR_TARGET_X = 2000, NEAR_TARGET_Y = 800;
+			if (!m_characterAction_p->getCharacter()->haveBulletAttack()) {
+				NEAR_TARGET_X = 500; // ‹ß‹——£UŒ‚‚µ‚©‚È‚¢‚©‚ç‚æ‚è‹ß‚Ã‚­
+				NEAR_TARGET_Y = 300;
+			}
+			m_gx = m_target_p->getCenterX() + GetRand(NEAR_TARGET_X) - NEAR_TARGET_X / 2;
+			m_gy = m_target_p->getCenterY() + GetRand(NEAR_TARGET_Y) - NEAR_TARGET_Y - 100;
 		}
 		else {
 			// ƒ‰ƒ“ƒ_ƒ€‚Éİ’è
@@ -850,53 +864,3 @@ void FollowFlightAI::moveOrder(int& right, int& left, int& up, int& down) {
 	stickOrder(right, left, up, down);
 }
 
-
-/*
-* ËŒ‚‚¾‚¯‚ÌNormalAI
-*/
-BulletOnlyAI::BulletOnlyAI() :
-	NormalAI()
-{
-
-}
-
-Brain* BulletOnlyAI::createCopy(std::vector<Character*> characters, const Camera* camera) {
-	BulletOnlyAI* res = new BulletOnlyAI();
-	copyTarget(characters, getTargetId(), res);
-	setParam(res);
-	return res;
-}
-
-
-/*
-* aŒ‚‚¾‚¯‚ÌNormalAI
-*/
-SlashOnlyAI::SlashOnlyAI() :
-	NormalAI()
-{
-
-}
-
-Brain* SlashOnlyAI::createCopy(std::vector<Character*> characters, const Camera* camera) {
-	SlashOnlyAI* res = new SlashOnlyAI();
-	copyTarget(characters, getTargetId(), res);
-	setParam(res);
-	return res;
-}
-
-
-/*
-* Î•û“ŠË‚¾‚¯‚ÌNormalAI
-*/
-ParabolaOnlyAI::ParabolaOnlyAI() :
-	ParabolaAI()
-{
-
-}
-
-Brain* ParabolaOnlyAI::createCopy(std::vector<Character*> characters, const Camera* camera) {
-	ParabolaOnlyAI* res = new ParabolaOnlyAI();
-	copyTarget(characters, getTargetId(), res);
-	setParam(res);
-	return res;
-}
