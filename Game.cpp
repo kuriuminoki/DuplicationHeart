@@ -148,12 +148,12 @@ GameData::GameData() {
 
 	m_saveFilePath = "";
 
-	const bool test = false;
-
 	m_areaNum = 1;
 	m_storyNum = 1;
 
-	if (test) {
+	// エリア0でデバッグするときはtrueにする
+	const bool TEST_MODE = false;
+	if (TEST_MODE) {
 		m_areaNum = 0;
 		m_storyNum = 0;
 	}
@@ -330,7 +330,6 @@ void GameData::updateStory(Story* story) {
 */
 Game::Game(const char* saveFilePath) {
 	// データ
-	//m_gameData = new GameData();
 	m_gameData = new GameData(saveFilePath);
 
 	// サウンドプレイヤー

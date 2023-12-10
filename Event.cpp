@@ -92,6 +92,9 @@ void Event::createFire(vector<string> param, World* world, SoundPlayer* soundPla
 	else if (param0 == "Auto") {
 		fire = new AutoFire(world);
 	}
+	else if (param0 == "Non") {
+		fire = new NonFire(world);
+	}
 
 	if (fire != nullptr) { m_eventFire.push_back(fire); }
 }

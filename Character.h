@@ -344,6 +344,11 @@ public:
 
 	// ŽaŒ‚UŒ‚‚ð‚·‚é(ƒLƒƒƒ‰‚²‚Æ‚Éˆá‚¤) ¶‚ðŒü‚¢‚Ä‚¢‚é‚©A¡‰½ƒJƒEƒ“ƒg‚©
 	virtual Object* slashAttack(bool leftDirection, int cnt, SoundPlayer* soundPlayer) { return nullptr; }
+
+	// ŽËŒ‚UŒ‚‚ðŽ‚Á‚Ä‚¢‚é‚©
+	bool haveBulletAttack() const { return m_attackInfo->bulletDamage() != 0; }
+	// ŽaŒ‚UŒ‚‚ðŽ‚Á‚Ä‚¢‚é‚©
+	bool haveSlashAttack() const { return m_attackInfo->slashDamage() != 0; }
 };
 
 
