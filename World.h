@@ -172,7 +172,7 @@ public:
 	inline void setConversation(Conversation* conversation){ m_conversation_p = conversation; }
 	inline void setMovie(Movie* movie) { m_movie_p = movie; }
 	void pushCharacter(Character* character, CharacterController* controller);
-	void popCharacter(int id);
+	void popCharacterController(int id);
 	void createRecorder();
 	void initRecorder();
 	void eraseRecorder();
@@ -186,9 +186,6 @@ private:
 
 	// アニメーションの更新
 	void updateAnimation();
-
-	// ＨＰ０のキャラ削除
-	void cleanCharacterController();
 
 	// キャラの更新（攻撃対象の変更）
 	void updateCharacter();
