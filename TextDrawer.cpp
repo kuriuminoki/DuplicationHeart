@@ -73,7 +73,7 @@ void ConversationDrawer::draw() {
 	if (!animeOnly) {
 		// 会話終了時
 		if (m_conversation->getFinishCnt() > 0) {
-			int finishCnt = m_conversation->getFinishCnt() * 8 * m_exY;
+			int finishCnt = (int)(m_conversation->getFinishCnt() * 8 * m_exY);
 			if ((Y1 + finishCnt) <= (GAME_HEIGHT - EDGE_DOWN - finishCnt)) { 
 				// フキダシ
 				DrawExtendGraph(EDGE_X, Y1 + finishCnt, GAME_WIDE - EDGE_X, GAME_HEIGHT - EDGE_DOWN - finishCnt, m_frameHandle, TRUE);
@@ -81,7 +81,7 @@ void ConversationDrawer::draw() {
 		}
 		// 会話開始時
 		else if (m_conversation->getStartCnt() > 0) {
-			int startCnt = m_conversation->getStartCnt() * 8 * m_exY;
+			int startCnt = (int)(m_conversation->getStartCnt() * 8 * m_exY);
 			if ((Y1 + startCnt) <= (GAME_HEIGHT - EDGE_DOWN - startCnt)) { 
 				// フキダシ
 				DrawExtendGraph(EDGE_X, Y1 + startCnt, GAME_WIDE - EDGE_X, GAME_HEIGHT - EDGE_DOWN - startCnt, m_frameHandle, TRUE);

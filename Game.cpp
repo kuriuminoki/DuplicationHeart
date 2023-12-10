@@ -551,7 +551,7 @@ bool HeartSkill::play() {
 		else {
 			// ƒXƒLƒ‹I—¹
 			for (unsigned int i = 0; i < m_duplicationId.size(); i++) {
-				m_world_p->popCharacter(m_duplicationId[i]);
+				m_world_p->popCharacterController(m_duplicationId[i]);
 				m_world_p->eraseRecorder();
 			}
 			return true;

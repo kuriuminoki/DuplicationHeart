@@ -262,7 +262,7 @@ void World::pushCharacter(Character* character, CharacterController* controller)
 	m_characterControllers.push_back(controller);
 }
 
-void World::popCharacter(int id) {
+void World::popCharacterController(int id) {
 	for (unsigned int i = 0; i < m_characterControllers.size(); i++) {
 		if (m_characterControllers[i]->getAction()->getCharacter()->getName() == "ハート") {
 			continue;
@@ -271,23 +271,6 @@ void World::popCharacter(int id) {
 			delete m_characterControllers[i];
 			m_characterControllers[i] = m_characterControllers.back();
 			m_characterControllers.pop_back();
-			i--;
-		}
-	}
-	for (unsigned int i = 0; i < m_characters.size(); i++) {
-		if (m_characters[i]->getName() == "ハート") {
-			continue;
-		}
-		if (m_characters[i]->getId() == id) {
-			for (unsigned int j = 0; j < m_characterControllers.size(); j++) {
-				if (m_characterControllers[j]->getBrain()->getTargetId() == id) {
-					m_characterControllers[j]->setTarget(nullptr);
-				}
-			}
-			//m_characters[i]->setHp(0);
-			delete m_characters[i];
-			m_characters[i] = m_characters.back();
-			m_characters.pop_back();
 			i--;
 		}
 	}
@@ -507,7 +490,9 @@ vector<const CharacterAction*> World::getActions() const {
 	vector<const CharacterAction*> actions;
 	size_t size = m_characterControllers.size();
 	for (unsigned int i = 0; i < size; i++) {
-		actions.push_back(m_characterControllers[i]->getAction());
+		if (m_characterControllers[i]->getAction()->getCharacter()->getHp() > 0) {
+			actions.push_back(m_characterControllers[i]->getAction());
+		}
 	}
 	return actions;
 }
@@ -551,7 +536,7 @@ void World::battle() {
 	}
 
 	// HP0のキャラコントローラ削除
-	cleanCharacterController();
+	// cleanCharacterController();
 
 	// deleteFlagがtrueのオブジェクトを削除する。
 	deleteObject(m_stageObjects);
@@ -576,18 +561,6 @@ void World::battle() {
 	// アニメーションの更新
 	updateAnimation();
 
-}
-
-// ＨＰ０のキャラコントローラ削除
-void World::cleanCharacterController() {
-	for (unsigned int i = 0; i < m_characterControllers.size(); i++) {
-		if (m_characterControllers[i]->getAction()->getCharacter()->getHp() == 0) {
-			delete m_characterControllers[i];
-			m_characterControllers[i] = m_characterControllers.back();
-			m_characterControllers.pop_back();
-			i--;
-		}
-	}
 }
 
 // キャラの更新（攻撃対象の変更）
@@ -717,6 +690,10 @@ void World::controlCharacter() {
 	size_t size = m_characterControllers.size();
 	for (unsigned int i = 0; i < size; i++) {
 		CharacterController* controller = m_characterControllers[i];
+
+		// HPが0ならスキップ
+		if (controller->getAction()->getCharacter()->getHp() == 0) { continue; }
+
 		// 行動前の処理
 		controller->init();
 
