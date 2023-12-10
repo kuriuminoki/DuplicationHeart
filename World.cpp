@@ -107,6 +107,7 @@ World::World(int fromAreaNum, int toAreaNum, SoundPlayer* soundPlayer) :
 
 	// 主人公のスタート地点
 	m_areaNum = toAreaNum;
+	m_nextAreaNum = m_areaNum;
 
 	// エリアをロード
 	const AreaReader data(fromAreaNum, toAreaNum, m_soundPlayer_p);
@@ -686,7 +687,7 @@ void World::atariCharacterAndDoor(CharacterController* controller, vector<Object
 		// 当たり判定をここで行う
 		if (objects[i]->atari(controller) && controller->getActionKey()) {
 			// 当たった場合 エリア移動が発生
-			m_areaNum = objects[i]->getAreaNum();
+			m_nextAreaNum = objects[i]->getAreaNum();
 			// 画面を暗転
 			m_brightValue--;
 		}
