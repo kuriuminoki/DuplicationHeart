@@ -148,7 +148,7 @@ GameData::GameData() {
 
 	m_saveFilePath = "";
 
-	const bool test = false;
+	const bool test = true;
 
 	m_areaNum = 1;
 	m_storyNum = 1;
@@ -330,7 +330,6 @@ void GameData::updateStory(Story* story) {
 */
 Game::Game(const char* saveFilePath) {
 	// データ
-	//m_gameData = new GameData();
 	m_gameData = new GameData(saveFilePath);
 
 	// サウンドプレイヤー

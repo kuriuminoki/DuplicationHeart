@@ -173,6 +173,21 @@ public:
 
 };
 
+// 発火しない　デバッグ用
+class NonFire :
+	public EventFire
+{
+public:
+
+	NonFire(World* world_p) :
+		EventFire(world_p)
+	{
+
+	}
+
+	bool fire() { return false; }
+};
+
 
 /*
 * EventElementの派生クラス
