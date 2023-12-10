@@ -21,9 +21,12 @@
 // Gameクラスのデバッグ
 void Game::debug(int x, int y, int color) const {
 	DrawFormatString(x, y, color, "**GAME**");
-	DrawFormatString(x, y + DRAW_FORMAT_STRING_SIZE, color, "StoryNum=%d, soundVolume=%d", m_gameData->getStoryNum(), m_soundPlayer->getVolume());
+	DrawFormatString(x, y + DRAW_FORMAT_STRING_SIZE, color, "StoryNum=%d, doorSum=%d", m_gameData->getStoryNum(), m_gameData->getDoorSum());
+	for (int i = 0; i < m_gameData->getDoorSum(); i++) {
+		DrawFormatString(x, y + DRAW_FORMAT_STRING_SIZE + ((i + 1) * DRAW_FORMAT_STRING_SIZE), color, "from=%d, to=%d", m_gameData->getFrom(i), m_gameData->getTo(i));
+	}
 	//m_story->debug(x + DRAW_FORMAT_STRING_SIZE, y + DRAW_FORMAT_STRING_SIZE * 2, color);
-	//m_world->debug(x + DRAW_FORMAT_STRING_SIZE, y + DRAW_FORMAT_STRING_SIZE * 3, color);
+	m_world->debug(1000, y + DRAW_FORMAT_STRING_SIZE * 3, color);
 }
 
 
@@ -39,12 +42,12 @@ void debugObjects(int x, int y, int color, std::vector<Object*> objects) {
 // Worldクラスのデバッグ
 void World::debug(int x, int y, int color) const {
 	DrawFormatString(x, y, color, "**World**");
-	DrawFormatString(x, y + DRAW_FORMAT_STRING_SIZE, color, "CharacterSum=%d, ControllerSum=%d, cameraEx=%f", m_characters.size(), m_characterControllers.size(), m_camera->getEx());
-	debugObjects(x, y + DRAW_FORMAT_STRING_SIZE * 2, color, m_attackObjects);
-	m_characterControllers[0]->debug(x + DRAW_FORMAT_STRING_SIZE, y + DRAW_FORMAT_STRING_SIZE * 3, color);
-	if (m_movie_p != nullptr) {
-		DrawFormatString(x, y + DRAW_FORMAT_STRING_SIZE * 3, color, "Movie: cnt=%d", m_movie_p->getCnt());
-	}
+	DrawFormatString(x, y + DRAW_FORMAT_STRING_SIZE, color, "areaNum=%d, CharacterSum=%d, ControllerSum=%d", m_areaNum, m_characters.size(), m_characterControllers.size(), m_camera->getEx());
+	//debugObjects(x, y + DRAW_FORMAT_STRING_SIZE * 2, color, m_attackObjects);
+	//m_characterControllers[0]->debug(x + DRAW_FORMAT_STRING_SIZE, y + DRAW_FORMAT_STRING_SIZE * 3, color);
+	//if (m_movie_p != nullptr) {
+	//	DrawFormatString(x, y + DRAW_FORMAT_STRING_SIZE * 3, color, "Movie: cnt=%d", m_movie_p->getCnt());
+	//}
 }
 
 

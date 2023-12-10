@@ -55,6 +55,7 @@ private:
 
 	// いま世界のどのエリアにいるか（メモリ節約のためプレイヤーの付近のみを読み込む）
 	int m_areaNum;
+	int m_nextAreaNum;
 
 	// 描画用のカメラ Worldがデリートする
 	Camera* m_camera;
@@ -99,6 +100,7 @@ public:
 	inline int getPlayerId() const { return m_playerId; }
 	inline int getBrightValue() const { return m_brightValue; }
 	inline int getAreaNum() const { return m_areaNum; }
+	inline int getNextAreaNum() const { return m_nextAreaNum; }
 	inline const Camera* getCamera() const { return m_camera; }
 	std::vector<CharacterController*> getCharacterControllers() const;
 	std::vector<const CharacterAction*> getActions() const;

@@ -176,6 +176,9 @@ public:
 	inline int getStoryNum() const { return m_storyNum; }
 	inline int getSoundVolume() const { return m_soundVolume; }
 	inline const char* getSaveFilePath() const { return m_saveFilePath.c_str(); }
+	inline int getDoorSum() const { return (int)m_doorData.size(); }
+	inline int getFrom(int i) const { return m_doorData[i]->from(); }
+	inline int getTo(int i) const { return m_doorData[i]->to(); }
 
 	// ƒZƒbƒ^
 	inline void setAreaNum(int areaNum) { m_areaNum = areaNum; }

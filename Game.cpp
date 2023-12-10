@@ -16,6 +16,13 @@
 
 using namespace std;
 
+
+// どこまで
+const int FINISH_STORY = 10;
+// エリア0でデバッグするときはtrueにする
+const bool TEST_MODE = false;
+
+
 /*
 * キャラのデータ
 */
@@ -151,8 +158,6 @@ GameData::GameData() {
 	m_areaNum = 1;
 	m_storyNum = 1;
 
-	// エリア0でデバッグするときはtrueにする
-	const bool TEST_MODE = false;
 	if (TEST_MODE) {
 		m_areaNum = 0;
 		m_storyNum = 0;
@@ -401,7 +406,7 @@ bool Game::play() {
 	}
 
 	// これ以上ストーリーを進ませない（テスト用）
-	if (m_gameData->getStoryNum() == 5 || m_gameData->getStoryNum() == 0) {
+	if (m_gameData->getStoryNum() == FINISH_STORY || m_gameData->getStoryNum() == 0) {
 		m_world->battle();
 		m_soundPlayer->play();
 		return false;
@@ -463,8 +468,8 @@ bool Game::play() {
 
 	// エリア移動
 	if (m_world->getBrightValue() == 0) {
-		int fromAreaNum = m_gameData->getAreaNum();
-		int toAreaNum = m_world->getAreaNum();
+		int fromAreaNum = m_world->getAreaNum();
+		int toAreaNum = m_world->getNextAreaNum();
 		m_gameData->asignedWorld(m_world, false);
 		delete m_world;
 		InitGraph();
@@ -475,6 +480,7 @@ bool Game::play() {
 		m_gameData->setAreaNum(toAreaNum);
 		return true;
 	}
+
 	return false;
 }
 
