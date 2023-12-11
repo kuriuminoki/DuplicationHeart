@@ -129,6 +129,8 @@ World::World(int fromAreaNum, int toAreaNum, SoundPlayer* soundPlayer) :
 		}
 	}
 
+	m_camera->setEx(m_cameraMaxEx);
+
 }
 
 World::World(const World* original) :
@@ -178,6 +180,8 @@ World::World(const World* original) :
 	}
 	m_backGroundGraph = original->getBackGroundGraph();
 	m_backGroundColor = original->getBackGroundColor();
+
+	m_camera->setEx(m_cameraMaxEx);
 
 }
 
@@ -592,7 +596,7 @@ void World::updateCamera() {
 	// キャラとカメラの距離の最大
 	int max_dx = 0, max_dy = 0;
 	// 画面内に入れようとする距離の最大　これより離れたキャラは無視
-	const int MAX_DISABLE = 2000;
+	const int MAX_DISABLE = 3000;
 	for (unsigned int i = 0; i < size; i++) {
 		// 今フォーカスしているキャラの座標に合わせる
 		if (m_focusId == m_characters[i]->getId()) {
@@ -628,7 +632,7 @@ void World::updateCamera() {
 		if (nowEx > m_cameraMinEx && (max_dx > nowWide || max_dy > nowHeight)) {
 			// 縮小
 			double d = double(max(max_dx - nowWide, max_dy - nowHeight));
-			m_camera->setEx(nowEx - min(0.08, d / 100000));
+			m_camera->setEx(nowEx - min(0.1, d / 100000));
 		}
 		else if (nowEx < m_cameraMaxEx && (max_dx < nowWide && max_dy < nowHeight)) {
 			// 拡大
