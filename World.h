@@ -6,21 +6,22 @@
 #include <string>
 
 
-class CharacterController;
-class CharacterAction;
-class Character;
-class Object;
-class DoorObject;
-class Camera;
 class Animation;
-class SoundPlayer;
-class Conversation;
 class Brain;
-class CharacterLoader;
-class ObjectLoader;
+class Camera;
+class Character;
+class CharacterAction;
+class CharacterController;
 class CharacterData;
+class CharacterLoader;
+class Conversation;
 class DoorData;
+class DoorObject;
+class GraphHandles;
 class Movie;
+class Object;
+class ObjectLoader;
+class SoundPlayer;
 
 
 class World {
@@ -85,6 +86,12 @@ private:
 	// エフェクト等のアニメーション Worldがデリートする
 	std::vector<Animation*> m_animations;
 
+	// キャラがやられた時のエフェクト画像
+	GraphHandles* m_characterDeadGraph;
+
+	// キャラがやられた時の効果音
+	int m_characterDeadSound;
+
 	// 背景
 	int m_backGroundGraph;
 	int m_backGroundColor;
@@ -119,6 +126,8 @@ public:
 	inline SoundPlayer* getSoundPlayer() const { return m_soundPlayer_p; }
 	inline double getCameraMaxEx() const { return m_cameraMaxEx; }
 	inline double getCameraMinEx() const { return m_cameraMinEx; }
+	inline GraphHandles* getCharacterDeadGraph() const { return m_characterDeadGraph; }
+	inline int getCharacterDeadSound() const { return m_characterDeadSound; }
 
 	// セッタ
 	void setSkillFlag(bool skillFlag);

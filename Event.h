@@ -157,6 +157,35 @@ public:
 	void setWorld(World* world);
 };
 
+// 特定のキャラが特定のキャラの近くにいる
+class CharacterNearFire :
+	public	EventFire
+{
+private:
+	// パラメータ
+	std::vector<std::string> m_param;
+
+	// キャラ
+	Character* m_character_p;
+
+	// 今いるエリア番号　エリア移動を知る用
+	int m_areaNum;
+
+	// 子のキャラの近くに行くのが条件
+	Character* m_target_p;
+
+	// 座標のずれの許容
+	int m_dx, m_dy;
+
+public:
+	CharacterNearFire(World* world, std::vector<std::string> param);
+
+	bool fire();
+
+	// 世界を設定しなおす
+	void setWorld(World* world);
+};
+
 // 勝手に発火
 class AutoFire :
 	public EventFire

@@ -89,6 +89,9 @@ void Event::createFire(vector<string> param, World* world, SoundPlayer* soundPla
 	if (param0 == "CharacterPoint") {
 		fire = new CharacterPointFire(world, param);
 	}
+	else if (param0 == "CharacterNear") {
+		fire = new CharacterNearFire(world, param);
+	}
 	else if (param0 == "Auto") {
 		fire = new AutoFire(world);
 	}
@@ -192,12 +195,12 @@ CharacterPointFire::CharacterPointFire(World* world, std::vector<std::string> pa
 	EventFire(world)
 {
 	m_param = param;
-	m_character_p = m_world_p->getCharacterWithName(param[1]);
-	m_areaNum = stoi(param[2]);
-	m_x = stoi(param[3]);
-	m_y = stoi(param[4]);
-	m_dx = stoi(param[5]);
-	m_dy = stoi(param[6]);
+	m_character_p = m_world_p->getCharacterWithName(m_param[1]);
+	m_areaNum = stoi(m_param[2]);
+	m_x = stoi(m_param[3]);
+	m_y = stoi(m_param[4]);
+	m_dx = stoi(m_param[5]);
+	m_dy = stoi(m_param[6]);
 }
 bool CharacterPointFire::fire() {
 	// 特定のキャラが指定した場所にいるか判定
@@ -210,6 +213,40 @@ bool CharacterPointFire::fire() {
 	return false;
 }
 void CharacterPointFire::setWorld(World* world) {
+	EventFire::setWorld(world);
+	m_character_p = m_world_p->getCharacterWithName(m_param[1]);
+}
+
+
+// 特定のキャラが特定のキャラの近くにいる
+CharacterNearFire::CharacterNearFire(World* world, std::vector<std::string> param) :
+	EventFire(world)
+{
+	m_param = param;
+	m_character_p = m_world_p->getCharacterWithName(m_param[1]);
+	m_target_p = m_world_p->getCharacterWithName(m_param[2]);
+	m_dx = stoi(param[3]);
+	m_dy = stoi(param[4]);
+
+	m_areaNum = m_world_p->getAreaNum();
+}
+bool CharacterNearFire::fire() {
+	// 特定のキャラが指定した場所にいるか判定
+	if (m_world_p->getAreaNum() != m_areaNum) { 
+		m_areaNum = m_world_p->getAreaNum();
+		m_target_p = m_world_p->getCharacterWithName(m_param[2]);
+	}
+	if (m_target_p == nullptr) { return false; }
+	int x = m_character_p->getCenterX();
+	int y = m_character_p->getY() + m_character_p->getHeight();
+	int targetX = m_target_p->getCenterX();
+	int targetY = m_target_p->getY() + m_target_p->getHeight();
+	if (x > targetX - m_dx && x < targetX + m_dx && y > targetY - m_dy && y < targetY + m_dy) {
+		return true;
+	}
+	return false;
+}
+void CharacterNearFire::setWorld(World* world) {
 	EventFire::setWorld(world);
 	m_character_p = m_world_p->getCharacterWithName(m_param[1]);
 }

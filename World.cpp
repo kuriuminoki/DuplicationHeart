@@ -15,6 +15,7 @@
 #include "CharacterLoader.h"
 #include "ObjectLoader.h"
 #include "Game.h"
+#include "GraphHandle.h"
 #include "DxLib.h"
 #include <algorithm>
 
@@ -129,6 +130,11 @@ World::World(int fromAreaNum, int toAreaNum, SoundPlayer* soundPlayer) :
 		}
 	}
 
+	m_camera->setEx(m_cameraMaxEx);
+
+	m_characterDeadGraph = new GraphHandles("picture/effect/dead", 5, 1.0, 0, true);
+	m_characterDeadSound = LoadSoundMem("sound/battle/dead.wav");
+
 }
 
 World::World(const World* original) :
@@ -142,6 +148,8 @@ World::World(const World* original) :
 	m_focusId = original->getFocusId();
 	m_playerId = original->getPlayerId();
 	m_soundPlayer_p = original->getSoundPlayer();
+	m_characterDeadGraph = original->getCharacterDeadGraph();
+	m_characterDeadSound = original->getCharacterDeadSound();
 	// キャラをコピー
 	for (unsigned int i = 0; i < original->getCharacters().size(); i++) {
 		Character* copy;
@@ -179,6 +187,8 @@ World::World(const World* original) :
 	m_backGroundGraph = original->getBackGroundGraph();
 	m_backGroundColor = original->getBackGroundColor();
 
+	m_camera->setEx(m_cameraMaxEx);
+
 }
 
 World::~World() {
@@ -208,6 +218,8 @@ World::~World() {
 	// 背景
 	if (!m_duplicationFlag) {
 		DeleteGraph(m_backGroundGraph);
+		delete m_characterDeadGraph;
+		DeleteSoundMem(m_characterDeadSound);
 	}
 }
 
@@ -542,7 +554,7 @@ void World::battle() {
 	// 画面暗転中 エリア移動かプレイヤーやられ時
 	if (m_brightValue != 255 || playerDead()) {
 		m_brightValue = max(0, m_brightValue - 10);
-		return;
+		if (!playerDead()) { return; }
 	}
 
 	// HP0のキャラコントローラ削除
@@ -587,19 +599,21 @@ void World::updateCharacter() {
 
 // カメラの更新
 void World::updateCamera() {
-	size_t size = m_characters.size();
-	int x = 0, y = 0;
-	// キャラとカメラの距離の最大
+
+	// カメラを揺らす
+	m_camera->shaking();
+
+	// キャラとカメラの距離の最大値を調べる
 	int max_dx = 0, max_dy = 0;
 	// 画面内に入れようとする距離の最大　これより離れたキャラは無視
-	const int MAX_DISABLE = 2000;
+	const int MAX_DISABLE = 3000;
+	size_t size = m_characters.size();
 	for (unsigned int i = 0; i < size; i++) {
 		// 今フォーカスしているキャラの座標に合わせる
 		if (m_focusId == m_characters[i]->getId()) {
-			x = m_characters[i]->getCenterX();
-			y = m_characters[i]->getCenterY();
-			m_camera->setGPoint(x, y);
+			m_camera->setGPoint(m_characters[i]->getCenterX(), m_characters[i]->getCenterY());
 		}
+		// フォーカスしているキャラ以外なら距離を調べる
 		else if (m_characters[i]->getHp() > 0) {
 			int dx = abs(m_camera->getX() - m_characters[i]->getX()) + m_characters[i]->getWide();
 			if (dx < MAX_DISABLE) {
@@ -608,7 +622,8 @@ void World::updateCamera() {
 			}
 		}
 	}
-	// カメラはゆっくり動く
+
+	// カメラを目標位置へ近づける
 	m_camera->move();
 
 	// カメラの拡大・縮小
@@ -628,7 +643,7 @@ void World::updateCamera() {
 		if (nowEx > m_cameraMinEx && (max_dx > nowWide || max_dy > nowHeight)) {
 			// 縮小
 			double d = double(max(max_dx - nowWide, max_dy - nowHeight));
-			m_camera->setEx(nowEx - min(0.08, d / 100000));
+			m_camera->setEx(nowEx - min(0.1, d / 100000));
 		}
 		else if (nowEx < m_cameraMaxEx && (max_dx < nowWide && max_dy < nowHeight)) {
 			// 拡大
@@ -664,6 +679,11 @@ void World::atariCharacterAndObject(CharacterController* controller, vector<Obje
 			int soundHandle = objects[i]->getSoundHandle();
 			int panPal = adjustPanSound(x, m_camera->getX());
 			m_soundPlayer_p->pushSoundQueue(soundHandle, panPal);
+			if (controller->getAction()->getCharacter()->getHp() == 0) {
+				m_animations.push_back(new Animation(x, y, 3, m_characterDeadGraph));
+				m_camera->shakingStart(20, 20);
+				m_soundPlayer_p->pushSoundQueue(m_characterDeadSound, panPal);
+			}
 		}
 		// deleteFlagがtrueなら削除する
 		if (objects[i]->getDeleteFlag()) {
