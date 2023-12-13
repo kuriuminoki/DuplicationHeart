@@ -23,6 +23,12 @@ private:
 	// 画面中心の座標
 	int m_centerX, m_centerY;
 
+	// 画面の揺れ幅
+	int m_shakingWidth;
+
+	// 揺れる残り時間
+	int m_shakingTime;
+
 public:
 	Camera();
 	Camera(int x, int y, double ex, int speed=0);
@@ -37,6 +43,8 @@ public:
 	inline double getEx() const { return m_ex; }
 	inline int getSpeed() const { return m_speed; }
 	inline int getMaxSpeed() const { return m_maxSpeed; }
+	inline int getShakingWidth() const { return m_shakingWidth; }
+	inline int getShakingTime() const { return m_shakingTime; }
 
 	// セッタ
 	inline void setPoint(int x, int y) { m_x = x; m_y = y; }
@@ -56,6 +64,12 @@ public:
 
 	// マウスの位置を取得
 	void getMouse(int* x, int* y) const;
+
+	// カメラを揺らし始める
+	void shakingStart(int width, int time);
+
+	// カメラを揺らす
+	void shaking();
 };
 
 

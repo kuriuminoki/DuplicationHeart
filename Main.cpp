@@ -60,8 +60,8 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 	//SetMousePoint(320, 240);//マウスカーソルの初期位置
 	
 	// 画像の拡大処理方式
-	//SetDrawMode(DX_DRAWMODE_BILINEAR);
-	SetDrawMode(DX_DRAWMODE_NEAREST);
+	SetDrawMode(DX_DRAWMODE_BILINEAR);
+	//SetDrawMode(DX_DRAWMODE_NEAREST);
 	SetFullScreenScalingMode(DX_DRAWMODE_NEAREST);
 
 	// ゲーム本体

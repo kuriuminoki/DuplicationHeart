@@ -1,5 +1,6 @@
 #include "Camera.h"
 #include "Define.h"
+#include "DxLib.h"
 
 
 Camera::Camera() :
@@ -18,6 +19,8 @@ Camera::Camera(int x, int y, double ex, int speed) {
 	m_maxSpeed = speed == 0 ? CAMERA_SPEED_DEFAULT : speed;
 	m_centerX = GAME_WIDE / 2;
 	m_centerY = GAME_HEIGHT / 2;
+	m_shakingWidth = 0;
+	m_shakingTime = 0;
 }
 
 Camera::Camera(const Camera* original) {
@@ -30,6 +33,8 @@ Camera::Camera(const Camera* original) {
 	m_maxSpeed = original->getMaxSpeed();
 	m_centerX = GAME_WIDE / 2;
 	m_centerY = GAME_HEIGHT / 2;
+	m_shakingWidth = original->getShakingWidth();
+	m_shakingTime = original->getShakingTime();
 }
 
 // カメラの移動 目標地点が近いほど鈍感になる
@@ -76,4 +81,18 @@ void Camera::getMouse(int* x, int* y) const {
 	// m_xとm_yは画面中央に対応するWorldの座標
 	*x = m_x + dx;
 	*y = m_y + dy;
+}
+
+// カメラを揺らす
+void Camera::shakingStart(int width, int time) {
+	m_shakingWidth = width;
+	m_shakingTime = time;
+}
+
+// カメラを揺らす
+void Camera::shaking() {
+	if (m_shakingTime == 0) { return; }
+	m_x += GetRand(m_shakingWidth * 2) - m_shakingWidth;
+	m_y += GetRand(m_shakingWidth * 2) - m_shakingWidth;
+	m_shakingTime--;
 }
