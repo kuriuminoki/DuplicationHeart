@@ -21,6 +21,8 @@ using namespace std;
 const int FINISH_STORY = 10;
 // エリア0でデバッグするときはtrueにする
 const bool TEST_MODE = false;
+// スキルが発動可能になるストーリー番号
+const int SKILL_USEABLE_STORY = 1;
 
 
 /*
@@ -413,7 +415,7 @@ bool Game::play() {
 	}
 
 	// スキル発動 Fキーかつスキル未発動状態かつ発動可能なイベント中（もしくはイベント中でない）かつエリア移動中でない
-	if (m_gameData->getStoryNum() >= 4) { // ストーリーの最初は発動できない
+	if (m_gameData->getStoryNum() >= SKILL_USEABLE_STORY) { // ストーリーの最初は発動できない
 		if (controlF() == 1 && m_skill == nullptr) { // Fキーで発動、ただしスキル身発動時
 			if (m_story->skillAble() && m_world->getBrightValue() == 255) { // 特定のイベント時やエリア移動中はダメ
 				if (m_world->getCharacterWithName("ハート")->getHp() > 0) {
