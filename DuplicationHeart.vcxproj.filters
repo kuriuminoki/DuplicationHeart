@@ -138,6 +138,9 @@
     <ClCompile Include="Title.cpp">
       <Filter>ソース ファイル\pages</Filter>
     </ClCompile>
+    <ClCompile Include="Item.cpp">
+      <Filter>ソース ファイル\Domain</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Define.h">
@@ -226,6 +229,9 @@
     </ClInclude>
     <ClInclude Include="Title.h">
       <Filter>ヘッダー ファイル\pages</Filter>
+    </ClInclude>
+    <ClInclude Include="Item.h">
+      <Filter>ヘッダー ファイル\Domain</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

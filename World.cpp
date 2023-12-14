@@ -223,7 +223,115 @@ World::~World() {
 	}
 }
 
-// スキル発動
+// Drawer用：CharacterActionのvectorを返す
+vector<const CharacterAction*> World::getActions() const {
+	vector<const CharacterAction*> actions;
+	size_t size = m_characterControllers.size();
+	for (unsigned int i = 0; i < size; i++) {
+		if (m_characterControllers[i]->getAction()->getCharacter()->getHp() > 0) {
+			actions.push_back(m_characterControllers[i]->getAction());
+		}
+	}
+	return actions;
+}
+
+// Drawer用：Objectのvectorを返す
+vector<const Object*> World::getFrontObjects() const {
+
+	vector<const Object*> allObjects;
+	allObjects.insert(allObjects.end(), m_stageObjects.begin(), m_stageObjects.end());
+	allObjects.insert(allObjects.end(), m_attackObjects.begin(), m_attackObjects.end());
+
+	return allObjects;
+}
+
+// Drawer用：キャラより後ろに描画するObjectのvectorを返す
+vector<const Object*> World::getBackObjects() const {
+
+	vector<const Object*> allObjects;
+	allObjects.insert(allObjects.end(), m_doorObjects.begin(), m_doorObjects.end());
+
+	return allObjects;
+}
+
+// Drawer用：Animationのvectorを返す
+vector<const Animation*> World::getConstAnimations() const {
+
+	vector<const Animation*> allAnimations;
+	allAnimations.insert(allAnimations.end(), m_animations.begin(), m_animations.end());
+
+	return allAnimations;
+}
+
+// 名前でキャラ検索
+Character* World::getCharacterWithName(string characterName) const {
+	for (unsigned int i = 0; i < m_characters.size(); i++) {
+		if (m_characters[i]->getName() == characterName) {
+			return m_characters[i];
+		}
+	}
+	return nullptr;
+}
+
+// 名前でコントローラ検索
+CharacterController* World::getControllerWithName(string characterName) const {
+	for (unsigned int i = 0; i < m_characters.size(); i++) {
+		if (m_characterControllers[i]->getAction()->getCharacter()->getName() == characterName) {
+			return m_characterControllers[i];
+		}
+	}
+	return nullptr;
+}
+
+// IDでキャラ検索
+Character* World::getCharacterWithId(int id) const {
+	for (unsigned int i = 0; i < m_characters.size(); i++) {
+		if (m_characters[i]->getId() == id) {
+			return m_characters[i];
+		}
+	}
+	return nullptr;
+}
+
+// ID指定でBrain変更
+void World::setBrainWithId(int id, Brain* brain) {
+	for (unsigned int i = 0; i < m_characterControllers.size(); i++) {
+		if (m_characterControllers[i]->getAction()->getCharacter()->getId() == id) {
+			m_characterControllers[i]->setBrain(brain);
+		}
+	}
+}
+
+// ストーリーによる追加キャラクター
+void World::addCharacter(CharacterLoader* characterLoader) {
+	pair<vector<Character*>, vector<CharacterController*> > p = characterLoader->getCharacters(m_camera, m_soundPlayer_p, m_areaNum);
+	// キャラクター
+	m_characters.insert(m_characters.end(), p.first.begin(), p.first.end());
+	// コントローラ
+	m_characterControllers.insert(m_characterControllers.end(), p.second.begin(), p.second.end());
+}
+
+// ストーリーによる追加オブジェクト
+void World::addObject(ObjectLoader* objectLoader) {
+	pair<vector<Object*>, vector<Object*> > p = objectLoader->getObjects(m_areaNum);
+	// 壁や床
+	m_stageObjects.insert(m_stageObjects.end(), p.first.begin(), p.first.end());
+	// ドア
+	m_doorObjects.insert(m_doorObjects.end(), p.second.begin(), p.second.end());
+}
+
+// プレイヤーのHPが0ならtrue
+bool World::playerDead() {
+	return m_player->getHp() <= 0;
+}
+
+// プレイヤーのHPをMAXにする
+void World::playerHpReset() {
+	m_player->setHp(m_player->getMaxHp());
+}
+
+
+// スキル発動：ハートをFreezeにする
 void World::setSkillFlag(bool skillFlag) { 
 	m_skillFlag = skillFlag;
 	for (unsigned int i = 0; i < m_characterControllers.size(); i++) {
@@ -233,48 +341,13 @@ void World::setSkillFlag(bool skillFlag) {
 	}
 }
 
-// ストーリーやイベントによる追加キャラクター
-void World::addCharacter(CharacterLoader* characterLoader) {
-	pair<vector<Character*>, vector<CharacterController*> > p = characterLoader->getCharacters(m_camera, m_soundPlayer_p, m_areaNum);
-	// キャラクター
-	m_characters.insert(m_characters.end(), p.first.begin(), p.first.end());
-	// コントローラ
-	m_characterControllers.insert(m_characterControllers.end(), p.second.begin(), p.second.end());
-}
-
-// ストーリーやイベントによる追加オブジェクト
-void World::addObject(ObjectLoader* objectLoader) {
-	pair<vector<Object*>, vector<Object*> > p = objectLoader->getObjects(m_areaNum);
-	// 壁や床
-	m_stageObjects.insert(m_stageObjects.end(), p.first.begin(), p.first.end());
-	// ドア
-	m_doorObjects.insert(m_doorObjects.end(), p.second.begin(), p.second.end());
-}
-
-std::vector<CharacterController*> World::getCharacterControllers() const {
-	return m_characterControllers;
-}
-std::vector<Character*> World::getCharacters() const {
-	return m_characters;
-}
-std::vector<Object*> World::getStageObjects() const {
-	return m_stageObjects;
-}
-std::vector<Object*> World::getDoorObjects() const {
-	return m_doorObjects;
-}
-std::vector<Object*> World::getAttackObjects() const {
-	return m_attackObjects;
-}
-std::vector<Animation*> World::getAnimations() const {
-	return m_animations;
-}
-
+// スキル発動：複製のハート追加用
 void World::pushCharacter(Character* character, CharacterController* controller) {
 	m_characters.push_back(character);
 	m_characterControllers.push_back(controller);
 }
 
+// スキル発動：複製のハート削除用
 void World::popCharacterController(int id) {
 	for (unsigned int i = 0; i < m_characterControllers.size(); i++) {
 		if (m_characterControllers[i]->getAction()->getCharacter()->getName() == "ハート") {
@@ -298,8 +371,7 @@ void World::popCharacterController(int id) {
 	}
 }
 
-
-// レコーダを作成し使用を開始
+// スキル発動：レコーダを作成し使用を開始
 void World::createRecorder() {
 	for (unsigned int i = 0; i < m_characterControllers.size(); i++) {
 		if (m_characterControllers[i]->getAction()->getCharacter()->getName() == "ハート") { continue; }
@@ -312,7 +384,7 @@ void World::createRecorder() {
 	}
 }
 
-// レコーダの時間を最初に戻す
+// スキル発動：レコーダの時間を最初に戻す
 void World::initRecorder() {
 	for (unsigned int i = 0; i < m_characterControllers.size(); i++) {
 		if (m_characterControllers[i]->getAction()->getCharacter()->getName() == "ハート") { continue; }
@@ -320,7 +392,7 @@ void World::initRecorder() {
 	}
 }
 
-// レコーダの使用をやめて削除する
+// スキル発動：レコーダの使用をやめて削除する
 void World::eraseRecorder() {
 	for (unsigned int i = 0; i < m_characterControllers.size(); i++) {
 		if (m_characterControllers[i]->getAction()->getCharacter()->getName() == "ハート") { continue; }
@@ -328,48 +400,7 @@ void World::eraseRecorder() {
 	}
 }
 
-// キャラ1体の情報を世界に反映
-void World::asignedCharacter(Character* character, CharacterData* data, bool changePosition) {
-	character->changeInfoVersion(data->version());
-	if (data->id() != -1) {
-		// このゲームで初登場じゃない
-		character->setHp(data->hp());
-	}
-	//character->setId(data.id());
-	character->setGroupId(data->groupId());
-	if (changePosition) {
-		character->setX(data->x());
-		// Y座標は身長に合わせて調整
-		character->setY(data->y() - character->getHeight());
-	}
-}
-
-// コントローラ1個の情報を世界に反映
-CharacterController* World::createControllerWithData(const Character* character, CharacterData* data) {
-	size_t size = m_characters.size();
-	// Actionを作成
-	CharacterAction* action = nullptr;
-	for (unsigned int j = 0; j < size; j++) {
-		if (m_characters[j]->getName() == character->getName()) {
-			action = createAction(data->actionName(), m_characters[j], data->soundFlag() ? m_soundPlayer_p : nullptr);
-			break;
-		}
-	}
-	// Brainを作成
-	Brain* brain = createBrain(data->brainName(), m_camera);
-	brain->setCharacterAction(action);
-	string follow = data->followName();
-	for (unsigned int j = 0; j < size; j++) {
-		if (m_characters[j]->getName() == follow) {
-			brain->searchFollow(m_characters[j]);
-			break;
-		}
-	}
-	// Controllerを作成
-	return createController(data->controllerName(), brain, action);
-}
-
-// キャラの状態を変更する いないなら作成する
+// データ管理：キャラの状態を変更する いないなら作成する
 void World::asignedCharacterData(const char* name, CharacterData* data) {
 	if (data->areaNum() == -1) { return; }
 	size_t size = m_characters.size();
@@ -402,7 +433,7 @@ void World::asignedCharacterData(const char* name, CharacterData* data) {
 	}
 }
 
-// キャラの状態を教える
+// データ管理：キャラの状態を教える
 void World::asignCharacterData(const char* name, CharacterData* data, int fromAreaNum, bool notCharacterPoint) const {
 	size_t size = m_characterControllers.size();
 	for (unsigned i = 0; i < size; i++) {
@@ -430,7 +461,7 @@ void World::asignCharacterData(const char* name, CharacterData* data, int fromAr
 	}
 }
 
-// Doorの状態を変更する いないなら作成する
+// データ管理：Doorの状態を変更する いないなら作成する
 void World::asignedDoorData(DoorData* data) {
 	if (data->from() != m_areaNum) { return; }
 	bool flag = false;
@@ -449,7 +480,7 @@ void World::asignedDoorData(DoorData* data) {
 	}
 }
 
-// Doorの状態を教える
+// データ管理：Doorの状態を教える
 void World::asignDoorData(vector<DoorData*>& data, int fromAreaNum) const {
 	size_t size = data.size();
 	for (unsigned i = 0; i < m_doorObjects.size(); i++) {
@@ -476,7 +507,7 @@ void World::asignDoorData(vector<DoorData*>& data, int fromAreaNum) const {
 	}
 }
 
-// プレイヤーとその仲間をドアの前に移動
+// データ管理：プレイヤーとその仲間をドアの前に移動
 void World::setPlayerOnDoor(int from) {
 	int doorX1 = m_player->getX(), doorY2 = m_player->getY() + m_player->getHeight();
 	for (unsigned int i = 0; i < m_doorObjects.size(); i++) {
@@ -507,44 +538,55 @@ void World::setPlayerOnDoor(int from) {
 	cameraPointInit();
 }
 
-// CharacterActionのvectorを返す
-vector<const CharacterAction*> World::getActions() const {
-	vector<const CharacterAction*> actions;
-	size_t size = m_characterControllers.size();
-	for (unsigned int i = 0; i < size; i++) {
-		if (m_characterControllers[i]->getAction()->getCharacter()->getHp() > 0) {
-			actions.push_back(m_characterControllers[i]->getAction());
+// データ管理：カメラの位置をリセット
+void World::cameraPointInit() {
+	for (unsigned int i = 0; i < m_characters.size(); i++) {
+		if (m_characters[i]->getId() == m_focusId) {
+			m_camera->setPoint(m_characters[i]->getCenterX(), m_characters[i]->getCenterY());
+			break;
 		}
 	}
-	return actions;
 }
 
-// Objectのvectorを返す
-vector<const Object*> World::getFrontObjects() const {
-
-	vector<const Object*> allObjects;
-	allObjects.insert(allObjects.end(), m_stageObjects.begin(), m_stageObjects.end());
-	allObjects.insert(allObjects.end(), m_attackObjects.begin(), m_attackObjects.end());
-
-	return allObjects;
+// データ管理：キャラ1体の情報を世界に反映
+void World::asignedCharacter(Character* character, CharacterData* data, bool changePosition) {
+	character->changeInfoVersion(data->version());
+	if (data->id() != -1) {
+		// このゲームで初登場じゃない
+		character->setHp(data->hp());
+	}
+	//character->setId(data.id());
+	character->setGroupId(data->groupId());
+	if (changePosition) {
+		character->setX(data->x());
+		// Y座標は身長に合わせて調整
+		character->setY(data->y() - character->getHeight());
+	}
 }
 
-// キャラより後ろに描画するObjectのvectorを返す
-vector<const Object*> World::getBackObjects() const {
-
-	vector<const Object*> allObjects;
-	allObjects.insert(allObjects.end(), m_doorObjects.begin(), m_doorObjects.end());
-
-	return allObjects;
-}
-
-// Animationのvectorを返す
-vector<const Animation*> World::getConstAnimations() const {
-
-	vector<const Animation*> allAnimations;
-	allAnimations.insert(allAnimations.end(), m_animations.begin(), m_animations.end());
-
-	return allAnimations;
+// データ管理：コントローラ1個の情報を世界に反映
+CharacterController* World::createControllerWithData(const Character* character, CharacterData* data) {
+	size_t size = m_characters.size();
+	// Actionを作成
+	CharacterAction* action = nullptr;
+	for (unsigned int j = 0; j < size; j++) {
+		if (m_characters[j]->getName() == character->getName()) {
+			action = createAction(data->actionName(), m_characters[j], data->soundFlag() ? m_soundPlayer_p : nullptr);
+			break;
+		}
+	}
+	// Brainを作成
+	Brain* brain = createBrain(data->brainName(), m_camera);
+	brain->setCharacterAction(action);
+	string follow = data->followName();
+	for (unsigned int j = 0; j < size; j++) {
+		if (m_characters[j]->getName() == follow) {
+			brain->searchFollow(m_characters[j]);
+			break;
+		}
+	}
+	// Controllerを作成
+	return createController(data->controllerName(), brain, action);
 }
 
 /*
@@ -556,9 +598,6 @@ void World::battle() {
 		m_brightValue = max(0, m_brightValue - 10);
 		if (!playerDead()) { return; }
 	}
-
-	// HP0のキャラコントローラ削除
-	// cleanCharacterController();
 
 	// deleteFlagがtrueのオブジェクトを削除する。
 	deleteObject(m_stageObjects);
@@ -585,19 +624,7 @@ void World::battle() {
 
 }
 
-// キャラの更新（攻撃対象の変更）
-void World::updateCharacter() {
-	size_t size = m_characterControllers.size();
-	for (unsigned int i = 0; i < size; i++) {
-		// Brainの要請で攻撃対象変更
-		if (m_characterControllers[i]->getBrain()->needSearchTarget()) { 
-			Character* target = m_characters[GetRand((int)m_characters.size() - 1)];
-			m_characterControllers[i]->searchTargetCandidate(target);
-		}
-	}
-}
-
-// カメラの更新
+//  Battle：カメラの更新
 void World::updateCamera() {
 
 	// カメラを揺らす
@@ -653,7 +680,7 @@ void World::updateCamera() {
 	}
 }
 
-// アニメーションの更新
+//  Battle：アニメーションの更新
 void World::updateAnimation() {
 	for (unsigned int i = 0; i < m_animations.size(); i++) {
 		m_animations[i]->count();
@@ -666,56 +693,19 @@ void World::updateAnimation() {
 	}
 }
 
-// キャラクターとオブジェクトの当たり判定
-void World::atariCharacterAndObject(CharacterController* controller, vector<Object*>& objects) {
-	// 壁や床オブジェクトの処理 (当たり判定と動き)
-	for (unsigned int i = 0; i < objects.size(); i++) {
-		// 当たり判定をここで行う
-		if (objects[i]->atari(controller)) {
-			// 当たった場合 エフェクト作成
-			int x = controller->getAction()->getCharacter()->getCenterX();
-			int y = controller->getAction()->getCharacter()->getCenterY();
-			m_animations.push_back(objects[i]->createAnimation(x, y, 3));
-			int soundHandle = objects[i]->getSoundHandle();
-			int panPal = adjustPanSound(x, m_camera->getX());
-			m_soundPlayer_p->pushSoundQueue(soundHandle, panPal);
-			if (controller->getAction()->getCharacter()->getHp() == 0) {
-				m_animations.push_back(new Animation(x, y, 3, m_characterDeadGraph));
-				m_camera->shakingStart(20, 20);
-				m_soundPlayer_p->pushSoundQueue(m_characterDeadSound, panPal);
-			}
-		}
-		// deleteFlagがtrueなら削除する
-		if (objects[i]->getDeleteFlag()) {
-			delete objects[i];
-			// 末尾を削除する方が速い
-			objects[i] = objects.back();
-			objects.pop_back();
-			i--;
+//  Battle：キャラの更新（攻撃対象の変更）
+void World::updateCharacter() {
+	size_t size = m_characterControllers.size();
+	for (unsigned int i = 0; i < size; i++) {
+		// Brainの要請で攻撃対象変更
+		if (m_characterControllers[i]->getBrain()->needSearchTarget()) {
+			Character* target = m_characters[GetRand((int)m_characters.size() - 1)];
+			m_characterControllers[i]->searchTargetCandidate(target);
 		}
 	}
 }
 
-// キャラクターと扉オブジェクトの当たり判定
-void World::atariCharacterAndDoor(CharacterController* controller, vector<Object*>& objects) {
-
-	// スキル発動中は扉は入れない
-	if (m_skillFlag) { return; }
-
-	// 壁や床オブジェクトの処理 (当たり判定と動き)
-	for (unsigned int i = 0; i < objects.size(); i++) {
-		// 当たり判定をここで行う
-		if (objects[i]->atari(controller) && controller->getActionKey()) {
-			// 当たった場合 エリア移動が発生
-			m_nextAreaNum = objects[i]->getAreaNum();
-			// 画面を暗転
-			m_brightValue--;
-		}
-	}
-
-}
-
-// キャラクターの動き
+//  Battle：キャラクターの動き
 void World::controlCharacter() {
 	size_t size = m_characterControllers.size();
 	for (unsigned int i = 0; i < size; i++) {
@@ -759,7 +749,7 @@ void World::controlCharacter() {
 	}
 }
 
-// オブジェクトの動き
+//  Battle：オブジェクトの動き
 void World::controlObject() {
 	// 壁や床の動き
 	actionObject(m_stageObjects);
@@ -774,7 +764,56 @@ void World::controlObject() {
 	atariAttackAndAttack();
 }
 
-// 壁や床<->攻撃の当たり判定
+//  Battle：キャラクターとオブジェクトの当たり判定
+void World::atariCharacterAndObject(CharacterController* controller, vector<Object*>& objects) {
+	// 壁や床オブジェクトの処理 (当たり判定と動き)
+	for (unsigned int i = 0; i < objects.size(); i++) {
+		// 当たり判定をここで行う
+		if (objects[i]->atari(controller)) {
+			// 当たった場合 エフェクト作成
+			int x = controller->getAction()->getCharacter()->getCenterX();
+			int y = controller->getAction()->getCharacter()->getCenterY();
+			m_animations.push_back(objects[i]->createAnimation(x, y, 3));
+			int soundHandle = objects[i]->getSoundHandle();
+			int panPal = adjustPanSound(x, m_camera->getX());
+			m_soundPlayer_p->pushSoundQueue(soundHandle, panPal);
+			if (controller->getAction()->getCharacter()->getHp() == 0) {
+				m_animations.push_back(new Animation(x, y, 3, m_characterDeadGraph));
+				m_camera->shakingStart(20, 20);
+				m_soundPlayer_p->pushSoundQueue(m_characterDeadSound, panPal);
+			}
+		}
+		// deleteFlagがtrueなら削除する
+		if (objects[i]->getDeleteFlag()) {
+			delete objects[i];
+			// 末尾を削除する方が速い
+			objects[i] = objects.back();
+			objects.pop_back();
+			i--;
+		}
+	}
+}
+
+//  Battle：キャラクターと扉オブジェクトの当たり判定
+void World::atariCharacterAndDoor(CharacterController* controller, vector<Object*>& objects) {
+
+	// スキル発動中は扉は入れない
+	if (m_skillFlag) { return; }
+
+	// 壁や床オブジェクトの処理 (当たり判定と動き)
+	for (unsigned int i = 0; i < objects.size(); i++) {
+		// 当たり判定をここで行う
+		if (objects[i]->atari(controller) && controller->getActionKey()) {
+			// 当たった場合 エリア移動が発生
+			m_nextAreaNum = objects[i]->getAreaNum();
+			// 画面を暗転
+			m_brightValue--;
+		}
+	}
+
+}
+
+//  Battle：壁や床<->攻撃の当たり判定
 void World::atariStageAndAttack() {
 	for (unsigned int i = 0; i < m_attackObjects.size(); i++) {
 		for (unsigned int j = 0; j < m_stageObjects.size(); j++) {
@@ -806,7 +845,7 @@ void World::atariStageAndAttack() {
 	}
 }
 
-// 攻撃<->攻撃の当たり判定
+//  Battle：攻撃<->攻撃の当たり判定
 void World::atariAttackAndAttack() {
 	if (m_attackObjects.size() == 0) { return; }
 	for (unsigned int i = 0; i < m_attackObjects.size() - 1; i++) {
@@ -845,60 +884,4 @@ void World::moviePlay() {
 			m_movie_p = nullptr;
 		}
 	}
-}
-
-
-Character* World::getCharacterWithName(string characterName) const {
-	for (unsigned int i = 0; i < m_characters.size(); i++) {
-		if (m_characters[i]->getName() == characterName) {
-			return m_characters[i];
-		}
-	}
-	return nullptr;
-}
-
-Character* World::getCharacterWithId(int id) const {
-	for (unsigned int i = 0; i < m_characters.size(); i++) {
-		if (m_characters[i]->getId() == id) {
-			return m_characters[i];
-		}
-	}
-	return nullptr;
-}
-
-void World::setBrainWithId(int id, Brain* brain) {
-	for (unsigned int i = 0; i < m_characterControllers.size(); i++) {
-		if (m_characterControllers[i]->getAction()->getCharacter()->getId() == id) {
-			m_characterControllers[i]->setBrain(brain);
-		}
-	}
-}
-
-CharacterController* World::getControllerWithName(string characterName) const {
-	for (unsigned int i = 0; i < m_characters.size(); i++) {
-		if (m_characterControllers[i]->getAction()->getCharacter()->getName() == characterName) {
-			return m_characterControllers[i];
-		}
-	}
-	return nullptr;
-}
-
-// カメラの位置をリセット
-void World::cameraPointInit() {
-	for (unsigned int i = 0; i < m_characters.size(); i++) {
-		if (m_characters[i]->getId() == m_focusId) {
-			m_camera->setPoint(m_characters[i]->getCenterX(), m_characters[i]->getCenterY());
-			break;
-		}
-	}
-}
-
-// プレイヤーのHPが0ならtrue
-bool World::playerDead() {
-	return m_player->getHp() <= 0;
-}
-
-// プレイヤーのHPをMAXにする
-void World::playerHpReset() {
-	m_player->setHp(m_player->getMaxHp());
 }
