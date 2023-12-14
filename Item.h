@@ -37,6 +37,9 @@ protected:
 	// 効果音
 	int m_sound;
 
+	// 取得済み
+	bool m_deleteFlag;
+
 public:
 
 	// コンストラクタ
@@ -44,6 +47,12 @@ public:
 
 	// デストラクタ
 	~Item();
+
+	// スキル発動用
+	virtual Item* createCopy() = 0;
+
+	// コピー
+	void setParam(Item* item);
 
 	// ゲッタ
 	inline int getX() const { return m_x; }
@@ -54,12 +63,20 @@ public:
 	inline bool getGrand() const { return m_grand; }
 	inline int getSound() const { return m_sound; }
 	inline const Animation* getAnimation() const { return m_animation; }
+	
+	// 取得済みかつ効果音が再生中じゃないなら削除してもらう
+	bool getDeleteFlag() const;
 
 	// セッタ
 	inline void setGrand(bool grand) { m_grand = grand; }
+	void setY(int y);
+	void setAnimation(Animation* animation) { delete m_animation; m_animation = animation; }
 
 	// アイテムの大きさ
 	void getGraphSize(int* wide, int* height) const;
+
+	// 座標
+	void getPoint(int* x1, int* y1, int* x2, int* y2);
 
 	// 毎フレームの初期化処理
 	void init();
@@ -67,9 +84,13 @@ public:
 	// 動き 毎フレーム呼ぶ
 	void action();
 
+	// プレイヤーとの当たり判定
+	bool atariCharacter(Character* player);
+
+private:
+
 	// プレイヤーに対するアクション
 	virtual void arrangePlayer(Character* player) {  }
-
 };
 
 
@@ -88,6 +109,12 @@ public:
 
 	// コンストラクタ
 	CureItem(const char* itemName, int x, int y, int cureValue);
+
+	// スキル発動用
+	Item* createCopy();
+
+	// セッタ
+	inline void setCureValue(int cureValue) { m_cureValue = cureValue; }
 
 	// プレイヤーに対するアクション
 	void arrangePlayer(Character* player);

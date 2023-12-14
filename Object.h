@@ -77,6 +77,9 @@ public:
 	void setEffectHandles(GraphHandles* effectHandles_p) { m_effectHandles_p = effectHandles_p; }
 	void setSoundHandle(int soundHandle_p) { m_soundHandle_p = soundHandle_p; }
 
+	// 座標XにおけるY1座標（傾きから算出する）
+	virtual int getY(int x) const { return m_y1; }
+
 	// HPを減らす
 	void decreaseHp(int damageValue);
 
@@ -106,6 +109,9 @@ public:
 
 	// キャラとの当たり判定
 	virtual bool atari(CharacterController* characterController) = 0;
+
+	// 単純に四角の落下物と衝突しているか
+	virtual bool atariDropBox(int x1, int y1, int x2, int y2, int vx, int vy);
 
 	// キャラがオブジェクトに入り込んでいるときの処理
 	virtual void penetration(CharacterController* characterController) {};
@@ -182,9 +188,8 @@ private:
 	// 左向きに下がっている坂
 	bool m_leftDown;
 
-	// 座標XにおけるY座標（傾きから算出する）
-	int getY(int x) const;
 public:
+
 	TriangleObject(int x1, int y1, int x2, int y2, const char* fileName, int color, bool leftDown, int hp = -1);
 
 	~TriangleObject();
@@ -193,12 +198,18 @@ public:
 
 	void debug(int x, int y, int color) const;
 
+	// 座標XにおけるY1座標（傾きから算出する）
+	int getY(int x) const;
+
 	// オブジェクト描画（画像がないときに使う）
 	void drawObject(int x1, int y1, int x2, int y2) const;
 
 	// キャラとの当たり判定
 	// 当たっているならキャラを操作する。
 	bool atari(CharacterController* characterController);
+
+	// 単純に四角の落下物と衝突しているか
+	bool atariDropBox(int x1, int y1, int x2, int y2, int vx, int vy);
 
 	// キャラがオブジェクトに入り込んでいるときの処理
 	void penetration(CharacterController* characterController);

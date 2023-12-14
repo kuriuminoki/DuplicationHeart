@@ -18,6 +18,7 @@ class Conversation;
 class DoorData;
 class DoorObject;
 class GraphHandles;
+class Item;
 class Movie;
 class Object;
 class ObjectLoader;
@@ -86,6 +87,9 @@ private:
 	// エフェクト等のアニメーション Worldがデリートする
 	std::vector<Animation*> m_animations;
 
+	// エリアに落ちているアイテム
+	std::vector<Item*> m_itemVector;
+
 	// キャラがやられた時のエフェクト画像
 	GraphHandles* m_characterDeadGraph;
 
@@ -118,6 +122,7 @@ public:
 	std::vector<Object*> getDoorObjects() const { return m_doorObjects; }
 	std::vector<Object*> getAttackObjects() const { return m_attackObjects; }
 	std::vector<Animation*> getAnimations() const { return m_animations; }
+	std::vector<Item*> getItemVector() const { return m_itemVector; }
 	inline const int getBackGroundGraph() const { return m_backGroundGraph; }
 	inline const int getBackGroundColor() const { return m_backGroundColor; }
 	inline const Conversation* getConversation() const { return m_conversation_p; }
@@ -230,6 +235,9 @@ private:
 
 	// Battle：オブジェクトの動き
 	void controlObject();
+
+	// Battle：アイテムの動き
+	void controlItem();
 
 	// Battle：キャラクターとオブジェクトの当たり判定
 	void atariCharacterAndObject(CharacterController* controller, std::vector<Object*>& objects);

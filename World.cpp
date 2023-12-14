@@ -9,6 +9,7 @@
 #include "CsvReader.h"
 #include "Control.h"
 #include "Define.h"
+#include "Item.h"
 #include "Text.h"
 #include "Brain.h"
 #include "ControllerRecorder.h"
@@ -184,6 +185,11 @@ World::World(const World* original) :
 		copy = original->getAnimations()[i]->createCopy();
 		m_animations.push_back(copy);
 	}
+	for (unsigned int i = 0; i < original->getItemVector().size(); i++) {
+		Item* copy;
+		copy = original->getItemVector()[i]->createCopy();
+		m_itemVector.push_back(copy);
+	}
 	m_backGroundGraph = original->getBackGroundGraph();
 	m_backGroundColor = original->getBackGroundColor();
 
@@ -203,6 +209,11 @@ World::~World() {
 	// 攻撃エフェクト削除
 	for (unsigned i = 0; i < m_animations.size(); i++) {
 		delete m_animations[i];
+	}
+
+	// アイテム削除
+	for (unsigned i = 0; i < m_itemVector.size(); i++) {
+		delete m_itemVector[i];
 	}
 
 	// 全コントローラを削除する。
@@ -258,7 +269,16 @@ vector<const Object*> World::getBackObjects() const {
 vector<const Animation*> World::getConstAnimations() const {
 
 	vector<const Animation*> allAnimations;
+
+	// エフェクト
 	allAnimations.insert(allAnimations.end(), m_animations.begin(), m_animations.end());
+
+	// アイテム
+	for (unsigned int i = 0; i < m_itemVector.size(); i++) {
+		if (!m_itemVector[i]->getDeleteFlag()) {
+			allAnimations.push_back(m_itemVector[i]->getAnimation());
+		}
+	}
 
 	return allAnimations;
 }
@@ -613,6 +633,9 @@ void World::battle() {
 	// オブジェクトの動き
 	controlObject();
 
+	// アイテムの動き
+	controlItem();
+
 	// カメラの更新
 	updateCamera();
 
@@ -720,7 +743,7 @@ void World::controlCharacter() {
 		// オブジェクトとの当たり判定
 		atariCharacterAndObject(controller, m_stageObjects);
 		atariCharacterAndObject(controller, m_attackObjects);
-		atariCharacterAndObject(controller, m_stageObjects);
+		atariCharacterAndObject(controller, m_stageObjects); // 2回目呼ぶのは妥協案　1回目で斜面にいるかがわかり、それによって処理が変わるため2回目が必要
 		if (controller->getAction()->getCharacter()->getId() == m_playerId) {
 			atariCharacterAndDoor(controller, m_doorObjects);
 		}
@@ -764,23 +787,64 @@ void World::controlObject() {
 	atariAttackAndAttack();
 }
 
+// Battle：アイテムの動き
+void World::controlItem() {
+	for (unsigned int i = 0; i < m_itemVector.size(); i++) {
+		// 取得済み
+		if (m_itemVector[i]->getDeleteFlag()) {
+			// 効果音が再生中でないなら削除
+			if (CheckSoundMem(m_itemVector[i]->getSound()) == 0) {
+				delete m_itemVector[i];
+				m_itemVector[i] = m_itemVector.back();
+				m_itemVector.pop_back();
+				i--;
+			}
+			continue;
+		}
+		// 初期化
+		m_itemVector[i]->init();
+		// 壁床との当たり判定
+		for (unsigned int j = 0; j < m_stageObjects.size(); j++) {
+			int x1 = 0, y1 = 0, x2 = 0, y2 = 0;
+			m_itemVector[i]->getPoint(&x1, &y1, &x2, &y2);
+			if (m_stageObjects[j]->atariDropBox(x1, y1, x2, y2, m_itemVector[i]->getVx(), m_itemVector[i]->getVy())) {
+				m_itemVector[i]->setGrand(true);
+				m_itemVector[i]->setY(m_stageObjects[j]->getY(m_itemVector[i]->getX()));
+			}
+		}
+		// キャラとの当たり判定
+		if (m_itemVector[i]->atariCharacter(m_player)) {
+			m_soundPlayer_p->pushSoundQueue(m_itemVector[i]->getSound());
+		}
+		// 動き
+		m_itemVector[i]->action();
+	}
+}
+
 //  Battle：キャラクターとオブジェクトの当たり判定
 void World::atariCharacterAndObject(CharacterController* controller, vector<Object*>& objects) {
 	// 壁や床オブジェクトの処理 (当たり判定と動き)
 	for (unsigned int i = 0; i < objects.size(); i++) {
 		// 当たり判定をここで行う
 		if (objects[i]->atari(controller)) {
-			// 当たった場合 エフェクト作成
-			int x = controller->getAction()->getCharacter()->getCenterX();
-			int y = controller->getAction()->getCharacter()->getCenterY();
+			const Character* character = controller->getAction()->getCharacter();
+			// エフェクト作成
+			int x = character->getCenterX();
+			int y = character->getCenterY();
 			m_animations.push_back(objects[i]->createAnimation(x, y, 3));
+			// 効果音
 			int soundHandle = objects[i]->getSoundHandle();
 			int panPal = adjustPanSound(x, m_camera->getX());
 			m_soundPlayer_p->pushSoundQueue(soundHandle, panPal);
-			if (controller->getAction()->getCharacter()->getHp() == 0) {
+			// HP = 0になったとき（やられたとき）
+			if (character->getHp() == 0) {
 				m_animations.push_back(new Animation(x, y, 3, m_characterDeadGraph));
 				m_camera->shakingStart(20, 20);
 				m_soundPlayer_p->pushSoundQueue(m_characterDeadSound, panPal);
+				if (!m_duplicationFlag && character->getGroupId() != m_player->getGroupId() && GetRand(100) < 100) {
+					// スキル発動中でなければ確率でアイテムが落ちる
+					m_itemVector.push_back(new CureItem("cure", x, y, 50));
+				}
 			}
 		}
 		// deleteFlagがtrueなら削除する
