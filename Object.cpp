@@ -440,7 +440,7 @@ bool TriangleObject::atari(CharacterController* characterController) {
 bool TriangleObject::atariDropBox(int x1, int y1, int x2, int y2, int vx, int vy) {
 	int y = getY((x1 + x2) / 2);
 	// –„‚Ü‚Á‚Ä‚¢‚é
-	if (x2 > m_x1 && x1 < m_x2 && y2 > m_y2 && y < m_y1) {
+	if (x2 > m_x1 && x1 < m_x2 && y2 > y && y1 < m_y2) {
 		return true;
 	}
 	// ã‚©‚çÕ“Ë‚µ‚Ä‚«‚½

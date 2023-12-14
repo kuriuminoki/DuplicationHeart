@@ -841,7 +841,7 @@ void World::atariCharacterAndObject(CharacterController* controller, vector<Obje
 				m_animations.push_back(new Animation(x, y, 3, m_characterDeadGraph));
 				m_camera->shakingStart(20, 20);
 				m_soundPlayer_p->pushSoundQueue(m_characterDeadSound, panPal);
-				if (!m_duplicationFlag && character->getGroupId() != m_player->getGroupId() && GetRand(100) < 100) {
+				if (!m_duplicationFlag && character->getGroupId() != m_player->getGroupId() && GetRand(100) < 20) {
 					// スキル発動中でなければ確率でアイテムが落ちる
 					m_itemVector.push_back(new CureItem("cure", x, y, 50));
 				}
