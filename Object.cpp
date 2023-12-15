@@ -61,6 +61,19 @@ void Object::decreaseHp(int damageValue) {
 	m_damageCnt = DAMAGE_CNT_SUM;
 }
 
+// 単純に四角の落下物と衝突しているか
+bool Object::atariDropBox(int x1, int y1, int x2, int y2, int vx, int vy) {
+	// 埋まっている
+	if (x2 > m_x1 && x1 < m_x2 && y2 > m_y1 && y1 < m_y2) {
+		return true;
+	}
+	// 上から衝突してきた
+	if (x2 + vx > m_x1 && x1 + vx < m_x2 && y2 < m_y1 && y2 + vy > m_y1) {
+		return true;
+	}
+	return false;
+}
+
 // アニメーション作成
 Animation* BulletObject::createAnimation(int x, int y, int flameCnt) {
 	if (m_effectHandles_p == nullptr) {
@@ -419,6 +432,20 @@ bool TriangleObject::atari(CharacterController* characterController) {
 				characterController->setCharacterX(m_x1 - characterWide);
 			}
 		}
+	}
+	return false;
+}
+
+// 単純に四角の落下物と衝突しているか
+bool TriangleObject::atariDropBox(int x1, int y1, int x2, int y2, int vx, int vy) {
+	int y = getY((x1 + x2) / 2);
+	// 埋まっている
+	if (x2 > m_x1 && x1 < m_x2 && y2 > y && y1 < m_y2) {
+		return true;
+	}
+	// 上から衝突してきた
+	if (x2 + vx > m_x1 && x1 + vx < m_x2 && y2 < y && y2 + vy > y) {
+		return true;
 	}
 	return false;
 }

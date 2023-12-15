@@ -18,6 +18,7 @@ class Conversation;
 class DoorData;
 class DoorObject;
 class GraphHandles;
+class Item;
 class Movie;
 class Object;
 class ObjectLoader;
@@ -86,6 +87,9 @@ private:
 	// エフェクト等のアニメーション Worldがデリートする
 	std::vector<Animation*> m_animations;
 
+	// エリアに落ちているアイテム
+	std::vector<Item*> m_itemVector;
+
 	// キャラがやられた時のエフェクト画像
 	GraphHandles* m_characterDeadGraph;
 
@@ -102,6 +106,9 @@ public:
 	World(const World* original);
 	~World();
 
+	//デバッグ
+	void debug(int x, int y, int color) const;
+
 	// ゲッタ
 	inline int getFocusId() const { return m_focusId; }
 	inline int getPlayerId() const { return m_playerId; }
@@ -109,16 +116,13 @@ public:
 	inline int getAreaNum() const { return m_areaNum; }
 	inline int getNextAreaNum() const { return m_nextAreaNum; }
 	inline const Camera* getCamera() const { return m_camera; }
-	std::vector<CharacterController*> getCharacterControllers() const;
-	std::vector<const CharacterAction*> getActions() const;
-	std::vector<Character*> getCharacters() const;
-	std::vector<Object*> getStageObjects() const;
-	std::vector<Object*> getDoorObjects() const;
-	std::vector<Object*> getAttackObjects() const;
-	std::vector<Animation*> getAnimations() const;
-	std::vector<const Object*> getFrontObjects() const;
-	std::vector<const Object*> getBackObjects() const;
-	std::vector<const Animation*> getConstAnimations() const;
+	std::vector<CharacterController*> getCharacterControllers() const { return m_characterControllers; }
+	std::vector<Character*> getCharacters() const { return m_characters; }
+	std::vector<Object*> getStageObjects() const { return m_stageObjects; }
+	std::vector<Object*> getDoorObjects() const { return m_doorObjects; }
+	std::vector<Object*> getAttackObjects() const { return m_attackObjects; }
+	std::vector<Animation*> getAnimations() const { return m_animations; }
+	std::vector<Item*> getItemVector() const { return m_itemVector; }
 	inline const int getBackGroundGraph() const { return m_backGroundGraph; }
 	inline const int getBackGroundColor() const { return m_backGroundColor; }
 	inline const Conversation* getConversation() const { return m_conversation_p; }
@@ -129,16 +133,73 @@ public:
 	inline GraphHandles* getCharacterDeadGraph() const { return m_characterDeadGraph; }
 	inline int getCharacterDeadSound() const { return m_characterDeadSound; }
 
-	// セッタ
-	void setSkillFlag(bool skillFlag);
-	inline void setFocusId(int id) { m_focusId = id; }
+	// Drawer用のゲッタ
+	std::vector<const CharacterAction*> getActions() const;
+	std::vector<const Object*> getFrontObjects() const;
+	std::vector<const Object*> getBackObjects() const;
+	std::vector<const Animation*> getConstAnimations() const;
 
-	// ストーリーやイベントによる追加
+	// 名前でキャラ検索
+	Character* getCharacterWithName(std::string characterName) const;
+
+	// 名前でコントローラ検索
+	CharacterController* getControllerWithName(std::string characterName) const;
+
+	// IDでキャラ検索
+	Character* getCharacterWithId(int id) const;
+
+	// セッタ
+	inline void setFocusId(int id) { m_focusId = id; }
+	inline void setConversation(Conversation* conversation) { m_conversation_p = conversation; }
+	inline void setMovie(Movie* movie) { m_movie_p = movie; }
+
+	// ID指定でBrain変更
+	void setBrainWithId(int id, Brain* brain);
+
+	// ストーリーによるキャラ追加
 	void addCharacter(CharacterLoader* characterLoader);
+
+	// ストーリーによるオブジェクト追加
 	void addObject(ObjectLoader* objectLoader);
 
-	//デバッグ
-	void debug(int x, int y, int color) const;
+	// プレイヤーのHPが0ならtrue
+	bool playerDead();
+
+	// プレイヤーのHPをMAXにする
+	void playerHpReset();
+
+	// スキル発動：ハートをFreezeにする
+	void setSkillFlag(bool skillFlag);
+
+	// スキル発動：複製のハート追加用
+	void pushCharacter(Character* character, CharacterController* controller);
+
+	// スキル発動：複製のハート削除用
+	void popCharacterController(int id);
+
+	// スキル発動：レコーダを作成し使用を開始
+	void createRecorder();
+
+	// スキル発動：レコーダの時間を最初に戻す
+	void initRecorder();
+
+	// スキル発動：レコーダの使用をやめて削除する
+	void eraseRecorder();
+
+	// データ管理：キャラの状態を変更する いないなら作成する
+	void asignedCharacterData(const char* name, CharacterData* data);
+
+	// データ管理：キャラの状態を教える
+	void asignCharacterData(const char* name, CharacterData* data, int fromAreaNum, bool notCharacterPoint) const;
+
+	// データ管理：Doorの状態を変更する いないなら作成する
+	void asignedDoorData(DoorData* data);
+
+	// データ管理：Doorの状態を教える
+	void asignDoorData(std::vector<DoorData*>& data, int fromAreaNum) const;
+
+	// データ管理：プレイヤーとその仲間をドアの前に移動
+	void setPlayerOnDoor(int from);
 
 	// キャラに戦わせる
 	void battle();
@@ -149,76 +210,47 @@ public:
 	// ムービーを流す
 	void moviePlay();
 
-	// キャラの状態を変更する いないなら作成する
-	void asignedCharacterData(const char* name, CharacterData* data);
+private:
 
-	// キャラの状態を教える
-	void asignCharacterData(const char* name, CharacterData* data, int fromAreaNum, bool notCharacterPoint) const;
-
-	// Doorの状態を変更する いないなら作成する
-	void asignedDoorData(DoorData* data);
-
-	// Doorの状態を教える
-	void asignDoorData(std::vector<DoorData*>& data, int fromAreaNum) const;
-
-	// プレイヤーとその仲間をドアの前に移動
-	void setPlayerOnDoor(int from);
-
-	// カメラの位置をリセット
+	// データ管理：カメラの位置をリセット
 	void cameraPointInit();
 
-	// プレイヤーのHPが0ならtrue
-	bool playerDead();
+	// データ管理：キャラのセーブデータを自身に反映させる
+	void asignedCharacter(Character* character, CharacterData* data, bool changePosition);
 
-	// プレイヤーのHPをMAXにする
-	void playerHpReset();
+	// データ管理：コントローラ1個の情報を世界に反映
+	CharacterController* createControllerWithData(const Character* character, CharacterData* data);
 
-	/*
-	* イベント用
-	*/
-	Character* getCharacterWithName(std::string characterName) const;
-	CharacterController* getControllerWithName(std::string characterName) const;
-	Character* getCharacterWithId(int id) const;
-	void setBrainWithId(int id, Brain* brain);
-	inline void setConversation(Conversation* conversation){ m_conversation_p = conversation; }
-	inline void setMovie(Movie* movie) { m_movie_p = movie; }
-	void pushCharacter(Character* character, CharacterController* controller);
-	void popCharacterController(int id);
-	void createRecorder();
-	void initRecorder();
-	void eraseRecorder();
-
-private:
-	// キャラクターとオブジェクトの当たり判定
-	void atariCharacterAndObject(CharacterController* controller, std::vector<Object*>& objects);
-
-	// キャラクターと扉の当たり判定
-	void atariCharacterAndDoor(CharacterController* controller, std::vector<Object*>& objects);
-
-	// アニメーションの更新
-	void updateAnimation();
-
-	// キャラの更新（攻撃対象の変更）
-	void updateCharacter();
-
-	// カメラの更新
+	// Battle：カメラの更新
 	void updateCamera();
 
-	// キャラクターの動き
+	// Battle：アニメーションの更新
+	void updateAnimation();
+
+	// Battle：キャラの更新（攻撃対象の変更）
+	void updateCharacter();
+
+	// Battle：キャラクターの動き
 	void controlCharacter();
 
-	// オブジェクトの動き
+	// Battle：オブジェクトの動き
 	void controlObject();
 
-	// 壁や床<->攻撃の当たり判定
+	// Battle：アイテムの動き
+	void controlItem();
+
+	// Battle：キャラクターとオブジェクトの当たり判定
+	void atariCharacterAndObject(CharacterController* controller, std::vector<Object*>& objects);
+
+	// Battle：キャラクターと扉の当たり判定
+	void atariCharacterAndDoor(CharacterController* controller, std::vector<Object*>& objects);
+
+	// Battle：壁や床<->攻撃の当たり判定
 	void atariStageAndAttack();
 
-	// 攻撃<->攻撃の当たり判定
+	// Battle：攻撃<->攻撃の当たり判定
 	void atariAttackAndAttack();
 
-	// キャラのセーブデータを自身に反映させる
-	void asignedCharacter(Character* character, CharacterData* data, bool changePosition);
-	CharacterController* createControllerWithData(const Character* character, CharacterData* data);
 };
 
 #endif
