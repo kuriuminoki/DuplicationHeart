@@ -900,7 +900,7 @@ void SlashObject::setSlashParam(SlashObject* object) {
 Object* DoorObject::createCopy() {
 	DoorObject* res = new DoorObject(m_x1, m_y1, m_x2, m_y2, m_fileName.c_str(), m_areaNum);
 	setParam(res);
-	res->setText(m_text);
+	res->setText(m_text.c_str());
 	return res;
 }
 

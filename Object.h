@@ -104,6 +104,9 @@ public:
 	// テキストを返す ないならnullptr
 	virtual inline std::string getText() const { return ""; }
 
+	// テキストをセット
+	virtual inline void setText(const char* text) {  }
+
 	// オブジェクト描画（画像がないときに使う）
 	virtual void drawObject(int x1, int y1, int x2, int y2) const {};
 
@@ -438,7 +441,7 @@ public:
 	const char* getFileName() const { return m_fileName.c_str(); }
 
 	// セッタ
-	inline void setText(std::string text) { m_text = text; }
+	inline void setText(const char* text) { m_text = text; }
 
 	// キャラとの当たり判定
 	virtual bool atari(CharacterController* characterController);

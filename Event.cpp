@@ -107,7 +107,10 @@ void Event::createElement(vector<string> param, World* world, SoundPlayer* sound
 	string param0 = param[0];
 	EventElement* element = nullptr;
 
-	if (param0 == "ChangeBrain") {
+	if (param0 == "LockArea") {
+		element = new LockAreaEvent(world, param);
+	}
+	else if (param0 == "ChangeBrain") {
 		element = new ChangeBrainEvent(world, param);
 	}
 	else if (param0 == "ChangeGroup") {
@@ -264,6 +267,16 @@ EventElement::~EventElement() {
 
 }
 
+// エリア移動を禁止する
+LockAreaEvent::LockAreaEvent(World* world, std::vector<std::string> param):
+	EventElement(world)
+{
+	m_lock = param[1] == "1" ? true : false;
+}
+EVENT_RESULT LockAreaEvent::play() {
+	m_world_p->setAreaLock(m_lock);
+	return EVENT_RESULT::SUCCESS;
+}
 
 // キャラのBrainを変更する
 ChangeBrainEvent::ChangeBrainEvent(World* world, vector<string> param) :

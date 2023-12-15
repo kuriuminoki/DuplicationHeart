@@ -8,6 +8,7 @@ class TitleOption;
 class OpMovie;
 class AnimationDrawer;
 class GameData;
+class ControlBar;
 
 
 /*
@@ -38,6 +39,9 @@ private:
 	// 使用するセーブデータのインデックス
 	int m_useSaveDataIndex;
 
+	// 開始するチャプター番号
+	ControlBar* m_startStoryNum[GAME_DATA_SUM];
+
 public:
 
 	SelectSaveData();
@@ -57,6 +61,9 @@ public:
 
 	// 使用するセーブデータのディレクトリ名
 	const char* useDirName();
+
+	// 始めるチャプター 指定がないなら-1
+	int startStoryNum();
 
 	// 全セーブデータ共通のデータをセーブ(タイトル画面のオプション用)
 	void saveCommon(int soundVolume);
@@ -128,6 +135,11 @@ public:
 	// 使用するセーブデータのフォルダ名
 	inline const char* useSaveFile() { 
 		return m_selectSaveData->useDirName();
+	}
+
+	// 始めるチャプター番号 指定がないなら-1
+	inline int startStoryNum() {
+		return m_selectSaveData->startStoryNum();
 	}
 
 };

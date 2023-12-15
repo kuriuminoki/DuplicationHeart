@@ -95,6 +95,8 @@ World::World() {
 	m_cameraMaxEx *= m_exX;
 	m_cameraMinEx *= m_exX;
 
+	m_areaLock = false;
+
 }
 
 /*
@@ -861,11 +863,15 @@ void World::atariCharacterAndObject(CharacterController* controller, vector<Obje
 //  Battle：キャラクターと扉オブジェクトの当たり判定
 void World::atariCharacterAndDoor(CharacterController* controller, vector<Object*>& objects) {
 
-	// スキル発動中は扉は入れない
+	// スキル発動中は扉に入れない
 	if (m_skillFlag) { return; }
 
 	// 壁や床オブジェクトの処理 (当たり判定と動き)
 	for (unsigned int i = 0; i < objects.size(); i++) {
+		if (m_areaLock) {
+			objects[i]->setText("");
+			continue;
+		}
 		// 当たり判定をここで行う
 		if (objects[i]->atari(controller) && controller->getActionKey()) {
 			// 当たった場合 エリア移動が発生

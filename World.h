@@ -59,6 +59,9 @@ private:
 	int m_areaNum;
 	int m_nextAreaNum;
 
+	// エリア移動が禁止されているならtrue
+	bool m_areaLock;
+
 	// 描画用のカメラ Worldがデリートする
 	Camera* m_camera;
 
@@ -152,6 +155,7 @@ public:
 	inline void setFocusId(int id) { m_focusId = id; }
 	inline void setConversation(Conversation* conversation) { m_conversation_p = conversation; }
 	inline void setMovie(Movie* movie) { m_movie_p = movie; }
+	inline void setAreaLock(bool lock) { m_areaLock = lock; }
 
 	// ID指定でBrain変更
 	void setBrainWithId(int id, Brain* brain);

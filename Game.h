@@ -155,17 +155,22 @@ private:
 	// 今やっているストーリー
 	int m_storyNum;
 
+	// 最新の未クリアストーリー
+	int m_latestStoryNum;
+
 	// 音量
 	int m_soundVolume;
 
 public:
 	GameData();
 	GameData(const char* saveFilePath);
+	GameData(const char* saveFilePath, int storyNum);
 	~GameData();
 
 	// セーブとロード
 	bool save();
 	bool load();
+	bool saveChapter();
 	// 全セーブデータ共通
 	bool saveCommon(int soundVolume, int gameWide, int gameHeight);
 	bool loadCommon(int* soundVolume, int* gameWide, int* gameHeight);
@@ -179,6 +184,7 @@ public:
 	inline int getDoorSum() const { return (int)m_doorData.size(); }
 	inline int getFrom(int i) const { return m_doorData[i]->from(); }
 	inline int getTo(int i) const { return m_doorData[i]->to(); }
+	inline int getLatestStoryNum() const { return m_latestStoryNum; }
 
 	// セッタ
 	inline void setAreaNum(int areaNum) { m_areaNum = areaNum; }
@@ -280,7 +286,7 @@ private:
 	bool m_rebootFlag;
 
 public:
-	Game(const char* saveFilePath = "savedata/test/");
+	Game(const char* saveFilePath = "savedata/test/", int storyNum = -1);
 	~Game();
 
 	// ゲッタ

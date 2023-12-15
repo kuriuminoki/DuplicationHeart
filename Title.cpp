@@ -45,6 +45,13 @@ SelectSaveData::SelectSaveData() {
 		}
 		m_dataButton[i] = new Button(text, (int)(100 * exX), (int)(300 * exY + (i * 150 * exY)), (int)(500 * exX), (int)(100 * exY), WHITE, GRAY2, m_font, BLACK);
 		m_dataInitButton[i] = new Button("削除", (int)(650 * exX), (int)(300 * exY + (i * 150 * exY)), (int)(100 * exX), (int)(100 * exY), LIGHT_RED, RED, m_font, BLACK);
+		int latestStoryNum = m_gameData[i]->getLatestStoryNum();
+		if (latestStoryNum > 1) {
+			m_startStoryNum[i] = new ControlBar(800, 350 + (i * 150), 1000, 400 + (i * 150), 1, latestStoryNum, latestStoryNum, "チャプター");
+		}
+		else {
+			m_startStoryNum[i] = nullptr;
+		}
 	}
 
 }
@@ -55,6 +62,7 @@ SelectSaveData::~SelectSaveData() {
 		delete m_gameData[i];
 		delete m_dataButton[i];
 		delete m_dataInitButton[i];
+		delete m_startStoryNum[i];
 	}
 }
 
@@ -100,6 +108,9 @@ bool SelectSaveData::play(int handX, int handY) {
 			m_initCnt = 0;
 			m_dataInitButton[i]->setColor(LIGHT_RED);
 		}
+		if (m_startStoryNum[i] != nullptr) {
+			m_startStoryNum[i]->play(handX, handY);
+		}
 	}
 
 	return false;
@@ -111,6 +122,9 @@ void SelectSaveData::draw(int handX, int handY) {
 	for (int i = 0; i < GAME_DATA_SUM; i++) {
 		m_dataButton[i]->draw(handX, handY);
 		m_dataInitButton[i]->draw(handX, handY);
+		if (m_startStoryNum[i] != nullptr) {
+			m_startStoryNum[i]->draw(handX, handY);
+		}
 	}
 
 }
@@ -119,6 +133,13 @@ void SelectSaveData::draw(int handX, int handY) {
 const char* SelectSaveData::useDirName() {
 	if (m_useSaveDataIndex == NOT_DECIDE_DATA) { return ""; }
 	return m_gameData[m_useSaveDataIndex]->getSaveFilePath();
+}
+
+// 始めるチャプター
+int SelectSaveData::startStoryNum() {
+	if (m_useSaveDataIndex == NOT_DECIDE_DATA || m_startStoryNum[m_useSaveDataIndex] == nullptr) { return -1; }
+	int storyNum = m_startStoryNum[m_useSaveDataIndex]->getNowValue();
+	return storyNum == m_gameData[m_useSaveDataIndex]->getLatestStoryNum() ? -1 : storyNum;
 }
 
 // 全セーブデータ共通のデータをセーブ(タイトル画面のオプション用)
