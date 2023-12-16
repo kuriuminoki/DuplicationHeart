@@ -27,7 +27,7 @@ void ObjectDrawer::drawObject(const Camera* const camera) {
 	y2 = m_object->getY2();
 
 	// ‰æ‘œ‚ª‚È‚¢‚È‚ç}Œ`•`‰æA‚ ‚é‚È‚ç•’Ê‚É‰æ‘œ•`‰æ
-	GraphHandle* graphHandle = m_object->getHandle();
+	const GraphHandle* graphHandle = m_object->getHandle();
 	if (graphHandle == nullptr) {
 		// ƒJƒƒ‰‚Å’²®
 		camera->setCamera(&x1, &y1, &ex);

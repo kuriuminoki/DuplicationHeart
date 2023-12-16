@@ -32,6 +32,7 @@ protected:
 
 public:
 	EventFire(World* world);
+	virtual ~EventFire() {}
 
 	virtual bool fire() = 0;
 
@@ -78,7 +79,7 @@ private:
 
 	// 発火後にこれを使ってElement生成
 	World* m_world_p;
-	SoundPlayer* m_soundPlayer;
+	SoundPlayer* m_soundPlayer_p;
 
 	// イベント番号
 	int m_eventNum;

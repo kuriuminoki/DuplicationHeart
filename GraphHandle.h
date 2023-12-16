@@ -87,7 +87,7 @@ public:
 class CharacterGraphHandle {
 private:
 	// •\Ž¦‚³‚ê‚é‰æ‘œ
-	GraphHandle* m_graphHandle;
+	GraphHandle* m_graphHandle_p;
 
 	double m_ex;
 
@@ -154,7 +154,7 @@ public:
 	~CharacterGraphHandle();
 
 	// •\Ž¦‚·‚é‰æ‘œ‚ð•Ô‚·
-	inline GraphHandle* getHandle() { return m_graphHandle; }
+	inline GraphHandle* getHandle() { return m_graphHandle_p; }
 	inline int getWide() const { return m_wide; }
 	inline int getHeight() const { return m_height; }
 

@@ -21,6 +21,7 @@ public:
 	virtual const char* getBrainName() const { return this->BRAIN_NAME; }
 
 	Brain();
+	virtual ~Brain(){}
 
 	virtual Brain* createCopy(std::vector<Character*> characters, const Camera* camera) = 0;
 

@@ -174,6 +174,7 @@ Title::Title() {
 	}
 	else {
 		m_movie = nullptr;
+		m_animationDrawer = nullptr;
 	}
 
 	double exX, exY;
@@ -201,6 +202,13 @@ Title::~Title() {
 	delete m_selectButton;
 	delete m_optionButton;
 	delete m_cancelButton;
+
+	if (m_movie != nullptr) {
+		delete m_movie;
+	}
+	if (m_animationDrawer != nullptr) {
+		delete m_animationDrawer;
+	}
 
 }
 

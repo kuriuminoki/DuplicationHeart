@@ -429,6 +429,8 @@ Game::Game(const char* saveFilePath, int storyNum) {
 }
 
 Game::~Game() {
+	// 音量をセーブ
+	m_gameData->saveCommon(m_battleOption->getNewSoundVolume(), GAME_WIDE, GAME_HEIGHT);
 	delete m_gameData;
 	delete m_soundPlayer;
 	delete m_world;
@@ -452,6 +454,8 @@ bool Game::play() {
 			m_soundPlayer->stopBGM();
 		}
 		else {
+			// 音量をセーブ
+			m_gameData->saveCommon(m_battleOption->getNewSoundVolume(), GAME_WIDE, GAME_HEIGHT);
 			delete m_battleOption;
 			m_battleOption = nullptr;
 			m_soundPlayer->playBGM();
@@ -542,7 +546,6 @@ bool Game::play() {
 		int toAreaNum = m_world->getNextAreaNum();
 		m_gameData->asignedWorld(m_world, false);
 		delete m_world;
-		InitGraph();
 		m_world = new World(fromAreaNum, toAreaNum, m_soundPlayer);
 		m_gameData->asignWorld(m_world);
 		m_world->setPlayerOnDoor(fromAreaNum);

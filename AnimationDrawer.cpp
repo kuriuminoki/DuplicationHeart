@@ -11,7 +11,7 @@ AnimationDrawer::AnimationDrawer(const Animation* animation) {
 void AnimationDrawer::drawAnimation(const Camera* camera) {
 	int x = m_animation->getX();
 	int y = m_animation->getY();
-	GraphHandle* handle = m_animation->getHandle();
+	const GraphHandle* handle = m_animation->getHandle();
 	double ex = handle->getEx();
 
 	// ƒJƒƒ‰‚Å•â³‚µ‚Ä•`‰æ

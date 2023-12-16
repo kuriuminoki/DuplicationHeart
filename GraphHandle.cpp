@@ -213,7 +213,7 @@ CharacterGraphHandle::~CharacterGraphHandle() {
 
 // 画像のサイズをセット
 void CharacterGraphHandle::setGraphSize() {
-	GetGraphSize(m_graphHandle->getHandle(), &m_wide, &m_height);
+	GetGraphSize(m_graphHandle_p->getHandle(), &m_wide, &m_height);
 	// 画像の拡大率も考慮してサイズを決定
 	m_wide = (int)(m_wide * m_ex);
 	m_height = (int)(m_height * m_ex);
@@ -223,11 +223,11 @@ void CharacterGraphHandle::setGraphSize() {
 void CharacterGraphHandle::setGraph(const GraphHandles* graphHandles, int index) {
 	if (graphHandles == nullptr) { return; }
 	if (index >= graphHandles->getSize() || index < 0) { return; }
-	m_graphHandle = graphHandles->getGraphHandle(index);
+	m_graphHandle_p = graphHandles->getGraphHandle(index);
 	setGraphSize();
 }
 void CharacterGraphHandle::setGraph(GraphHandle* graphHandle) {
-	m_graphHandle = graphHandle;
+	m_graphHandle_p = graphHandle;
 	setGraphSize();
 }
 
