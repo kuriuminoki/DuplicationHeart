@@ -390,7 +390,7 @@ Object* NormalController::slashAttack() {
 			order = m_brain->slashOrder();
 			m_slashRecorder->writeRecord(order);
 			// UŒ‚–Ú•W‚ğ‘‚«‚İ
-			m_bulletRecorder->setGoal(
+			m_slashRecorder->setGoal(
 				targetX - m_characterAction->getCharacter()->getCenterX(),
 				targetY - m_characterAction->getCharacter()->getCenterY()
 			);

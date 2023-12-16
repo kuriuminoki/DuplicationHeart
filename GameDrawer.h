@@ -8,6 +8,10 @@ class GameDrawer {
 private:
 	const Game* m_game;
 
+	// テキストやフォントのサイズの倍率
+	double m_exX;
+	double m_exY;
+
 	WorldDrawer* m_worldDrawer;
 
 	// スキルの情報のフォント
