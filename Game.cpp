@@ -600,6 +600,9 @@ HeartSkill::~HeartSkill() {
 		m_world_p->eraseRecorder();
 	}
 	DeleteSoundMem(m_sound);
+	if (m_duplicationWorld != nullptr) {
+		delete m_duplicationWorld;
+	}
 }
 
 // スキル終了時にtrue
@@ -628,6 +631,7 @@ bool HeartSkill::play() {
 			// 最後のループはもとのWorldに操作記録をコピーして、そのWorldでbattle
 			copyRecord(m_duplicationWorld, m_world_p);
 			delete m_duplicationWorld;
+			m_duplicationWorld = nullptr;
 		}
 		else { 
 			return true;
