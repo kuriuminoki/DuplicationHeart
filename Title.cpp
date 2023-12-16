@@ -47,7 +47,7 @@ SelectSaveData::SelectSaveData() {
 		m_dataInitButton[i] = new Button("削除", (int)(650 * exX), (int)(300 * exY + (i * 150 * exY)), (int)(100 * exX), (int)(100 * exY), LIGHT_RED, RED, m_font, BLACK);
 		int latestStoryNum = m_gameData[i]->getLatestStoryNum();
 		if (latestStoryNum > 1) {
-			m_startStoryNum[i] = new ControlBar(800, 350 + (i * 150), 1000, 400 + (i * 150), 1, latestStoryNum, latestStoryNum, "チャプター");
+			m_startStoryNum[i] = new ControlBar(900, 350 + (i * 150), 1600, 400 + (i * 150), 1, latestStoryNum, latestStoryNum, "チャプター");
 		}
 		else {
 			m_startStoryNum[i] = nullptr;
@@ -99,6 +99,8 @@ bool SelectSaveData::play(int handX, int handY) {
 					// セーブデータ削除
 					m_gameData[i]->removeSaveData();
 					m_dataButton[i]->setString("New Game");
+					delete m_startStoryNum[i];
+					m_startStoryNum[i] = nullptr;
 				}
 				m_initCnt = 0;
 				m_dataInitButton[i]->setColor(LIGHT_RED);

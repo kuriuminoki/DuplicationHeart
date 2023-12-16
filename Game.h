@@ -246,8 +246,14 @@ public:
 	inline World* getWorld() const { return m_loopNow < m_loopNum ? m_duplicationWorld : m_world_p; }
 	inline double getCnt() const { return ((double)DUPLICATION_TIME / 60.0) - ((double)m_cnt / 60.0); }
 
-	// スキル進行中
+	// スキル進行中 スキル終了時にtrue
 	bool play();
+
+	// 戦わせる（操作記録をするという言い方が正しい）
+	void battle();
+
+	// 操作記録が終わったかどうかの判定
+	bool finishRecordFlag();
 
 private:
 	// 世界のコピーを作る コピーの変更はオリジナルに影響しない

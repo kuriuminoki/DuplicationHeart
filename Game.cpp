@@ -203,7 +203,7 @@ GameData::GameData(const char* saveFilePath, int storyNum) :
 	// セーブ場所
 	m_saveFilePath = saveFilePath;
 	// いったん最新のデータを読み込む
-	load();
+	m_exist = load();
 	
 	// 古いチャプターのデータを読み込んで上書き latestStoryNumだけは変わらない
 	int latestStoryNum = m_latestStoryNum;
@@ -423,6 +423,8 @@ Game::Game(const char* saveFilePath, int storyNum) {
 	// 初期データをセーブ
 	if (!m_gameData->getExist()) {
 		m_gameData->save();
+		// チャプターのバックアップ
+		m_gameData->saveChapter();
 	}
 }
 
@@ -430,6 +432,13 @@ Game::~Game() {
 	delete m_gameData;
 	delete m_soundPlayer;
 	delete m_world;
+	delete m_story;
+	if (m_battleOption != nullptr) {
+		delete m_battleOption;
+	}
+	if (m_skill != nullptr) {
+		delete m_skill;
+	}
 	DeleteSoundMem(m_pauseSound);
 }
 
@@ -473,20 +482,16 @@ bool Game::play() {
 			if (m_story->skillAble() && m_world->getBrightValue() == 255) { // 特定のイベント時やエリア移動中はダメ
 				if (m_world->getCharacterWithName("ハート")->getHp() > 0) {
 					m_world->setSkillFlag(true);
-					m_skill = new HeartSkill(3, m_world, m_soundPlayer);
+					m_skill = new HeartSkill(1, m_world, m_soundPlayer);
 				}
 			}
 		}
 	}
 	
-	// スキル発動中
-	if (m_skill != nullptr) {
-		if (m_skill->play()) {
-			// スキル終了
-			delete m_skill;
-			m_skill = nullptr;
-			m_world->setSkillFlag(false);
-		}
+	// スキル発動中で、操作記録中
+	if (m_skill != nullptr && !m_skill->finishRecordFlag()) {
+		m_skill->battle();
+		m_skill->play();
 	}
 	// ストーリー進行
 	else if (m_story->play()) {
@@ -505,6 +510,14 @@ bool Game::play() {
 		m_gameData->save();
 		// チャプターのバックアップ
 		m_gameData->saveChapter();
+	}
+	else if (m_skill != nullptr) {
+		if (m_skill->play()) {
+			// スキル終了
+			delete m_skill;
+			m_skill = nullptr;
+			m_world->setSkillFlag(false);
+		}
 	}
 
 	// 音
@@ -581,9 +594,15 @@ HeartSkill::HeartSkill(int loopNum, World* world, SoundPlayer* soundPlayer) {
 }
 
 HeartSkill::~HeartSkill() {
+	// スキル終了
+	for (unsigned int i = 0; i < m_duplicationId.size(); i++) {
+		m_world_p->popCharacterController(m_duplicationId[i]);
+		m_world_p->eraseRecorder();
+	}
 	DeleteSoundMem(m_sound);
 }
 
+// スキル終了時にtrue
 bool HeartSkill::play() {
 	m_cnt++;
 	if (m_cnt == DUPLICATION_TIME) {
@@ -610,25 +629,21 @@ bool HeartSkill::play() {
 			copyRecord(m_duplicationWorld, m_world_p);
 			delete m_duplicationWorld;
 		}
-		else {
-			// スキル終了
-			for (unsigned int i = 0; i < m_duplicationId.size(); i++) {
-				m_world_p->popCharacterController(m_duplicationId[i]);
-				m_world_p->eraseRecorder();
-			}
+		else { 
 			return true;
 		}
 	}
-
-	// 戦わせる（最後のループ以外なら、操作記録をするという言い方が正しい）
-	if (m_loopNow < m_loopNum) {
-		m_duplicationWorld->battle();
-	}
-	else {
-		m_world_p->battle();
-	}
-
 	return false;
+}
+
+// 戦わせる（操作記録をするという言い方が正しい）
+void HeartSkill::battle() {
+	m_duplicationWorld->battle();
+}
+
+// 終わったかどうかの判定
+bool HeartSkill::finishRecordFlag() {
+	return m_loopNow >= m_loopNum;
 }
 
 // 世界のコピーを作る コピーの変更はオリジナルに影響しない
