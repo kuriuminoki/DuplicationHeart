@@ -221,6 +221,22 @@ public:
 /*
 * EventElementの派生クラス
 */
+// エリア移動を禁止する
+class LockAreaEvent :
+	public EventElement
+{
+private:
+
+	// 禁止ならtrue
+	bool m_lock;
+
+public:
+	LockAreaEvent(World* world, std::vector<std::string> param);
+
+	// プレイ
+	EVENT_RESULT play();
+
+};
 // キャラのAIを変える
 class ChangeBrainEvent :
 	public EventElement

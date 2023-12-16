@@ -54,6 +54,9 @@ Story::~Story() {
 	for (unsigned int i = 0; i < m_subEvent.size(); i++) {
 		delete m_subEvent[i];
 	}
+	if (m_nowEvent != nullptr) {
+		delete m_nowEvent;
+	}
 	delete m_characterLoader;
 	delete m_objectLoader;
 }

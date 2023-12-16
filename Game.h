@@ -155,17 +155,22 @@ private:
 	// 今やっているストーリー
 	int m_storyNum;
 
+	// 最新の未クリアストーリー
+	int m_latestStoryNum;
+
 	// 音量
 	int m_soundVolume;
 
 public:
 	GameData();
 	GameData(const char* saveFilePath);
+	GameData(const char* saveFilePath, int storyNum);
 	~GameData();
 
 	// セーブとロード
 	bool save();
 	bool load();
+	bool saveChapter();
 	// 全セーブデータ共通
 	bool saveCommon(int soundVolume, int gameWide, int gameHeight);
 	bool loadCommon(int* soundVolume, int* gameWide, int* gameHeight);
@@ -179,6 +184,7 @@ public:
 	inline int getDoorSum() const { return (int)m_doorData.size(); }
 	inline int getFrom(int i) const { return m_doorData[i]->from(); }
 	inline int getTo(int i) const { return m_doorData[i]->to(); }
+	inline int getLatestStoryNum() const { return m_latestStoryNum; }
 
 	// セッタ
 	inline void setAreaNum(int areaNum) { m_areaNum = areaNum; }
@@ -240,8 +246,14 @@ public:
 	inline World* getWorld() const { return m_loopNow < m_loopNum ? m_duplicationWorld : m_world_p; }
 	inline double getCnt() const { return ((double)DUPLICATION_TIME / 60.0) - ((double)m_cnt / 60.0); }
 
-	// スキル進行中
+	// スキル進行中 スキル終了時にtrue
 	bool play();
+
+	// 戦わせる（操作記録をするという言い方が正しい）
+	void battle();
+
+	// 操作記録が終わったかどうかの判定
+	bool finishRecordFlag();
 
 private:
 	// 世界のコピーを作る コピーの変更はオリジナルに影響しない
@@ -280,7 +292,7 @@ private:
 	bool m_rebootFlag;
 
 public:
-	Game(const char* saveFilePath = "savedata/test/");
+	Game(const char* saveFilePath = "savedata/test/", int storyNum = -1);
 	~Game();
 
 	// ゲッタ
