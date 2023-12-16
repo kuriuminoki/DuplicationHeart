@@ -429,8 +429,6 @@ Game::Game(const char* saveFilePath, int storyNum) {
 }
 
 Game::~Game() {
-	// 音量をセーブ
-	m_gameData->saveCommon(m_battleOption->getNewSoundVolume(), GAME_WIDE, GAME_HEIGHT);
 	delete m_gameData;
 	delete m_soundPlayer;
 	delete m_world;
@@ -467,6 +465,8 @@ bool Game::play() {
 		if (m_battleOption->getTitleFlag()) {
 			// タイトルへ戻る
 			m_rebootFlag = true;
+			// 音量をセーブ
+			m_gameData->saveCommon(m_battleOption->getNewSoundVolume(), GAME_WIDE, GAME_HEIGHT);
 		}
 		// 音
 		m_soundPlayer->play();
