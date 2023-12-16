@@ -128,7 +128,7 @@ World::World(int fromAreaNum, int toAreaNum, SoundPlayer* soundPlayer) :
 	// プレイヤーをセット
 	for (unsigned int i = 0; i < m_characters.size(); i++) {
 		if (m_playerId == m_characters[i]->getId()) {
-			m_player = m_characters[i];
+			m_player_p = m_characters[i];
 			break;
 		}
 	}
@@ -158,7 +158,7 @@ World::World(const World* original) :
 		Character* copy;
 		copy = original->getCharacters()[i]->createCopy();
 		m_characters.push_back(copy);
-		if (copy->getId() == m_playerId) { m_player = copy; }
+		if (copy->getId() == m_playerId) { m_player_p = copy; }
 	}
 	// コントローラをコピー
 	for (unsigned int i = 0; i < original->getCharacterControllers().size(); i++) {
@@ -344,12 +344,12 @@ void World::addObject(ObjectLoader* objectLoader) {
 
 // プレイヤーのHPが0ならtrue
 bool World::playerDead() {
-	return m_player->getHp() <= 0;
+	return m_player_p->getHp() <= 0;
 }
 
 // プレイヤーのHPをMAXにする
 void World::playerHpReset() {
-	m_player->setHp(m_player->getMaxHp());
+	m_player_p->setHp(m_player_p->getMaxHp());
 }
 
 
@@ -531,7 +531,7 @@ void World::asignDoorData(vector<DoorData*>& data, int fromAreaNum) const {
 
 // データ管理：プレイヤーとその仲間をドアの前に移動
 void World::setPlayerOnDoor(int from) {
-	int doorX1 = m_player->getX(), doorY2 = m_player->getY() + m_player->getHeight();
+	int doorX1 = m_player_p->getX(), doorY2 = m_player_p->getY() + m_player_p->getHeight();
 	for (unsigned int i = 0; i < m_doorObjects.size(); i++) {
 		if (m_doorObjects[i]->getAreaNum() == from) {
 			doorX1 = m_doorObjects[i]->getX1();
@@ -539,8 +539,8 @@ void World::setPlayerOnDoor(int from) {
 		}
 	}
 	// プレイヤー
-	m_player->setX(doorX1);
-	m_player->setY(doorY2 - m_player->getHeight());
+	m_player_p->setX(doorX1);
+	m_player_p->setY(doorY2 - m_player_p->getHeight());
 
 	// プレイヤーの仲間
 	for (unsigned int i = 0; i < m_characterControllers.size(); i++) {
@@ -753,7 +753,7 @@ void World::controlCharacter() {
 		// 操作 originalのハートはフリーズ
 		if (!m_duplicationFlag || m_characterControllers[i]->getAction()->getCharacter()->getId() != m_playerId) {
 			controller->control();
-			controller->setPlayerDirection(m_player);
+			controller->setPlayerDirection(m_player_p);
 		}
 
 		// 射撃攻撃
@@ -815,7 +815,7 @@ void World::controlItem() {
 			}
 		}
 		// キャラとの当たり判定
-		if (m_itemVector[i]->atariCharacter(m_player)) {
+		if (m_itemVector[i]->atariCharacter(m_player_p)) {
 			m_soundPlayer_p->pushSoundQueue(m_itemVector[i]->getSound());
 		}
 		// 動き
@@ -843,7 +843,7 @@ void World::atariCharacterAndObject(CharacterController* controller, vector<Obje
 				m_animations.push_back(new Animation(x, y, 3, m_characterDeadGraph));
 				m_camera->shakingStart(20, 20);
 				m_soundPlayer_p->pushSoundQueue(m_characterDeadSound, panPal);
-				if (!m_duplicationFlag && character->getGroupId() != m_player->getGroupId() && GetRand(100) < 20) {
+				if (!m_duplicationFlag && character->getGroupId() != m_player_p->getGroupId() && GetRand(100) < 20) {
 					// スキル発動中でなければ確率でアイテムが落ちる
 					m_itemVector.push_back(new CureItem("cure", x, y, 50));
 				}

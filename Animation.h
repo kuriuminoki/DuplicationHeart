@@ -11,7 +11,7 @@ class SoundPlayer;
 class Animation {
 private:
 	// ‰æ‘œƒnƒ“ƒhƒ‹
-	GraphHandles* m_handles;
+	GraphHandles* m_handles_p;
 
 	// À•W
 	int m_x, m_y;

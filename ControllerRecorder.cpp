@@ -55,9 +55,6 @@ ControllerRecorder::~ControllerRecorder() {
 // ŽžŠÔ‚ði‚ß‚é
 void ControllerRecorder::addTime() {
 	m_time++;
-	//if (m_records.back()->getEndTime() <= m_time) {
-	//	m_index = (int)m_records.size();
-	//}
 	if (m_records.size() > 0 && m_index < m_records.size() && m_records[m_index]->getEndTime() <= m_time) {
 		m_index = min((int)m_records.size() + 1, m_index + 1);
 	}

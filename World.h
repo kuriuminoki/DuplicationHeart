@@ -73,7 +73,7 @@ private:
 	std::vector<Character*> m_characters;
 
 	// プレイヤー 毎回for文でID検索しない用
-	Character* m_player;
+	Character* m_player_p;
 
 	// 戦闘のためにキャラを動かすコントローラ Worldがデリートする
 	std::vector<CharacterController*> m_characterControllers;

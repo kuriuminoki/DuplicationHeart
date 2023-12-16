@@ -132,10 +132,10 @@ std::string Conversation::getText() const {
 
 // 画像を返す（描画用）
 GraphHandle* Conversation::getGraph() const {
-	int size = (int)m_speakerGraph->getSize();
+	int size = (int)m_speakerGraph_p->getSize();
 	int index = size - (m_textNow / 2 % size) - 1;
 	index = m_textNow == (unsigned int)m_text.size() ? 0 : index;
-	return m_speakerGraph->getGraphHandle(index);
+	return m_speakerGraph_p->getGraphHandle(index);
 }
 
 // セリフの長さ
@@ -361,7 +361,7 @@ void Conversation::setNextText(const int size, char* buff) {
 
 void Conversation::setSpeakerGraph(const char* faceName) {
 	Character* c = m_world_p->getCharacterWithName(m_speakerName);
-	m_speakerGraph = c->getFaceHandle()->getGraphHandle(faceName);
+	m_speakerGraph_p = c->getFaceHandle()->getGraphHandle(faceName);
 }
 
 // セッタ

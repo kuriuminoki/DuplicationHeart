@@ -40,6 +40,7 @@ ControlBar::ControlBar(int x1, int y1, int x2, int y2, int minValue, int maxValu
 }
 
 ControlBar::~ControlBar() {
+	delete m_controlButton;
 	DeleteFontToHandle(m_font);
 }
 
@@ -155,6 +156,7 @@ BattleOption::BattleOption(SoundPlayer* soundPlayer):
 	m_titleFlag = false;
 }
 BattleOption::~BattleOption() {
+	delete m_titleButton;
 	DeleteGraph(m_backgroundGraph);
 	DeleteFontToHandle(m_font);
 }
@@ -206,6 +208,8 @@ TitleOption::TitleOption(SoundPlayer* soundPlayer) :
 
 TitleOption::~TitleOption() {
 	DeleteFontToHandle(m_font);
+	delete m_gameWideController;
+	delete m_gameHeightController;
 	delete m_leftButton;
 	delete m_rightButton;
 	delete m_tmpApplyButton;

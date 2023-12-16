@@ -89,6 +89,9 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 				// ゲームを再起動、タイトルへ戻る
 				delete game;
 				delete gameDrawer;
+				InitGraph();
+				InitSoundMem();
+				InitFontToHandle();
 				gamePlay = false;
 				SetMouseDispFlag(MOUSE_DISP);//マウス表示
 				title = new Title();
@@ -107,6 +110,9 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 			else if (result == Title::REBOOT) {
 				// ゲームを再起動
 				delete title;
+				InitGraph();
+				InitSoundMem();
+				InitFontToHandle();
 				ChangeWindowMode(WINDOW), DxLib_Init(), SetDrawScreen(DX_SCREEN_BACK);
 				SetMouseDispFlag(MOUSE_DISP);//マウス表示
 				title = new Title();

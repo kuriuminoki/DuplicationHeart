@@ -42,7 +42,7 @@ Event::Event(int eventNum, World* world, SoundPlayer* soundPlayer) {
 	m_eventElement = nullptr;
 
 	m_world_p = world;
-	m_soundPlayer = soundPlayer;
+	m_soundPlayer_p = soundPlayer;
 
 	ostringstream oss;
 	oss << "data/event/event" << m_eventNum << ".csv";
@@ -152,7 +152,7 @@ bool Event::fire() {
 	}
 	
 	// 発火して初めてイベントを作る
-	createElement(mapParam2vector(m_elementsData[m_nowElement++]), m_world_p, m_soundPlayer);
+	createElement(mapParam2vector(m_elementsData[m_nowElement++]), m_world_p, m_soundPlayer_p);
 	return true;
 }
 
@@ -175,7 +175,7 @@ EVENT_RESULT Event::play() {
 		else { 
 			// EventElementは残っているのでまだイベント続く
 			delete m_eventElement;
-			createElement(mapParam2vector(m_elementsData[m_nowElement++]), m_world_p, m_soundPlayer);
+			createElement(mapParam2vector(m_elementsData[m_nowElement++]), m_world_p, m_soundPlayer_p);
 			return EVENT_RESULT::NOW;
 		}
 	}

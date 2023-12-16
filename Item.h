@@ -46,7 +46,7 @@ public:
 	Item(const char* itemName, int x, int y);
 
 	// デストラクタ
-	~Item();
+	virtual ~Item();
 
 	// スキル発動用
 	virtual Item* createCopy() = 0;

@@ -14,13 +14,13 @@ using namespace std;
 Animation::Animation(int x, int y, int flameCnt, GraphHandles* graphHandles) {
 	m_x = x;
 	m_y = y;
-	m_handles = graphHandles;
+	m_handles_p = graphHandles;
 	m_flameCnt = flameCnt;
 	init();
 }
 
 Animation* Animation::createCopy() {
-	Animation* res = new Animation(m_x, m_y, m_flameCnt, m_handles);
+	Animation* res = new Animation(m_x, m_y, m_flameCnt, m_handles_p);
 	res->setCnt(m_cnt);
 	res->setFinishCnt(m_finishCnt);
 	res->setFinishFlag(m_finishFlag);
@@ -30,13 +30,13 @@ Animation* Animation::createCopy() {
 // 初期化
 void Animation::init() {
 	m_cnt = 0;
-	m_finishCnt = m_flameCnt * m_handles->getSize();
+	m_finishCnt = m_flameCnt * m_handles_p->getSize();
 	m_finishFlag = false;
 }
 
 // アニメーションの切り替え
 void Animation::changeGraph(GraphHandles* nextGraph, int flameCnt) {
-	m_handles = nextGraph;
+	m_handles_p = nextGraph;
 	if (flameCnt > 0) { m_flameCnt = flameCnt; }
 	init();
 }
@@ -54,7 +54,7 @@ void Animation::count() {
 
 // 描画用
 GraphHandle* Animation::getHandle() const {
-	return m_handles->getGraphHandle((m_cnt - 1) / m_flameCnt);
+	return m_handles_p->getGraphHandle((m_cnt - 1) / m_flameCnt);
 }
 
 

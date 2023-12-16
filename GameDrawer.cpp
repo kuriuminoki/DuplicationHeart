@@ -28,7 +28,7 @@ GameDrawer::~GameDrawer() {
 void GameDrawer::draw() {
 
 	// ¢ŠE‚ð•`‰æ
-	HeartSkill* skill = m_game->getSkill();
+	const HeartSkill* skill = m_game->getSkill();
 	if (skill != nullptr) {
 		m_worldDrawer->setWorld(skill->getWorld());
 	}

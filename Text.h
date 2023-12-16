@@ -102,7 +102,7 @@ private:
 	bool m_noFace;
 
 	// ”­Œ¾ŽÒ‚ÌŠç‰æ‘œ
-	GraphHandles* m_speakerGraph;
+	GraphHandles* m_speakerGraph_p;
 
 	// ”­Œ¾
 	std::string m_text;

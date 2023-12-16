@@ -114,6 +114,7 @@ public:
 
 	CharacterAction();
 	CharacterAction(Character* character, SoundPlayer* soundPlayer_p);
+	virtual ~CharacterAction() {}
 
 	// ƒRƒs[ì¬
 	virtual CharacterAction* createCopy(std::vector<Character*> characters) = 0;
