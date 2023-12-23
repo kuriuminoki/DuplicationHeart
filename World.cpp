@@ -137,6 +137,7 @@ World::World(int fromAreaNum, int toAreaNum, SoundPlayer* soundPlayer) :
 
 	m_characterDeadGraph = new GraphHandles("picture/effect/dead", 5, 1.0, 0, true);
 	m_characterDeadSound = LoadSoundMem("sound/battle/dead.wav");
+	m_doorSound = LoadSoundMem("sound/battle/door.wav");
 
 }
 
@@ -153,6 +154,8 @@ World::World(const World* original) :
 	m_soundPlayer_p = original->getSoundPlayer();
 	m_characterDeadGraph = original->getCharacterDeadGraph();
 	m_characterDeadSound = original->getCharacterDeadSound();
+	m_doorSound = original->getDoorSound();
+
 	// キャラをコピー
 	for (unsigned int i = 0; i < original->getCharacters().size(); i++) {
 		Character* copy;
@@ -233,6 +236,7 @@ World::~World() {
 		DeleteGraph(m_backGroundGraph);
 		delete m_characterDeadGraph;
 		DeleteSoundMem(m_characterDeadSound);
+		DeleteSoundMem(m_doorSound);
 	}
 }
 
@@ -878,6 +882,7 @@ void World::atariCharacterAndDoor(CharacterController* controller, vector<Object
 			m_nextAreaNum = objects[i]->getAreaNum();
 			// 画面を暗転
 			m_brightValue--;
+			m_soundPlayer_p->pushSoundQueue(m_doorSound);
 		}
 	}
 

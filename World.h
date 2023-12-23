@@ -99,6 +99,9 @@ private:
 	// キャラがやられた時の効果音
 	int m_characterDeadSound;
 
+	// ドアに入った時の効果音
+	int m_doorSound;
+
 	// 背景
 	int m_backGroundGraph;
 	int m_backGroundColor;
@@ -135,6 +138,7 @@ public:
 	inline double getCameraMinEx() const { return m_cameraMinEx; }
 	inline GraphHandles* getCharacterDeadGraph() const { return m_characterDeadGraph; }
 	inline int getCharacterDeadSound() const { return m_characterDeadSound; }
+	inline int getDoorSound() const { return m_doorSound; }
 
 	// Drawer用のゲッタ
 	std::vector<const CharacterAction*> getActions() const;
