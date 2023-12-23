@@ -42,6 +42,12 @@ private:
 	// 開始するチャプター番号
 	ControlBar* m_startStoryNum[GAME_DATA_SUM];
 
+	// 背景画像
+	int m_haikei;
+	int m_haikeiX, m_haikeiY;
+	int m_haikeiWide, m_haikeiHeight;
+	double m_haikeiEx;
+
 public:
 
 	SelectSaveData();

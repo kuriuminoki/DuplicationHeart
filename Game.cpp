@@ -541,7 +541,7 @@ bool Game::play() {
 	}
 
 	// ƒGƒŠƒAˆÚ“®
-	if (m_world->getBrightValue() == 0) {
+	if (m_world->getBrightValue() == 0 && CheckSoundMem(m_world->getDoorSound()) == 0) {
 		int fromAreaNum = m_world->getAreaNum();
 		int toAreaNum = m_world->getNextAreaNum();
 		m_gameData->asignedWorld(m_world, false);
