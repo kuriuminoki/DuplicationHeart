@@ -54,6 +54,15 @@ SelectSaveData::SelectSaveData() {
 		}
 	}
 
+	// ”wŒi‰æ‘œ
+	m_haikei = LoadGraph("picture/system/savedata.png");
+	GetGraphSize(m_haikei, &m_haikeiWide, &m_haikeiHeight);
+	m_haikeiEx = min(exX, exY);
+	m_haikeiWide = (int)(m_haikeiWide * m_haikeiEx);
+	m_haikeiHeight = (int)(m_haikeiHeight * m_haikeiEx);
+	m_haikeiX = m_haikeiWide / 2;
+	m_haikeiY = m_haikeiHeight / 2;
+
 }
 
 SelectSaveData::~SelectSaveData() {
@@ -64,6 +73,7 @@ SelectSaveData::~SelectSaveData() {
 		delete m_dataInitButton[i];
 		delete m_startStoryNum[i];
 	}
+	DeleteGraph(m_haikei);
 }
 
 int SelectSaveData::getSoundVolume() {
@@ -119,6 +129,19 @@ bool SelectSaveData::play(int handX, int handY) {
 }
 
 void SelectSaveData::draw(int handX, int handY) {
+
+	// ”wŒi‰æ‘œ
+	m_haikeiX--; m_haikeiY++;
+	SetDrawBlendMode(DX_BLENDMODE_ALPHA, 100);
+	DrawRotaGraph(m_haikeiX, m_haikeiY, m_haikeiEx, 0, m_haikei, TRUE);
+	DrawRotaGraph(m_haikeiX + m_haikeiWide, m_haikeiY, m_haikeiEx, 0, m_haikei, TRUE);
+	DrawRotaGraph(m_haikeiX, m_haikeiY - m_haikeiHeight, m_haikeiEx, 0, m_haikei, TRUE);
+	DrawRotaGraph(m_haikeiX + m_haikeiWide, m_haikeiY - m_haikeiHeight, m_haikeiEx, 0, m_haikei, TRUE);
+	SetDrawBlendMode(DX_BLENDMODE_NOBLEND, 0);
+	if (m_haikeiX <= -m_haikeiWide / 2 && m_haikeiY >= GAME_HEIGHT + m_haikeiHeight / 2) {
+		m_haikeiX += m_haikeiWide;
+		m_haikeiY -= m_haikeiHeight;
+	}
 	
 	// ƒ{ƒ^ƒ“
 	for (int i = 0; i < GAME_DATA_SUM; i++) {
