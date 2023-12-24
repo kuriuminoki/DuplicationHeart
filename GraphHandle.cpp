@@ -53,8 +53,17 @@ void GraphHandle::lineUpDraw(int x1, int y1, int x2, int y2, const Camera* camer
 	height = (int)(height * m_ex);
 
 	int xi = (x2 - x1) / wide;
-	wide += ((x2 - x1) % wide) / xi + 1;
 	int yi = (y2 - y1) / height;
+
+	if (xi == 0 || yi == 0) {
+		double ex = 1.0;
+		camera->setCamera(&x1, &y1, &ex);
+		camera->setCamera(&x2, &y2, &ex);
+		this->extendDraw(x1, y1, x2, y2);
+		return;
+	}
+
+	wide += ((x2 - x1) % wide) / xi + 1;
 	height += ((y2 - y1) % height) / yi + 1;
 	
 	int x = x1;
