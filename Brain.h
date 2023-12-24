@@ -390,4 +390,30 @@ public:
 };
 
 
+/*
+* ƒtƒŒƒ“ƒ`—pAI
+*/
+class FrenchAI :
+	public NormalAI
+{
+private:
+
+	const int SLASH_REACH = 1200;
+
+public:
+	static const char* BRAIN_NAME;
+	const char* getBrainName() const { return this->BRAIN_NAME; }
+
+	FrenchAI();
+
+	Brain* createCopy(std::vector<Character*> characters, const Camera* camera);
+
+	int slashOrder();
+	int bulletOrder() { return 0; }
+	void moveOrder(int& right, int& left, int& up, int& down);
+	int jumpOrder() { return 0; }
+	int squatOrder() { m_squatCnt = 0; return 0; }
+};
+
+
 #endif

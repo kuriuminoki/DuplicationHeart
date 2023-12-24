@@ -185,8 +185,8 @@ void CharacterAction::init() {
 // ƒ_ƒ[ƒW
 void CharacterAction::damage(int vx, int vy, int damageValue) {
 	m_damageCnt = DAMAGE_TIME;
-	setState(CHARACTER_STATE::DAMAGE);
 	if (!m_heavy) {
+		setState(CHARACTER_STATE::DAMAGE);
 		m_vx += vx;
 		m_vy += vy;
 		m_character_p->setLeftDirection(m_vx > 0);
@@ -209,7 +209,7 @@ void CharacterAction::finishSlash() {
 }
 
 bool CharacterAction::ableDamage() const {
-	if (m_state == CHARACTER_STATE::DAMAGE) { return false; }
+	if (m_state == CHARACTER_STATE::DAMAGE || m_damageCnt > 0) { return false; }
 	return true;
 }
 

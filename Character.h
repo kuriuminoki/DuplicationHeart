@@ -461,7 +461,7 @@ public:
 	void switchPreJump(int cnt = 0);
 
 	// ËŒ‚UŒ‚‚ğ‚·‚é(ƒLƒƒƒ‰‚²‚Æ‚Éˆá‚¤)
-	Object* bulletAttack(int gx, int gy, SoundPlayer* soundPlayer);
+	Object* bulletAttack(int gx, int gy, SoundPlayer* soundPlayer){ return nullptr; }
 
 	// aŒ‚UŒ‚‚ğ‚·‚é(ƒLƒƒƒ‰‚²‚Æ‚Éˆá‚¤)
 	Object* slashAttack(bool leftDirection, int cnt, SoundPlayer* soundPlayer);
