@@ -89,31 +89,35 @@ void ConversationDrawer::draw() {
 		}
 		// 会話中
 		else {
+			int dx = m_conversation->getTextAction().getDx();
+			int dy = m_conversation->getTextAction().getDy();
+
 			// フキダシ
-			DrawExtendGraph(EDGE_X, Y1, GAME_WIDE - EDGE_X, GAME_HEIGHT - EDGE_DOWN, m_frameHandle, TRUE);
+			DrawExtendGraph(EDGE_X + dx, Y1 + dy, GAME_WIDE - EDGE_X + dx, GAME_HEIGHT - EDGE_DOWN + dy, m_frameHandle, TRUE);
 
 			// 発言者の名前、セリフ顔画像
 			int now = 0;
 			int i = 0;
 			const int CHAR_EDGE = (int)(30 * m_exX);
 			if (m_conversation->getNoFace()) { // 顔画像がない場合
-				int x = EDGE_X + TEXT_GRAPH_EDGE + graphSize / 2;
+				int x = EDGE_X + TEXT_GRAPH_EDGE + graphSize / 2 + dx;
 				// 名前
-				DrawStringToHandle(x, GAME_HEIGHT - EDGE_DOWN - (int)(NAME_SIZE * m_exX) - TEXT_GRAPH_EDGE, name.c_str(), BLACK, m_nameHandle);
+				DrawStringToHandle(x, GAME_HEIGHT - EDGE_DOWN - (int)(NAME_SIZE * m_exX) - TEXT_GRAPH_EDGE + dy, name.c_str(), BLACK, m_nameHandle);
 				// セリフ
-				drawText(x, Y1 + TEXT_GRAPH_EDGE, (int)(TEXT_SIZE * m_exX) + CHAR_EDGE, text, BLACK, m_textHandle);
+				drawText(x, Y1 + TEXT_GRAPH_EDGE + dy, (int)(TEXT_SIZE * m_exX) + CHAR_EDGE, text, BLACK, m_textHandle);
 			}
 			else { // 顔画像がある場合
 				// 名前
-				DrawStringToHandle(EDGE_X + TEXT_GRAPH_EDGE + graphSize + (int)(NAME_SIZE * m_exX), GAME_HEIGHT - EDGE_DOWN - (int)(NAME_SIZE * m_exX) - TEXT_GRAPH_EDGE, name.c_str(), BLACK, m_nameHandle);
+				DrawStringToHandle(EDGE_X + TEXT_GRAPH_EDGE + graphSize + (int)(NAME_SIZE * m_exX) + dx, GAME_HEIGHT - EDGE_DOWN - (int)(NAME_SIZE * m_exX) - TEXT_GRAPH_EDGE + dy, name.c_str(), BLACK, m_nameHandle);
 				// セリフ
-				drawText(EDGE_X + TEXT_GRAPH_EDGE * 2 + graphSize, Y1 + TEXT_GRAPH_EDGE, (int)(TEXT_SIZE * m_exX) + CHAR_EDGE, text, BLACK, m_textHandle);
+				drawText(EDGE_X + TEXT_GRAPH_EDGE * 2 + graphSize + dx, Y1 + TEXT_GRAPH_EDGE + dy, (int)(TEXT_SIZE * m_exX) + CHAR_EDGE, text, BLACK, m_textHandle);
 				// キャラの顔画像
-				graph->draw(EDGE_X + TEXT_GRAPH_EDGE + graphSize / 2, Y1 + TEXT_GRAPH_EDGE + graphSize / 2, m_exX);
+				graph->draw(EDGE_X + TEXT_GRAPH_EDGE + graphSize / 2 + dx, Y1 + TEXT_GRAPH_EDGE + graphSize / 2 + dy, m_exX);
 			}
 		}
 	}
 	
+	// 画面右下のクリック要求アイコン
 	bool textFinish = m_conversation->finishText() && m_conversation->getFinishCnt() == 0 && m_conversation->getStartCnt() == 0;
 	bool eventFinish = !(m_conversation->animePlayNow()) || (m_conversation->getEventAnime()->getAnime()->getFinishFlag());
 	if (textFinish &&eventFinish) {

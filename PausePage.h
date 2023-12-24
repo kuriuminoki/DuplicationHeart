@@ -7,6 +7,30 @@
 class Button;
 class SoundPlayer;
 
+class TitleBackGround {
+private:
+
+	// 背景画像
+	int m_haikei;
+
+	// 座標
+	int m_haikeiX, m_haikeiY;
+
+	// 画像サイズ
+	int m_haikeiWide, m_haikeiHeight;
+
+	// 画像倍率
+	double m_haikeiEx;
+
+public:
+
+	TitleBackGround();
+	~TitleBackGround();
+
+	void draw();
+
+};
+
 
 // マウスでボタンを左右に動かして値を調整する機能
 class ControlBar {
@@ -182,6 +206,9 @@ class TitleOption :
 		{1280, 768}, {1280, 720}, {1176, 664}, {1152, 864}, {1024, 768}, {800, 600},
 		{640, 480} };
 	int m_nowTmpIndex;
+
+	// 背景
+	TitleBackGround* m_haikei;
 
 public:
 	TitleOption(SoundPlayer* soundPlayer);

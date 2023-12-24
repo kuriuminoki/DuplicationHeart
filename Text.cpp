@@ -67,6 +67,46 @@ void EventAnime::play() {
 
 
 /*
+* フキダシのアクション
+*/
+TextAction::TextAction() {
+	init();
+}
+
+void TextAction::init() {
+	m_jumpFlag = false;
+	m_dx = 0;
+	m_dy = 0;
+	m_vy = 0;
+	m_quakeCnt = 0;
+	m_quakeDx = 0;
+	m_quakeDy = 0;
+}
+
+void TextAction::play() {
+
+	if (m_jumpFlag) {
+		m_vy++;
+		m_dy += m_vy;
+		if (m_dy > 0 && m_vy > 0) { 
+			init();
+		}
+	}
+
+	if (m_quakeCnt > 0) { 
+		m_quakeCnt--;
+		m_quakeDx = GetRand(50) - 25;
+		m_quakeDy = GetRand(50) - 25;
+		if (m_vy == 0 && m_quakeCnt == 0) {
+			init();
+		}
+	}
+
+}
+
+
+
+/*
 * 会話イベント
 */
 Conversation::Conversation(int textNum, World* world, SoundPlayer* soundPlayer) {
@@ -84,6 +124,7 @@ Conversation::Conversation(int textNum, World* world, SoundPlayer* soundPlayer) 
 	m_cnt = 0;
 	m_textSpeed = TEXT_SPEED;
 	m_eventAnime = nullptr;
+	m_sound = -1;
 
 	// 効果音
 	m_displaySound = LoadSoundMem("sound/text/display.wav");
@@ -123,6 +164,9 @@ Conversation::~Conversation() {
 		delete m_animations[i];
 	}
 	delete m_textFinishGraph;
+	if (m_sound != -1) {
+		DeleteSoundMem(m_sound);
+	}
 }
 
 // テキストを返す（描画用）
@@ -151,7 +195,13 @@ bool Conversation::finishText() const {
 // 会話イベントの処理
 bool Conversation::play() {
 
-	// クリックアニメーションの再生
+	// 効果音の制御
+	if (m_sound != -1 && CheckSoundMem(m_sound) == 0) {
+		DeleteSoundMem(m_sound);
+		m_sound = -1;
+	}
+
+	// クリックエフェクトの再生
 	for (unsigned int i = 0; i < m_animations.size(); i++) {
 		m_animations[i]->count();
 		if (m_animations[i]->getFinishFlag()) {
@@ -162,6 +212,7 @@ bool Conversation::play() {
 		}
 	}
 
+	// クリックのエフェクト
 	if (leftClick() == 1) {
 		int handX = 0, handY = 0;
 		GetMousePoint(&handX, &handY);
@@ -200,6 +251,7 @@ bool Conversation::play() {
 		return false;
 	}
 
+	// イベント開始前のBGM名をバックアップ
 	if (m_text == "") {
 		m_originalBgmPath = m_soundPlayer_p->getBgmName();
 		loadNextBlock();
@@ -207,6 +259,7 @@ bool Conversation::play() {
 
 	// プレイヤーからのアクション（スペースキー入力）
 	if (leftClick() == 1) {
+		m_textAction.init();
 		if (finishText()) {
 			// 全ての会話が終わった
 			if (FileRead_eof(m_fp) != 0) {
@@ -238,6 +291,11 @@ bool Conversation::play() {
 		}
 	}
 
+	// フキダシのアクション
+	if (m_startCnt == 0 && m_finishCnt == 0) {
+		m_textAction.play();
+	}
+
 	return false;
 }
 
@@ -253,7 +311,8 @@ void Conversation::loadNextBlock() {
 		str = buff;
 		if (str != "") { break; }
 	}
-	if (str == "@eventStart" || str == "@eventPic" || str == "@eventToDark" || str == "@eventToClear") { // 挿絵の始まり
+	if (str == "@eventStart" || str == "@eventPic" || str == "@eventToDark" || str == "@eventToClear") {
+		// 挿絵の始まり
 		if (m_eventAnime != nullptr) { delete m_eventAnime; }
 		FileRead_gets(buff, size, m_fp);
 		string path = buff;
@@ -280,12 +339,14 @@ void Conversation::loadNextBlock() {
 			m_eventAnime->setBright(0);
 		}
 	}
-	else if (str == "@eventEnd") { // 挿絵の終わり
+	else if (str == "@eventEnd") {
+		// 挿絵の終わり
 		delete m_eventAnime;
 		m_eventAnime = nullptr;
 		loadNextBlock();
 	}
-	else if (str == "@same") { // セリフだけ更新
+	else if (str == "@same") {
+		// セリフだけ更新
 		setNextText(size, buff);
 	}
 	else if (str == "@setBGM") {
@@ -316,9 +377,33 @@ void Conversation::loadNextBlock() {
 		m_finishCnt = 1;
 		loadNextBlock();
 	}
+	else if (str == "@quake") {
+		// フキダシを揺らす
+		FileRead_gets(buff, size, m_fp);
+		string s = buff; // 時間
+		m_textAction.setQuakeCnt(stoi(s));
+		loadNextBlock();
+	}
+	else if (str == "@jump") {
+		// フキダシをジャンプさせる
+		FileRead_gets(buff, size, m_fp);
+		string s = buff; // 初速
+		m_textAction.setVy(stoi(s));
+		loadNextBlock();
+	}
+	else if (str == "@sound") {
+		// 効果音を鳴らす
+		if (m_sound != -1) { DeleteSoundMem(m_sound); }
+		FileRead_gets(buff, size, m_fp);
+		string path = "sound/";
+		path += buff;
+		m_sound = LoadSoundMem(path.c_str());
+		m_soundPlayer_p->pushSoundQueue(m_sound);
+		loadNextBlock();
+	}
 	else { // 発言
-		if (str == "@null" || str == "???" || str == "ひとみ") { // ナレーション
-			// 発言者
+		if (str == "@null" || str == "???" || str == "ひとみ") {
+			// ナレーション
 			m_speakerName = str == "@null" ? "" : str;
 			m_noFace = true;
 		}

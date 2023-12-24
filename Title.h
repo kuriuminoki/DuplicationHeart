@@ -9,6 +9,7 @@ class OpMovie;
 class AnimationDrawer;
 class GameData;
 class ControlBar;
+class TitleBackGround;
 
 
 /*
@@ -42,11 +43,8 @@ private:
 	// ŠJn‚·‚éƒ`ƒƒƒvƒ^[”Ô†
 	ControlBar* m_startStoryNum[GAME_DATA_SUM];
 
-	// ”wŒi‰æ‘œ
-	int m_haikei;
-	int m_haikeiX, m_haikeiY;
-	int m_haikeiWide, m_haikeiHeight;
-	double m_haikeiEx;
+	// ”wŒi
+	TitleBackGround* m_haikei;
 
 public:
 
