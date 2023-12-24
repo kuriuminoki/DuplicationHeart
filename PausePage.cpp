@@ -12,6 +12,39 @@
 using namespace std;
 
 
+// ”wŒi
+TitleBackGround::TitleBackGround() {
+	double exX, exY;
+	getGameEx(exX, exY);
+	m_haikei = LoadGraph("picture/system/savedata.png");
+	GetGraphSize(m_haikei, &m_haikeiWide, &m_haikeiHeight);
+	m_haikeiEx = min(exX, exY);
+	m_haikeiWide = (int)(m_haikeiWide * m_haikeiEx);
+	m_haikeiHeight = (int)(m_haikeiHeight * m_haikeiEx);
+	m_haikeiX = m_haikeiWide / 2;
+	m_haikeiY = m_haikeiHeight / 2;
+}
+
+TitleBackGround::~TitleBackGround() {
+	DeleteGraph(m_haikei);
+}
+
+void TitleBackGround::draw() {
+	// ”wŒi‰æ‘œ
+	m_haikeiX--; m_haikeiY++;
+	SetDrawBlendMode(DX_BLENDMODE_ALPHA, 100);
+	DrawRotaGraph(m_haikeiX, m_haikeiY, m_haikeiEx, 0, m_haikei, TRUE);
+	DrawRotaGraph(m_haikeiX + m_haikeiWide, m_haikeiY, m_haikeiEx, 0, m_haikei, TRUE);
+	DrawRotaGraph(m_haikeiX, m_haikeiY - m_haikeiHeight, m_haikeiEx, 0, m_haikei, TRUE);
+	DrawRotaGraph(m_haikeiX + m_haikeiWide, m_haikeiY - m_haikeiHeight, m_haikeiEx, 0, m_haikei, TRUE);
+	SetDrawBlendMode(DX_BLENDMODE_NOBLEND, 0);
+	if (m_haikeiX <= -m_haikeiWide / 2 && m_haikeiY >= GAME_HEIGHT + m_haikeiHeight / 2) {
+		m_haikeiX += m_haikeiWide;
+		m_haikeiY -= m_haikeiHeight;
+	}
+}
+
+
 ControlBar::ControlBar(int x1, int y1, int x2, int y2, int minValue, int maxValue, int initValue, string name) {
 	
 	m_name = name;
@@ -204,6 +237,9 @@ TitleOption::TitleOption(SoundPlayer* soundPlayer) :
 	m_rightButton = new Button("¨", m_gameWideController->getRightX() - (int)(100 * m_exX), (int)((HEIGHT_Y2 + 50) * m_exY), (int)(100 * m_exX), (int)(100 * m_exY), WHITE, GRAY2, m_font, BLACK);
 	m_tmpApplyButton = new Button("Apply", m_gameWideController->getLeftX(), (int)((HEIGHT_Y2 + 170) * m_exY), m_gameWideController->getRightX() - m_gameWideController->getLeftX(), (int)(100 * m_exY), WHITE, GRAY2, m_font, BLACK);
 	m_nowTmpIndex = 0;
+
+	// ”wŒi
+	m_haikei = new TitleBackGround();
 }
 
 TitleOption::~TitleOption() {
@@ -213,6 +249,7 @@ TitleOption::~TitleOption() {
 	delete m_leftButton;
 	delete m_rightButton;
 	delete m_tmpApplyButton;
+	delete m_haikei;
 }
 
 void TitleOption::play() {
@@ -242,6 +279,9 @@ void TitleOption::play() {
 }
 
 void TitleOption::draw() const {
+
+	// ”wŒi
+	m_haikei->draw();
 
 	GamePause::draw();
 

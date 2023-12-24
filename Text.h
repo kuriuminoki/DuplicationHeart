@@ -61,6 +61,46 @@ public:
 
 
 /*
+* フキダシのアクション
+*/
+class TextAction {
+private:
+
+	// ジャンプ中
+	bool m_jumpFlag;
+
+	// 座標のずれ
+	int m_dx, m_dy;
+
+	// 速度
+	int m_vy;
+
+	// 振動する残り時間
+	int m_quakeCnt;
+
+	// 振動によるずれ
+	int m_quakeDx, m_quakeDy;
+
+public:
+
+	TextAction();
+
+	// ゲッタ
+	int getDx() const { return m_dx + m_quakeDx; }
+	int getDy() const { return m_dy + m_quakeDy; }
+
+	// セッタ
+	void setVy(int vy) { m_vy = vy; m_jumpFlag = true; }
+	void setQuakeCnt(int cnt) { m_quakeCnt = cnt; }
+
+	void init();
+
+	void play();
+
+};
+
+
+/*
 * 会話イベント
 */
 class Conversation {
@@ -129,6 +169,12 @@ private:
 	// 発言終了時の印画像
 	GraphHandle* m_textFinishGraph;
 
+	// フキダシのアクション
+	TextAction m_textAction;
+
+	// 効果音
+	int m_sound;
+
 public:
 	Conversation(int textNum, World* world, SoundPlayer* soundPlayer);
 	~Conversation();
@@ -153,6 +199,7 @@ public:
 	const std::vector<Animation*> getAnimations() const { return m_animations; }
 	const GraphHandle* getTextFinishGraph() const { return m_textFinishGraph; }
 	const EventAnime* getEventAnime() const { return m_eventAnime; }
+	const TextAction getTextAction() const { return m_textAction; }
 
 	// セッタ
 	void setWorld(World* world);
