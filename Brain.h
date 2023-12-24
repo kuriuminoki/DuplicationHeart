@@ -391,6 +391,31 @@ public:
 
 
 /*
+* 棒立ちで射撃するヒエラルキー
+*/
+class HierarchyAI :
+	public NormalAI
+{
+public:
+
+	static const char* BRAIN_NAME;
+	const char* getBrainName() const { return this->BRAIN_NAME; }
+
+	HierarchyAI();
+
+	Brain* createCopy(std::vector<Character*> characters, const Camera* camera);
+
+	int bulletOrder() { return 1; }
+	void bulletTargetPoint(int& x, int& y);
+
+	void moveOrder(int& right, int& left, int& up, int& down) { return; }
+	int jumpOrder() { return 0; }
+	int squatOrder() { m_squatCnt = 0; return 0; }
+
+};
+
+
+/*
 * フレンチ用AI
 */
 class FrenchAI :
@@ -398,7 +423,7 @@ class FrenchAI :
 {
 private:
 
-	const int SLASH_REACH = 1200;
+	const int SLASH_REACH = 1500;
 
 public:
 	static const char* BRAIN_NAME;

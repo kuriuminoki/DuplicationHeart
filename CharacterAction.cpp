@@ -189,7 +189,7 @@ void CharacterAction::damage(int vx, int vy, int damageValue) {
 		setState(CHARACTER_STATE::DAMAGE);
 		m_vx += vx;
 		m_vy += vy;
-		m_character_p->setLeftDirection(m_vx > 0);
+		m_character_p->setLeftDirection(vx > 0);
 		// ’ˆ‚É•‚‚©‚¹‚é
 		m_grand = false;
 		m_grandRightSlope = false;

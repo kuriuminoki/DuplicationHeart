@@ -21,7 +21,7 @@ using namespace std;
 
 
 // どこまで
-const int FINISH_STORY = 10;
+const int FINISH_STORY = 9;
 // エリア0でデバッグするときはtrueにする
 const bool TEST_MODE = false;
 // スキルが発動可能になるストーリー番号
@@ -172,14 +172,16 @@ GameData::GameData() {
 	}
 
 	// 主要キャラを設定
-	const int mainSum = 6;
+	const int mainSum = 8;
 	const char* mainCharacters[mainSum] = {
 		"ハート",
 		"シエスタ",
 		"ヒエラルキー",
 		"ヴァルキリア",
 		"トロイ",
-		"エム・サディ"
+		"メモリー",
+		"エム・サディ",
+		"フレンチ"
 	};
 	for (int i = 0; i < mainSum; i++) {
 		m_characterData.push_back(new CharacterData(mainCharacters[i]));
@@ -563,7 +565,7 @@ void Game::backPrevSave() {
 	// これまでのWorldを削除
 	delete m_world;
 	// 前のセーブデータをロード
-	GameData prevData(m_gameData->getSaveFilePath(), m_gameData->getStoryNum() - 1);
+	GameData prevData(m_gameData->getSaveFilePath(), m_gameData->getStoryNum());
 	// 以前のAreaNumでロード
 	m_world = new World(-1, prevData.getAreaNum(), m_soundPlayer);
 	m_gameData->asignWorld(m_world, true);

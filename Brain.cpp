@@ -22,6 +22,7 @@ const char* FollowParabolaAI::BRAIN_NAME = "FollowParabolaAI";
 const char* ValkiriaAI::BRAIN_NAME = "ValkiriaAI";
 const char* FlightAI::BRAIN_NAME = "FlightAI";
 const char* FollowFlightAI::BRAIN_NAME = "FollowFlightAI";
+const char* HierarchyAI::BRAIN_NAME = "HierarchyAI";
 const char* FrenchAI::BRAIN_NAME = "FrenchAI";
 
 // クラス名からBrainを作成する関数
@@ -53,6 +54,9 @@ Brain* createBrain(const string brainName, const Camera* camera_p) {
 	}
 	else if (brainName == FollowFlightAI::BRAIN_NAME) {
 		brain = new FollowFlightAI();
+	}
+	else if (brainName == HierarchyAI::BRAIN_NAME) {
+		brain = new HierarchyAI();
 	}
 	else if (brainName == FrenchAI::BRAIN_NAME) {
 		brain = new FrenchAI();
@@ -870,6 +874,26 @@ void FollowFlightAI::moveOrder(int& right, int& left, int& up, int& down) {
 
 
 /*
+* ヒエラルキー用AI
+*/
+HierarchyAI::HierarchyAI() :
+	NormalAI()
+{
+
+}
+Brain* HierarchyAI::createCopy(std::vector<Character*> characters, const Camera* camera) {
+	HierarchyAI* res = new HierarchyAI();
+	copyTarget(characters, getTargetId(), res);
+	setParam(res);
+	return res;
+}
+void HierarchyAI::bulletTargetPoint(int& x, int& y) {
+	x = GetRand(600) - 300 + m_characterAction_p->getCharacter()->getCenterX();
+	y = m_characterAction_p->getCharacter()->getCenterY() - GetRand(300);
+}
+
+
+/*
 * フレンチ用AI
 */
 FrenchAI::FrenchAI() :
@@ -901,7 +925,7 @@ int FrenchAI::slashOrder() {
 		return 0;
 	}
 	// ランダムで斬撃
-	if (GetRand(50) == 0) {
+	if (GetRand(30) == 0) {
 		return 1;
 	}
 	return 0;
@@ -911,6 +935,8 @@ void FrenchAI::moveOrder(int& right, int& left, int& up, int& down) {
 	if (m_characterAction_p->getSlashCnt() > 0) {
 		// 攻撃中は移動しない
 		right = 0; left = 0; up = 0; down = 0;
+		m_gx = m_characterAction_p->getCharacter()->getCenterX();
+		m_gy = m_characterAction_p->getCharacter()->getY();
 		return;
 	}
 	NormalAI::moveOrder(right, left, up, down);
