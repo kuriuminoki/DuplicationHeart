@@ -266,7 +266,7 @@ TriangleObject::TriangleObject(int x1, int y1, int x2, int y2, const char* fileN
 	if (m_fileName != "null") {
 		string filePath = "picture/stageMaterial/";
 		filePath += m_fileName;
-		m_handle = new GraphHandle(filePath.c_str(), OBJECT_DEFAULT_SIZE, 0.0, true);
+		m_handle = new GraphHandle(filePath.c_str(), OBJECT_DEFAULT_SIZE, 0.0, true, !leftDown);
 	}
 	m_leftDown = leftDown;
 }

@@ -22,6 +22,8 @@ const char* FollowParabolaAI::BRAIN_NAME = "FollowParabolaAI";
 const char* ValkiriaAI::BRAIN_NAME = "ValkiriaAI";
 const char* FlightAI::BRAIN_NAME = "FlightAI";
 const char* FollowFlightAI::BRAIN_NAME = "FollowFlightAI";
+const char* HierarchyAI::BRAIN_NAME = "HierarchyAI";
+const char* FrenchAI::BRAIN_NAME = "FrenchAI";
 
 // クラス名からBrainを作成する関数
 Brain* createBrain(const string brainName, const Camera* camera_p) {
@@ -52,6 +54,12 @@ Brain* createBrain(const string brainName, const Camera* camera_p) {
 	}
 	else if (brainName == FollowFlightAI::BRAIN_NAME) {
 		brain = new FollowFlightAI();
+	}
+	else if (brainName == HierarchyAI::BRAIN_NAME) {
+		brain = new HierarchyAI();
+	}
+	else if (brainName == FrenchAI::BRAIN_NAME) {
+		brain = new FrenchAI();
 	}
 	return brain;
 }
@@ -864,3 +872,72 @@ void FollowFlightAI::moveOrder(int& right, int& left, int& up, int& down) {
 	stickOrder(right, left, up, down);
 }
 
+
+/*
+* ヒエラルキー用AI
+*/
+HierarchyAI::HierarchyAI() :
+	NormalAI()
+{
+
+}
+Brain* HierarchyAI::createCopy(std::vector<Character*> characters, const Camera* camera) {
+	HierarchyAI* res = new HierarchyAI();
+	copyTarget(characters, getTargetId(), res);
+	setParam(res);
+	return res;
+}
+void HierarchyAI::bulletTargetPoint(int& x, int& y) {
+	x = GetRand(600) - 300 + m_characterAction_p->getCharacter()->getCenterX();
+	y = m_characterAction_p->getCharacter()->getCenterY() - GetRand(300);
+}
+
+
+/*
+* フレンチ用AI
+*/
+FrenchAI::FrenchAI() :
+	NormalAI()
+{
+
+}
+Brain* FrenchAI::createCopy(std::vector<Character*> characters, const Camera* camera) {
+	FrenchAI* res = new FrenchAI();
+	copyTarget(characters, getTargetId(), res);
+	setParam(res);
+	return res;
+}
+int FrenchAI::slashOrder() {
+	if (m_target_p == nullptr || m_target_p->getHp() == 0) {
+		return 0;
+	}
+	int x = m_characterAction_p->getCharacter()->getCenterX();
+	int y = m_characterAction_p->getCharacter()->getCenterY();
+	// 距離の近い敵が高くにいるなら
+	if ((abs(x - m_target_p->getCenterX()) < SLASH_REACH) && (y - m_target_p->getCenterY() > 200)) {
+		// 地面にいるうちは斬撃しない
+		if (m_characterAction_p->getGrand()) {
+			return 0;
+		}
+	}
+	// 遠距離の敵には斬撃しない
+	if (abs(m_target_p->getCenterX() - x) >= SLASH_REACH) {
+		return 0;
+	}
+	// ランダムで斬撃
+	if (GetRand(30) == 0) {
+		return 1;
+	}
+	return 0;
+}
+void FrenchAI::moveOrder(int& right, int& left, int& up, int& down) {
+
+	if (m_characterAction_p->getSlashCnt() > 0) {
+		// 攻撃中は移動しない
+		right = 0; left = 0; up = 0; down = 0;
+		m_gx = m_characterAction_p->getCharacter()->getCenterX();
+		m_gy = m_characterAction_p->getCharacter()->getY();
+		return;
+	}
+	NormalAI::moveOrder(right, left, up, down);
+}

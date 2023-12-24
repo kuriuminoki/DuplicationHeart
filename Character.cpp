@@ -28,7 +28,7 @@ Character* createCharacter(const char* characterName, int hp, int x, int y, int 
 	else if (name == "ヒエラルキー") {
 		character = new Hierarchy(name.c_str(), hp, x, y, groupId);
 	}
-	else if (name == "ヴァルキリア") {
+	else if (name == "ヴァルキリア" || name == "フレンチ") {
 		character = new Valkyria(name.c_str(), hp, x, y, groupId);
 	}
 	else if (name == "トロイ") {
@@ -663,11 +663,6 @@ void Valkyria::switchPreJump(int cnt) {
 	m_graphHandle->switchPreJump(index);
 }
 
-// 射撃攻撃をする(キャラごとに違う)
-Object* Valkyria::bulletAttack(int gx, int gy, SoundPlayer* soundPlayer) {
-	return nullptr;
-}
-
 // 斬撃攻撃をする(キャラごとに違う)
 Object* Valkyria::slashAttack(bool leftDirection, int cnt, SoundPlayer* soundPlayer) {
 	// 攻撃範囲を決定
@@ -690,6 +685,7 @@ Object* Valkyria::slashAttack(bool leftDirection, int cnt, SoundPlayer* soundPla
 	int height = attackHeight;
 	// cntが攻撃のタイミングならオブジェクト生成
 	if (cnt == m_attackInfo->slashCountSum() - 1) {
+		index = 0 % slashHandles->getSize();
 		attackObject = new SlashObject(x1, m_y, x2, m_y + height,
 			slashHandles->getGraphHandle(index), m_attackInfo->slashCountSum() - 12, m_attackInfo);
 		// 効果音
@@ -700,10 +696,12 @@ Object* Valkyria::slashAttack(bool leftDirection, int cnt, SoundPlayer* soundPla
 		}
 	}
 	else if (cnt == m_attackInfo->slashCountSum() * 2 / 3) {
+		index = 1 % slashHandles->getSize();
 		attackObject = new SlashObject(x1, m_y, x2, m_y + height,
 			slashHandles->getGraphHandle(index), m_attackInfo->slashCountSum() - slashCountSum - 6, m_attackInfo);
 	}
 	else if (cnt == m_attackInfo->slashCountSum() / 3) {
+		index = 2 % slashHandles->getSize();
 		attackObject = new SlashObject(x1, m_y, x2, m_y + height,
 			slashHandles->getGraphHandle(index), m_attackInfo->slashCountSum() - 2 * slashCountSum, m_attackInfo);
 	}

@@ -283,6 +283,9 @@ public:
 };
 
 
+/*
+* ヴァルキリア用Action
+*/
 class ValkiriaAction :
 	public StickAction
 {
