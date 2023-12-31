@@ -402,9 +402,13 @@ void Conversation::loadNextBlock() {
 		loadNextBlock();
 	}
 	else { // ”­Œ¾
-		if (str == "@null" || str == "???" || str == "‚Ğ‚Æ‚İ") {
+		if (str == "@null") {
 			// ƒiƒŒ[ƒVƒ‡ƒ“
-			m_speakerName = str == "@null" ? "" : str;
+			m_speakerName = "";
+			m_noFace = true;
+		}
+		else if (str[0] == '*') {
+			m_speakerName = str.substr(1, str.size());
 			m_noFace = true;
 		}
 		else {

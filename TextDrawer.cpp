@@ -149,7 +149,7 @@ void ConversationDrawer::drawText(int x, int y,int height, std::string text, int
 		int next = now + min(MAX_TEXT_LEN, (int)text.size() - now);
 
 		string disp = text.substr(now, next - now);
-		size_t br = disp.find("b");
+		size_t br = disp.find("b"); // ‰üs‚Ì‹L†
 		if (br != string::npos) {
 			disp = disp.substr(0, br);
 			now += (int)br + 2;
