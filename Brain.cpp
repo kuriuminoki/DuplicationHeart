@@ -231,7 +231,7 @@ void NormalAI::moveOrder(int& right, int& left, int& up, int& down) {
 
 	// 現在地
 	int x = m_characterAction_p->getCharacter()->getCenterX();
-	int y = m_characterAction_p->getCharacter()->getCenterY();
+	int y = m_characterAction_p->getCharacter()->getY() + m_characterAction_p->getCharacter()->getHeight();
 
 	// (壁につっかえるなどで)移動できてないから諦める
 	if (m_moveCnt >= GIVE_UP_MOVE_CNT) {
@@ -301,7 +301,7 @@ void NormalAI::moveUpDownOrder(int x, int y, bool& tryFlag) {
 void NormalAI::stickOrder(int& right, int& left, int& up, int& down) {
 	// 現在地
 	int x = m_characterAction_p->getCharacter()->getCenterX();
-	int y = m_characterAction_p->getCharacter()->getCenterY();
+	int y = m_characterAction_p->getCharacter()->getY() + m_characterAction_p->getCharacter()->getHeight();
 
 	// 目標に向かって走る
 	if (m_gx > x + GX_ERROR) {
@@ -557,7 +557,7 @@ void FollowNormalAI::moveOrder(int& right, int& left, int& up, int& down) {
 
 	// 現在地
 	int x = m_characterAction_p->getCharacter()->getCenterX();
-	int y = m_characterAction_p->getCharacter()->getCenterY();
+	int y = m_characterAction_p->getCharacter()->getY() + m_characterAction_p->getCharacter()->getHeight();
 
 	// (壁につっかえるなどで)移動できてないから諦める
 	if (m_moveCnt >= GIVE_UP_MOVE_CNT) {
@@ -710,7 +710,7 @@ int ValkiriaAI::slashOrder() {
 		return 0;
 	}
 	int x = m_characterAction_p->getCharacter()->getCenterX();
-	int y = m_characterAction_p->getCharacter()->getCenterY();
+	int y = m_characterAction_p->getCharacter()->getY() + m_characterAction_p->getCharacter()->getHeight();
 	// 距離の近い敵が高くにいるなら
 	if ((abs(x - m_target_p->getCenterX()) < SLASH_REACH) && (y - m_target_p->getCenterY() > 200)) {
 		// 地面にいるうちは斬撃しない
@@ -757,7 +757,7 @@ int ValkiriaAI::jumpOrder() {
 	int maxJump = m_characterAction_p->getPreJumpMax();
 	int minJump = maxJump / 3;
 	int x = m_characterAction_p->getCharacter()->getCenterX();
-	int y = m_characterAction_p->getCharacter()->getCenterY();
+	int y = m_characterAction_p->getCharacter()->getY() + m_characterAction_p->getCharacter()->getHeight();
 	if (m_jumpCnt == 0) {
 		// ランダムでジャンプ
 		if (m_squatCnt == 0 && GetRand(99) < 20 && m_target_p != nullptr && m_target_p->getHp() > 0) {
@@ -801,7 +801,7 @@ Brain* FlightAI::createCopy(std::vector<Character*> characters, const Camera* ca
 void FlightAI::moveOrder(int& right, int& left, int& up, int& down) {
 	// 現在地
 	int x = m_characterAction_p->getCharacter()->getCenterX();
-	int y = m_characterAction_p->getCharacter()->getCenterY();
+	int y = m_characterAction_p->getCharacter()->getY() + m_characterAction_p->getCharacter()->getHeight();
 
 	// 上下移動の制御
 	moveUpDownOrder(x, y, m_try);
@@ -837,14 +837,12 @@ void FlightAI::moveOrder(int& right, int& left, int& up, int& down) {
 
 // 目標地点へ移動するだけ 達成済みならtrueで何もしない
 bool FlightAI::moveGoalOrder(int& right, int& left, int& up, int& down, int& jump) {
+	// 現在地
+	int x = m_characterAction_p->getCharacter()->getCenterX();
+	int y = m_characterAction_p->getCharacter()->getY() + m_characterAction_p->getCharacter()->getHeight();
+	moveUpDownOrder(x, y, m_try);
 	bool flag = NormalAI::moveGoalOrder(right, left, up, down, jump);
-	if (!flag) {
-		// 現在地
-		int x = m_characterAction_p->getCharacter()->getCenterX();
-		int y = m_characterAction_p->getCharacter()->getY() + m_characterAction_p->getCharacter()->getHeight();
-		moveUpDownOrder(x, y, m_try);
-	}
-	return false;
+	return flag;
 }
 
 
@@ -875,7 +873,7 @@ void FollowFlightAI::moveOrder(int& right, int& left, int& up, int& down) {
 
 	// 現在地
 	int x = m_characterAction_p->getCharacter()->getCenterX();
-	int y = m_characterAction_p->getCharacter()->getCenterY();
+	int y = m_characterAction_p->getCharacter()->getY() + m_characterAction_p->getCharacter()->getHeight();
 
 	// 上下移動の制御
 	moveUpDownOrder(x, y, m_try);
@@ -908,14 +906,12 @@ void FollowFlightAI::moveOrder(int& right, int& left, int& up, int& down) {
 
 // 目標地点へ移動するだけ 達成済みならtrueで何もしない
 bool FollowFlightAI::moveGoalOrder(int& right, int& left, int& up, int& down, int& jump) {
+	// 現在地
+	int x = m_characterAction_p->getCharacter()->getCenterX();
+	int y = m_characterAction_p->getCharacter()->getY() + m_characterAction_p->getCharacter()->getHeight();
+	moveUpDownOrder(x, y, m_try);
 	bool flag = NormalAI::moveGoalOrder(right, left, up, down, jump);
-	if (!flag) {
-		// 現在地
-		int x = m_characterAction_p->getCharacter()->getCenterX();
-		int y = m_characterAction_p->getCharacter()->getY() + m_characterAction_p->getCharacter()->getHeight();
-		moveUpDownOrder(x, y, m_try);
-	}
-	return false;
+	return flag;
 }
 
 
@@ -958,7 +954,7 @@ int FrenchAI::slashOrder() {
 		return 0;
 	}
 	int x = m_characterAction_p->getCharacter()->getCenterX();
-	int y = m_characterAction_p->getCharacter()->getCenterY();
+	int y = m_characterAction_p->getCharacter()->getY() + m_characterAction_p->getCharacter()->getHeight();
 	// 距離の近い敵が高くにいるなら
 	if ((abs(x - m_target_p->getCenterX()) < SLASH_REACH) && (y - m_target_p->getCenterY() > 200)) {
 		// 地面にいるうちは斬撃しない

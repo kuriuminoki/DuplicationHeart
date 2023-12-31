@@ -435,7 +435,6 @@ Game::Game(const char* saveFilePath, int storyNum) {
 
 Game::~Game() {
 	delete m_gameData;
-	delete m_soundPlayer;
 	delete m_world;
 	delete m_story;
 	if (m_battleOption != nullptr) {
@@ -445,6 +444,7 @@ Game::~Game() {
 		delete m_skill;
 	}
 	DeleteSoundMem(m_pauseSound);
+	delete m_soundPlayer;
 }
 
 bool Game::play() {
