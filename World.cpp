@@ -467,6 +467,7 @@ void World::asignCharacterData(const char* name, CharacterData* data, int fromAr
 			const Character* c = m_characterControllers[i]->getAction()->getCharacter();
 			data->setVersion(c->getVersion());
 			data->setHp(c->getHp());
+			data->setInvincible(c->getInvincible());
 			data->setId(c->getId());
 			data->setGroupId(c->getGroupId());
 			data->setAreaNum(fromAreaNum);
@@ -581,7 +582,7 @@ void World::asignedCharacter(Character* character, CharacterData* data, bool cha
 		// ‚±‚ÌƒQ[ƒ€‚Å‰“oê‚¶‚á‚È‚¢
 		character->setHp(data->hp());
 	}
-	//character->setId(data.id());
+	character->setInvincible(data->invincible());
 	character->setGroupId(data->groupId());
 	if (changePosition) {
 		character->setX(data->x());
@@ -685,8 +686,8 @@ void World::updateCamera() {
 	// ƒJƒƒ‰‚ÌŠg‘åEk¬
 	// ‘å‚«‚­•ÏX‚·‚é•K—v‚ª‚ ‚éê‡‚Ù‚ÇA‘å‚«‚­Šg‘å—¦‚ð•ÏX‚·‚éB
 	double nowEx = m_camera->getEx();
-	int leftShift = controlLeftShift();
-	if (leftShift > 0) {
+	int shift = controlLeftShift() + controlRightShift();
+	if (shift > 0) {
 		if (nowEx > m_cameraMinEx) {
 			m_camera->setEx(max(nowEx - 0.01, 0.1));
 		}

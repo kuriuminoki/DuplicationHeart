@@ -37,6 +37,9 @@ int controlSpace();
 // 左Shiftキー
 int controlLeftShift();
 
+// 右Shiftキー
+int controlRightShift();
+
 //ESCキー：ゲーム終了
 int controlEsc();
 

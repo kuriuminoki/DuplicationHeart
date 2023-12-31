@@ -237,7 +237,7 @@ void OpMovie::play() {
 	}
 	else if (m_cnt < 690 && m_cnt >= 600) {
 		m_animation->setX(GAME_WIDE / 2);
-		if (m_cnt / 5 % 2 == 0) {
+		if (m_cnt / 5 % 2 == 1) {
 			m_animation->changeGraph(m_titleBlue, 60);
 		}
 		else {
@@ -245,7 +245,7 @@ void OpMovie::play() {
 		}
 	}
 	else if (m_cnt < 700 && m_cnt >= 690) {
-		m_animation->changeGraph(m_titleOrange, 60);
+		m_animation->changeGraph(m_titleBlue, 60);
 	}
 	else if (m_cnt >= 2130 && !characterQueue.empty()) {
 		if (m_animation->getFinishFlag() && !characterQueue.empty()) {
