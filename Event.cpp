@@ -110,8 +110,14 @@ void Event::createElement(vector<string> param, World* world, SoundPlayer* sound
 	if (param0 == "LockArea") {
 		element = new LockAreaEvent(world, param);
 	}
-	else if (param0 == "InvincinbleEvent") {
+	else if (param0 == "Invincinble") {
 		element = new InvincinbleEvent(world, param);
+	}
+	else if (param0 == "SetGoalPoint") {
+		element = new SetGoalPointEvent(world, param);
+	}
+	else if (param0 == "MoveGoal") {
+		element = new MoveGoalEvent(world, param);
 	}
 	else if (param0 == "ChangeBrain") {
 		element = new ChangeBrainEvent(world, param);
@@ -318,7 +324,7 @@ EVENT_RESULT ChangeBrainEvent::play() {
 	m_controller_p->setBrain(brain);
 
 	// 追跡対象が必要なBrainは追跡対象を設定
-	if (brain->getBrainName() == FollowNormalAI::BRAIN_NAME || 
+	if (brain->getBrainName() == FollowNormalAI::BRAIN_NAME ||
 		brain->getBrainName() == FollowParabolaAI::BRAIN_NAME ||
 		brain->getBrainName() == ValkiriaAI::BRAIN_NAME ||
 		brain->getBrainName() == FollowFlightAI::BRAIN_NAME) {
@@ -331,6 +337,40 @@ EVENT_RESULT ChangeBrainEvent::play() {
 void ChangeBrainEvent::setWorld(World* world) {
 	EventElement::setWorld(world);
 	m_controller_p = m_world_p->getControllerWithName(m_param[2]);
+}
+
+// キャラの目標地点を設定を変える
+SetGoalPointEvent::SetGoalPointEvent(World* world, vector<string> param) :
+	EventElement(world)
+{
+	m_gx = stoi(param[1]);
+	m_gy = stoi(param[2]);
+	m_controller_p = m_world_p->getControllerWithName(param[3]);
+	m_param = param;
+}
+EVENT_RESULT SetGoalPointEvent::play() {
+
+	// 対象のキャラの目標地点を設定
+	m_controller_p->setGoal(m_gx, m_gy);
+
+	return EVENT_RESULT::SUCCESS;
+}
+void SetGoalPointEvent::setWorld(World* world) {
+	EventElement::setWorld(world);
+	m_controller_p = m_world_p->getControllerWithName(m_param[3]);
+}
+
+// 全キャラが目標地点へ移動するまで待機
+MoveGoalEvent::MoveGoalEvent(World* world, std::vector<std::string> param) :
+	EventElement(world)
+{
+	int x = 1;
+}
+EVENT_RESULT MoveGoalEvent::play() {
+	if (m_world_p->moveGoalCharacter()) {
+		return EVENT_RESULT::SUCCESS;
+	}
+	return EVENT_RESULT::NOW;
 }
 
 // キャラのGroupIDを変更する

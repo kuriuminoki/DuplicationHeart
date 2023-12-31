@@ -31,6 +31,8 @@ public:
 	virtual bool actionOrder() { return false; }
 
 	// セッタ
+	virtual void setGx(int gx) { }
+	virtual void setGy(int gy) { }
 	virtual void setCharacterAction(const CharacterAction* characterAction) = 0;
 
 	// 遠距離攻撃の目標座標
@@ -77,6 +79,9 @@ public:
 
 	// 追跡対象の近くにいるか判定
 	virtual bool checkAlreadyFollow() { return true; }
+
+	// 目標地点へ移動するだけ 達成済みならtrueで何もしない
+	virtual bool moveGoalOrder(int& right, int& left, int& up, int& down, int& jump) { return true; }
 };
 
 
@@ -232,6 +237,9 @@ public:
 	int getTargetId() const;
 	const char* getTargetName() const;
 
+	// 目標地点へ移動するだけ 達成済みならtrueで何もしない
+	bool moveGoalOrder(int& right, int& left, int& up, int& down, int& jump);
+
 protected:
 	// スティック操作
 	void stickOrder(int& right, int& left, int& up, int& down);
@@ -366,6 +374,9 @@ public:
 	Brain* createCopy(std::vector<Character*> characters, const Camera* camera);
 
 	void moveOrder(int& right, int& left, int& up, int& down);
+
+	// 目標地点へ移動するだけ 達成済みならtrueで何もしない
+	bool moveGoalOrder(int& right, int& left, int& up, int& down, int& jump);
 };
 
 
@@ -387,6 +398,9 @@ public:
 	Brain* createCopy(std::vector<Character*> characters, const Camera* camera);
 
 	void moveOrder(int& right, int& left, int& up, int& down);
+
+	// 目標地点へ移動するだけ 達成済みならtrueで何もしない
+	bool moveGoalOrder(int& right, int& left, int& up, int& down, int& jump);
 };
 
 

@@ -212,6 +212,9 @@ public:
 	// キャラに戦わせる
 	void battle();
 
+	// 各キャラが目標地点へ移動するだけ
+	bool moveGoalCharacter();
+
 	// キャラに会話させる
 	void talk();
 

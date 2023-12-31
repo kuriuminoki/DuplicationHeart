@@ -474,6 +474,28 @@ const char*  NormalAI::getTargetName() const {
 	return m_target_p == nullptr ? "" : m_target_p->getName().c_str();
 }
 
+// 目標地点へ移動するだけ 達成済みならtrueで何もしない
+bool NormalAI::moveGoalOrder(int& right, int& left, int& up, int& down, int& jump) {
+	// 現在地
+	int x = m_characterAction_p->getCharacter()->getCenterX();
+	int y = m_characterAction_p->getCharacter()->getY() + m_characterAction_p->getCharacter()->getHeight();
+	// 目標に到達しているか
+	if (m_gx > x - GX_ERROR && m_gx < x + GX_ERROR && m_gy > y - GY_ERROR && m_gy < y + GY_ERROR) {
+		return true;
+	}
+	// 到達していないので移動
+	stickOrder(right, left, up, down);
+	// 壁にぶつかったからジャンプ
+	int maxJump = m_characterAction_p->getPreJumpMax();
+	if (m_jumpCnt == 0) {
+		if (m_rightKey > 0 && m_characterAction_p->getRightLock()) { m_jumpCnt = maxJump; }
+		else if (m_leftKey > 0 && m_characterAction_p->getLeftLock()) { m_jumpCnt = maxJump; }
+	}
+	if (m_jumpCnt > 0) { m_jumpCnt--; }
+	jump = m_jumpCnt == 0 ? 0 : maxJump - m_jumpCnt;
+	return false;
+}
+
 
 /*
 * キャラについていくNormalAI
@@ -813,6 +835,18 @@ void FlightAI::moveOrder(int& right, int& left, int& up, int& down) {
 	stickOrder(right, left, up, down);
 }
 
+// 目標地点へ移動するだけ 達成済みならtrueで何もしない
+bool FlightAI::moveGoalOrder(int& right, int& left, int& up, int& down, int& jump) {
+	bool flag = NormalAI::moveGoalOrder(right, left, up, down, jump);
+	if (!flag) {
+		// 現在地
+		int x = m_characterAction_p->getCharacter()->getCenterX();
+		int y = m_characterAction_p->getCharacter()->getY() + m_characterAction_p->getCharacter()->getHeight();
+		moveUpDownOrder(x, y, m_try);
+	}
+	return false;
+}
+
 
 /*
 * 空を飛ぶAI
@@ -870,6 +904,18 @@ void FollowFlightAI::moveOrder(int& right, int& left, int& up, int& down) {
 		m_try = false;
 	}
 	stickOrder(right, left, up, down);
+}
+
+// 目標地点へ移動するだけ 達成済みならtrueで何もしない
+bool FollowFlightAI::moveGoalOrder(int& right, int& left, int& up, int& down, int& jump) {
+	bool flag = NormalAI::moveGoalOrder(right, left, up, down, jump);
+	if (!flag) {
+		// 現在地
+		int x = m_characterAction_p->getCharacter()->getCenterX();
+		int y = m_characterAction_p->getCharacter()->getY() + m_characterAction_p->getCharacter()->getHeight();
+		moveUpDownOrder(x, y, m_try);
+	}
+	return false;
 }
 
 

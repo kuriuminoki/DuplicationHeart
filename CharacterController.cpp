@@ -212,6 +212,24 @@ void CharacterController::setPlayerDirection(Character* player_p) {
 	m_characterAction->setCharacterLeftDirection(player_p->getCenterX() < m_characterAction->getCharacter()->getCenterX());
 }
 
+// AIの目標地点を設定
+void CharacterController::setGoal(int gx, int gy) {
+	m_brain->setGx(gx);
+	m_brain->setGy(gy);
+}
+
+// 目標地点へ移動するだけ
+bool CharacterController::moveGoal() {
+	// 移動 stickなどの入力状態を更新する
+	int rightStick = 0, leftStick = 0, upStick = 0, downStick = 0, jump = 0;
+	bool alreadyGoal = m_brain->moveGoalOrder(rightStick, leftStick, upStick, downStick, jump);
+	// stickに応じて移動
+	m_characterAction->move(rightStick, leftStick, upStick, downStick);
+	// ジャンプ
+	m_characterAction->jump(jump);
+	return alreadyGoal;
+}
+
 
 /*
 * キャラコントロール マウスを使う可能性もあるのでCameraが必要

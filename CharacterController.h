@@ -123,6 +123,12 @@ public:
 
 	// BrainがFreezeならプレイヤーの方向を向かせる
 	void setPlayerDirection(Character* player_p);
+
+	// AIの目標地点を設定
+	void setGoal(int gx, int gy);
+
+	// 目標地点へ移動するだけ
+	bool moveGoal();
 };
 
 

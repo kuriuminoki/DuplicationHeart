@@ -940,6 +940,66 @@ void World::atariAttackAndAttack() {
 	}
 }
 
+// 各キャラが目標地点へ移動するだけ 全員到達したらtrueを返す
+bool World::moveGoalCharacter() {
+	// deleteFlagがtrueのオブジェクトを削除する。
+	deleteObject(m_stageObjects);
+	deleteObject(m_attackObjects);
+
+	// キャラの更新（攻撃対象の変更）
+	// 上でキャラを削除したから更新したから必要
+	updateCharacter();
+
+	// キャラクターの動き
+	bool allCharacterAlreadyGoal = true;
+	size_t size = m_characterControllers.size();
+	for (unsigned int i = 0; i < size; i++) {
+		CharacterController* controller = m_characterControllers[i];
+
+		// HPが0ならスキップ
+		if (controller->getAction()->getCharacter()->getHp() == 0) { continue; }
+
+		// 行動前の処理
+		controller->init();
+
+		// オブジェクトとの当たり判定
+		atariCharacterAndObject(controller, m_stageObjects);
+		atariCharacterAndObject(controller, m_attackObjects);
+		atariCharacterAndObject(controller, m_stageObjects); // 2回目呼ぶのは妥協案　1回目で斜面にいるかがわかり、それによって処理が変わるため2回目が必要
+
+		// 目標地点へ移動する操作 originalのハートはフリーズ
+		if (!m_duplicationFlag || m_characterControllers[i]->getAction()->getCharacter()->getId() != m_playerId) {
+			allCharacterAlreadyGoal &= controller->moveGoal();
+			controller->setPlayerDirection(m_player_p);
+		}
+
+		// 反映 originalのハートはフリーズ
+		if (!m_duplicationFlag || m_characterControllers[i]->getAction()->getCharacter()->getId() != m_playerId) {
+			controller->action();
+		}
+
+		// オブジェクトとの貫通判定
+		penetrationCharacterAndObject(controller, m_stageObjects);
+	}
+
+	// オブジェクトの動き
+	controlObject();
+
+	// アイテムの動き
+	controlItem();
+
+	// カメラの更新
+	updateCamera();
+
+	// サウンドプレイヤーのパン設定用
+	m_soundPlayer_p->setCameraX(m_camera->getX());
+
+	// アニメーションの更新
+	updateAnimation();
+
+	return allCharacterAlreadyGoal;
+}
+
 // 会話させる
 void World::talk() {
 	if (m_conversation_p != nullptr) {
