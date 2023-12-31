@@ -265,6 +265,52 @@ public:
 	// 世界を設定しなおす
 	void setWorld(World* world);
 };
+// キャラの目標地点を設定を変える
+class SetGoalPointEvent :
+	public EventElement
+{
+private:
+
+	// パラメータ
+	std::vector<std::string> m_param;
+
+	// 目標地点
+	int m_gx, m_gy;
+
+	// 対象のキャラ
+	CharacterController* m_controller_p;
+
+public:
+	SetGoalPointEvent(World* world, std::vector<std::string> param);
+
+	// プレイ
+	EVENT_RESULT play();
+
+	// ハートのスキル発動が可能かどうか
+	bool skillAble() { return false; }
+
+	// 世界を設定しなおす
+	void setWorld(World* world);
+};
+// 全キャラが目標地点へ移動するまで待機
+class MoveGoalEvent :
+	public EventElement
+{
+private:
+
+	// パラメータ
+	std::vector<std::string> m_param;
+
+public:
+	MoveGoalEvent(World* world, std::vector<std::string> param);
+
+	// プレイ
+	EVENT_RESULT play();
+
+	// ハートのスキル発動が可能かどうか
+	bool skillAble() { return false; }
+
+};
 // キャラのAIを変える
 class ChangeBrainEvent :
 	public EventElement
