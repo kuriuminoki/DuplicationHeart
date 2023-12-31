@@ -125,11 +125,14 @@ void Event::createElement(vector<string> param, World* world, SoundPlayer* sound
 	else if (param0 == "ChangeGroup") {
 		element = new ChangeGroupEvent(world, param);
 	}
-	else if (param0 == "ChangeInfoVersionEvent") {
+	else if (param0 == "ChangeInfoVersion") {
 		element = new ChangeInfoVersionEvent(world, param);
 	}
-	else if (param0 == "ChangeCharacterPointEvent") {
+	else if (param0 == "ChangeCharacterPoint") {
 		element = new ChangeCharacterPointEvent(world, param);
+	}
+	else if (param0 == "ChangeCharacterDirection") {
+		element = new ChangeCharacterDirectionEvent(world, param);
 	}
 	else if (param0 == "DeadCharacter") {
 		element = new DeadCharacterEvent(world, param);
@@ -143,7 +146,7 @@ void Event::createElement(vector<string> param, World* world, SoundPlayer* sound
 	else if (param0 == "Movie") {
 		element = new MovieEvent(world, soundPlayer, param);
 	}
-	else if (param0 == "PlayerDeadEvent") {
+	else if (param0 == "PlayerDead") {
 		element = new PlayerDeadEvent(world, param);
 	}
 
@@ -429,6 +432,46 @@ void ChangeCharacterPointEvent::setWorld(World* world) {
 	m_character_p = m_world_p->getCharacterWithName(m_param[2]);
 }
 
+// キャラの向きを変える
+ChangeCharacterDirectionEvent::ChangeCharacterDirectionEvent(World* world, std::vector<string> param) :
+	EventElement(world)
+{
+	m_param = param;
+	m_leftDirection = false;
+	m_targetCharacter_p = nullptr;
+	if (m_param[1] == "left" || m_param[1] == "true") {
+		// 左を指定
+		m_leftDirection = true;
+	}
+	else if (m_param[1] == "right" || m_param[1] == "false") {
+		// 右を指定
+		m_leftDirection = false;
+	}
+	else {
+		// 特定のキャラの方向を指定
+		m_targetCharacter_p = m_world_p->getCharacterWithName(m_param[1]);
+	}
+	// 方向を変える対象のキャラ
+	m_character_p = m_world_p->getCharacterWithName(m_param[2]);
+}
+EVENT_RESULT ChangeCharacterDirectionEvent::play() {
+	// 対象のキャラの向きを変更する
+	if (m_targetCharacter_p != nullptr) {
+		// 特定のキャラの方向へ向く
+		m_character_p->setLeftDirection(m_character_p->getCenterX() > m_targetCharacter_p->getCenterX());
+	}
+	else {
+		// 指定した方向へ向く
+		m_character_p->setLeftDirection(m_leftDirection);
+	}
+	return EVENT_RESULT::SUCCESS;
+}
+void ChangeCharacterDirectionEvent::setWorld(World* world) {
+	EventElement::setWorld(world);
+	m_targetCharacter_p = m_world_p->getCharacterWithName(m_param[1]);
+	m_character_p = m_world_p->getCharacterWithName(m_param[2]);
+}
+
 // 特定のキャラのHPが0になるまで戦う
 DeadCharacterEvent::DeadCharacterEvent(World* world, std::vector<std::string> param) :
 	EventElement(world)
@@ -502,8 +545,9 @@ void TalkEvent::setWorld(World* world) {
 MovieEvent::MovieEvent(World* world, SoundPlayer* soundPlayer, std::vector<std::string> param) :
 	EventElement(world)
 {
-	//int textNum = stoi(param[1]);
-	m_movie = new OpMovie(soundPlayer);
+	if (param[1] == "op") {
+		m_movie = new OpMovie(soundPlayer);
+	}
 }
 
 MovieEvent::~MovieEvent() {
