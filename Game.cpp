@@ -35,6 +35,7 @@ CharacterData::CharacterData(const char* name) {
 	m_version = 1;
 	m_name = name;
 	m_hp = -1;
+	m_invincible = false;
 	// id=-1ÇÕÉfÅ[É^Ç»ÇµÇà”ñ°Ç∑ÇÈ
 	m_id = -1;
 	m_groupId = -1;
@@ -52,6 +53,7 @@ CharacterData::CharacterData(const char* name) {
 void CharacterData::save(FILE* intFp, FILE* strFp) {
 	fwrite(&m_version, sizeof(m_version), 1, intFp);
 	fwrite(&m_hp, sizeof(m_hp), 1, intFp);
+	fwrite(&m_invincible, sizeof(m_invincible), 1, intFp);
 	fwrite(&m_id, sizeof(m_id), 1, intFp);
 	fwrite(&m_groupId, sizeof(m_groupId), 1, intFp);
 	fwrite(&m_areaNum, sizeof(m_areaNum), 1, intFp);
@@ -71,6 +73,7 @@ void CharacterData::save(FILE* intFp, FILE* strFp) {
 void CharacterData::load(FILE* intFp, FILE* strFp) {
 	fread(&m_version, sizeof(m_version), 1, intFp);
 	fread(&m_hp, sizeof(m_hp), 1, intFp);
+	fread(&m_invincible, sizeof(m_invincible), 1, intFp);
 	fread(&m_id, sizeof(m_id), 1, intFp);
 	fread(&m_groupId, sizeof(m_groupId), 1, intFp);
 	fread(&m_areaNum, sizeof(m_areaNum), 1, intFp);

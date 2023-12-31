@@ -210,6 +210,7 @@ Character::Character(int hp, int x, int y, int groupId) {
 	m_hp = hp;
 	m_prevHp = m_hp;
 	m_dispHpCnt = 0;
+	m_invincible = false;
 	m_x = x;
 	m_y = y;
 
@@ -249,6 +250,7 @@ void Character::setParam(Character* character) {
 	character->setLeftDirection(m_leftDirection);
 	character->setHp(m_hp);
 	character->setPrevHp(m_prevHp);
+	character->setInvincible(m_invincible);
 	character->getCharacterGraphHandle()->setGraph(getGraphHandle());
 }
 
@@ -289,6 +291,11 @@ void Character::setLeftDirection(bool leftDirection) {
 
 // HPå∏è≠
 void Character::damageHp(int value) {
+
+	// ñ≥ìG
+	if (m_invincible) { return; }
+	
+	// ñ≥ìGÇ∂Ç·Ç»Ç¢Ç»ÇÁHPåªè€
 	m_hp = max(0, m_hp - value);
 	m_dispHpCnt = 60;
 }

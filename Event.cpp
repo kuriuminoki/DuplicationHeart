@@ -110,6 +110,9 @@ void Event::createElement(vector<string> param, World* world, SoundPlayer* sound
 	if (param0 == "LockArea") {
 		element = new LockAreaEvent(world, param);
 	}
+	else if (param0 == "InvincinbleEvent") {
+		element = new InvincinbleEvent(world, param);
+	}
 	else if (param0 == "ChangeBrain") {
 		element = new ChangeBrainEvent(world, param);
 	}
@@ -145,6 +148,8 @@ void Event::createElement(vector<string> param, World* world, SoundPlayer* sound
 }
 
 bool Event::fire() {
+
+	// 条件を"すべて"満たしたら発火
 	for (unsigned int i = 0; i < m_eventFire.size(); i++) {
 		if (!m_eventFire[i]->fire()) {
 			return false;
@@ -276,6 +281,26 @@ LockAreaEvent::LockAreaEvent(World* world, std::vector<std::string> param):
 EVENT_RESULT LockAreaEvent::play() {
 	m_world_p->setAreaLock(m_lock);
 	return EVENT_RESULT::SUCCESS;
+}
+
+// キャラを無敵にする
+InvincinbleEvent::InvincinbleEvent(World* world, vector<string> param) :
+	EventElement(world)
+{
+	m_invincible = param[1] == "1" ? true : false;
+	m_character_p = m_world_p->getCharacterWithName(param[2]);
+	m_param = param;
+}
+EVENT_RESULT InvincinbleEvent::play() {
+
+	// 対象のキャラを無敵にする
+	m_character_p->setInvincible(m_invincible);
+
+	return EVENT_RESULT::SUCCESS;
+}
+void InvincinbleEvent::setWorld(World* world) {
+	EventElement::setWorld(world);
+	m_character_p = m_world_p->getCharacterWithName(m_param[2]);
 }
 
 // キャラのBrainを変更する

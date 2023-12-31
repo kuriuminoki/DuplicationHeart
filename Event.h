@@ -238,6 +238,33 @@ public:
 	EVENT_RESULT play();
 
 };
+// キャラを無敵にする
+class InvincinbleEvent :
+	public EventElement
+{
+private:
+
+	// パラメータ
+	std::vector<std::string> m_param;
+
+	// trueなら無敵にする
+	bool m_invincible;
+
+	// 対象のキャラ
+	Character* m_character_p;
+
+public:
+	InvincinbleEvent(World* world, std::vector<std::string> param);
+
+	// プレイ
+	EVENT_RESULT play();
+
+	// ハートのスキル発動が可能かどうか
+	bool skillAble() { return false; }
+
+	// 世界を設定しなおす
+	void setWorld(World* world);
+};
 // キャラのAIを変える
 class ChangeBrainEvent :
 	public EventElement

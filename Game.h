@@ -24,6 +24,9 @@ private:
 	// HP
 	int m_hp;
 
+	// –³“G‚È‚çtrue
+	bool m_invincible;
+
 	// ID
 	int m_id;
 
@@ -65,6 +68,7 @@ public:
 	inline const char* name() const { return m_name.c_str(); }
 	inline const int version() const { return m_version; }
 	inline int hp() const { return m_hp; }
+	inline bool invincible() const { return m_invincible; }
 	inline int id() const { return m_id; }
 	inline int groupId() const { return m_groupId; }
 	inline int areaNum() const { return m_areaNum; }
@@ -80,6 +84,7 @@ public:
 	// ƒZƒbƒ^
 	inline void setVersion(int version) { m_version = version; }
 	inline void setHp(int hp) { m_hp = hp; }
+	inline void setInvincible(bool invincible) { m_invincible = invincible; }
 	inline void setId(int id) { m_id = id; }
 	inline void setGroupId(int groupId) { m_groupId = groupId; }
 	inline void setAreaNum(int areaNum) { m_areaNum = areaNum; }
