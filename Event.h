@@ -420,6 +420,37 @@ public:
 	void setWorld(World* world);
 };
 
+// キャラの向きを変える
+class ChangeCharacterDirectionEvent :
+	public EventElement
+{
+private:
+
+	// パラメータ
+	std::vector<std::string> m_param;
+
+	// 左を向くならtrue
+	bool m_leftDirection;
+
+	// 子のキャラがいる方向へ向く いないならnullptr
+	Character* m_targetCharacter_p;
+
+	// 対象のキャラ
+	Character* m_character_p;
+
+public:
+	ChangeCharacterDirectionEvent(World* world, std::vector<std::string> param);
+
+	// プレイ
+	EVENT_RESULT play();
+
+	// ハートのスキル発動が可能かどうか
+	bool skillAble() { return false; }
+
+	// 世界を設定しなおす
+	void setWorld(World* world);
+};
+
 // 特定のキャラのHPが0になるまで戦う
 class DeadCharacterEvent :
 	public EventElement
