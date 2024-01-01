@@ -118,9 +118,9 @@ void ConversationDrawer::draw() {
 	}
 	
 	// 画面右下のクリック要求アイコン
-	bool textFinish = m_conversation->finishText() && m_conversation->getFinishCnt() == 0 && m_conversation->getStartCnt() == 0;
+	bool textFinish = m_conversation->finishText() && m_conversation->getFinishCnt() == 0 && m_conversation->getStartCnt() == 0 && m_conversation->nextTextAble();
 	bool eventFinish = !(m_conversation->animePlayNow()) || (m_conversation->getEventAnime()->getAnime()->getFinishFlag());
-	if (textFinish &&eventFinish) {
+	if (textFinish && eventFinish) {
 		int dy = (int)(((m_conversation->getCnt() / 3) % 20 - 10) * m_exY);
 		m_conversation->getTextFinishGraph()->draw(GAME_WIDE - EDGE_X - (int)(100 * m_exX), GAME_HEIGHT - EDGE_DOWN - (int)(50 * m_exY) + dy - TEXT_GRAPH_EDGE, m_conversation->getTextFinishGraph()->getEx());
 	}
@@ -138,15 +138,23 @@ void ConversationDrawer::draw() {
 
 }
 
-void ConversationDrawer::drawText(int x, int y,int height, std::string text, int color, int font) {
+void ConversationDrawer::drawText(int x, int y,int height, const std::string text, int color, int font) {
 	int now = 0;
 	int i = 0;
-	int size = (int)(text.size());
+	const int size = (int)(text.size());
 	// セリフ
 	while (now < size) {
 
 		// 次は何文字目まで表示するか
-		int next = now + min(MAX_TEXT_LEN, (int)text.size() - now);
+		int next = now + min(MAX_TEXT_LEN, size - now);
+
+		// 次の行の先頭が「、」か「。」ならそれも含める
+		if (next - now >= 0 && size >= next - now + 2) {
+			string nextStrHead = text.substr(next - now, 2);
+			if (nextStrHead == "、" || nextStrHead == "。") {
+				next += 2;
+			}
+		}
 
 		string disp = text.substr(now, next - now);
 		size_t br = disp.find("｜"); // 改行の記号
@@ -159,6 +167,7 @@ void ConversationDrawer::drawText(int x, int y,int height, std::string text, int
 		}
 
 		// セリフを描画
+		if (disp.size() == 0) { continue; }
 		DrawStringToHandle(x, y + (i * height), disp.c_str(), BLACK, m_textHandle);
 
 		// 次の行

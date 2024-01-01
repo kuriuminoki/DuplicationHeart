@@ -120,6 +120,9 @@ private:
 	const unsigned int TEXT_SPEED = 5;
 	unsigned int m_textSpeed;
 
+	// 次のテキストへ行けるようになるまでの時間
+	const unsigned int NEXT_TEXT_ABLE = 30;
+
 	// テキストを飛ばせるようになるまでの時間
 	const unsigned int MOVE_FINAL_ABLE = 10;
 
@@ -212,6 +215,9 @@ public:
 
 	// 最後までセリフ表示したか
 	bool finishText() const;
+
+	// 次のセリフへ移行できるか
+	bool nextTextAble() const { return m_cnt > NEXT_TEXT_ABLE; }
 
 private:
 	void loadNextBlock();

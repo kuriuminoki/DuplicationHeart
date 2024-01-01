@@ -258,9 +258,10 @@ bool Conversation::play() {
 	}
 
 	// プレイヤーからのアクション（スペースキー入力）
-	if (leftClick() == 1) {
-		m_textAction.init();
-		if (finishText()) {
+	if (leftClick() == 1 && m_cnt > MOVE_FINAL_ABLE) {
+		if (finishText() && m_cnt > NEXT_TEXT_ABLE) {
+			// アニメーションのリセット
+			m_textAction.init();
 			// 全ての会話が終わった
 			if (FileRead_eof(m_fp) != 0) {
 				m_finishCnt++;
@@ -271,7 +272,7 @@ bool Conversation::play() {
 			// 効果音
 			m_soundPlayer_p->pushSoundQueue(m_nextSound);
 		}
-		else if(m_cnt > MOVE_FINAL_ABLE) {
+		else {
 			// 最後までテキストを飛ばす
 			m_textNow = (unsigned int)m_text.size();
 		}
@@ -365,6 +366,12 @@ void Conversation::loadNextBlock() {
 	else if (str == "@resetBGM") {
 		// BGMを戻す
 		m_soundPlayer_p->setBGM(m_originalBgmPath);
+		loadNextBlock();
+	}
+	else if (str == "@setWorldBGM") {
+		// WorldのBGMを変更
+		FileRead_gets(buff, size, m_fp);
+		m_originalBgmPath = buff;
 		loadNextBlock();
 	}
 	else if (str == "@startCnt") {

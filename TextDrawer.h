@@ -43,7 +43,7 @@ public:
 
 	void draw();
 
-	void drawText(int x, int y, int height, std::string text, int color, int font);
+	void drawText(int x, int y, int height, const std::string text, int color, int font);
 };
 
 
