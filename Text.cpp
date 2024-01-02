@@ -179,6 +179,14 @@ GraphHandle* Conversation::getGraph() const {
 	int size = (int)m_speakerGraph_p->getSize();
 	int index = size - (m_textNow / 2 % size) - 1;
 	index = m_textNow == (unsigned int)m_text.size() ? 0 : index;
+	if (m_faceDrawMode == FaceDrawMode::FREEZE) {
+		index = 0;
+	}
+	else if (m_faceDrawMode == FaceDrawMode::ONCE) {
+		if (m_textNow / 2 >= size) {
+			index = size - 1;
+		}
+	}
 	return m_speakerGraph_p->getGraphHandle(index);
 }
 
@@ -267,6 +275,8 @@ bool Conversation::play() {
 				m_finishCnt++;
 				return false;
 			}
+			// 顔画像の表示モードをデフォルトに戻す
+			m_faceDrawMode = FaceDrawMode::NORMAL;
 			// 次のテキストへ移る
 			loadNextBlock();
 			// 効果音
@@ -406,6 +416,17 @@ void Conversation::loadNextBlock() {
 		path += buff;
 		m_sound = LoadSoundMem(path.c_str());
 		m_soundPlayer_p->pushSoundQueue(m_sound);
+		loadNextBlock();
+	}
+	else if (str == "@face") {
+		FileRead_gets(buff, size, m_fp);
+		string mode = buff;
+		if (mode == "freeze") {
+			m_faceDrawMode = FaceDrawMode::FREEZE;
+		}
+		else if (mode == "once") {
+			m_faceDrawMode = FaceDrawMode::ONCE;
+		}
 		loadNextBlock();
 	}
 	else { // 発言

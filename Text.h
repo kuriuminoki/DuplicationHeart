@@ -178,6 +178,14 @@ private:
 	// 効果音
 	int m_sound;
 
+	// 顔画像の表示方法
+	enum FaceDrawMode {
+		NORMAL,	// 普通にアニメを繰り返し
+		FREEZE,	// アニメを動かさない
+		ONCE	// 一度だけ再生
+	};
+	FaceDrawMode m_faceDrawMode;
+
 public:
 	Conversation(int textNum, World* world, SoundPlayer* soundPlayer);
 	~Conversation();
