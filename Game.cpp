@@ -175,7 +175,7 @@ GameData::GameData() {
 	}
 
 	// 主要キャラを設定
-	const int mainSum = 8;
+	const int mainSum = 9;
 	const char* mainCharacters[mainSum] = {
 		"ハート",
 		"シエスタ",
@@ -183,6 +183,7 @@ GameData::GameData() {
 		"ヴァルキリア",
 		"トロイ",
 		"メモリー",
+		"ユーリ",
 		"エム・サディ",
 		"フレンチ"
 	};

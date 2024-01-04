@@ -149,8 +149,8 @@ void ConversationDrawer::drawText(int x, int y,int height, const std::string tex
 		int next = now + min(MAX_TEXT_LEN, size - now);
 
 		// 次の行の先頭が「、」か「。」ならそれも含める
-		if (next - now >= 0 && size >= next - now + 2) {
-			string nextStrHead = text.substr(next - now, 2);
+		if (next - now >= 0 && size >= next + 2) {
+			string nextStrHead = text.substr(next, 2);
 			if (nextStrHead == "、" || nextStrHead == "。" || nextStrHead == "？" || nextStrHead == "！") {
 				next += 2;
 			}
