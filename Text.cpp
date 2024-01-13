@@ -183,7 +183,7 @@ GraphHandle* Conversation::getGraph() const {
 		index = 0;
 	}
 	else if (m_faceDrawMode == FaceDrawMode::ONCE) {
-		if (m_textNow / 2 >= size) {
+		if (m_textNow / 2 >= (unsigned int)size) {
 			index = size - 1;
 		}
 	}

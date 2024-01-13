@@ -96,9 +96,6 @@ private:
 	// OPムービー
 	OpMovie* m_movie;
 
-	// OP描画用
-	AnimationDrawer* m_animationDrawer;
-
 	// セーブデータ選択画面
 	SelectSaveData* m_selectSaveData;
 

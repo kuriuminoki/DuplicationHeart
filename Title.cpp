@@ -177,11 +177,9 @@ Title::Title() {
 	if (m_selectSaveData->saveDataExist()) { 
 		m_soundPlayer->setVolume(m_selectSaveData->getSoundVolume());
 		m_movie = new OpMovie(m_soundPlayer);
-		m_animationDrawer = new AnimationDrawer(nullptr);
 	}
 	else {
 		m_movie = nullptr;
-		m_animationDrawer = nullptr;
 	}
 
 	double exX, exY;
@@ -212,9 +210,6 @@ Title::~Title() {
 
 	if (m_movie != nullptr) {
 		delete m_movie;
-	}
-	if (m_animationDrawer != nullptr) {
-		delete m_animationDrawer;
 	}
 
 }
@@ -276,8 +271,7 @@ void Title::draw() {
 
 	// OP
 	if (m_movie != nullptr) {
-		m_animationDrawer->setAnimation(m_movie->getAnimation());
-		m_animationDrawer->drawAnimation();
+		m_movie->draw();
 		return;
 	}
 
