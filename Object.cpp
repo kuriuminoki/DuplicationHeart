@@ -815,6 +815,8 @@ DoorObject::DoorObject(int x1, int y1, int x2, int y2, const char* fileName, int
 	m_handle = new GraphHandle(filePath.c_str(), 1.0, 0.0, true);
 	m_areaNum = areaNum;
 	m_text = "";
+	m_defaultText = "Ｗキーで入る";
+	m_textNum = -1;
 }
 
 DoorObject::~DoorObject() {
@@ -834,11 +836,23 @@ bool DoorObject::atari(CharacterController* characterController) {
 
 	// 当たり判定
 	if (characterX2 > m_x1 && characterX1 < m_x2 && characterY2 > m_y1 && characterY1 < m_y2) {
-		m_text = "Ｗキーで入る";
+		m_text = m_defaultText;
 		return true;
 	}
 	m_text = "";
 	return false;
+}
+
+StageObject::StageObject(int x1, int y1, int x2, int y2, const char* fileName, int textNum) :
+	DoorObject(x1, y1, x2, y2, fileName, -1)
+{
+	m_textNum = textNum;
+	m_defaultText = "Ｗキーで調べる";
+}
+
+StageObject::~StageObject() {
+	// DoorObjectでdeleteされるので不要
+	//delete m_handle;
 }
 
 
@@ -899,6 +913,12 @@ void SlashObject::setSlashParam(SlashObject* object) {
 }
 Object* DoorObject::createCopy() {
 	DoorObject* res = new DoorObject(m_x1, m_y1, m_x2, m_y2, m_fileName.c_str(), m_areaNum);
+	setParam(res);
+	res->setText(m_text.c_str());
+	return res;
+}
+Object* StageObject::createCopy() {
+	StageObject* res = new StageObject(m_x1, m_y1, m_x2, m_y2, m_fileName.c_str(), m_textNum);
 	setParam(res);
 	res->setText(m_text.c_str());
 	return res;

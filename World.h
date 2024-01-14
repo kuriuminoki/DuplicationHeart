@@ -40,6 +40,8 @@ private:
 	// 会話イベント EventElementクラスからもらう
 	Conversation* m_conversation_p;
 
+	Conversation* m_objectConversation;
+
 	// ムービー EventElementクラスからもらう
 	Movie* m_movie_p;
 
@@ -136,6 +138,7 @@ public:
 	inline const int getBackGroundGraph() const { return m_backGroundGraph; }
 	inline const int getBackGroundColor() const { return m_backGroundColor; }
 	inline const Conversation* getConversation() const { return m_conversation_p; }
+	inline const Conversation* getObjectConversation() const { return m_objectConversation; }
 	inline Movie* getMovie() const { return m_movie_p; }
 	inline SoundPlayer* getSoundPlayer() const { return m_soundPlayer_p; }
 	inline double getCameraMaxEx() const { return m_cameraMaxEx; }

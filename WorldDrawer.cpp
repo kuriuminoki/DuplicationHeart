@@ -175,6 +175,14 @@ void WorldDrawer::draw() {
 		m_conversationDrawer->setConversation(conversation);
 		m_conversationDrawer->draw();
 	}
+	else {
+		// StageObjectを調べた際のテキストイベント
+		conversation = m_world->getObjectConversation();
+		if (conversation != nullptr) {
+			m_conversationDrawer->setConversation(conversation);
+			m_conversationDrawer->draw();
+		}
+	}
 
 	if (movie == nullptr && conversation == nullptr) {
 		// ターゲット

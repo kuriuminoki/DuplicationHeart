@@ -91,6 +91,7 @@ public:
 
 	// 扉用
 	virtual inline int getAreaNum() const { return -1; }
+	virtual inline int getTextNum() const { return -1; }
 
 	// 画像を返す　ないならnullptr
 	virtual GraphHandle* getHandle() const { return m_handle; }
@@ -417,7 +418,7 @@ public:
 class DoorObject :
 	public Object 
 {
-private:
+protected:
 	// ファイルネームを保存しておく
 	std::string m_fileName;
 
@@ -426,6 +427,10 @@ private:
 
 	// チュートリアルのテキスト
 	std::string m_text;
+
+	std::string m_defaultText;
+
+	int m_textNum;
 
 public:
 	DoorObject(int x1, int y1, int x2, int y2, const char* fileName, int areaNum);
@@ -439,12 +444,27 @@ public:
 	inline int getAreaNum() const { return m_areaNum; }
 	inline std::string getText() const { return m_text; }
 	const char* getFileName() const { return m_fileName.c_str(); }
+	inline int getTextNum() const { return m_textNum; }
 
 	// セッタ
 	inline void setText(const char* text) { m_text = text; }
 
 	// キャラとの当たり判定
 	virtual bool atari(CharacterController* characterController);
+};
+
+
+// 当たり判定のないオブジェクト
+class StageObject :
+	public DoorObject
+{
+public:
+
+	StageObject(int x1, int y1, int x2, int y2, const char* fileName, int textNum);
+	~StageObject();
+
+	Object* createCopy();
+
 };
 
 #endif
