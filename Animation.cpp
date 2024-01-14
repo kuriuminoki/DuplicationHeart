@@ -75,6 +75,9 @@ Movie::Movie(SoundPlayer* soundPlayer_p) {
 	m_soundPlayer_p = soundPlayer_p;
 	m_bgmPath = "";
 	m_originalBgmPath = m_soundPlayer_p->getBgmName();
+
+	m_flameWide = (GAME_WIDE - (int)(GAME_WIDE_DEFAULT * m_ex)) / 2;
+	m_flameHeight = (GAME_HEIGHT - (int)(GAME_HEIGHT_DEFAULT * m_ex)) / 2;
 }
 
 Movie::~Movie() {
@@ -113,6 +116,17 @@ void Movie::draw() {
 	if (m_animation != nullptr) {
 		m_animationDrawer->setAnimation(m_animation);
 		m_animationDrawer->drawAnimation();
+	}
+}
+
+void Movie::drawFlame() {
+	if (m_flameWide > 0) {
+		DrawBox(0, 0, m_flameWide + 1, GAME_HEIGHT, BLACK, TRUE);
+		DrawBox(GAME_WIDE - m_flameWide - 1, 0, GAME_WIDE, GAME_HEIGHT, BLACK, TRUE);
+	}
+	if (m_flameHeight > 0) {
+		DrawBox(0, 0, GAME_WIDE, m_flameHeight + 1, BLACK, TRUE);
+		DrawBox(0, GAME_HEIGHT - m_flameHeight - 1, GAME_WIDE, GAME_HEIGHT, BLACK, TRUE);
 	}
 
 	// デバッグ用
@@ -153,21 +167,21 @@ void PartOneCharacter::draw() {
 
 
 void OpMovie::pushPartOneCharacter(int index, bool front, GraphHandle* character) {
-	int y = GAME_WIDE / 2;
+	int y = GAME_HEIGHT * 5 / 6 - m_flameHeight / 2;
 	int vx = -8;
 	double ex = m_ex;
 	int wide = 800 * m_ex;
 	int x = 0;
 	if (!front) { // 後ろのキャラ
 		double backEx = 0.3;
-		y = GAME_WIDE / 10;
+		y = GAME_HEIGHT/ 5 + m_flameHeight / 2;
 		vx = 5 * m_ex;
 		ex *= backEx;
 		wide = 400 * m_ex;
 		x = index * (-wide) + (GAME_WIDE / 2);
 	}
 	else {
-		double frontEx = 0.8;
+		double frontEx = 0.7;
 		vx = -10 * m_ex;
 		ex *= frontEx;
 		wide = 700 * m_ex;
@@ -663,5 +677,5 @@ void OpMovie::draw() {
 	if (m_cnt > 2950 && m_cnt < 3050 && m_animation->getFinishFlag()) {
 		DrawBox(0, 0, GAME_WIDE, GAME_HEIGHT, BLACK, TRUE);
 	}
-
+	drawFlame();
 }

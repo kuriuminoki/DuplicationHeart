@@ -69,6 +69,8 @@ protected:
 	// ‰ğ‘œ“x‚Ì•ÏX‚É‘Î‰
 	double m_ex;
 
+	int m_flameWide, m_flameHeight;
+
 	// I—¹‚µ‚½‚çtrue
 	bool m_finishFlag;
 
@@ -107,6 +109,9 @@ public:
 
 	// •`‰æ
 	virtual void draw();
+
+protected:
+	void drawFlame();
 };
 
 

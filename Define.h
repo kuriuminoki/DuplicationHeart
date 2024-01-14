@@ -13,6 +13,8 @@ static int MOUSE_DISP = TRUE;
 #define GAME_HEIGHT_MAX 2160
 #define GAME_WIDE_MIN 640
 #define GAME_HEIGHT_MIN 480
+#define GAME_WIDE_DEFAULT 1920
+#define GAME_HEIGHT_DEFAULT 1080
 extern int GAME_WIDE;
 extern int GAME_HEIGHT;
 
