@@ -548,11 +548,14 @@ void OpMovie::play() {
 	}
 	else if (m_cnt < 3050 && m_cnt >= 2780) {
 		if (m_cnt == 2780) {
-			m_heart->setEx(m_ex + 10.0);
+			m_heart->setEx(m_ex * 10.0);
 			m_animation->changeGraph(m_heart);
 		}
 		if (m_heart->getGraphHandle()->getEx() > m_ex) {
-			m_heart->setEx(m_heart->getGraphHandle()->getEx() - 1.0);
+			m_heart->setEx(m_heart->getGraphHandle()->getEx() * 2 / 3);
+		}
+		if (m_heart->getGraphHandle()->getEx() < m_ex) {
+			m_heart->setEx(m_ex);
 		}
 		if (m_cnt < 2870) {
 			m_animation->setX(m_animation->getX() + GetRand(2) - 1);
@@ -653,7 +656,7 @@ void OpMovie::play() {
 
 
 	// èIóπ
-	if (m_cnt == 5000) {
+	if (m_cnt == 4800) {
 		m_finishFlag = true;
 	}
 }

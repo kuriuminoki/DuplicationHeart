@@ -63,6 +63,9 @@ pair<vector<Object*>, vector<Object*> > ObjectLoader::getObjects(int areaNum) {
 		if (name == "Door") {
 			res.second.push_back(new DoorObject(x1, y1, x2, y2, graph.c_str(), stoi(other)));
 		}
+		else if (name == "Stage") {
+			res.second.push_back(new StageObject(x1, y1, x2, y2, graph.c_str(), stoi(other)));
+		}
 	}
 	
 	return res;

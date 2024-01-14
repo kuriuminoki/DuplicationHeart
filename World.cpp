@@ -83,6 +83,7 @@ World::World() {
 
 	// 会話イベント
 	m_conversation_p = nullptr;
+	m_objectConversation = nullptr;
 
 	// ムービー
 	m_movie_p = nullptr;
@@ -240,6 +241,10 @@ World::~World() {
 		delete m_characterDeadGraph;
 		DeleteSoundMem(m_characterDeadSound);
 		DeleteSoundMem(m_doorSound);
+	}
+
+	if (m_objectConversation != nullptr) {
+		delete m_objectConversation;
 	}
 }
 
@@ -514,6 +519,8 @@ void World::asignedDoorData(DoorData* data) {
 void World::asignDoorData(vector<DoorData*>& data, int fromAreaNum) const {
 	size_t size = data.size();
 	for (unsigned i = 0; i < m_doorObjects.size(); i++) {
+		// ドアじゃない
+		if (m_doorObjects[i]->getAreaNum() == -1) { continue; }
 		// セーブデータにドアが存在するか
 		bool flag = false;
 		for (unsigned j = 0; j < size; j++) {
@@ -627,6 +634,17 @@ void World::battle() {
 	if (m_brightValue != 255 || playerDead()) {
 		m_brightValue = max(0, m_brightValue - 10);
 		if (!playerDead()) { return; }
+	}
+
+	// オブジェクトを調べた時のテキスト
+	if (m_objectConversation != nullptr) {
+		m_objectConversation->play();
+		// 会話終了
+		if (m_objectConversation->getFinishFlag()) {
+			delete m_objectConversation;
+			m_objectConversation = nullptr;
+		}
+		return;
 	}
 
 	// deleteFlagがtrueのオブジェクトを削除する。
@@ -882,11 +900,19 @@ void World::atariCharacterAndDoor(CharacterController* controller, vector<Object
 		}
 		// 当たり判定をここで行う
 		if (objects[i]->atari(controller) && controller->getActionKey()) {
-			// 当たった場合 エリア移動が発生
-			m_nextAreaNum = objects[i]->getAreaNum();
-			// 画面を暗転
-			m_brightValue--;
-			m_soundPlayer_p->pushSoundQueue(m_doorSound);
+			if (objects[i]->getAreaNum() == -1) {
+				// ドアじゃない
+				if (objects[i]->getTextNum() != -1) {
+					m_objectConversation = new Conversation(objects[i]->getTextNum(), this, m_soundPlayer_p);
+				}
+			}
+			else {
+				// 当たった場合 エリア移動が発生
+				m_nextAreaNum = objects[i]->getAreaNum();
+				// 画面を暗転
+				m_brightValue--;
+				m_soundPlayer_p->pushSoundQueue(m_doorSound);
+			}
 		}
 	}
 
