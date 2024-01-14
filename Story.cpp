@@ -43,6 +43,12 @@ Story::Story(int storyNum, World* world, SoundPlayer* soundPlayer) {
 		m_objectLoader->addObject(objectData[i]);
 	}
 
+	// 時間帯を決定
+	vector<map<string, string> > dateData = csvReader2.getDomainData("DATE:");
+	if (dateData.size() > 0) {
+		m_date = stoi(dateData[0]["num"]);
+	}
+
 	// イベントの発火確認
 	checkFire();
 }
@@ -121,6 +127,7 @@ bool Story::skillAble() {
 // セッタ
 void Story::setWorld(World* world) {
 	m_world_p = world;
+	m_world_p->setDate(m_date);
 	if (m_nowEvent != nullptr) {
 		m_nowEvent->setWorld(m_world_p);
 	}

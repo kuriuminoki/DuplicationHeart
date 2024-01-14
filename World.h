@@ -59,6 +59,9 @@ private:
 	int m_areaNum;
 	int m_nextAreaNum;
 
+	// 時間帯 0は昼、1は夕方、2は夜
+	int m_date;
+
 	// エリア移動が禁止されているならtrue
 	bool m_areaLock;
 
@@ -121,6 +124,7 @@ public:
 	inline int getBrightValue() const { return m_brightValue; }
 	inline int getAreaNum() const { return m_areaNum; }
 	inline int getNextAreaNum() const { return m_nextAreaNum; }
+	inline int getDate() const { return m_date; }
 	inline const Camera* getCamera() const { return m_camera; }
 	std::vector<CharacterController*> getCharacterControllers() const { return m_characterControllers; }
 	std::vector<Character*> getCharacters() const { return m_characters; }
@@ -160,6 +164,7 @@ public:
 	inline void setConversation(Conversation* conversation) { m_conversation_p = conversation; }
 	inline void setMovie(Movie* movie) { m_movie_p = movie; }
 	inline void setAreaLock(bool lock) { m_areaLock = lock; }
+	inline void setDate(int date) { m_date = date; }
 
 	// ID指定でBrain変更
 	void setBrainWithId(int id, Brain* brain);
