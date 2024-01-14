@@ -179,6 +179,14 @@ GraphHandle* Conversation::getGraph() const {
 	int size = (int)m_speakerGraph_p->getSize();
 	int index = size - (m_textNow / 2 % size) - 1;
 	index = m_textNow == (unsigned int)m_text.size() ? 0 : index;
+	if (m_faceDrawMode == FaceDrawMode::FREEZE) {
+		index = 0;
+	}
+	else if (m_faceDrawMode == FaceDrawMode::ONCE) {
+		if (m_textNow / 2 >= (unsigned int)size) {
+			index = size - 1;
+		}
+	}
 	return m_speakerGraph_p->getGraphHandle(index);
 }
 
@@ -258,20 +266,23 @@ bool Conversation::play() {
 	}
 
 	// プレイヤーからのアクション（スペースキー入力）
-	if (leftClick() == 1) {
-		m_textAction.init();
-		if (finishText()) {
+	if (leftClick() == 1 && m_cnt > MOVE_FINAL_ABLE) {
+		if (finishText() && m_cnt > NEXT_TEXT_ABLE) {
+			// アニメーションのリセット
+			m_textAction.init();
 			// 全ての会話が終わった
 			if (FileRead_eof(m_fp) != 0) {
 				m_finishCnt++;
 				return false;
 			}
+			// 顔画像の表示モードをデフォルトに戻す
+			m_faceDrawMode = FaceDrawMode::NORMAL;
 			// 次のテキストへ移る
 			loadNextBlock();
 			// 効果音
 			m_soundPlayer_p->pushSoundQueue(m_nextSound);
 		}
-		else if(m_cnt > MOVE_FINAL_ABLE) {
+		else {
 			// 最後までテキストを飛ばす
 			m_textNow = (unsigned int)m_text.size();
 		}
@@ -367,6 +378,12 @@ void Conversation::loadNextBlock() {
 		m_soundPlayer_p->setBGM(m_originalBgmPath);
 		loadNextBlock();
 	}
+	else if (str == "@setWorldBGM") {
+		// WorldのBGMを変更
+		FileRead_gets(buff, size, m_fp);
+		m_originalBgmPath = buff;
+		loadNextBlock();
+	}
 	else if (str == "@startCnt") {
 		// startCnt = FINISH_COUNTに戻し、フキダシを大きくする
 		m_startCnt = FINISH_COUNT;
@@ -401,10 +418,25 @@ void Conversation::loadNextBlock() {
 		m_soundPlayer_p->pushSoundQueue(m_sound);
 		loadNextBlock();
 	}
+	else if (str == "@face") {
+		FileRead_gets(buff, size, m_fp);
+		string mode = buff;
+		if (mode == "freeze") {
+			m_faceDrawMode = FaceDrawMode::FREEZE;
+		}
+		else if (mode == "once") {
+			m_faceDrawMode = FaceDrawMode::ONCE;
+		}
+		loadNextBlock();
+	}
 	else { // 発言
-		if (str == "@null" || str == "???" || str == "ひとみ") {
+		if (str == "@null") {
 			// ナレーション
-			m_speakerName = str == "@null" ? "" : str;
+			m_speakerName = "";
+			m_noFace = true;
+		}
+		else if (str[0] == '*') {
+			m_speakerName = str.substr(1, str.size());
 			m_noFace = true;
 		}
 		else {

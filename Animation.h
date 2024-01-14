@@ -3,10 +3,12 @@
 
 #include <queue>
 #include <string>
+#include <vector>
 
 class GraphHandle;
 class GraphHandles;
 class SoundPlayer;
+class AnimationDrawer;
 
 class Animation {
 private:
@@ -67,6 +69,8 @@ protected:
 	// 解像度の変更に対応
 	double m_ex;
 
+	int m_flameWide, m_flameHeight;
+
 	// 終了したらtrue
 	bool m_finishFlag;
 
@@ -74,7 +78,9 @@ protected:
 	int m_cnt;
 
 	// 画像を入れて動かすメイン画像
+	int m_centerX, m_centerY;
 	Animation* m_animation;
+	AnimationDrawer* m_animationDrawer;
 
 	// サブ画像 cntが0になったものはpopしていく
 	std::queue<Animation*> m_subAnimation;
@@ -100,6 +106,36 @@ public:
 
 	// 再生
 	virtual void play();
+
+	// 描画
+	virtual void draw();
+
+protected:
+	void drawFlame();
+};
+
+
+// オープニング用
+class PartOneCharacter {
+private:
+
+	// 画像
+	GraphHandle* m_character;
+
+	// 座標
+	int m_initX, m_initY;
+	int m_x, m_y;
+
+	// 速度
+	int m_vx, m_vy;
+
+	double m_ex;
+
+public:
+	PartOneCharacter(GraphHandle* character, int initX, int initY, int vx, double ex);
+
+	void play();
+	void draw();
 };
 
 
@@ -118,6 +154,43 @@ private:
 	GraphHandles* m_titleOrange;
 	GraphHandles* m_titleHeart;
 	GraphHandles* m_heartHide;
+
+	// part1
+	GraphHandles* m_darkHeart;
+	GraphHandles* m_heartEye;
+	std::vector<PartOneCharacter*> m_partOneCharacters;
+	GraphHandle* m_archive1;
+	GraphHandle* m_aigis1;
+	GraphHandle* m_assault1;
+	GraphHandle* m_vermelia1;
+	GraphHandle* m_exlucina1;
+	GraphHandle* m_msadi1;
+	GraphHandle* m_elnino1;
+	GraphHandle* m_onyx1;
+	GraphHandle* m_courir1;
+	GraphHandle* m_cornein1;
+	GraphHandle* m_koharu1;
+	GraphHandle* m_siesta1;
+	GraphHandle* m_hierarchy1;
+	GraphHandle* m_troy1;
+	GraphHandle* m_ancient1;
+	GraphHandle* m_valkiria1;
+	GraphHandle* m_chocola1;
+	GraphHandle* m_titius1;
+	GraphHandle* m_fred1;
+	GraphHandle* m_french1;
+	GraphHandle* m_mascara1;
+	GraphHandle* m_yuri1;
+	GraphHandle* m_rabbi1;
+
+	// part2
+	GraphHandles* m_heartAndMem;
+	GraphHandles* m_heartCry1;
+	GraphHandles* m_heartCry2;
+	GraphHandles* m_memSad1;
+	GraphHandles* m_memSad2;
+	GraphHandles* m_eyeFocus;
+
 	// キャラ
 	GraphHandles* m_archive;
 	GraphHandles* m_aigis;
@@ -137,9 +210,24 @@ private:
 	GraphHandles* m_fred;
 	GraphHandles* m_french;
 	GraphHandles* m_mascara;
+	GraphHandles* m_memoryA;
+	GraphHandles* m_memoryB;
 	GraphHandles* m_yuri;
 	GraphHandles* m_rabbi;
 	GraphHandles* m_tank;
+
+	// サビ
+	GraphHandles* m_heartFlame;
+	GraphHandles* m_rmem;
+	GraphHandles* m_heartSabi;
+	GraphHandles* m_tvSiesta;
+	GraphHandles* m_tvHierarchy;
+	GraphHandles* m_tvValkiria;
+	GraphHandles* m_tvTroy;
+	GraphHandles* m_tvHeart;
+	GraphHandles* m_tvShine;
+	GraphHandles* m_tvRshine;
+	GraphHandles* m_titleFinal;
 
 	// キャラを順に表示する用 (graph, cntSum)
 	std::queue<std::pair<GraphHandles*, int> > characterQueue;
@@ -150,6 +238,12 @@ public:
 
 	// 再生
 	void play();
+
+	// 描画
+	void draw();
+
+private:
+	void pushPartOneCharacter(int index, bool front, GraphHandle* character);
 };
 
 

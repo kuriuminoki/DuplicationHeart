@@ -327,12 +327,26 @@ FaceGraphHandle::FaceGraphHandle(const char* characterName, double drawEx) {
 
 	// ƒ[ƒh
 	const char* dir = "picture/face/";
-	loadCharacterGraph(dir, characterName, m_normalHandles, "’Êí", data, m_ex);
+	auto ite = data.begin();
+	while (ite != data.end()) {
+		string faceName = ite->first;
+		if (faceName != "name") {
+			loadCharacterGraph(dir, characterName, m_faceHandles[faceName], faceName, data, m_ex);
+		}
+		ite++;
+	}
 
 }
 FaceGraphHandle::~FaceGraphHandle() {
-	delete m_normalHandles;
+	auto ite = m_faceHandles.begin();
+	while (ite != m_faceHandles.end()) {
+		string faceName = ite->first;
+		if (m_faceHandles[faceName] != nullptr) {
+			delete m_faceHandles[faceName];
+		}
+		ite++;
+	}
 }
 GraphHandles* FaceGraphHandle::getGraphHandle(const char* faceName) {
-	return m_normalHandles;
+	return m_faceHandles[faceName];
 }

@@ -1,7 +1,9 @@
 #include "Animation.h"
+#include "AnimationDrawer.h"
 #include "GraphHandle.h"
 #include "Sound.h"
 #include "Define.h"
+#include "DxLib.h"
 
 #include<string>
 
@@ -69,9 +71,13 @@ Movie::Movie(SoundPlayer* soundPlayer_p) {
 	m_finishFlag = false;
 	m_cnt = 0;
 	m_animation = nullptr;
+	m_animationDrawer = new AnimationDrawer(m_animation);
 	m_soundPlayer_p = soundPlayer_p;
 	m_bgmPath = "";
 	m_originalBgmPath = m_soundPlayer_p->getBgmName();
+
+	m_flameWide = (GAME_WIDE - (int)(GAME_WIDE_DEFAULT * m_ex)) / 2;
+	m_flameHeight = (GAME_HEIGHT - (int)(GAME_HEIGHT_DEFAULT * m_ex)) / 2;
 }
 
 Movie::~Movie() {
@@ -106,6 +112,83 @@ void Movie::play() {
 	}
 }
 
+void Movie::draw() {
+	if (m_animation != nullptr) {
+		m_animationDrawer->setAnimation(m_animation);
+		m_animationDrawer->drawAnimation();
+	}
+}
+
+void Movie::drawFlame() {
+	if (m_flameWide > 0) {
+		DrawBox(0, 0, m_flameWide + 1, GAME_HEIGHT, BLACK, TRUE);
+		DrawBox(GAME_WIDE - m_flameWide - 1, 0, GAME_WIDE, GAME_HEIGHT, BLACK, TRUE);
+	}
+	if (m_flameHeight > 0) {
+		DrawBox(0, 0, GAME_WIDE, m_flameHeight + 1, BLACK, TRUE);
+		DrawBox(0, GAME_HEIGHT - m_flameHeight - 1, GAME_WIDE, GAME_HEIGHT, BLACK, TRUE);
+	}
+
+	// デバッグ用
+	DrawFormatString(0, GAME_HEIGHT - 100, BLACK, "COUNT = %d", m_cnt);
+	DrawFormatString(0, GAME_HEIGHT - 50, WHITE, "COUNT = %d", m_cnt);
+}
+
+
+// オープニング用
+PartOneCharacter::PartOneCharacter(GraphHandle* character, int initX, int initY, int vx, double ex) {
+	m_character = character;
+	m_initX = initX;
+	m_initY = initY;
+	m_x = m_initX;
+	m_y = m_initY;
+	m_vx = vx;
+	m_vy = 0;
+	m_ex = ex;
+}
+
+void PartOneCharacter::play() {
+	m_x += m_vx;
+	m_y += m_vy;
+	if (m_y < m_initY) {
+		m_vy++;
+	}
+	if (m_y >= m_initY) {
+		m_y = m_initY;
+		m_vy = 0;
+	}
+	if (m_y == m_initY && GetRand(100) < 1) {
+		m_vy = -20 * m_ex;
+	}
+}
+void PartOneCharacter::draw() {
+	m_character->draw(m_x, m_y, m_ex);
+}
+
+
+void OpMovie::pushPartOneCharacter(int index, bool front, GraphHandle* character) {
+	int y = GAME_HEIGHT * 5 / 6 - m_flameHeight / 2;
+	int vx = -8;
+	double ex = m_ex;
+	int wide = 800 * m_ex;
+	int x = 0;
+	if (!front) { // 後ろのキャラ
+		double backEx = 0.3;
+		y = GAME_HEIGHT/ 5 + m_flameHeight / 2;
+		vx = 5 * m_ex;
+		ex *= backEx;
+		wide = 400 * m_ex;
+		x = index * (-wide) + (GAME_WIDE / 2);
+	}
+	else {
+		double frontEx = 0.7;
+		vx = -10 * m_ex;
+		ex *= frontEx;
+		wide = 700 * m_ex;
+		x = GAME_WIDE / 2 + (index * wide);
+	}
+	m_partOneCharacters.push_back(new PartOneCharacter(character, x, y, vx, ex));
+}
 
 // オープニング
 OpMovie::OpMovie(SoundPlayer* soundPlayer_p):
@@ -120,54 +203,127 @@ OpMovie::OpMovie(SoundPlayer* soundPlayer_p):
 	m_titleOrange = new GraphHandles((path + "title/" + "titleOrange").c_str(), 1, m_ex);
 	m_titleHeart = new GraphHandles((path + "title/" + "heart").c_str(), 1, m_ex);
 	m_heartHide = new GraphHandles((path + "title/" + "ハート隠し").c_str(), 2, m_ex);
-	// キャラ
-	m_archive = new GraphHandles((path + "アーカイブ").c_str(), 1, m_ex);
-	m_aigis = new GraphHandles((path + "アイギス").c_str(), 1, m_ex);
-	m_assault = new GraphHandles((path + "アサルト03").c_str(), 1, m_ex);
-	m_vermelia = new GraphHandles((path + "ヴェルメリア").c_str(), 1, m_ex);
-	m_exlucina = new GraphHandles((path + "エクスルキナ").c_str(), 1, m_ex);
-	m_msadi = new GraphHandles((path + "エムサディ").c_str(), 1, m_ex);
-	m_elnino = new GraphHandles((path + "エルニーニョ").c_str(), 1, m_ex);
-	m_onyx = new GraphHandles((path + "オニュクス").c_str(), 1, m_ex);
-	m_courir = new GraphHandles((path + "クーリール").c_str(), 1, m_ex);
-	m_cornein = new GraphHandles((path + "コーネイン").c_str(), 1, m_ex);
-	m_koharu = new GraphHandles((path + "コハル").c_str(), 1, m_ex);
-	m_siesta = new GraphHandles((path + "シエスタ").c_str(), 5, m_ex);
-	m_chocola = new GraphHandles((path + "ショコラ").c_str(), 1, m_ex);
-	m_titius = new GraphHandles((path + "ティティウス").c_str(), 1, m_ex);
-	m_heart = new GraphHandles((path + "ハート").c_str(), 1, m_ex);
-	m_fred = new GraphHandles((path + "フレッド").c_str(), 1, m_ex);
-	m_french = new GraphHandles((path + "フレンチ").c_str(), 1, m_ex);
-	m_mascara = new GraphHandles((path + "マスカーラ").c_str(), 1, m_ex);
-	m_yuri = new GraphHandles((path + "ユーリ").c_str(), 1, m_ex);
-	m_rabbi = new GraphHandles((path + "ラビ―").c_str(), 1, m_ex);
-	m_tank = new GraphHandles((path + "棒タンク").c_str(), 1, m_ex);
 
+	// part1
+	m_darkHeart = new GraphHandles((path + "part1/" + "darkHeart").c_str(), 3, m_ex);
+	m_heartEye = new GraphHandles((path + "part1/" + "heartEye").c_str(), 4, m_ex);
+	m_archive1 = new GraphHandle((path + "part1/character/" + "アーカイブ.png").c_str(), m_ex, 0.0, true);
+	m_aigis1 = new GraphHandle((path + "part1/character/" + "アイギス.png").c_str(), m_ex, 0.0, true);
+	m_assault1 = new GraphHandle((path + "part1/character/" + "アサルト03.png").c_str(), m_ex, 0.0, true);
+	m_vermelia1 = new GraphHandle((path + "part1/character/" + "ヴェルメリア.png").c_str(), m_ex, 0.0, true);
+	m_exlucina1 = new GraphHandle((path + "part1/character/" + "エクスルキナ.png").c_str(), m_ex, 0.0, true);
+	m_msadi1 = new GraphHandle((path + "part1/character/" + "エム・サディ.png").c_str(), m_ex, 0.0, true);
+	m_elnino1 = new GraphHandle((path + "part1/character/" + "エルニーニョ.png").c_str(), m_ex, 0.0, true);
+	m_onyx1 = new GraphHandle((path + "part1/character/" + "オニュクス.png").c_str(), m_ex, 0.0, true);
+	m_courir1 = new GraphHandle((path + "part1/character/" + "クーリール.png").c_str(), m_ex, 0.0, true);
+	m_cornein1 = new GraphHandle((path + "part1/character/" + "コーネイン.png").c_str(), m_ex, 0.0, true);
+	m_koharu1 = new GraphHandle((path + "part1/character/" + "コハル.png").c_str(), m_ex, 0.0, true);
+	m_siesta1 = new GraphHandle((path + "part1/character/" + "シエスタ.png").c_str(), m_ex, 0.0, true);
+	m_hierarchy1 = new GraphHandle((path + "part1/character/" + "ヒエラルキー.png").c_str(), m_ex, 0.0, true);;
+	m_troy1 = new GraphHandle((path + "part1/character/" + "トロイ.png").c_str(), m_ex, 0.0, true);;
+	m_ancient1 = new GraphHandle((path + "part1/character/" + "エンシャント.png").c_str(), m_ex, 0.0, true);;
+	m_valkiria1 = new GraphHandle((path + "part1/character/" + "ヴァルキリア.png").c_str(), m_ex, 0.0, true);;
+	m_chocola1 = new GraphHandle((path + "part1/character/" + "ショコラ.png").c_str(), m_ex, 0.0, true);
+	m_titius1 = new GraphHandle((path + "part1/character/" + "ティティウス.png").c_str(), m_ex, 0.0, true);
+	m_fred1 = new GraphHandle((path + "part1/character/" + "フレッド.png").c_str(), m_ex, 0.0, true);
+	m_french1 = new GraphHandle((path + "part1/character/" + "フレンチ.png").c_str(), m_ex, 0.0, true);
+	m_mascara1 = new GraphHandle((path + "part1/character/" + "マスカーラ.png").c_str(), m_ex, 0.0, true);
+	m_yuri1 = new GraphHandle((path + "part1/character/" + "ユーリ.png").c_str(), m_ex, 0.0, true);
+	m_rabbi1 = new GraphHandle((path + "part1/character/" + "ラビ―.png").c_str(), m_ex, 0.0, true);
+	pushPartOneCharacter(0, false, m_fred1);
+	pushPartOneCharacter(1, false, m_yuri1);
+	pushPartOneCharacter(2, false, m_aigis1);
+	pushPartOneCharacter(3, false, m_koharu1);
+	pushPartOneCharacter(4, false, m_exlucina1);
+	pushPartOneCharacter(5, false, m_elnino1);
+	pushPartOneCharacter(6, false, m_troy1);
+	pushPartOneCharacter(7, false, m_chocola1);
+	pushPartOneCharacter(8, false, m_onyx1);
+
+	pushPartOneCharacter(0, true, m_vermelia1);
+	pushPartOneCharacter(1, true, m_mascara1);
+	pushPartOneCharacter(2, true, m_archive1);
+	pushPartOneCharacter(3, true, m_rabbi1);
+	pushPartOneCharacter(4, true, m_ancient1);
+	pushPartOneCharacter(5, true, m_cornein1);
+	pushPartOneCharacter(6, true, m_hierarchy1);
+	pushPartOneCharacter(7, true, m_assault1);
+	pushPartOneCharacter(8, true, m_valkiria1);
+
+
+	// part2
+	m_heartAndMem = new GraphHandles((path + "part2/" + "heart&Mem").c_str(), 1, m_ex);
+	m_heartCry1 = new GraphHandles((path + "part2/" + "heartA").c_str(), 3, m_ex);
+	m_heartCry2 = new GraphHandles((path + "part2/" + "heartB").c_str(), 4, m_ex);
+	m_memSad1 = new GraphHandles((path + "part2/" + "memA").c_str(), 3, m_ex);
+	m_memSad2 = new GraphHandles((path + "part2/" + "memB").c_str(), 3, m_ex);
+	m_eyeFocus = new GraphHandles((path + "part2/" + "eyeFocus").c_str(), 5, m_ex);
+
+	// キャラ
+	double charaEx = m_ex * 1.1;
+	m_archive = new GraphHandles((path + "アーカイブ").c_str(), 1, charaEx);
+	m_aigis = new GraphHandles((path + "アイギス").c_str(), 4, charaEx, 0, false, true);
+	m_assault = new GraphHandles((path + "アサルト03").c_str(), 4, charaEx);
+	m_vermelia = new GraphHandles((path + "ヴェルメリア").c_str(), 1, charaEx);
+	m_exlucina = new GraphHandles((path + "エクスルキナ").c_str(), 4, charaEx);
+	m_msadi = new GraphHandles((path + "エムサディ").c_str(), 4, charaEx);
+	m_elnino = new GraphHandles((path + "エルニーニョ").c_str(), 4, charaEx);
+	m_onyx = new GraphHandles((path + "オニュクス").c_str(), 4, charaEx);
+	m_courir = new GraphHandles((path + "クーリール").c_str(), 4, charaEx, 0, false, true);
+	m_cornein = new GraphHandles((path + "コーネイン").c_str(), 5, charaEx);
+	m_koharu = new GraphHandles((path + "コハル").c_str(), 4, charaEx);
+	m_siesta = new GraphHandles((path + "シエスタ").c_str(), 5, charaEx);
+	m_chocola = new GraphHandles((path + "ショコラ").c_str(), 4, charaEx);
+	m_titius = new GraphHandles((path + "ティティウス").c_str(), 5, charaEx);
+	m_heart = new GraphHandles((path + "ハート").c_str(), 1, charaEx);
+	m_fred = new GraphHandles((path + "フレッド").c_str(), 1, charaEx);
+	m_french = new GraphHandles((path + "フレンチ").c_str(), 1, charaEx);
+	m_mascara = new GraphHandles((path + "マスカーラ").c_str(), 4, charaEx);
+	m_memoryA = new GraphHandles((path + "memA").c_str(), 6, m_ex);
+	m_memoryB = new GraphHandles((path + "memB").c_str(), 10, m_ex);
+	m_yuri = new GraphHandles((path + "ユーリ").c_str(), 4, charaEx);
+	m_rabbi = new GraphHandles((path + "ラビ―").c_str(), 4, charaEx);
+	m_tank = new GraphHandles((path + "棒タンク").c_str(), 4, charaEx);
 	// 表示する順にpush
-	const int CHARA_TIME = 32;
+	const int CHARA_TIME = 35;
 	characterQueue.push(make_pair(m_koharu, CHARA_TIME));
+	characterQueue.push(make_pair(m_titius, CHARA_TIME));
 	characterQueue.push(make_pair(m_assault, CHARA_TIME));
 	characterQueue.push(make_pair(m_msadi, CHARA_TIME));
-	characterQueue.push(make_pair(m_exlucina, CHARA_TIME));
-	characterQueue.push(make_pair(m_yuri, CHARA_TIME));
-	characterQueue.push(make_pair(m_titius, CHARA_TIME));
-	characterQueue.push(make_pair(m_tank, CHARA_TIME));
-	characterQueue.push(make_pair(m_chocola, CHARA_TIME));
-	characterQueue.push(make_pair(m_vermelia, CHARA_TIME));
 	characterQueue.push(make_pair(m_french, CHARA_TIME));
-	characterQueue.push(make_pair(m_courir, CHARA_TIME));
+	characterQueue.push(make_pair(m_vermelia, CHARA_TIME));
+	characterQueue.push(make_pair(m_chocola, CHARA_TIME));
+	characterQueue.push(make_pair(m_exlucina, CHARA_TIME));
+	//characterQueue.push(make_pair(m_tank, CHARA_TIME));
+	characterQueue.push(make_pair(m_yuri, CHARA_TIME));
 	characterQueue.push(make_pair(m_cornein, CHARA_TIME));
 	characterQueue.push(make_pair(m_aigis, CHARA_TIME));
-	characterQueue.push(make_pair(m_elnino, CHARA_TIME));
 	characterQueue.push(make_pair(m_onyx, CHARA_TIME));
+	characterQueue.push(make_pair(m_courir, CHARA_TIME));
 	characterQueue.push(make_pair(m_fred, CHARA_TIME));
+	characterQueue.push(make_pair(m_elnino, CHARA_TIME));
 	characterQueue.push(make_pair(m_mascara, CHARA_TIME));
 	characterQueue.push(make_pair(m_rabbi, CHARA_TIME));
 	characterQueue.push(make_pair(m_archive, CHARA_TIME));
 	characterQueue.push(make_pair(m_siesta, CHARA_TIME));
 
+	// サビ
+	m_heartFlame = new GraphHandles((path + "sabi/" + "heartFlame").c_str(), 1, m_ex);
+	m_rmem = new GraphHandles((path + "sabi/" + "rmem").c_str(), 8, m_ex);
+	m_heartSabi = new GraphHandles((path + "sabi/" + "heart").c_str(), 2, m_ex);
+	m_tvSiesta = new GraphHandles((path + "sabi/" + "シエスタ").c_str(), 1, m_ex);
+	m_tvHierarchy = new GraphHandles((path + "sabi/" + "ヒエラルキー").c_str(), 1, m_ex);
+	m_tvValkiria = new GraphHandles((path + "sabi/" + "ヴァルキリア").c_str(), 1, m_ex);
+	m_tvTroy = new GraphHandles((path + "sabi/" + "トロイ").c_str(), 1, m_ex);
+	m_tvHeart = new GraphHandles((path + "sabi/" + "ハート").c_str(), 1, m_ex);
+	m_tvShine = new GraphHandles((path + "sabi/" + "shine").c_str(), 4, m_ex);
+	m_tvRshine = new GraphHandles((path + "sabi/" + "rshine").c_str(), 4, m_ex);
+	m_titleFinal = new GraphHandles((path + "sabi/" + "titleFinal").c_str(), 1, m_ex, 0.0, true);
+
 	// 最初の画像
-	m_animation = new Animation(GAME_WIDE / 2, GAME_HEIGHT / 2, 120, m_titleH);
+	m_centerX = GAME_WIDE / 2;
+	m_centerY = GAME_HEIGHT / 2;
+	m_animation = new Animation(m_centerX, m_centerY, 120, m_titleH);
 
 	// BGM
 	m_bgmPath = "sound/movie/kobune.mp3";
@@ -183,6 +339,42 @@ OpMovie::~OpMovie() {
 	delete m_titleOrange;
 	delete m_titleHeart;
 	delete m_heartHide;
+	// part1
+	delete m_darkHeart;
+	delete m_heartEye;
+	delete m_archive1;
+	delete m_aigis1;
+	delete m_assault1;
+	delete m_vermelia1;
+	delete m_exlucina1;
+	delete m_msadi1;
+	delete m_elnino1;
+	delete m_onyx1;
+	delete m_courir1;
+	delete m_cornein1;
+	delete m_koharu1;
+	delete m_siesta1;
+	delete m_hierarchy1;
+	delete m_troy1;
+	delete m_ancient1;
+	delete m_valkiria1;
+	delete m_chocola1;
+	delete m_titius1;
+	delete m_fred1;
+	delete m_french1;
+	delete m_mascara1;
+	delete m_yuri1;
+	delete m_rabbi1;
+	for (unsigned int i = 0; i < m_partOneCharacters.size(); i++) {
+		delete m_partOneCharacters[i];
+	}
+	// part2
+	delete m_heartAndMem;
+	delete m_heartCry1;
+	delete m_heartCry2;
+	delete m_memSad1;
+	delete m_memSad2;
+	delete m_eyeFocus;
 	// キャラ
 	delete m_archive;
 	delete m_aigis;
@@ -202,15 +394,33 @@ OpMovie::~OpMovie() {
 	delete m_fred;
 	delete m_french;
 	delete m_mascara;
+	delete m_memoryA;
+	delete m_memoryB;
 	delete m_yuri;
 	delete m_rabbi;
 	delete m_tank;
+
+	// サビ
+	delete m_heartFlame;
+	delete m_rmem;
+	delete m_heartSabi;
+	delete m_tvSiesta;
+	delete m_tvHierarchy;
+	delete m_tvValkiria;
+	delete m_tvTroy;
+	delete m_tvHeart;
+	delete m_tvShine;
+	delete m_tvRshine;
+	delete m_titleFinal;
 
 	// 音楽を止める
 	m_soundPlayer_p->stopBGM();
 }
 
 void OpMovie::play() {
+
+	static int internalCnt = 0;
+	if (m_cnt == 0) { internalCnt = 0; }
 
 	// カウント
 	Movie::play();
@@ -243,23 +453,229 @@ void OpMovie::play() {
 		else {
 			m_animation->changeGraph(m_titleOrange, 60);
 		}
-	}
-	else if (m_cnt < 700 && m_cnt >= 690) {
-		m_animation->changeGraph(m_titleBlue, 60);
-	}
-	else if (m_cnt >= 2130 && !characterQueue.empty()) {
-		if (m_animation->getFinishFlag() && !characterQueue.empty()) {
-			GraphHandles* next = characterQueue.front().first;
-			m_animation->changeGraph(next, characterQueue.front().second / next->getSize());
-			characterQueue.pop();
+		if (m_cnt == 690) {
+			m_animation->changeGraph(m_titleBlue, 60);
 		}
 	}
-	if (m_animation->getFinishFlag() && characterQueue.empty()) {
-		m_animation->changeGraph(m_heart);
+	else if (m_cnt < 1470 && m_cnt >= 840) { // part1
+		if (m_cnt == 840) {
+			m_animation->changeGraph(m_darkHeart, 1000);
+		}
+		if (m_cnt == 970) {
+			m_animation->changeGraph(m_darkHeart, 6);
+		}
+		if (m_cnt == 1050) {
+			m_animation->changeGraph(m_heartEye, 100);
+		}
+		// 揺れ
+		if (m_cnt == 1469) {
+			m_animation->setX(m_centerX);
+			m_animation->setY(m_centerY);
+		}
+		else {
+			m_animation->setX(m_animation->getX() + GetRand(2) - 1);
+			m_animation->setY(m_animation->getY() + GetRand(2) - 1);
+		}
 	}
+	else if (m_cnt < 2130 && m_cnt >= 1470) { // part2
+		DrawBox(0, 0, GAME_WIDE, GAME_HEIGHT, WHITE, TRUE);
+		if (m_cnt < 2080 && m_cnt % 4 == 1) {
+			m_animation->setY(m_animation->getY() + 1);
+		}
+		// ハート＆メモリー
+		if (m_cnt == 1470) {
+			m_animation->changeGraph(m_heartAndMem, 1000);
+		}
+		// ハート
+		if (m_cnt == 1780) {
+			m_animation->setY(m_centerY);
+			m_animation->changeGraph(m_heartCry1, 1000);
+		}
+		else if (m_cnt == 1840) {
+			m_animation->changeGraph(m_heartCry1, 10);
+		}
+		else if (m_cnt == 1900) {
+			m_animation->changeGraph(m_heartCry2, 6);
+		}
+		// メモリー
+		if (m_cnt == 1950) {
+			m_animation->setY(m_centerY);
+			m_animation->changeGraph(m_memSad1, 1000);
+		}
+		else if (m_cnt == 2010) {
+			m_animation->changeGraph(m_memSad1, 10);
+		}
+		else if (m_cnt == 2050) {
+			m_animation->changeGraph(m_memSad2, 6);
+		}
+		// 眼
+		if (m_cnt == 2080) {
+			m_animation->setY(m_centerY);
+			m_animation->changeGraph(m_eyeFocus, 9);
+		}
+		// 元に戻す
+		if (m_cnt == 2129) {
+			m_animation->setX(m_centerX);
+			m_animation->setY(m_centerY);
+		}
+	}
+	else if (m_cnt < 2780 && m_cnt >= 2130) { // サビ前
+		if (m_cnt > 3100) {
+			m_animation->setX(m_centerX);
+			m_animation->setY(m_centerY);
+		}
+		else {
+			m_animation->setX(m_animation->getX() + GetRand(2) - 1);
+			m_animation->setY(m_animation->getY() + GetRand(2) - 1);
+		}
+		if (m_animation->getFinishFlag() && !characterQueue.empty()) {
+			if (internalCnt == 0) {
+				GraphHandles* next = characterQueue.front().first;
+				if (next->getSize() == 1) {
+					m_animation->changeGraph(next, 32);
+				}
+				else {
+					m_animation->changeGraph(next, 8);
+				}
+				//m_animation->changeGraph(next, characterQueue.front().second / next->getSize());
+				characterQueue.pop();
+				internalCnt = 0;
+			}
+			else {
+				internalCnt++;
+			}
+		}
+	}
+	else if (m_cnt < 3050 && m_cnt >= 2780) {
+		if (m_cnt == 2780) {
+			m_heart->setEx(m_ex + 10.0);
+			m_animation->changeGraph(m_heart);
+		}
+		if (m_heart->getGraphHandle()->getEx() > m_ex) {
+			m_heart->setEx(m_heart->getGraphHandle()->getEx() - 1.0);
+		}
+		if (m_cnt < 2870) {
+			m_animation->setX(m_animation->getX() + GetRand(2) - 1);
+			m_animation->setY(m_animation->getY() + GetRand(2) - 1);
+		}
+		if (m_cnt == 2870) {
+			m_animation->setX(m_centerX);
+			m_animation->setY(m_centerY);
+			m_animation->changeGraph(m_memoryA, 6);
+		}
+		if (m_cnt == 2950) {
+			m_animation->changeGraph(m_memoryB, 6);
+		}
+	}
+	else if (m_cnt < 3750 && m_cnt >= 3050) { // サビ1
+		if (m_cnt == 3050) {
+			m_animation->setX(m_centerX);
+			m_animation->setY(m_centerY);
+			m_heartFlame->setEx(m_ex * 11);
+			m_animation->changeGraph(m_heartFlame);
+		}
+		if (m_heartFlame->getGraphHandle()->getEx() > m_ex) {
+			m_heartFlame->setEx(m_heartFlame->getGraphHandle()->getEx() * 239 / 240);
+		}
+		if (m_cnt > 3610 && m_cnt <= 3640) {
+			m_animation->changeGraph(m_rmem, 3);
+		}
+		if (m_cnt == 3665) {
+			m_heartSabi->setEx(m_ex * 1.1);
+			m_animation->changeGraph(m_heartSabi, 24);
+		}
+		if (m_cnt > 3710 && m_heartSabi->getGraphHandle()->getEx() > m_ex) {
+			m_heartSabi->setEx(m_heartSabi->getGraphHandle()->getEx() * 99 / 100);
+		}
+		if (m_heartSabi->getGraphHandle()->getEx() < m_ex) {
+			m_heartSabi->setEx(m_ex);
+		}
+	}
+	else if (m_cnt >= 3750) { // サビ2
+		if (m_cnt == 3750) {
+			m_animation->changeGraph(m_tvRshine, 3);
+		}
+		if (m_cnt == 3775 - 12) {
+			m_animation->changeGraph(m_tvShine, 3);
+		}
+		if (m_cnt == 3800 - 24) {
+			m_animation->changeGraph(m_tvSiesta, 30);
+		}
+
+		if (m_cnt == 3825) {
+			m_animation->changeGraph(m_tvRshine, 3);
+		}
+		if (m_cnt == 3850 - 12) {
+			m_animation->changeGraph(m_tvShine, 3);
+		}
+		if (m_cnt == 3875 - 24) {
+			m_animation->changeGraph(m_tvTroy, 30);
+		}
+
+		if (m_cnt == 3900) {
+			m_animation->changeGraph(m_tvRshine, 3);
+		}
+		if (m_cnt == 3925 - 12) {
+			m_animation->changeGraph(m_tvShine, 3);
+		}
+		if (m_cnt == 3950 - 24) {
+			m_animation->changeGraph(m_tvHierarchy, 30);
+		}
+
+		if (m_cnt == 3975) {
+			m_animation->changeGraph(m_tvRshine, 3);
+		}
+		if (m_cnt == 4000 - 12) {
+			m_animation->changeGraph(m_tvShine, 3);
+		}
+		if (m_cnt == 4025 - 24) {
+			m_animation->changeGraph(m_tvValkiria, 30);
+		}
+
+		if (m_cnt == 4050) {
+			m_animation->changeGraph(m_tvRshine, 3);
+		}
+		if (m_cnt == 4075 - 12) {
+			m_animation->changeGraph(m_tvShine, 3);
+		}
+		if (m_cnt == 4100 - 24) {
+			m_animation->changeGraph(m_tvHeart, 30);
+		}
+		if (m_cnt == 4300) {
+			m_animation->changeGraph(m_tvRshine, 3);
+		}
+	}
+	if (m_cnt >= 4350) {
+		if (m_cnt == 4350) {
+			m_animation->changeGraph(m_titleFinal, 1000);
+		}
+	}
+
 
 	// 終了
 	if (m_cnt == 5000) {
 		m_finishFlag = true;
 	}
+}
+
+void OpMovie::draw() {
+	DrawBox(0, 0, GAME_WIDE, GAME_HEIGHT, WHITE, TRUE);
+	// 最期のタイトル画像を徐々に透明度を低くする
+	if (m_cnt >= 4350) {
+		DrawBox(0, 0, GAME_WIDE, GAME_HEIGHT, BLACK, TRUE);
+		int alpha = min(255, m_cnt - 4350);
+		SetDrawBlendMode(DX_BLENDMODE_ALPHA, alpha);
+	}
+	Movie::draw();
+	SetDrawBlendMode(DX_BLENDMODE_ALPHA, 255);
+	if (m_cnt > 980 && m_cnt < 1470) {
+		for (unsigned int i = 0; i < m_partOneCharacters.size(); i++) {
+			m_partOneCharacters[i]->play();
+			m_partOneCharacters[i]->draw();
+		}
+	}
+	if (m_cnt > 2950 && m_cnt < 3050 && m_animation->getFinishFlag()) {
+		DrawBox(0, 0, GAME_WIDE, GAME_HEIGHT, BLACK, TRUE);
+	}
+	drawFlame();
 }

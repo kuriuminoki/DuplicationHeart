@@ -1,6 +1,9 @@
 #ifndef GRAPH_HANDLE_H_INCLUDED
 #define GRAPH_HANDLE_H_INCLUDED
 
+#include <map>
+#include <string>
+
 class Camera;
 
 /*
@@ -223,8 +226,9 @@ public:
 class FaceGraphHandle {
 private:
 	double m_ex;
-	// ’Êí
-	GraphHandles* m_normalHandles;
+
+	// Šç‰æ‘œ <‰æ‘œ–¼, ‰æ‘œƒnƒ“ƒhƒ‹>
+	std::map<std::string, GraphHandles*> m_faceHandles;
 
 public:
 	FaceGraphHandle();

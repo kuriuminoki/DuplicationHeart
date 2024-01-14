@@ -175,7 +175,7 @@ GameData::GameData() {
 	}
 
 	// 主要キャラを設定
-	const int mainSum = 8;
+	const int mainSum = 9;
 	const char* mainCharacters[mainSum] = {
 		"ハート",
 		"シエスタ",
@@ -183,6 +183,7 @@ GameData::GameData() {
 		"ヴァルキリア",
 		"トロイ",
 		"メモリー",
+		"ユーリ",
 		"エム・サディ",
 		"フレンチ"
 	};
@@ -435,7 +436,6 @@ Game::Game(const char* saveFilePath, int storyNum) {
 
 Game::~Game() {
 	delete m_gameData;
-	delete m_soundPlayer;
 	delete m_world;
 	delete m_story;
 	if (m_battleOption != nullptr) {
@@ -445,6 +445,7 @@ Game::~Game() {
 		delete m_skill;
 	}
 	DeleteSoundMem(m_pauseSound);
+	delete m_soundPlayer;
 }
 
 bool Game::play() {

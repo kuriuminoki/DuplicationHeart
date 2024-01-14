@@ -120,6 +120,9 @@ private:
 	const unsigned int TEXT_SPEED = 5;
 	unsigned int m_textSpeed;
 
+	// 次のテキストへ行けるようになるまでの時間
+	const unsigned int NEXT_TEXT_ABLE = 30;
+
 	// テキストを飛ばせるようになるまでの時間
 	const unsigned int MOVE_FINAL_ABLE = 10;
 
@@ -175,6 +178,14 @@ private:
 	// 効果音
 	int m_sound;
 
+	// 顔画像の表示方法
+	enum FaceDrawMode {
+		NORMAL,	// 普通にアニメを繰り返し
+		FREEZE,	// アニメを動かさない
+		ONCE	// 一度だけ再生
+	};
+	FaceDrawMode m_faceDrawMode;
+
 public:
 	Conversation(int textNum, World* world, SoundPlayer* soundPlayer);
 	~Conversation();
@@ -212,6 +223,9 @@ public:
 
 	// 最後までセリフ表示したか
 	bool finishText() const;
+
+	// 次のセリフへ移行できるか
+	bool nextTextAble() const { return m_cnt > NEXT_TEXT_ABLE; }
 
 private:
 	void loadNextBlock();
