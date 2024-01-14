@@ -433,6 +433,8 @@ Game::Game(const char* saveFilePath, int storyNum) {
 		// チャプターのバックアップ
 		m_gameData->saveChapter();
 	}
+
+	m_gameoverCnt = 0;
 }
 
 Game::~Game() {
@@ -450,6 +452,15 @@ Game::~Game() {
 }
 
 bool Game::play() {
+
+	// ゲームオーバー
+	if (m_gameoverCnt > 0) {
+		m_gameoverCnt++;
+		if (m_gameoverCnt == 120) {
+			m_rebootFlag = true;
+		}
+		return false;
+	}
 
 	// 一時停止
 	if (controlQ() == 1) {
@@ -545,7 +556,7 @@ bool Game::play() {
 	else if (m_world->playerDead() && m_world->getBrightValue() == 0) {
 		// storyからハートがやられたことを伝えられたらタイトルへ戻る
 		// やられるのがイベントの成功条件なら前のif文(m_story->getBackPrevSaveFlag())にひっかかるはず
-		m_rebootFlag = true;
+		m_gameoverCnt++;
 	}
 
 	// エリア移動

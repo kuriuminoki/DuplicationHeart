@@ -281,6 +281,9 @@ private:
 	// 世界
 	World* m_world;
 
+	// ゲームオーバーの表示
+	int m_gameoverCnt;
+
 	// ストーリー
 	Story* m_story;
 
@@ -305,6 +308,7 @@ public:
 	HeartSkill* getSkill() const { return m_skill; }
 	BattleOption* getGamePause() const { return m_battleOption; }
 	bool getRebootFlag() const { return m_rebootFlag; }
+	inline int getGameoverCnt() const { return m_gameoverCnt; }
 
 	// デバッグ
 	void debug(int x, int y, int color) const;
