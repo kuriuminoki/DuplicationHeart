@@ -54,6 +54,9 @@ WorldDrawer::WorldDrawer(const World* world) {
 	m_animationDrawer = new AnimationDrawer(nullptr);
 	m_conversationDrawer = new ConversationDrawer(nullptr);
 	m_hpBarGraph = LoadGraph("picture/battleMaterial/hpBar.png");
+	m_noonHaikei = LoadGraph("picture/stageMaterial/noon.jpg");
+	m_eveningHaikei = LoadGraph("picture/stageMaterial/evening.jpg");
+	m_nightHaikei = LoadGraph("picture/stageMaterial/night.jpg");
 }
 
 WorldDrawer::~WorldDrawer() {
@@ -62,6 +65,9 @@ WorldDrawer::~WorldDrawer() {
 	delete m_animationDrawer;
 	delete m_conversationDrawer;
 	DeleteGraph(m_hpBarGraph);
+	DeleteGraph(m_noonHaikei);
+	DeleteGraph(m_eveningHaikei);
+	DeleteGraph(m_nightHaikei);
 }
 
 // •`‰æ‚·‚é
@@ -76,7 +82,29 @@ void WorldDrawer::draw() {
 
 	}
 	else {
-		DrawBox(0, 0, GAME_WIDE, GAME_HEIGHT, m_world->getBackGroundColor(), TRUE);
+		int date = m_world->getDate();
+		int wide = 0, height = 0;
+		double ex = 1.0;
+		switch (date) {
+		case 0:
+			GetGraphSize(m_noonHaikei, &wide, &height);
+			ex = max((double)GAME_WIDE / wide, (double)GAME_HEIGHT / height);
+			DrawRotaGraph(GAME_WIDE / 2, GAME_HEIGHT / 2, ex, 0.0, m_noonHaikei, TRUE);
+			break;
+		case 1:
+			GetGraphSize(m_eveningHaikei, &wide, &height);
+			ex = max((double)GAME_WIDE / wide, (double)GAME_HEIGHT / height);
+			DrawRotaGraph(GAME_WIDE / 2, GAME_HEIGHT / 2, ex, 0.0, m_eveningHaikei, TRUE);
+			break;
+		case 2:
+			GetGraphSize(m_nightHaikei, &wide, &height);
+			ex = max((double)GAME_WIDE / wide, (double)GAME_HEIGHT / height);
+			DrawRotaGraph(GAME_WIDE / 2, GAME_HEIGHT / 2, ex, 0.0, m_nightHaikei, TRUE);
+			break;
+		default:
+			DrawBox(0, 0, GAME_WIDE, GAME_HEIGHT, m_world->getBackGroundColor(), TRUE);
+			break;
+		}
 	}
 
 	// ƒJƒƒ‰‚ğæ“¾

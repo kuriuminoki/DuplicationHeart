@@ -407,6 +407,7 @@ Game::Game(const char* saveFilePath, int storyNum) {
 
 	// ストーリー
 	m_story = new Story(m_gameData->getStoryNum(), m_world, m_soundPlayer);
+	m_world->setDate(m_story->getDate());
 
 	// セーブデータに上書き
 	m_gameData->updateStory(m_story);
@@ -514,6 +515,7 @@ bool Game::play() {
 		m_gameData->updateStory(m_story);
 		m_gameData->asignedWorld(m_world, false);
 		// Worldに反映
+		//m_world->setDate(m_story->getDate());
 		m_world->addCharacter(m_story->getCharacterLoader());
 		m_world->addObject(m_story->getObjectLoader());
 		// セーブ

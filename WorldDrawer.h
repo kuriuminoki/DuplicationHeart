@@ -39,6 +39,11 @@ private:
 	// •`‰æ‚·‚é¢ŠE
 	const World* m_world;
 
+	// ”wŒi‰æ‘œ
+	int m_noonHaikei;
+	int m_eveningHaikei;
+	int m_nightHaikei;
+
 	// ƒLƒƒƒ‰•`‰æ—p
 	CharacterDrawer* m_characterDrawer;
 

@@ -97,6 +97,8 @@ World::World() {
 
 	m_areaLock = false;
 
+	m_date = 0;
+
 }
 
 /*
@@ -155,6 +157,7 @@ World::World(const World* original) :
 	m_characterDeadGraph = original->getCharacterDeadGraph();
 	m_characterDeadSound = original->getCharacterDeadSound();
 	m_doorSound = original->getDoorSound();
+	m_date = original->getDate();
 
 	// キャラをコピー
 	for (unsigned int i = 0; i < original->getCharacters().size(); i++) {
