@@ -190,6 +190,7 @@ public:
 	inline int getFrom(int i) const { return m_doorData[i]->from(); }
 	inline int getTo(int i) const { return m_doorData[i]->to(); }
 	inline int getLatestStoryNum() const { return m_latestStoryNum; }
+	CharacterData* getCharacterData(std::string characterName);
 
 	// セッタ
 	inline void setAreaNum(int areaNum) { m_areaNum = areaNum; }
@@ -281,6 +282,9 @@ private:
 	// 世界
 	World* m_world;
 
+	// ゲームオーバーの表示
+	int m_gameoverCnt;
+
 	// ストーリー
 	Story* m_story;
 
@@ -305,6 +309,7 @@ public:
 	HeartSkill* getSkill() const { return m_skill; }
 	BattleOption* getGamePause() const { return m_battleOption; }
 	bool getRebootFlag() const { return m_rebootFlag; }
+	inline int getGameoverCnt() const { return m_gameoverCnt; }
 
 	// デバッグ
 	void debug(int x, int y, int color) const;

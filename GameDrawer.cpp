@@ -20,14 +20,27 @@ GameDrawer::GameDrawer(const Game* game) {
 	m_worldDrawer = new WorldDrawer(nullptr);
 
 	m_skillHandle = CreateFontToHandle(nullptr, (int)(SKILL_SIZE * m_exX), 10);
+
+	m_gameoverHandle = LoadGraph("picture/system/gameover.png");
 }
 
 GameDrawer::~GameDrawer() {
 	delete m_worldDrawer;
 	DeleteFontToHandle(m_skillHandle);
+	DeleteGraph(m_gameoverHandle);
 }
 
 void GameDrawer::draw() {
+
+	// ƒQ[ƒ€ƒI[ƒo[
+	int gameoverCnt = m_game->getGameoverCnt();
+	if (gameoverCnt > 0) {
+		if ((gameoverCnt < 60 && gameoverCnt / 2 % 2 == 0) || gameoverCnt > 60) {
+			DrawRotaGraph(GAME_WIDE / 2, GAME_HEIGHT / 2, min(m_exX, m_exY) * 0.7, 0.0, m_gameoverHandle, TRUE);
+		}
+
+		return;
+	}
 
 	// ¢ŠE‚ð•`‰æ
 	const HeartSkill* skill = m_game->getSkill();

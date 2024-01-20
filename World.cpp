@@ -264,7 +264,6 @@ vector<const CharacterAction*> World::getActions() const {
 vector<const Object*> World::getFrontObjects() const {
 
 	vector<const Object*> allObjects;
-	allObjects.insert(allObjects.end(), m_stageObjects.begin(), m_stageObjects.end());
 	allObjects.insert(allObjects.end(), m_attackObjects.begin(), m_attackObjects.end());
 
 	return allObjects;
@@ -274,6 +273,7 @@ vector<const Object*> World::getFrontObjects() const {
 vector<const Object*> World::getBackObjects() const {
 
 	vector<const Object*> allObjects;
+	allObjects.insert(allObjects.end(), m_stageObjects.begin(), m_stageObjects.end());
 	allObjects.insert(allObjects.end(), m_doorObjects.begin(), m_doorObjects.end());
 
 	return allObjects;
@@ -557,6 +557,23 @@ void World::setPlayerOnDoor(int from) {
 	m_player_p->setX(doorX1);
 	m_player_p->setY(doorY2 - m_player_p->getHeight());
 
+	// 仲間も移動
+	setPlayerFollowerPoint();
+
+	// カメラリセット
+	cameraPointInit();
+}
+
+// プレイヤーを特定の座標へ移動
+void World::setPlayerPoint(CharacterData* characterData) {
+	m_player_p->setX(characterData->x());
+	m_player_p->setY(characterData->y() - m_player_p->getHeight());
+	// カメラリセット
+	cameraPointInit();
+}
+
+// 仲間をプレイヤーの位置へ移動
+void World::setPlayerFollowerPoint() {
 	// プレイヤーの仲間
 	for (unsigned int i = 0; i < m_characterControllers.size(); i++) {
 		const Character* follow = m_characterControllers[i]->getBrain()->getFollow();
@@ -565,14 +582,13 @@ void World::setPlayerOnDoor(int from) {
 			// Controllerに対応するCharacterに変更を加える
 			for (unsigned int j = 0; j < m_characters.size(); j++) {
 				if (m_characterControllers[i]->getAction()->getCharacter()->getId() == m_characters[j]->getId()) {
-					m_characters[j]->setX(doorX1);
-					m_characters[j]->setY(doorY2 - m_characters[j]->getHeight());
+					m_characters[j]->setX(m_player_p->getX());
+					m_characters[j]->setY(m_player_p->getY() + m_player_p->getHeight() - m_characters[j]->getHeight());
 					break;
 				}
 			}
 		}
 	}
-	cameraPointInit();
 }
 
 // データ管理：カメラの位置をリセット
@@ -693,7 +709,9 @@ void World::updateCamera() {
 		}
 		// フォーカスしているキャラ以外なら距離を調べる
 		else if (m_characters[i]->getHp() > 0) {
-			int dx = abs(m_camera->getX() - m_characters[i]->getX()) + m_characters[i]->getWide();
+			int x = m_characters[i]->getX();
+			if (m_camera->getX() < x) { x += m_characters[i]->getWide(); }
+			int dx = abs(m_camera->getX() - x);
 			if (dx < MAX_DISABLE) {
 				max_dx = max(max_dx, dx);
 				max_dy = max(max_dy, abs(m_camera->getY() - m_characters[i]->getY()) + m_characters[i]->getHeight());
@@ -716,8 +734,8 @@ void World::updateCamera() {
 	else {
 		int nowWide = (int)(GAME_WIDE / 2 / nowEx);
 		int nowHeight = (int)(GAME_HEIGHT / 2 / nowEx);
-		max_dx = (int)(max_dx * nowEx / m_exX);
-		max_dy = (int)(max_dy * nowEx / m_exY);
+		max_dx = (int)(max_dx / m_exX);
+		max_dy = (int)(max_dy / m_exY);
 		if (nowEx > m_cameraMinEx && (max_dx > nowWide || max_dy > nowHeight)) {
 			// 縮小
 			double d = double(max(max_dx - nowWide, max_dy - nowHeight));
@@ -726,7 +744,7 @@ void World::updateCamera() {
 		else if (nowEx < m_cameraMaxEx && (max_dx < nowWide && max_dy < nowHeight)) {
 			// 拡大
 			double d = double(max(nowWide - max_dx, nowHeight - max_dy));
-			m_camera->setEx(nowEx + min(0.08, d / 100000));
+			m_camera->setEx(nowEx + min(0.001, d / 100000));
 		}
 	}
 }

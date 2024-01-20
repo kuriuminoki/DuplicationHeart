@@ -847,7 +847,12 @@ StageObject::StageObject(int x1, int y1, int x2, int y2, const char* fileName, i
 	DoorObject(x1, y1, x2, y2, fileName, -1)
 {
 	m_textNum = textNum;
-	m_defaultText = "Ｗキーで調べる";
+	if (textNum == -1) {
+		m_defaultText = "";
+	}
+	else {
+		m_defaultText = "Ｗキーで調べる";
+	}
 }
 
 StageObject::~StageObject() {

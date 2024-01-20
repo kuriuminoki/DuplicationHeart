@@ -230,6 +230,15 @@ GameData::~GameData() {
 	}
 }
 
+CharacterData* GameData::getCharacterData(string characterName) {
+	for (unsigned int i = 0; i < m_characterData.size(); i++) {
+		if (m_characterData[i]->name()) {
+			return m_characterData[i];
+		}
+	}
+	return nullptr;
+}
+
 // セーブ
 bool GameData::save() {
 
@@ -433,6 +442,8 @@ Game::Game(const char* saveFilePath, int storyNum) {
 		// チャプターのバックアップ
 		m_gameData->saveChapter();
 	}
+
+	m_gameoverCnt = 0;
 }
 
 Game::~Game() {
@@ -450,6 +461,15 @@ Game::~Game() {
 }
 
 bool Game::play() {
+
+	// ゲームオーバー
+	if (m_gameoverCnt > 0) {
+		m_gameoverCnt++;
+		if (m_gameoverCnt == 120) {
+			m_rebootFlag = true;
+		}
+		return false;
+	}
 
 	// 一時停止
 	if (controlQ() == 1) {
@@ -545,7 +565,7 @@ bool Game::play() {
 	else if (m_world->playerDead() && m_world->getBrightValue() == 0) {
 		// storyからハートがやられたことを伝えられたらタイトルへ戻る
 		// やられるのがイベントの成功条件なら前のif文(m_story->getBackPrevSaveFlag())にひっかかるはず
-		m_rebootFlag = true;
+		m_gameoverCnt++;
 	}
 
 	// エリア移動
@@ -575,7 +595,8 @@ void Game::backPrevSave() {
 	// 以前のAreaNumでロード
 	m_world = new World(-1, prevData.getAreaNum(), m_soundPlayer);
 	m_gameData->asignWorld(m_world, true);
-	m_world->setPlayerOnDoor(m_gameData->getAreaNum());
+	m_world->setPlayerPoint(prevData.getCharacterData("ハート"));
+	m_world->setPlayerFollowerPoint();
 	m_story->setWorld(m_world);
 }
 

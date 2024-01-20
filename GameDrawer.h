@@ -18,6 +18,9 @@ private:
 	const int SKILL_SIZE = 100;
 	int m_skillHandle;
 
+	// ゲームオーバーの画像
+	int m_gameoverHandle;
+
 public:
 	GameDrawer(const Game* game);
 
