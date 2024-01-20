@@ -65,6 +65,7 @@ public:
 	inline int getHp() const { return m_hp; }
 	inline int getDamageCnt() const { return m_damageCnt; }
 	virtual const char* getFileName() const { return ""; }
+	virtual bool getTextDisp() const { return false; }
 
 	// セッタ
 	inline void setDeleteFlag(bool deleteFlag) { m_deleteFlag = deleteFlag; }
@@ -76,6 +77,7 @@ public:
 	void setDamageCnt(int damageCnt) { m_damageCnt = damageCnt; }
 	void setEffectHandles(GraphHandles* effectHandles_p) { m_effectHandles_p = effectHandles_p; }
 	void setSoundHandle(int soundHandle_p) { m_soundHandle_p = soundHandle_p; }
+	virtual inline void setTextDisp(const bool textDisp) {}
 
 	// 座標XにおけるY1座標（傾きから算出する）
 	virtual int getY(int x) const { return m_y1; }
@@ -427,6 +429,7 @@ protected:
 
 	// チュートリアルのテキスト
 	std::string m_text;
+	bool m_textDisp;
 
 	std::string m_defaultText;
 
@@ -442,12 +445,14 @@ public:
 
 	// ゲッタ
 	inline int getAreaNum() const { return m_areaNum; }
-	inline std::string getText() const { return m_text; }
+	inline std::string getText() const { return m_textDisp ? m_defaultText : m_text; }
 	const char* getFileName() const { return m_fileName.c_str(); }
 	inline int getTextNum() const { return m_textNum; }
+	inline bool getTextDisp() const { return m_textDisp; }
 
 	// セッタ
 	inline void setText(const char* text) { m_text = text; }
+	inline void setTextDisp(const bool textDisp) { m_textDisp = textDisp; }
 
 	// キャラとの当たり判定
 	virtual bool atari(CharacterController* characterController);

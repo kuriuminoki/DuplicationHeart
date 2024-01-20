@@ -817,6 +817,7 @@ DoorObject::DoorObject(int x1, int y1, int x2, int y2, const char* fileName, int
 	m_text = "";
 	m_defaultText = "Ｗキーで入る";
 	m_textNum = -1;
+	m_textDisp = false;
 }
 
 DoorObject::~DoorObject() {
@@ -825,7 +826,7 @@ DoorObject::~DoorObject() {
 
 bool DoorObject::atari(CharacterController* characterController) {
 	if (!characterController->getAction()->ableDamage() || !characterController->getAction()->getGrand()) {
-		m_text = "";
+		m_textDisp = false;
 		return false;
 	}
 	// キャラの情報　座標と移動スピード
@@ -836,10 +837,10 @@ bool DoorObject::atari(CharacterController* characterController) {
 
 	// 当たり判定
 	if (characterX2 > m_x1 && characterX1 < m_x2 && characterY2 > m_y1 && characterY1 < m_y2) {
-		m_text = m_defaultText;
+		m_textDisp = true;
 		return true;
 	}
-	m_text = "";
+	m_textDisp = false;
 	return false;
 }
 
@@ -920,12 +921,14 @@ Object* DoorObject::createCopy() {
 	DoorObject* res = new DoorObject(m_x1, m_y1, m_x2, m_y2, m_fileName.c_str(), m_areaNum);
 	setParam(res);
 	res->setText(m_text.c_str());
+	res->setTextDisp(m_textDisp);
 	return res;
 }
 Object* StageObject::createCopy() {
 	StageObject* res = new StageObject(m_x1, m_y1, m_x2, m_y2, m_fileName.c_str(), m_textNum);
 	setParam(res);
 	res->setText(m_text.c_str());
+	res->setTextDisp(m_textDisp);
 	return res;
 }
 
