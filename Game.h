@@ -190,6 +190,7 @@ public:
 	inline int getFrom(int i) const { return m_doorData[i]->from(); }
 	inline int getTo(int i) const { return m_doorData[i]->to(); }
 	inline int getLatestStoryNum() const { return m_latestStoryNum; }
+	CharacterData* getCharacterData(std::string characterName);
 
 	// ƒZƒbƒ^
 	inline void setAreaNum(int areaNum) { m_areaNum = areaNum; }

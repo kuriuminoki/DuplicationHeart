@@ -214,8 +214,14 @@ public:
 	// データ管理：Doorの状態を教える
 	void asignDoorData(std::vector<DoorData*>& data, int fromAreaNum) const;
 
-	// データ管理：プレイヤーとその仲間をドアの前に移動
+	// データ管理：プレイヤーをドアの前まで移動
 	void setPlayerOnDoor(int from);
+
+	// プレイヤーを特定の座標へ移動
+	void setPlayerPoint(CharacterData* characterData);
+
+	// 仲間をプレイヤーの位置へ移動
+	void setPlayerFollowerPoint();
 
 	// キャラに戦わせる
 	void battle();

@@ -230,6 +230,15 @@ GameData::~GameData() {
 	}
 }
 
+CharacterData* GameData::getCharacterData(string characterName) {
+	for (unsigned int i = 0; i < m_characterData.size(); i++) {
+		if (m_characterData[i]->name()) {
+			return m_characterData[i];
+		}
+	}
+	return nullptr;
+}
+
 // セーブ
 bool GameData::save() {
 
@@ -586,7 +595,8 @@ void Game::backPrevSave() {
 	// 以前のAreaNumでロード
 	m_world = new World(-1, prevData.getAreaNum(), m_soundPlayer);
 	m_gameData->asignWorld(m_world, true);
-	m_world->setPlayerOnDoor(m_gameData->getAreaNum());
+	m_world->setPlayerPoint(prevData.getCharacterData("ハート"));
+	m_world->setPlayerFollowerPoint();
 	m_story->setWorld(m_world);
 }
 
