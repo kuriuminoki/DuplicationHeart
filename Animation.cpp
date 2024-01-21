@@ -130,8 +130,8 @@ void Movie::drawFlame() {
 	}
 
 	// デバッグ用
-	DrawFormatString(0, GAME_HEIGHT - 100, BLACK, "COUNT = %d", m_cnt);
-	DrawFormatString(0, GAME_HEIGHT - 50, WHITE, "COUNT = %d", m_cnt);
+	//DrawFormatString(0, GAME_HEIGHT - 100, BLACK, "COUNT = %d", m_cnt);
+	//DrawFormatString(0, GAME_HEIGHT - 50, WHITE, "COUNT = %d", m_cnt);
 }
 
 
@@ -202,7 +202,8 @@ OpMovie::OpMovie(SoundPlayer* soundPlayer_p):
 	m_titleBlue = new GraphHandles((path + "title/" + "titleBlue").c_str(), 1, m_ex);
 	m_titleOrange = new GraphHandles((path + "title/" + "titleOrange").c_str(), 1, m_ex);
 	m_titleHeart = new GraphHandles((path + "title/" + "heart").c_str(), 1, m_ex);
-	m_heartHide = new GraphHandles((path + "title/" + "ハート隠し").c_str(), 2, m_ex);
+	m_heartHide = new GraphHandles((path + "title/" + "ハート隠し").c_str(), 3, m_ex);
+	m_heartHide2 = new GraphHandles((path + "title/" + "ハート隠し").c_str(), 1, m_ex);
 
 	// part1
 	m_darkHeart = new GraphHandles((path + "part1/" + "darkHeart").c_str(), 3, m_ex);
@@ -339,6 +340,7 @@ OpMovie::~OpMovie() {
 	delete m_titleOrange;
 	delete m_titleHeart;
 	delete m_heartHide;
+	delete m_heartHide2;
 	// part1
 	delete m_darkHeart;
 	delete m_heartEye;
@@ -438,8 +440,16 @@ void OpMovie::play() {
 	else if (m_cnt < 440 && m_animation->getFinishFlag()) {
 		m_animation->changeGraph(m_title, 30);
 	}
-	else if (m_cnt == 440) {
-		m_animation->changeGraph(m_heartHide, 60);
+	else if (m_cnt >= 440 && m_cnt < 560) {
+		if (m_cnt == 440) {
+			m_animation->changeGraph(m_heartHide, 60);
+		}
+		else if (m_cnt == 460) {
+			m_animation->changeGraph(m_heartHide, 6);
+		}
+		else if (m_cnt == 500) {
+			m_animation->changeGraph(m_heartHide2, 60);
+		}
 	}
 	else if (m_cnt < 600 && m_cnt >= 560) {
 		m_animation->changeGraph(m_titleHeart, 60);
@@ -552,7 +562,7 @@ void OpMovie::play() {
 			m_animation->changeGraph(m_heart);
 		}
 		if (m_heart->getGraphHandle()->getEx() > m_ex) {
-			m_heart->setEx(m_heart->getGraphHandle()->getEx() * 2 / 3);
+			m_heart->setEx(m_heart->getGraphHandle()->getEx() * 4 / 5);
 		}
 		if (m_heart->getGraphHandle()->getEx() < m_ex) {
 			m_heart->setEx(m_ex);
@@ -595,56 +605,57 @@ void OpMovie::play() {
 		}
 	}
 	else if (m_cnt >= 3750) { // サビ2
-		if (m_cnt == 3750) {
+		if (m_cnt == 3770) {
 			m_animation->changeGraph(m_tvRshine, 3);
 		}
-		if (m_cnt == 3775 - 12) {
+
+		if (m_cnt == 3900 - 100) {
 			m_animation->changeGraph(m_tvShine, 3);
 		}
-		if (m_cnt == 3800 - 24) {
+		if (m_cnt == 3900 - 100 + 13) {
 			m_animation->changeGraph(m_tvSiesta, 30);
 		}
-
-		if (m_cnt == 3825) {
+		if (m_cnt == 3900 - 30) {
 			m_animation->changeGraph(m_tvRshine, 3);
 		}
-		if (m_cnt == 3850 - 12) {
+
+		if (m_cnt == 4000 - 100) {
 			m_animation->changeGraph(m_tvShine, 3);
 		}
-		if (m_cnt == 3875 - 24) {
+		if (m_cnt == 4000 - 100 + 13) {
 			m_animation->changeGraph(m_tvTroy, 30);
 		}
-
-		if (m_cnt == 3900) {
+		if (m_cnt == 4000 - 30) {
 			m_animation->changeGraph(m_tvRshine, 3);
 		}
-		if (m_cnt == 3925 - 12) {
+
+		if (m_cnt == 4100 - 100) {
 			m_animation->changeGraph(m_tvShine, 3);
 		}
-		if (m_cnt == 3950 - 24) {
+		if (m_cnt == 4100 - 100 + 13) {
 			m_animation->changeGraph(m_tvHierarchy, 30);
 		}
-
-		if (m_cnt == 3975) {
+		if (m_cnt == 4100 - 30) {
 			m_animation->changeGraph(m_tvRshine, 3);
 		}
-		if (m_cnt == 4000 - 12) {
+
+		if (m_cnt == 4200 - 100) {
 			m_animation->changeGraph(m_tvShine, 3);
 		}
-		if (m_cnt == 4025 - 24) {
+		if (m_cnt == 4200 - 100 + 13) {
 			m_animation->changeGraph(m_tvValkiria, 30);
 		}
-
-		if (m_cnt == 4050) {
+		if (m_cnt == 4200 - 30) {
 			m_animation->changeGraph(m_tvRshine, 3);
 		}
-		if (m_cnt == 4075 - 12) {
+
+		if (m_cnt == 4300 - 100) {
 			m_animation->changeGraph(m_tvShine, 3);
 		}
-		if (m_cnt == 4100 - 24) {
+		if (m_cnt == 4300 - 100 + 13) {
 			m_animation->changeGraph(m_tvHeart, 30);
 		}
-		if (m_cnt == 4300) {
+		if (m_cnt == 4350 - 20) {
 			m_animation->changeGraph(m_tvRshine, 3);
 		}
 	}
