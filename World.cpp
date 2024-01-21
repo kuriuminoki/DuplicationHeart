@@ -744,7 +744,7 @@ void World::updateCamera() {
 		else if (nowEx < m_cameraMaxEx && (max_dx < nowWide && max_dy < nowHeight)) {
 			// 拡大
 			double d = double(max(nowWide - max_dx, nowHeight - max_dy));
-			m_camera->setEx(nowEx + min(0.001, d / 100000));
+			m_camera->setEx(nowEx + min(0.005, d / 100000));
 		}
 	}
 }
@@ -913,7 +913,7 @@ void World::atariCharacterAndDoor(CharacterController* controller, vector<Object
 	// 壁や床オブジェクトの処理 (当たり判定と動き)
 	for (unsigned int i = 0; i < objects.size(); i++) {
 		if (m_areaLock) {
-			objects[i]->setText("");
+			objects[i]->setTextDisp(false);
 			continue;
 		}
 		// 当たり判定をここで行う

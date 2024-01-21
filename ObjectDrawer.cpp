@@ -53,7 +53,7 @@ void ObjectDrawer::drawObject(const Camera* const camera) {
 			graphHandle->draw((x1 + x2) / 2, (y1 + y2) / 2, camera->getEx() * graphHandle->getEx());
 		}
 	}
-	if (m_object->getText() != "") {
+	if (m_object->getTextDisp()) {
 		int halfStrSize = m_fontSize * (int)(m_object->getText().size()) / 4;
 		int centerX = (x1 + x2) / 2;
 		DrawBox(centerX - halfStrSize, y1 - m_fontSize, centerX + halfStrSize, y1, WHITE, TRUE);
