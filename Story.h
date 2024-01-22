@@ -19,6 +19,9 @@ private:
 	// ストーリー番号
 	int m_storyNum;
 
+	// 時間帯
+	int m_date;
+
 	// 進行中のイベント
 	Event* m_nowEvent;
 	
@@ -42,16 +45,25 @@ public:
 
 	bool play();
 
+	// イベントの発火確認
+	void checkFire();
+
 	// ハートのスキル発動が可能かどうか
 	bool skillAble();
 
 	// ゲッタ
 	inline int getStoryNum() const { return m_storyNum; }
+	inline int getDate() const { return m_date; }
 	inline CharacterLoader* getCharacterLoader() const { return m_characterLoader; }
 	inline ObjectLoader* getObjectLoader() const { return m_objectLoader; }
+	inline const World* getWorld() const { return m_world_p; }
+	bool getBackPrevSaveFlag() const;
 
 	// セッタ
 	void setWorld(World* world);
+
+	// 前のセーブポイントへ戻ったことを教えてもらう
+	void doneBackPrevSave();
 };
 
 

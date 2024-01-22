@@ -13,6 +13,9 @@
 using namespace std;
 
 
+const double OBJECT_DEFAULT_SIZE = 0.3;
+
+
 Object::Object() :
 	Object(0, 0, 0, 0, -1)
 {
@@ -28,12 +31,14 @@ Object::Object(int x1, int y1, int x2, int y2, int hp) {
 	if (m_x1 > m_x2) { std::swap(m_x1, m_x2); }
 	if (m_y1 > m_y2) { std::swap(m_y1, m_y2); }
 
+	m_handle = nullptr;
+
 	m_hp = hp;
 	m_damageCnt = 0;
 
 	m_deleteFlag = false;
 
-	m_effectHandles_p = NULL;
+	m_effectHandles_p = nullptr;
 	m_soundHandle_p = -1;
 }
 
@@ -56,18 +61,31 @@ void Object::decreaseHp(int damageValue) {
 	m_damageCnt = DAMAGE_CNT_SUM;
 }
 
+// 単純に四角の落下物と衝突しているか
+bool Object::atariDropBox(int x1, int y1, int x2, int y2, int vx, int vy) {
+	// 埋まっている
+	if (x2 > m_x1 && x1 < m_x2 && y2 > m_y1 && y1 < m_y2) {
+		return true;
+	}
+	// 上から衝突してきた
+	if (x2 + vx > m_x1 && x1 + vx < m_x2 && y2 < m_y1 && y2 + vy > m_y1) {
+		return true;
+	}
+	return false;
+}
+
 // アニメーション作成
 Animation* BulletObject::createAnimation(int x, int y, int flameCnt) {
-	if (m_effectHandles_p == NULL) {
-		return NULL;
+	if (m_effectHandles_p == nullptr) {
+		return nullptr;
 	}
 	return new Animation((m_x1 + m_x2) / 2, (m_y1 + m_y2) / 2, 3, m_effectHandles_p);
 }
 
 // アニメーション作成
 Animation* SlashObject::createAnimation(int x, int y, int flameCnt) {
-	if (m_effectHandles_p == NULL) {
-		return NULL;
+	if (m_effectHandles_p == nullptr) {
+		return nullptr;
 	}
 	// 座標の平均をとる
 	x = (x + (m_x1 + m_x2) / 2) / 2;
@@ -78,10 +96,22 @@ Animation* SlashObject::createAnimation(int x, int y, int flameCnt) {
 /*
 * 四角形のオブジェクト
 */
-BoxObject::BoxObject(int x1, int y1, int x2, int y2, int color, int hp) :
+BoxObject::BoxObject(int x1, int y1, int x2, int y2, const char* fileName, int color, int hp) :
 	Object(x1, y1, x2, y2, hp)
 {
+	m_fileName = fileName;
+	if (m_fileName != "null") {
+		string filePath = "picture/stageMaterial/";
+		filePath += m_fileName;
+		m_handle = new GraphHandle(filePath.c_str(), OBJECT_DEFAULT_SIZE, 0.0, true);
+	}
 	m_color = color;
+}
+
+BoxObject::~BoxObject() {
+	if (m_handle != nullptr) {
+		delete m_handle;
+	}
 }
 
 // キャラクターとの当たり判定
@@ -118,10 +148,11 @@ bool BoxObject::atari(CharacterController* characterController) {
 
 	// キャラが左右移動で当たっているか判定
 	if (characterY2 + characterVy > m_y1 && characterY1 + characterVy < m_y2) {
+		bool slope = characterController->getAction()->getGrandLeftSlope() || characterController->getAction()->getGrandRightSlope();
 		// 右に移動中のキャラが左から当たっているか判定
 		if (characterX2 <= m_x1 && characterX2 + characterVx >= m_x1) {
 			// 段差とみなして乗り越える
-			if (characterY2 - STAIR_HEIGHT <= m_y1) {
+			if (slope && characterY2 - STAIR_HEIGHT <= m_y1) {
 				// 適切な座標へ
 				characterController->setCharacterX(m_x1 - characterWide / 2 - characterVx);
 				characterController->setCharacterY(m_y1 - characterHeight);
@@ -140,7 +171,7 @@ bool BoxObject::atari(CharacterController* characterController) {
 		}
 		// 左に移動中のキャラが右から当たっているか判定
 		else if (characterX1 >= m_x2 && characterX1 + characterVx <= m_x2) {
-			if (characterY2 - STAIR_HEIGHT <= m_y1) {
+			if (slope && characterY2 - STAIR_HEIGHT <= m_y1) {
 				// 適切な座標へ
 				characterController->setCharacterX(m_x2 - characterWide / 2 + characterVx);
 				characterController->setCharacterY(m_y1 - characterHeight);
@@ -227,11 +258,23 @@ void BoxObject::action() {
 	if (m_damageCnt > 0) { m_damageCnt--; }
 }
 
-TriangleObject::TriangleObject(int x1, int y1, int x2, int y2, int color, bool leftDown, int hp):
+TriangleObject::TriangleObject(int x1, int y1, int x2, int y2, const char* fileName, int color, bool leftDown, int hp):
 	Object(x1, y1, x2, y2, hp)
 {
 	m_color = color;
+	m_fileName = fileName;
+	if (m_fileName != "null") {
+		string filePath = "picture/stageMaterial/";
+		filePath += m_fileName;
+		m_handle = new GraphHandle(filePath.c_str(), OBJECT_DEFAULT_SIZE, 0.0, true, !leftDown);
+	}
 	m_leftDown = leftDown;
+}
+
+TriangleObject::~TriangleObject() {
+	if (m_handle != nullptr) {
+		delete m_handle;
+	}
 }
 
 // 座標XにおけるY座標（傾きから算出する）
@@ -393,6 +436,20 @@ bool TriangleObject::atari(CharacterController* characterController) {
 	return false;
 }
 
+// 単純に四角の落下物と衝突しているか
+bool TriangleObject::atariDropBox(int x1, int y1, int x2, int y2, int vx, int vy) {
+	int y = getY((x1 + x2) / 2);
+	// 埋まっている
+	if (x2 > m_x1 && x1 < m_x2 && y2 > y && y1 < m_y2) {
+		return true;
+	}
+	// 上から衝突してきた
+	if (x2 + vx > m_x1 && x1 + vx < m_x2 && y2 < y && y2 + vy > y) {
+		return true;
+	}
+	return false;
+}
+
 // キャラがオブジェクトに入り込んでいるときの処理
 void TriangleObject::penetration(CharacterController* characterController) {
 	// キャラの情報　座標と移動スピード
@@ -500,6 +557,8 @@ BulletObject::BulletObject(int x, int y, int color, int gx, int gy, AttackInfo* 
 
 	// サウンド
 	m_soundHandle_p = attackInfo->bulletSoundeHandle();
+
+	m_handle = nullptr;
 }
 
 BulletObject::BulletObject(int x, int y, int color, int gx, int gy) :
@@ -518,8 +577,15 @@ BulletObject::BulletObject(int x, int y, int color, int gx, int gy) :
 	m_v = 0;
 	m_vx = 0;
 	m_vy = 0;
-	m_effectHandles_p = NULL;
+	m_effectHandles_p = nullptr;
 	m_soundHandle_p = -1;
+	m_handle = nullptr;
+}
+
+BulletObject::BulletObject(int x, int y, GraphHandle* handle, int gx, int gy, AttackInfo* attackInfo):
+	BulletObject(x, y, WHITE, gx, gy, attackInfo)
+{
+	m_handle = handle;
 }
 
 // キャラとの当たり判定
@@ -580,6 +646,11 @@ void BulletObject::action() {
 }
 
 
+ParabolaBullet::ParabolaBullet(int x, int y, int color, int gx, int gy, AttackInfo* attackInfo):
+	BulletObject(x, y, color, gx, gy, attackInfo)
+{
+
+}
 ParabolaBullet::ParabolaBullet(int x, int y, GraphHandle* handle, int gx, int gy, AttackInfo* attackInfo):
 	BulletObject(x, y, -1, gx, gy, attackInfo)
 {
@@ -607,7 +678,8 @@ void ParabolaBullet::action() {
 }
 
 // 画像ハンドルを返す
-GraphHandle* ParabolaBullet::getHandle() const { 
+GraphHandle* BulletObject::getHandle() const { 
+	if (m_handle == nullptr) { return nullptr; }
 	double r = atan2((double)m_vy, (double)m_vx);
 	if (m_vy == 0) { r = 0; }
 	m_handle->setAngle(r);
@@ -659,7 +731,7 @@ SlashObject::SlashObject(int x1, int y1, int x2, int y2, GraphHandle* handle, in
 	m_cnt = 0;
 	m_slashImpactX = 0;
 	m_slashImpactY = 0;
-	m_effectHandles_p = NULL;
+	m_effectHandles_p = nullptr;
 	m_soundHandle_p = -1;
 }
 
@@ -738,18 +810,23 @@ DoorObject::DoorObject(int x1, int y1, int x2, int y2, const char* fileName, int
 	Object(x1, y1, x2, y2)
 {
 	m_fileName = fileName;
-	m_graph = new GraphHandle(fileName, 1.0, 0.0, true);
+	string filePath = "picture/stageMaterial/";
+	filePath += m_fileName;
+	m_handle = new GraphHandle(filePath.c_str(), 1.0, 0.0, true);
 	m_areaNum = areaNum;
 	m_text = "";
+	m_defaultText = "Ｗキーで入る";
+	m_textNum = -1;
+	m_textDisp = false;
 }
 
 DoorObject::~DoorObject() {
-	delete m_graph;
+	delete m_handle;
 }
 
 bool DoorObject::atari(CharacterController* characterController) {
 	if (!characterController->getAction()->ableDamage() || !characterController->getAction()->getGrand()) {
-		m_text = "";
+		m_textDisp = false;
 		return false;
 	}
 	// キャラの情報　座標と移動スピード
@@ -760,22 +837,39 @@ bool DoorObject::atari(CharacterController* characterController) {
 
 	// 当たり判定
 	if (characterX2 > m_x1 && characterX1 < m_x2 && characterY2 > m_y1 && characterY1 < m_y2) {
-		m_text = "Ｗキーで入る";
+		m_textDisp = true;
 		return true;
 	}
-	m_text = "";
+	m_textDisp = false;
 	return false;
+}
+
+StageObject::StageObject(int x1, int y1, int x2, int y2, const char* fileName, int textNum) :
+	DoorObject(x1, y1, x2, y2, fileName, -1)
+{
+	m_textNum = textNum;
+	if (textNum == -1) {
+		m_defaultText = "";
+	}
+	else {
+		m_defaultText = "Ｗキーで調べる";
+	}
+}
+
+StageObject::~StageObject() {
+	// DoorObjectでdeleteされるので不要
+	//delete m_handle;
 }
 
 
 // コピー作成
 Object* BoxObject::createCopy() {
-	Object* res = new BoxObject(m_x1, m_y1, m_x2, m_y2, m_color, m_hp);
+	Object* res = new BoxObject(m_x1, m_y1, m_x2, m_y2, m_fileName.c_str(), m_color, m_hp);
 	setParam(res);
 	return res;
 }
 Object* TriangleObject::createCopy() {
-	Object* res = new TriangleObject(m_x1, m_y1, m_x2, m_y2, m_color, m_leftDown, m_hp);
+	Object* res = new TriangleObject(m_x1, m_y1, m_x2, m_y2, m_fileName.c_str(), m_color, m_leftDown, m_hp);
 	setParam(res);
 	return res;
 }
@@ -826,7 +920,15 @@ void SlashObject::setSlashParam(SlashObject* object) {
 Object* DoorObject::createCopy() {
 	DoorObject* res = new DoorObject(m_x1, m_y1, m_x2, m_y2, m_fileName.c_str(), m_areaNum);
 	setParam(res);
-	res->setText(m_text);
+	res->setText(m_text.c_str());
+	res->setTextDisp(m_textDisp);
+	return res;
+}
+Object* StageObject::createCopy() {
+	StageObject* res = new StageObject(m_x1, m_y1, m_x2, m_y2, m_fileName.c_str(), m_textNum);
+	setParam(res);
+	res->setText(m_text.c_str());
+	res->setTextDisp(m_textDisp);
 	return res;
 }
 

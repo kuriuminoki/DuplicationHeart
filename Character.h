@@ -3,6 +3,7 @@
 
 
 #include<string>
+#include<map>
 
 class Object;
 class GraphHandle;
@@ -29,6 +30,9 @@ private:
 	// ジャンプ時のY方向の初速
 	int m_jumpHeight;
 
+	// 射撃時に撃つ方向を向くか
+	bool m_sameBulletDirection;
+
 	// ジャンプ時の音
 	int m_jumpSound;
 
@@ -46,15 +50,24 @@ public:
 
 	~CharacterInfo();
 
-	// ゲッタのみを持つ
+	// ゲッタのみを持つ、セッタは持たない
 	inline std::string name() const { return m_name; }
 	inline int maxHp() const { return m_maxHp; }
 	inline double handleEx() const { return m_handleEx; }
 	inline int moveSpeed() const { return m_moveSpeed; }
 	inline int jumpHeight() const { return m_jumpHeight; }
+	inline bool sameBulletDirection() const { return m_sameBulletDirection; }
 	inline int jumpSound() const { return m_jumpSound; }
 	inline int passiveSound() const { return m_passiveSound; }
 	inline int landSound() const { return m_landSound; }
+
+	// バージョン変更
+	void changeVersion(int version);
+
+private:
+
+	void setParam(std::map<std::string, std::string>& data);
+
 };
 
 
@@ -131,7 +144,7 @@ public:
 
 	~AttackInfo();
 	
-	// ゲッタのみを持つ
+	// ゲッタのみを持つ、セッタは持たない
 	int bulletHp() const { return m_bulletHp; }
 	int bulletDamage() const { return m_bulletDamage; }
 	int bulletRx() const { return m_bulletRx; }
@@ -155,6 +168,14 @@ public:
 	int slashSoundHandle() const { return m_slashSoundHandle; }
 	int bulletStartSoundeHandle() const { return m_bulletStartSoundHandle; }
 	int slashStartSoundHandle() const { return m_slashStartSoundHandle; }
+
+	// バージョン変更
+	void changeVersion(const char* characterName, int version);
+
+private:
+
+	void setParam(std::map<std::string, std::string>& data);
+
 };
 
 
@@ -173,14 +194,29 @@ protected:
 	// グループID 味方識別用
 	int m_groupId;
 
+	// Infoのバージョン
+	int m_version;
+
 	// 残り体力
 	int m_hp;
+
+	// ダメージを受ける前の体力
+	int m_prevHp;
+
+	// HPバーを表示する残り時間
+	int m_dispHpCnt;
+
+	// 無敵ならtrue
+	bool m_invincible;
 
 	// X座標、Y座標
 	int m_x, m_y;
 
 	// 左を向いている
 	bool m_leftDirection;
+
+	// 一時的に動けない状態（ハートのスキル発動など）
+	bool m_freeze;
 
 	// キャラの情報
 	CharacterInfo* m_characterInfo;
@@ -198,9 +234,10 @@ public:
 	// コンストラクタ
 	Character();
 	Character(int hp, int x, int y, int groupId);
-	~Character();
+	virtual ~Character();
 
 	virtual Character* createCopy() = 0;
+	void setParam(Character* character);
 
 	// デバッグ
 	void debugCharacter(int x, int y, int color) const;
@@ -209,21 +246,32 @@ public:
 	// ゲッタ
 	inline int getId() const { return m_id; }
 	inline int getGroupId() const { return m_groupId; }
+	inline int getVersion() const { return m_version; }
 	inline int getHp() const { return m_hp; }
+	inline int getPrevHp() const { return m_prevHp; }
+	inline int getDispHpCnt() const { return m_dispHpCnt; }
+	inline bool getInvincible() const { return m_invincible; }
 	inline int getX() const { return m_x; }
 	inline int getY() const { return m_y; }
 	inline bool getLeftDirection() const { return m_leftDirection; }
+	inline int getFreeze() const { return m_freeze; }
 	FaceGraphHandle* getFaceHandle() const { return m_faceHandle; }
 	inline CharacterGraphHandle* getCharacterGraphHandle() const { return m_graphHandle; }
 	inline AttackInfo* getAttackInfo() const { return m_attackInfo; }
 	inline CharacterInfo* getCharacterInfo() const { return m_characterInfo; }
 
 	// セッタ
-	inline void setHp(int hp) { m_hp = (hp > m_characterInfo->maxHp()) ? m_characterInfo->maxHp() : hp; }
+	inline void setHp(int hp) { m_hp = (hp > m_characterInfo->maxHp()) ? m_characterInfo->maxHp() : hp; m_prevHp = m_hp; }
+	inline void setPrevHp(int prevHp) { 
+		m_prevHp = (prevHp < m_hp) ? m_hp : prevHp;
+		if (m_prevHp == m_hp && m_dispHpCnt > 0) { m_dispHpCnt--; }
+	}
+	inline void setInvincible(bool invincible) { m_invincible = invincible; }
 	inline void setX(int x) { m_x = x; }
 	inline void setY(int y) { m_y = y; }
 	inline void setId(int id) { m_id = id; }
 	inline void setGroupId(int id) { m_groupId = id; }
+	inline void setFreeze(bool freeze) { m_freeze = freeze; }
 	// キャラの向き変更は、画像の反転も行う
 	void setLeftDirection(bool leftDirection);
 	inline void setDuplicationFlag(bool flag) { m_duplicationFlag = flag; }
@@ -243,6 +291,9 @@ public:
 	inline int getBulletRapid() const { return m_attackInfo->bulletRapid(); }
 	inline int getSlashCountSum() const { return m_attackInfo->slashCountSum(); }
 	inline int getSlashInterval() const { return m_attackInfo->slashInterval(); }
+
+	// Infoのバージョンを変更する
+	void changeInfoVersion(int version);
 
 	// 画像の情報を取得
 	int getCenterX() const;
@@ -294,10 +345,15 @@ public:
 	void moveDown(int d);
 
 	// 射撃攻撃をする(キャラごとに違う)
-	virtual Object* bulletAttack(int gx, int gy, SoundPlayer* soundPlayer) { return NULL; }
+	virtual Object* bulletAttack(int gx, int gy, SoundPlayer* soundPlayer) { return nullptr; }
 
 	// 斬撃攻撃をする(キャラごとに違う) 左を向いているか、今何カウントか
-	virtual Object* slashAttack(bool leftDirection, int cnt, SoundPlayer* soundPlayer) { return NULL; }
+	virtual Object* slashAttack(bool leftDirection, int cnt, SoundPlayer* soundPlayer) { return nullptr; }
+
+	// 射撃攻撃を持っているか
+	bool haveBulletAttack() const { return m_attackInfo->bulletDamage() != 0; }
+	// 斬撃攻撃を持っているか
+	bool haveSlashAttack() const { return m_attackInfo->slashDamage() != 0; }
 };
 
 
@@ -310,12 +366,15 @@ Character* createCharacter(const char* characterName, int hp = 100, int x = 0, i
 class Heart :
 	public Character
 {
-private:
+protected:
 	//// 走りアニメのスピード
 	const int RUN_ANIME_SPEED = 6;
 	
 	//// ジャンプ前アニメのスピード
 	const int RUN_PREJUMP_SPEED = 6;
+
+	// 弾の色
+	int m_bulletColor;
 	
 public:
 	// コンストラクタ
@@ -366,6 +425,123 @@ public:
 
 	// 斬撃攻撃をする(キャラごとに違う)
 	Object* slashAttack(bool leftDirection, int cnt, SoundPlayer* soundPlayer);
+};
+
+
+/*
+* ヒエラルキー
+*/
+class Hierarchy :
+	public Heart
+{
+public:
+	// コンストラクタ
+	Hierarchy(const char* name, int hp, int x, int y, int groupId);
+	Hierarchy(const char* name, int hp, int x, int y, int groupId, AttackInfo* attackInfo);
+
+	Character* createCopy();
+
+	// 射撃攻撃をする(キャラごとに違う)
+	Object* bulletAttack(int gx, int gy, SoundPlayer* soundPlayer);
+
+	// 斬撃攻撃をする(キャラごとに違う)
+	Object* slashAttack(bool leftDirection, int cnt, SoundPlayer* soundPlayer);
+};
+
+
+/*
+* ヴァルキリア
+*/
+class Valkyria :
+	public Heart
+{
+public:
+	// コンストラクタ
+	Valkyria(const char* name, int hp, int x, int y, int groupId);
+	Valkyria(const char* name, int hp, int x, int y, int groupId, AttackInfo* attackInfo);
+
+	Character* createCopy();
+
+	// ジャンプ前画像をセット
+	void switchPreJump(int cnt = 0);
+
+	// 射撃攻撃をする(キャラごとに違う)
+	Object* bulletAttack(int gx, int gy, SoundPlayer* soundPlayer){ return nullptr; }
+
+	// 斬撃攻撃をする(キャラごとに違う)
+	Object* slashAttack(bool leftDirection, int cnt, SoundPlayer* soundPlayer);
+};
+
+
+/*
+* トロイ
+*/
+class Troy :
+	public Heart
+{
+public:
+	// コンストラクタ
+	Troy(const char* name, int hp, int x, int y, int groupId);
+	Troy(const char* name, int hp, int x, int y, int groupId, AttackInfo* attackInfo);
+
+	Character* createCopy();
+
+	// 斬撃攻撃をする(キャラごとに違う)
+	Object* slashAttack(bool leftDirection, int cnt, SoundPlayer* soundPlayer);
+};
+
+
+/*
+* 普通の射撃のみをするキャラ
+*/
+class BulletOnly :
+	public Heart
+{
+public:
+	// コンストラクタ
+	BulletOnly(const char* name, int hp, int x, int y, int groupId);
+	BulletOnly(const char* name, int hp, int x, int y, int groupId, AttackInfo* attackInfo);
+
+	Character* createCopy();
+
+	// 斬撃攻撃をする(キャラごとに違う)
+	Object* slashAttack(bool leftDirection, int cnt, SoundPlayer* soundPlayer) { return nullptr; }
+};
+
+
+/*
+* 普通の斬撃のみをするキャラ
+*/
+class SlashOnly :
+	public Heart
+{
+public:
+	// コンストラクタ
+	SlashOnly(const char* name, int hp, int x, int y, int groupId);
+	SlashOnly(const char* name, int hp, int x, int y, int groupId, AttackInfo* attackInfo);
+
+	Character* createCopy();
+
+	// 射撃攻撃をする(キャラごとに違う)
+	Object* bulletAttack(int gx, int gy, SoundPlayer* soundPlayer) { return nullptr; }
+};
+
+
+/*
+* ParabolaBulletのみを撃つキャラ
+*/
+class ParabolaOnly :
+	public Heart
+{
+public:
+	// コンストラクタ
+	ParabolaOnly(const char* name, int hp, int x, int y, int groupId);
+	ParabolaOnly(const char* name, int hp, int x, int y, int groupId, AttackInfo* attackInfo);
+
+	Character* createCopy();
+
+	// 射撃攻撃をする(キャラごとに違う)
+	Object* bulletAttack(int gx, int gy, SoundPlayer* soundPlayer);
 };
 
 

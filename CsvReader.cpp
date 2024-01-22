@@ -148,7 +148,7 @@ CsvReader2::CsvReader2(const char* fileName) {
 		// 一行分のテキストをデータにしてVectorに変換
 		vector<string> oneDataVector = csv2vector(buff);
 
-		if (oneDataVector[1] == "") {
+		if ((oneDataVector[1] == "" && oneDataVector[0].find(":") != std::string::npos) || oneDataVector[0] == "") {
 			domainName = oneDataVector[0];
 			FileRead_gets(buff, size, fp);
 			m_columnNames[domainName] = csv2vector(buff);
@@ -209,7 +209,7 @@ AreaReader::AreaReader(int fromAreaNum, int toAreaNum, SoundPlayer* soundPlayer)
 	m_fromAreaNum = fromAreaNum;
 	m_soundPlayer_p = soundPlayer;
 
-	m_camera_p = NULL;
+	m_camera_p = nullptr;
 	m_focusId = -1;
 	m_playerId = -1;
 	m_backGroundGraph = -1;

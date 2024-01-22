@@ -41,14 +41,14 @@ SoundPlayer::~SoundPlayer() {
 void SoundPlayer::setVolume(int volume) {
 	if (volume < 0) { m_volume = 0; }
 	else {
-		m_volume = min(m_volume, 100);
+		m_volume = min(volume, 100);
 	}
-	changeSoundVolume(m_bgmHandle, m_volume);
+	changeSoundVolume(m_volume, m_bgmHandle);
 }
 
 // BGMをセット（変更）
 void SoundPlayer::setBGM(std::string bgmName, int volume) {
-	if (bgmName == m_bgmName) { return; }
+	if (bgmName == m_bgmName || bgmName == "" || bgmName == "null") { return; }
 	DeleteSoundMem(m_bgmHandle);
 	m_bgmName = bgmName;
 	m_bgmHandle = LoadSoundMem(bgmName.c_str());
@@ -59,7 +59,7 @@ void SoundPlayer::setBGM(std::string bgmName, int volume) {
 
 // BGMを再生
 void SoundPlayer::playBGM() {
-	PlaySoundMem(m_bgmHandle, DX_PLAYTYPE_LOOP);
+	PlaySoundMem(m_bgmHandle, DX_PLAYTYPE_LOOP, FALSE);
 }
 
 // BGMをストップ
@@ -67,9 +67,19 @@ void SoundPlayer::stopBGM() {
 	StopSoundMem(m_bgmHandle);
 }
 
+// BGMが再生していないか調べる
+int SoundPlayer::checkBGMplay() {
+	return CheckSoundMem(m_bgmHandle);
+}
+
 // 効果音の再生待機列へプッシュ
 void SoundPlayer::pushSoundQueue(int soundHandle, int panPal) {
 	m_soundQueue.push(make_pair(soundHandle, panPal));
+}
+
+// 効果音の再生待機列をクリア
+void SoundPlayer::clearSoundQueue() {
+	queue<pair<int, int> >().swap(m_soundQueue);
 }
 
 // 効果音を鳴らす

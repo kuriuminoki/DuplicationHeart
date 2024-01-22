@@ -1,6 +1,11 @@
 #ifndef GRAPH_HANDLE_H_INCLUDED
 #define GRAPH_HANDLE_H_INCLUDED
 
+#include <map>
+#include <string>
+
+class Camera;
+
 /*
 * 画像データ(ハンドル、画像固有の拡大率、向き)をまとめて扱うためのクラス
 */
@@ -41,7 +46,11 @@ public:
 	// 描画する
 	void draw(int x, int y, double ex = 1.0) const;
 
-	void extendDraw(int x1, int y1, int x2, int y2) const ;
+	// 範囲を指定して変形描画する
+	void extendDraw(int x1, int y1, int x2, int y2) const;
+
+	// 範囲を指定して敷き詰めるように描画する
+	void lineUpDraw(int x1, int y1, int x2, int y2, const Camera* camera) const;
 };
 
 
@@ -81,7 +90,7 @@ public:
 class CharacterGraphHandle {
 private:
 	// 表示される画像
-	GraphHandle* m_graphHandle;
+	GraphHandle* m_graphHandle_p;
 
 	double m_ex;
 
@@ -148,7 +157,7 @@ public:
 	~CharacterGraphHandle();
 
 	// 表示する画像を返す
-	inline GraphHandle* getHandle() { return m_graphHandle; }
+	inline GraphHandle* getHandle() { return m_graphHandle_p; }
 	inline int getWide() const { return m_wide; }
 	inline int getHeight() const { return m_height; }
 
@@ -217,8 +226,9 @@ public:
 class FaceGraphHandle {
 private:
 	double m_ex;
-	// 通常
-	GraphHandles* m_normalHandles;
+
+	// 顔画像 <画像名, 画像ハンドル>
+	std::map<std::string, GraphHandles*> m_faceHandles;
 
 public:
 	FaceGraphHandle();

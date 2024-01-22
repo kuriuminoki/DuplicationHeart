@@ -2,7 +2,10 @@
 #define TEXT_DRAWER_H_INCLUDED
 
 
+#include <string>
+
 class Conversation;
+class AnimationDrawer;
 
 
 class ConversationDrawer {
@@ -10,6 +13,13 @@ private:
 	
 	// 会話
 	const Conversation* m_conversation;
+
+	// アニメイベント用
+	AnimationDrawer* m_animationDrawer;
+
+	// テキストやフォントのサイズの倍率
+	double m_exX;
+	double m_exY;
 	
 	// フォント（テキスト）
 	int m_textHandle;
@@ -32,6 +42,8 @@ public:
 	void setConversation(const Conversation* conversation) { m_conversation = conversation; }
 
 	void draw();
+
+	void drawText(int x, int y, int height, const std::string text, int color, int font);
 };
 
 

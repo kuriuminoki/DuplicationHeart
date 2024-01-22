@@ -37,6 +37,12 @@
     <Filter Include="ヘッダー ファイル\Loader">
       <UniqueIdentifier>{ed248952-e8e8-41aa-bff0-b4ac934a8e07}</UniqueIdentifier>
     </Filter>
+    <Filter Include="ヘッダー ファイル\pages">
+      <UniqueIdentifier>{dc0df2ee-2308-4450-835a-c887e7892cc9}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ソース ファイル\pages">
+      <UniqueIdentifier>{4f6a2357-f2bf-45ed-b9ad-c42312feccfb}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Main.cpp">
@@ -120,6 +126,21 @@
     <ClCompile Include="ObjectLoader.cpp">
       <Filter>ソース ファイル\Loader</Filter>
     </ClCompile>
+    <ClCompile Include="Button.cpp">
+      <Filter>ソース ファイル\Domain</Filter>
+    </ClCompile>
+    <ClCompile Include="PausePage.cpp">
+      <Filter>ソース ファイル\pages</Filter>
+    </ClCompile>
+    <ClCompile Include="Define.cpp">
+      <Filter>ソース ファイル</Filter>
+    </ClCompile>
+    <ClCompile Include="Title.cpp">
+      <Filter>ソース ファイル\pages</Filter>
+    </ClCompile>
+    <ClCompile Include="Item.cpp">
+      <Filter>ソース ファイル\Domain</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Define.h">
@@ -199,6 +220,18 @@
     </ClInclude>
     <ClInclude Include="ObjectLoader.h">
       <Filter>ヘッダー ファイル\Loader</Filter>
+    </ClInclude>
+    <ClInclude Include="Button.h">
+      <Filter>ヘッダー ファイル\Domain</Filter>
+    </ClInclude>
+    <ClInclude Include="PausePage.h">
+      <Filter>ヘッダー ファイル\pages</Filter>
+    </ClInclude>
+    <ClInclude Include="Title.h">
+      <Filter>ヘッダー ファイル\pages</Filter>
+    </ClInclude>
+    <ClInclude Include="Item.h">
+      <Filter>ヘッダー ファイル\Domain</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

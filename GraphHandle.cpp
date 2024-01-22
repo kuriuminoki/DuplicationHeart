@@ -1,5 +1,7 @@
 #include "GraphHandle.h"
+#include "Camera.h"
 #include "CsvReader.h"
+#include "Define.h"
 #include "DxLib.h"
 #include <string>
 #include <sstream>
@@ -27,7 +29,7 @@ void GraphHandle::draw(int x, int y, double ex) const {
 	DrawRotaGraph(x, y, ex, m_angle, m_handle, m_trans, m_reverseX, m_reverseY);
 }
 
-// 範囲を指定して描画する
+// 範囲を指定して変形描画する
 void GraphHandle::extendDraw(int x1, int y1, int x2, int y2) const {
 	if (m_reverseX) {
 		swap(x1, x2);
@@ -36,6 +38,50 @@ void GraphHandle::extendDraw(int x1, int y1, int x2, int y2) const {
 		swap(y1, y2);
 	}
 	DrawExtendGraph(x1, y1, x2, y2, m_handle, m_trans);
+}
+
+// 範囲を指定して敷き詰めるように描画する
+void GraphHandle::lineUpDraw(int x1, int y1, int x2, int y2, const Camera* camera) const {
+
+	if (x1 > x2) { swap(x1, x2); }
+	if (y1 > y2) { swap(y1, y2); }
+
+	int wide = 0, height = 0;
+	GetGraphSize(m_handle, &wide, &height);
+
+	wide = (int)(wide * m_ex);
+	height = (int)(height * m_ex);
+
+	int xi = (x2 - x1) / wide;
+	int yi = (y2 - y1) / height;
+
+	if (xi == 0 || yi == 0) {
+		double ex = 1.0;
+		camera->setCamera(&x1, &y1, &ex);
+		camera->setCamera(&x2, &y2, &ex);
+		this->extendDraw(x1, y1, x2, y2);
+		return;
+	}
+
+	wide += ((x2 - x1) % wide) / xi + 1;
+	height += ((y2 - y1) % height) / yi + 1;
+	
+	int x = x1;
+	for (int i = 0; i < xi; i++, x += wide) {
+		int nextX = x + wide > x2 ? x2 : x + wide;
+		int y = y1;
+		for (int j = 0; j < yi; j++, y += height) {
+			int nextY = y + height > y2 ? y2 : y + height;
+			int drawX1 = x, drawY1 = y, drawX2 = nextX, drawY2 = nextY;
+			double ex = 0;
+			camera->setCamera(&drawX1, &drawY1, &ex);
+			camera->setCamera(&drawX2, &drawY2, &ex);
+			if (drawX1 > GAME_WIDE || drawX2 < 0) { continue; }
+			if (drawY1 > GAME_HEIGHT || drawY2 < 0) { continue; }
+			DrawExtendGraph(drawX1, drawY1, drawX2, drawY2, m_handle, m_trans);
+		}
+	}
+
 }
 
 
@@ -112,7 +158,7 @@ void loadCharacterGraph(const char* dir, const char* characterName, GraphHandles
 		handles = new GraphHandles(oss.str().c_str(), n, ex, 0.0, true);
 	}
 	else {
-		handles = NULL;
+		handles = nullptr;
 	}
 }
 // デフォルト値で初期化
@@ -155,28 +201,28 @@ CharacterGraphHandle::CharacterGraphHandle(const char* characterName, double dra
 }
 // 画像を削除
 CharacterGraphHandle::~CharacterGraphHandle() {
-	delete m_standHandles;
-	delete m_slashHandles;
-	delete m_bulletHandles;
-	delete m_squatHandles;
-	delete m_squatBulletHandles;
-	delete m_standBulletHandles;
-	delete m_standSlashHandles;
-	delete m_runHandles;
-	delete m_runBulletHandles;
-	delete m_landHandles;
-	delete m_jumpHandles;
-	delete m_downHandles;
-	delete m_preJumpHandles;
-	delete m_damageHandles;
-	delete m_boostHandles;
-	delete m_airBulletHandles;
-	delete m_airSlashHandles;
+	if (m_standHandles != nullptr) { delete m_standHandles; }
+	if (m_standHandles != nullptr) { delete m_slashHandles; }
+	if (m_standHandles != nullptr) { delete m_bulletHandles; }
+	if (m_standHandles != nullptr) { delete m_squatHandles; }
+	if (m_standHandles != nullptr) { delete m_squatBulletHandles; }
+	if (m_standHandles != nullptr) { delete m_standBulletHandles; }
+	if (m_standHandles != nullptr) { delete m_standSlashHandles; }
+	if (m_standHandles != nullptr) { delete m_runHandles; }
+	if (m_standHandles != nullptr) { delete m_runBulletHandles; }
+	if (m_standHandles != nullptr) { delete m_landHandles; }
+	if (m_standHandles != nullptr) { delete m_jumpHandles; }
+	if (m_standHandles != nullptr) { delete m_downHandles; }
+	if (m_standHandles != nullptr) { delete m_preJumpHandles; }
+	if (m_standHandles != nullptr) { delete m_damageHandles; }
+	if (m_standHandles != nullptr) { delete m_boostHandles; }
+	if (m_standHandles != nullptr) { delete m_airBulletHandles; }
+	if (m_standHandles != nullptr) { delete m_airSlashHandles; }
 }
 
 // 画像のサイズをセット
 void CharacterGraphHandle::setGraphSize() {
-	GetGraphSize(m_graphHandle->getHandle(), &m_wide, &m_height);
+	GetGraphSize(m_graphHandle_p->getHandle(), &m_wide, &m_height);
 	// 画像の拡大率も考慮してサイズを決定
 	m_wide = (int)(m_wide * m_ex);
 	m_height = (int)(m_height * m_ex);
@@ -184,12 +230,13 @@ void CharacterGraphHandle::setGraphSize() {
 
 // 画像をセットする 存在しないならそのまま
 void CharacterGraphHandle::setGraph(const GraphHandles* graphHandles, int index) {
+	if (graphHandles == nullptr) { return; }
 	if (index >= graphHandles->getSize() || index < 0) { return; }
-	m_graphHandle = graphHandles == NULL ? m_graphHandle : graphHandles->getGraphHandle(index);
+	m_graphHandle_p = graphHandles->getGraphHandle(index);
 	setGraphSize();
 }
 void CharacterGraphHandle::setGraph(GraphHandle* graphHandle) {
-	m_graphHandle = graphHandle;
+	m_graphHandle_p = graphHandle;
 	setGraphSize();
 }
 
@@ -199,18 +246,22 @@ void CharacterGraphHandle::switchStand(int index){
 }
 // 立ち射撃画像をセット
 void CharacterGraphHandle::switchBullet(int index){
+	if (m_standBulletHandles == nullptr) { switchStand(index); }
 	setGraph(m_standBulletHandles, index);
 }
 // 立ち斬撃画像をセット
 void CharacterGraphHandle::switchSlash(int index){
+	if (m_standSlashHandles == nullptr) { switchStand(index); }
 	setGraph(m_standSlashHandles, index);
 }
 // しゃがみ画像をセット
 void CharacterGraphHandle::switchSquat(int index){
+	if (m_squatHandles == nullptr) { switchStand(index); }
 	setGraph(m_squatHandles, index);
 }
 // しゃがみ射撃画像をセット
 void CharacterGraphHandle::switchSquatBullet(int index) {
+	if (m_squatBulletHandles == nullptr) { switchBullet(index); }
 	setGraph(m_squatBulletHandles, index);
 }
 // 走り画像をセット
@@ -219,6 +270,7 @@ void CharacterGraphHandle::switchRun(int index){
 }
 // 走り射撃画像をセット
 void CharacterGraphHandle::switchRunBullet(int index) {
+	if (m_runBulletHandles == nullptr) { switchRun(index); }
 	setGraph(m_runBulletHandles, index);
 }
 // 着地画像をセット
@@ -267,16 +319,34 @@ FaceGraphHandle::FaceGraphHandle(const char* characterName, double drawEx) {
 	CsvReader reader("data/faceGraph.csv");
 	// キャラ名でデータを検索
 	map<string, string> data = reader.findOne("name", characterName);
-	if (data.size() == 0) { data = reader.findOne("name", "テスト"); }
+	// 見つからなかったらテストで再検索
+	if (data.size() == 0) { 
+		characterName = "テスト";
+		data = reader.findOne("name", characterName);
+	}
 
 	// ロード
 	const char* dir = "picture/face/";
-	loadCharacterGraph(dir, characterName, m_normalHandles, "通常", data, m_ex);
+	auto ite = data.begin();
+	while (ite != data.end()) {
+		string faceName = ite->first;
+		if (faceName != "name") {
+			loadCharacterGraph(dir, characterName, m_faceHandles[faceName], faceName, data, m_ex);
+		}
+		ite++;
+	}
 
 }
 FaceGraphHandle::~FaceGraphHandle() {
-	delete m_normalHandles;
+	auto ite = m_faceHandles.begin();
+	while (ite != m_faceHandles.end()) {
+		string faceName = ite->first;
+		if (m_faceHandles[faceName] != nullptr) {
+			delete m_faceHandles[faceName];
+		}
+		ite++;
+	}
 }
 GraphHandles* FaceGraphHandle::getGraphHandle(const char* faceName) {
-	return m_normalHandles;
+	return m_faceHandles[faceName];
 }

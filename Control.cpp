@@ -74,6 +74,11 @@ int controlF() {
 	return Key[KEY_INPUT_F];
 }
 
+// Qキー（一時停止）
+int controlQ() {
+	return Key[KEY_INPUT_Q];
+}
+
 //デバッグモード起動用
 int controlDebug() {
 	if (Key[KEY_INPUT_P] == 1) { // Pキーが押されていたら
@@ -92,6 +97,12 @@ int controlSpace()
 int controlLeftShift()
 {
 	return Key[KEY_INPUT_LSHIFT];
+}
+
+//右Shiftキー
+int controlRightShift()
+{
+	return Key[KEY_INPUT_RSHIFT];
 }
 
 //ゲーム終了用

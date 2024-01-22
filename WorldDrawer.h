@@ -39,6 +39,11 @@ private:
 	// 描画する世界
 	const World* m_world;
 
+	// 背景画像
+	int m_noonHaikei;
+	int m_eveningHaikei;
+	int m_nightHaikei;
+
 	// キャラ描画用
 	CharacterDrawer* m_characterDrawer;
 
@@ -50,6 +55,9 @@ private:
 
 	// マウスカーソル代わり
 	TargetDrawer m_targetDrawer;
+
+	// HPバー
+	int m_hpBarGraph;
 
 	// 会話イベント
 	ConversationDrawer* m_conversationDrawer;

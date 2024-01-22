@@ -28,7 +28,7 @@ protected:
 	// 操作対象 Controllerがデリートする
 	CharacterAction* m_characterAction;
 
-	// 操作の記録 使わないならNULL
+	// 操作の記録 使わないならnullptr
 	ControllerRecorder* m_stickRecorder;
 	ControllerRecorder* m_jumpRecorder;
 	ControllerRecorder* m_squatRecorder;
@@ -95,6 +95,7 @@ public:
 	// キャラクターのセッタ
 	void setCharacterX(int x);
 	void setCharacterY(int y);
+	void setCharacterFreeze(bool freeze);
 
 	// 行動前の処理 毎フレーム行う
 	void init();
@@ -119,6 +120,15 @@ public:
 
 	// ダメージ
 	virtual void damage(int vx, int vy, int damageValue) = 0;
+
+	// BrainがFreezeならプレイヤーの方向を向かせる allがtrueなら全キャラが対象
+	void setPlayerDirection(Character* player_p, bool all = false);
+
+	// AIの目標地点を設定
+	void setGoal(int gx, int gy);
+
+	// 目標地点へ移動するだけ
+	bool moveGoal();
 };
 
 

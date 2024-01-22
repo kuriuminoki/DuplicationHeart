@@ -21,6 +21,7 @@ public:
 	virtual const char* getBrainName() const { return this->BRAIN_NAME; }
 
 	Brain();
+	virtual ~Brain(){}
 
 	virtual Brain* createCopy(std::vector<Character*> characters, const Camera* camera) = 0;
 
@@ -30,10 +31,15 @@ public:
 	virtual bool actionOrder() { return false; }
 
 	// セッタ
+	virtual void setGx(int gx) { }
+	virtual void setGy(int gy) { }
 	virtual void setCharacterAction(const CharacterAction* characterAction) = 0;
 
 	// 遠距離攻撃の目標座標
 	virtual void bulletTargetPoint(int& x, int& y) = 0;
+
+	// 近距離攻撃の目標座標
+	virtual void slashTargetPoint(int& x, int& y) = 0;
 
 	// 移動（上下左右の入力）
 	virtual void moveOrder(int& right, int& left, int& up, int& down) = 0;
@@ -70,6 +76,12 @@ public:
 	virtual const Character* getFollow() const { return nullptr; }
 
 	virtual void setTarget(Character* character) {  }
+
+	// 追跡対象の近くにいるか判定
+	virtual bool checkAlreadyFollow() { return true; }
+
+	// 目標地点へ移動するだけ 達成済みならtrueで何もしない
+	virtual bool moveGoalOrder(int& right, int& left, int& up, int& down, int& jump) { return true; }
 };
 
 
@@ -90,11 +102,18 @@ private:
 public:
 	static const char* BRAIN_NAME;
 	const char* getBrainName() const { return this->BRAIN_NAME; }
+
 	KeyboardBrain(const Camera* camera);
+
 	Brain* createCopy(std::vector<Character*> characters, const Camera* camera) { return new KeyboardBrain(camera); }
+
 	void debug(int x, int y, int color) const;
+
+	// セッタ
 	inline void setCharacterAction(const CharacterAction* characterAction) { m_characterAction_p = characterAction; }
+
 	void bulletTargetPoint(int& x, int& y);
+	void slashTargetPoint(int& x, int& y);
 	bool actionOrder();
 	void moveOrder(int& right, int& left, int& up, int& down);
 	int jumpOrder();
@@ -113,12 +132,19 @@ class Freeze :
 public:
 	static const char* BRAIN_NAME;
 	const char* getBrainName() const { return this->BRAIN_NAME; }
+
 	Freeze() { }
+
 	Brain* createCopy(std::vector<Character*> characters, const Camera* camera) { return new Freeze(); }
+
 	void debug(int x, int y, int color) const { }
-	bool actionOrder() { return false; }
+
+	// セッタ
 	void setCharacterAction(const CharacterAction* characterAction) {  }
+
+	bool actionOrder() { return false; }
 	void bulletTargetPoint(int& x, int& y) {  }
+	void slashTargetPoint(int& x, int& y) {  }
 	void moveOrder(int& right, int& left, int& up, int& down) { right = 0; left = 0; up = 0; down = 0; }
 	int jumpOrder() { return 0; }
 	int squatOrder() { return 0; }
@@ -133,11 +159,7 @@ public:
 class NormalAI :
 	public Brain
 {
-private:
-
-	// 攻撃対象を認知する距離
-	const int TARGET_DISTANCE = 2000;
-
+protected:
 	// 移動用
 	int m_rightKey, m_leftKey, m_upKey, m_downKey;
 
@@ -147,7 +169,9 @@ private:
 	// しゃがむ長さ
 	int m_squatCnt;
 
-protected:
+	// 攻撃対象を認知する距離
+	const int TARGET_DISTANCE = 2000;
+
 	// 攻撃対象
 	const Character* m_target_p;
 
@@ -162,6 +186,7 @@ protected:
 
 	// 移動目標達成とみなす誤差 ±GX_ERROR
 	const int GX_ERROR = 100;
+	const int GY_ERROR = 50;
 
 	// 移動時間
 	int m_moveCnt;
@@ -172,10 +197,15 @@ protected:
 public:
 	static const char* BRAIN_NAME;
 	const char* getBrainName() const { return this->BRAIN_NAME; }
+
 	NormalAI();
+
 	Brain* createCopy(std::vector<Character*> characters, const Camera* camera);
 	void setParam(NormalAI* brain);
 
+	void debug(int x, int y, int color) const;
+
+	// セッタ
 	void setRightKey(int rightKey) { m_rightKey = rightKey; }
 	void setLeftKey(int leftKey) { m_leftKey = leftKey; }
 	void setUpKey(int upKey) { m_upKey = upKey; }
@@ -186,11 +216,12 @@ public:
 	void setGy(int gy) { m_gy = gy; }
 	void setMoveCnt(int cnt) { m_moveCnt = cnt; }
 	void setTarget(Character* character) { m_target_p = character; }
-
-	void debug(int x, int y, int color) const;
 	void setCharacterAction(const CharacterAction* characterAction);
+
 	void bulletTargetPoint(int& x, int& y);
+	void slashTargetPoint(int& x, int& y);
 	void moveOrder(int& right, int& left, int& up, int& down);
+	void moveUpDownOrder(int x, int y, bool& tryFlag);
 	int jumpOrder();
 	int squatOrder();
 	int slashOrder();
@@ -206,6 +237,9 @@ public:
 	int getTargetId() const;
 	const char* getTargetName() const;
 
+	// 目標地点へ移動するだけ 達成済みならtrueで何もしない
+	bool moveGoalOrder(int& right, int& left, int& up, int& down, int& jump);
+
 protected:
 	// スティック操作
 	void stickOrder(int& right, int& left, int& up, int& down);
@@ -213,18 +247,8 @@ protected:
 
 
 /*
-* ParabolaBulletを使うAI
+* 仲間についていきつつ戦うNormalAI
 */
-class ParabolaAI :
-	public NormalAI
-{
-public:
-	static const char* BRAIN_NAME;
-	const char* getBrainName() const { return this->BRAIN_NAME; }
-	void bulletTargetPoint(int& x, int& y);
-};
-
-
 class FollowNormalAI :
 	public NormalAI
 {
@@ -233,11 +257,12 @@ protected:
 	const Character* m_follow_p;
 
 	// 追跡対象の近くにいるとみなす誤差 ±GX_ERROR
-	const int FOLLOW_X_ERROR = 500;
+	const int FOLLOW_X_ERROR = 600;
 
 public:
 	static const char* BRAIN_NAME;
 	const char* getBrainName() const { return this->BRAIN_NAME; }
+
 	FollowNormalAI();
 
 	Brain* createCopy(std::vector<Character*> characters, const Camera* camera);
@@ -260,7 +285,29 @@ public:
 
 	// 追跡対象を変更する必要があるならtrueでアピールする(AIクラスでオーバライドする)。
 	bool needSearchFollow() const;
+
+	// 追跡対象の近くにいるか判定
+	bool checkAlreadyFollow();
 };
+
+
+/*
+* ParabolaBulletを使うAI
+*/
+class ParabolaAI :
+	public NormalAI
+{
+public:
+	static const char* BRAIN_NAME;
+	const char* getBrainName() const { return this->BRAIN_NAME; }
+
+	ParabolaAI();
+
+	Brain* createCopy(std::vector<Character*> characters, const Camera* camera);
+
+	void bulletTargetPoint(int& x, int& y);
+};
+
 
 /*
 * ParabolaBulletを使うAI
@@ -271,7 +318,140 @@ class FollowParabolaAI :
 public:
 	static const char* BRAIN_NAME;
 	const char* getBrainName() const { return this->BRAIN_NAME; }
+
+	FollowParabolaAI();
+
+	Brain* createCopy(std::vector<Character*> characters, const Camera* camera);
+
 	void bulletTargetPoint(int& x, int& y);
+};
+
+
+/*
+* ヴァルキリア用AI 斬撃の間合いやハートとの距離に気を付ける
+*/
+class ValkiriaAI :
+	public FollowNormalAI
+{
+private:
+
+	const int SLASH_REACH = 1200;
+
+public:
+	static const char* BRAIN_NAME;
+	const char* getBrainName() const { return this->BRAIN_NAME; }
+
+	ValkiriaAI();
+
+	Brain* createCopy(std::vector<Character*> characters, const Camera* camera);
+
+	int slashOrder();
+	int bulletOrder() { return 0; }
+	void moveOrder(int& right, int& left, int& up, int& down);
+	int jumpOrder();
+
+	// 攻撃対象を変更する必要があるならtrueでアピールする。
+	bool needSearchTarget() const;
+
+};
+
+
+/*
+* 空を飛ぶキャラ用のAI
+*/
+class FlightAI :
+	public NormalAI
+{
+private:
+	// 壁にぶつかったとき、trueにして上か下へ移動する。trueのとき天井や床にぶつかっていたら逆へ移動
+	bool m_try;
+public:
+	static const char* BRAIN_NAME;
+	const char* getBrainName() const { return this->BRAIN_NAME; }
+
+	FlightAI();
+
+	Brain* createCopy(std::vector<Character*> characters, const Camera* camera);
+
+	void moveOrder(int& right, int& left, int& up, int& down);
+
+	// 目標地点へ移動するだけ 達成済みならtrueで何もしない
+	bool moveGoalOrder(int& right, int& left, int& up, int& down, int& jump);
+};
+
+
+/*
+* 空を飛ぶ追跡キャラAI
+*/
+class FollowFlightAI :
+	public FollowNormalAI
+{
+private:
+	// 壁にぶつかったとき、trueにして上か下へ移動する。trueのとき天井や床にぶつかっていたら逆へ移動
+	bool m_try;
+public:
+	static const char* BRAIN_NAME;
+	const char* getBrainName() const { return this->BRAIN_NAME; }
+
+	FollowFlightAI();
+
+	Brain* createCopy(std::vector<Character*> characters, const Camera* camera);
+
+	void moveOrder(int& right, int& left, int& up, int& down);
+
+	// 目標地点へ移動するだけ 達成済みならtrueで何もしない
+	bool moveGoalOrder(int& right, int& left, int& up, int& down, int& jump);
+};
+
+
+/*
+* 棒立ちで射撃するヒエラルキー
+*/
+class HierarchyAI :
+	public NormalAI
+{
+public:
+
+	static const char* BRAIN_NAME;
+	const char* getBrainName() const { return this->BRAIN_NAME; }
+
+	HierarchyAI();
+
+	Brain* createCopy(std::vector<Character*> characters, const Camera* camera);
+
+	int bulletOrder() { return 1; }
+	void bulletTargetPoint(int& x, int& y);
+
+	void moveOrder(int& right, int& left, int& up, int& down) { return; }
+	int jumpOrder() { return 0; }
+	int squatOrder() { m_squatCnt = 0; return 0; }
+
+};
+
+
+/*
+* フレンチ用AI
+*/
+class FrenchAI :
+	public NormalAI
+{
+private:
+
+	const int SLASH_REACH = 1500;
+
+public:
+	static const char* BRAIN_NAME;
+	const char* getBrainName() const { return this->BRAIN_NAME; }
+
+	FrenchAI();
+
+	Brain* createCopy(std::vector<Character*> characters, const Camera* camera);
+
+	int slashOrder();
+	int bulletOrder() { return 0; }
+	void moveOrder(int& right, int& left, int& up, int& down);
+	int jumpOrder() { return 0; }
+	int squatOrder() { m_squatCnt = 0; return 0; }
 };
 
 

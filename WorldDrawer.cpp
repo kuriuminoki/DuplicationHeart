@@ -3,8 +3,10 @@
 #include "Camera.h"
 #include "CharacterDrawer.h"
 #include "CharacterAction.h"
+#include "Character.h"
 #include "ObjectDrawer.h"
 #include "AnimationDrawer.h"
+#include "Animation.h"
 #include "TextDrawer.h"
 #include "Text.h"
 #include "Define.h"
@@ -47,10 +49,14 @@ void TargetDrawer::anime() {
 
 WorldDrawer::WorldDrawer(const World* world) {
 	m_world = world;
-	m_characterDrawer = new CharacterDrawer(NULL);
-	m_objectDrawer = new ObjectDrawer(NULL);
-	m_animationDrawer = new AnimationDrawer(NULL);
-	m_conversationDrawer = new ConversationDrawer(NULL);
+	m_characterDrawer = new CharacterDrawer(nullptr);
+	m_objectDrawer = new ObjectDrawer(nullptr);
+	m_animationDrawer = new AnimationDrawer(nullptr);
+	m_conversationDrawer = new ConversationDrawer(nullptr);
+	m_hpBarGraph = LoadGraph("picture/battleMaterial/hpBar.png");
+	m_noonHaikei = LoadGraph("picture/stageMaterial/noon.jpg");
+	m_eveningHaikei = LoadGraph("picture/stageMaterial/evening.jpg");
+	m_nightHaikei = LoadGraph("picture/stageMaterial/night.jpg");
 }
 
 WorldDrawer::~WorldDrawer() {
@@ -58,19 +64,47 @@ WorldDrawer::~WorldDrawer() {
 	delete m_objectDrawer;
 	delete m_animationDrawer;
 	delete m_conversationDrawer;
+	DeleteGraph(m_hpBarGraph);
+	DeleteGraph(m_noonHaikei);
+	DeleteGraph(m_eveningHaikei);
+	DeleteGraph(m_nightHaikei);
 }
 
 // 描画する
 void WorldDrawer::draw() {
+	
 	int bright = m_world->getBrightValue();
 	SetDrawBright(bright, bright, bright);
+
 	// 背景
 	int groundGraph = m_world->getBackGroundGraph();
 	if (groundGraph != -1) {
 
 	}
 	else {
-		DrawBox(0, 0, GAME_WIDE, GAME_HEIGHT, m_world->getBackGroundColor(), TRUE);
+		int date = m_world->getDate();
+		int wide = 0, height = 0;
+		double ex = 1.0;
+		switch (date) {
+		case 0:
+			GetGraphSize(m_noonHaikei, &wide, &height);
+			ex = max((double)GAME_WIDE / wide, (double)GAME_HEIGHT / height);
+			DrawRotaGraph(GAME_WIDE / 2, GAME_HEIGHT / 2, ex, 0.0, m_noonHaikei, TRUE);
+			break;
+		case 1:
+			GetGraphSize(m_eveningHaikei, &wide, &height);
+			ex = max((double)GAME_WIDE / wide, (double)GAME_HEIGHT / height);
+			DrawRotaGraph(GAME_WIDE / 2, GAME_HEIGHT / 2, ex, 0.0, m_eveningHaikei, TRUE);
+			break;
+		case 2:
+			GetGraphSize(m_nightHaikei, &wide, &height);
+			ex = max((double)GAME_WIDE / wide, (double)GAME_HEIGHT / height);
+			DrawRotaGraph(GAME_WIDE / 2, GAME_HEIGHT / 2, ex, 0.0, m_nightHaikei, TRUE);
+			break;
+		default:
+			DrawBox(0, 0, GAME_WIDE, GAME_HEIGHT, m_world->getBackGroundColor(), TRUE);
+			break;
+		}
 	}
 
 	// カメラを取得
@@ -120,14 +154,41 @@ void WorldDrawer::draw() {
 		m_animationDrawer->drawAnimation(camera);
 	}
 
-	m_targetDrawer.setEx(camera->getEx());
-	m_targetDrawer.draw();
-	SetDrawBright(255, 255, 255);
+	// ハートの情報
+	size = m_world->getCharacters().size();
+	for (unsigned int i = 0; i < size; i++) {
+		if (m_world->getCharacters()[i]->getName() == "ハート") {
+			m_characterDrawer->drawPlayerHpBar(m_world->getCharacters()[i], m_hpBarGraph);
+		}
+	}
+
+	// ムービー
+	Movie* movie = m_world->getMovie();
+	if (movie != nullptr) {
+		DrawBox(0, 0, GAME_WIDE, GAME_HEIGHT, BLACK, TRUE);
+		movie->draw();
+	}
 
 	// テキストイベント
 	const Conversation* conversation = m_world->getConversation();
-	if (conversation != NULL) {
+	if (conversation != nullptr) {
 		m_conversationDrawer->setConversation(conversation);
 		m_conversationDrawer->draw();
 	}
+	else {
+		// StageObjectを調べた際のテキストイベント
+		conversation = m_world->getObjectConversation();
+		if (conversation != nullptr) {
+			m_conversationDrawer->setConversation(conversation);
+			m_conversationDrawer->draw();
+		}
+	}
+
+	if (movie == nullptr && conversation == nullptr) {
+		// ターゲット
+		m_targetDrawer.setEx(camera->getEx());
+		m_targetDrawer.draw();
+	}
+
+	SetDrawBright(255, 255, 255);
 }

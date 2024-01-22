@@ -25,6 +25,9 @@ int controlD();
 // Fキー（スキル発動）
 int controlF();
 
+// Qキー（一時停止）
+int controlQ();
+
 //FPS表示のオンオフ
 int controlDebug();
 
@@ -33,6 +36,9 @@ int controlSpace();
 
 // 左Shiftキー
 int controlLeftShift();
+
+// 右Shiftキー
+int controlRightShift();
 
 //ESCキー：ゲーム終了
 int controlEsc();

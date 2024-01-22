@@ -2,13 +2,9 @@
 #include "Define.h"
 #include "Game.h"
 #include "GameDrawer.h"
+#include "Title.h"
 #include "DxLib.h"
 
-
-// フルスクリーンならFALSE
-static int WINDOW = TRUE;
-// マウスを表示するならFALSE
-static int MOUSE_DISP = FALSE;
 
 ///////fpsの調整///////////////
 static int mStartTime;
@@ -33,7 +29,7 @@ bool Update() {
 }
 
 void Draw(int x, int y, int color) {
-	DrawFormatString(0, 0, WHITE, "デバッグモード：%.1f FPS", mFps);
+	DrawFormatString(0, 0, BLUE, "デバッグモード：%.1f FPS, 解像度：%d*%d", mFps, GAME_WIDE, GAME_HEIGHT);
 }
 
 void Wait() {
@@ -48,31 +44,80 @@ void Wait() {
 int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 	SetWindowSizeChangeEnableFlag(TRUE);//windowサイズ変更可能
 	SetUseDirectInputFlag(TRUE);
-	SetGraphMode(GAME_WIDE, GAME_HEIGHT, 16);
+	GameData* gameData = new GameData();
+	SetGraphMode(GAME_WIDE, GAME_HEIGHT, GAME_COLOR_BIT_NUM);
+	delete gameData;
+
 	ChangeWindowMode(WINDOW), DxLib_Init(), SetDrawScreen(DX_SCREEN_BACK);
+	
 	//SetAlwaysRunFlag(TRUE);//画面を常にアクティブ
+
+	// ウィンドウの名前
 	SetMainWindowText("複製のHeart");
+
 	////マウス関連////
 	SetMouseDispFlag(MOUSE_DISP);//マウス表示
 	//SetMousePoint(320, 240);//マウスカーソルの初期位置
-	SetDrawMode(DX_DRAWMODE_BILINEAR);
-	//SetDrawMode(DX_DRAWMODE_NEAREST);
-	//ゲーム本体
-	Game game;
+	
+	// 画像の拡大処理方式
+	//SetDrawMode(DX_DRAWMODE_BILINEAR);
+	SetDrawMode(DX_DRAWMODE_NEAREST);
+	SetFullScreenScalingMode(DX_DRAWMODE_NEAREST);
+
+	// ゲーム本体
+	Game* game = nullptr;
 	// ゲーム描画用
-	GameDrawer* gameDrawer = new GameDrawer(&game);
-	bool title_flag = false;//trueならタイトル画面終了
+	GameDrawer* gameDrawer = nullptr;
+	// タイトル画面
+	Title* title = new Title();
+	// ゲーム中ならtrue タイトル画面ならfalse
+	bool gamePlay = false;
+
 	while (ScreenFlip() == 0 && ProcessMessage() == 0 && ClearDrawScreen() == 0)
 	{
 		updateKey();
 		mouseClick();
 
 		/////メイン////
-		if (game.play()) {
-			delete gameDrawer;
-			gameDrawer = new GameDrawer(&game);
+		if (gamePlay) {
+			if (game->play()) {
+				//InitGraphが実行されたのでDrawerも作り直し
+				delete gameDrawer;
+				gameDrawer = new GameDrawer(game);
+			}
+			if (game->getRebootFlag()) {
+				// ゲームを再起動、タイトルへ戻る
+				delete game;
+				delete gameDrawer;
+				InitGraph();
+				InitSoundMem();
+				InitFontToHandle();
+				gamePlay = false;
+				SetMouseDispFlag(MOUSE_DISP);//マウス表示
+				title = new Title();
+			}
+			else{ gameDrawer->draw(); }
 		}
-		gameDrawer->draw();
+		else {
+			Title::TITLE_RESULT result = title->play();
+			title->draw();
+			if (result == Title::START) {
+				game = new Game(title->useSaveFile(), title->startStoryNum());
+				gameDrawer = new GameDrawer(game);
+				delete title;
+				gamePlay = true;
+			}
+			else if (result == Title::REBOOT) {
+				// ゲームを再起動
+				delete title;
+				InitGraph();
+				InitSoundMem();
+				InitFontToHandle();
+				ChangeWindowMode(WINDOW), DxLib_Init(), SetDrawScreen(DX_SCREEN_BACK);
+				SetMouseDispFlag(MOUSE_DISP);//マウス表示
+				title = new Title();
+			}
+		}
 		///////////////
 
 		//FPS操作
@@ -84,7 +129,9 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 		// デバッグ
 		if (debug == TRUE) {
 			Draw(0, 0, BLACK);
-			game.debug(0, DRAW_FORMAT_STRING_SIZE, BLACK);
+			if (game != nullptr) {
+				game->debug(0, DRAW_FORMAT_STRING_SIZE, BLACK);
+			}
 		}
 		Wait();
 		if (controlEsc() == TRUE) { DxLib_End(); }

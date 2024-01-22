@@ -22,6 +22,9 @@ protected:
 	// 右下の座標+1
 	int m_x2, m_y2;
 
+	// オブジェクトの画像
+	GraphHandle* m_handle;
+
 	// HP -1なら無敵
 	int m_hp;
 
@@ -41,6 +44,7 @@ protected:
 public:
 	Object();
 	Object(int x1, int y1, int x2, int y2, int hp = -1);
+	virtual ~Object() { }
 
 	virtual Object* createCopy() = 0;
 	void setParam(Object* object);
@@ -61,6 +65,7 @@ public:
 	inline int getHp() const { return m_hp; }
 	inline int getDamageCnt() const { return m_damageCnt; }
 	virtual const char* getFileName() const { return ""; }
+	virtual bool getTextDisp() const { return false; }
 
 	// セッタ
 	inline void setDeleteFlag(bool deleteFlag) { m_deleteFlag = deleteFlag; }
@@ -72,6 +77,10 @@ public:
 	void setDamageCnt(int damageCnt) { m_damageCnt = damageCnt; }
 	void setEffectHandles(GraphHandles* effectHandles_p) { m_effectHandles_p = effectHandles_p; }
 	void setSoundHandle(int soundHandle_p) { m_soundHandle_p = soundHandle_p; }
+	virtual inline void setTextDisp(const bool textDisp) {}
+
+	// 座標XにおけるY1座標（傾きから算出する）
+	virtual int getY(int x) const { return m_y1; }
 
 	// HPを減らす
 	void decreaseHp(int damageValue);
@@ -84,21 +93,31 @@ public:
 
 	// 扉用
 	virtual inline int getAreaNum() const { return -1; }
+	virtual inline int getTextNum() const { return -1; }
 
-	// 画像を返す　ないならNULL
-	virtual GraphHandle* getHandle() const { return nullptr; }
+	// 画像を返す　ないならnullptr
+	virtual GraphHandle* getHandle() const { return m_handle; }
+
+	// 画像を敷き詰めて表示するならtrue
+	virtual bool lineUpType() const { return false; }
 
 	// 画像の大きさを自動調節する
 	virtual bool extendGraph() const { return true; }
 
-	// テキストを返す ないならNULL
+	// テキストを返す ないならnullptr
 	virtual inline std::string getText() const { return ""; }
+
+	// テキストをセット
+	virtual inline void setText(const char* text) {  }
 
 	// オブジェクト描画（画像がないときに使う）
 	virtual void drawObject(int x1, int y1, int x2, int y2) const {};
 
 	// キャラとの当たり判定
 	virtual bool atari(CharacterController* characterController) = 0;
+
+	// 単純に四角の落下物と衝突しているか
+	virtual bool atariDropBox(int x1, int y1, int x2, int y2, int vx, int vy);
 
 	// キャラがオブジェクトに入り込んでいるときの処理
 	virtual void penetration(CharacterController* characterController) {};
@@ -122,17 +141,25 @@ class BoxObject :
 {
 private:
 	// 段差とみなして自動で乗り越えられる高さ
-	const int STAIR_HEIGHT = 50;
+	const int STAIR_HEIGHT = 200;
 
 	// オブジェクトの色
 	int m_color;
 
+	// ファイルネームを保存しておく
+	std::string m_fileName;
+
 public:
-	BoxObject(int x1, int y1, int x2, int y2, int color, int hp = -1);
+	BoxObject(int x1, int y1, int x2, int y2, const char* fileName, int color, int hp = -1);
+
+	~BoxObject();
 
 	Object* createCopy();
 
 	void debug(int x, int y, int color) const;
+
+	// 画像を敷き詰めて表示するならtrue
+	bool lineUpType() const { return true; }
 
 	// オブジェクト描画（画像がないときに使う）
 	void drawObject(int x1, int y1, int x2, int y2) const;
@@ -161,17 +188,24 @@ private:
 	// オブジェクトの色
 	int m_color;
 
+	// ファイルネームを保存しておく
+	std::string m_fileName;
+
 	// 左向きに下がっている坂
 	bool m_leftDown;
 
-	// 座標XにおけるY座標（傾きから算出する）
-	int getY(int x) const;
 public:
-	TriangleObject(int x1, int y1, int x2, int y2, int color, bool leftDown, int hp = -1);
+
+	TriangleObject(int x1, int y1, int x2, int y2, const char* fileName, int color, bool leftDown, int hp = -1);
+
+	~TriangleObject();
 
 	Object* createCopy();
 
 	void debug(int x, int y, int color) const;
+
+	// 座標XにおけるY1座標（傾きから算出する）
+	int getY(int x) const;
 
 	// オブジェクト描画（画像がないときに使う）
 	void drawObject(int x1, int y1, int x2, int y2) const;
@@ -179,6 +213,9 @@ public:
 	// キャラとの当たり判定
 	// 当たっているならキャラを操作する。
 	bool atari(CharacterController* characterController);
+
+	// 単純に四角の落下物と衝突しているか
+	bool atariDropBox(int x1, int y1, int x2, int y2, int vx, int vy);
 
 	// キャラがオブジェクトに入り込んでいるときの処理
 	void penetration(CharacterController* characterController);
@@ -198,6 +235,7 @@ class BulletObject :
 	public Object
 {
 protected:
+
 	// この攻撃を出したキャラのＩＤ 自滅防止用
 	int m_characterId;
 
@@ -230,6 +268,7 @@ public:
 	// x, y, gx, gyは弾の中心座標
 	BulletObject(int x, int y, int color, int gx, int gy, AttackInfo* attackInfo);
 	BulletObject(int x, int y, int color, int gx, int gy);
+	BulletObject(int x, int y, GraphHandle* handle, int gx, int gy, AttackInfo* attackInfo);
 
 	Object* createCopy();
 	void setBulletParam(BulletObject* obejct);
@@ -241,6 +280,9 @@ public:
 
 	// ゲッタ
 	inline int getGroupId() const { return m_groupId; }
+
+	// 画像ハンドルを返す
+	GraphHandle* getHandle() const;
 
 	// セッタ
 	// キャラクターIDをセット
@@ -280,11 +322,10 @@ public:
 class ParabolaBullet :
 	public BulletObject
 {
-private:
-	GraphHandle* m_handle;
 public:
 	static const int G = 2;
 
+	ParabolaBullet(int x, int y, int color, int gx, int gy, AttackInfo* attackInfo);
 	ParabolaBullet(int x, int y, GraphHandle* handle, int gx, int gy, AttackInfo* attackInfo);
 	ParabolaBullet(int x, int y, GraphHandle* handle, int gx, int gy);
 
@@ -296,9 +337,6 @@ public:
 
 	// 動くオブジェクト用 毎フレーム行う
 	void action();
-
-	// 画像ハンドルを返す
-	GraphHandle* getHandle() const;
 
 	// 画像の大きさを自動調節する
 	bool extendGraph() const { return false; }
@@ -317,9 +355,6 @@ private:
 
 	// この攻撃が当たらないグループのID チームキル防止用
 	int m_groupId;
-
-	// オブジェクトの画像
-	GraphHandle* m_handle;
 
 	// ダメージ
 	int m_damage;
@@ -350,9 +385,6 @@ public:
 	void setSlashParam(SlashObject* object);
 
 	void debug(int x, int y, int color) const;
-
-	// 画像を返す　ないならNULL
-	GraphHandle* getHandle() const { return m_handle; }
 
 	// ゲッタ
 	inline int getGroupId() const { return m_groupId; }
@@ -388,18 +420,20 @@ public:
 class DoorObject :
 	public Object 
 {
-private:
+protected:
 	// ファイルネームを保存しておく
 	std::string m_fileName;
-
-	// 画像
-	GraphHandle* m_graph;
 
 	// 行先のエリア番号
 	int m_areaNum;
 
 	// チュートリアルのテキスト
 	std::string m_text;
+	bool m_textDisp;
+
+	std::string m_defaultText;
+
+	int m_textNum;
 
 public:
 	DoorObject(int x1, int y1, int x2, int y2, const char* fileName, int areaNum);
@@ -410,16 +444,32 @@ public:
 	void debug(int x, int y, int color) const;
 
 	// ゲッタ
-	GraphHandle* getHandle() const { return m_graph; }
 	inline int getAreaNum() const { return m_areaNum; }
-	inline std::string getText() const { return m_text; }
+	inline std::string getText() const { return m_textDisp ? m_defaultText : m_text; }
 	const char* getFileName() const { return m_fileName.c_str(); }
+	inline int getTextNum() const { return m_textNum; }
+	inline bool getTextDisp() const { return m_textDisp; }
 
 	// セッタ
-	inline void setText(std::string text) { m_text = text; }
+	inline void setText(const char* text) { m_text = text; }
+	inline void setTextDisp(const bool textDisp) { m_textDisp = textDisp; }
 
 	// キャラとの当たり判定
 	virtual bool atari(CharacterController* characterController);
+};
+
+
+// 当たり判定のないオブジェクト
+class StageObject :
+	public DoorObject
+{
+public:
+
+	StageObject(int x1, int y1, int x2, int y2, const char* fileName, int textNum);
+	~StageObject();
+
+	Object* createCopy();
+
 };
 
 #endif

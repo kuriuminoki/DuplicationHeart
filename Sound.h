@@ -28,9 +28,13 @@ public:
 	SoundPlayer();
 	~SoundPlayer();
 
-	void setVolume(int volume);
+	// ゲッタ
 	inline int getVolume() const { return m_volume; }
 	inline int getCameraX() const { return m_cameraX; }
+	const char* getBgmName() const { return m_bgmName.c_str(); }
+
+	// セッタ
+	void setVolume(int volume);
 	inline void setCameraX(int cameraX) { m_cameraX = cameraX; }
 
 	// BGMをセット（変更）
@@ -45,8 +49,14 @@ public:
 	// BGMをストップ
 	void stopBGM();
 
+	// BGMが再生していないか調べる
+	int checkBGMplay();
+
 	// 効果音の再生待機列へプッシュ
 	void pushSoundQueue(int soundHandle, int panPal = 0);
+
+	// 効果音の再生待機列をクリア
+	void clearSoundQueue();
 
 	// 効果音を鳴らす
 	void play();

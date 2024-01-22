@@ -12,7 +12,7 @@ using namespace std;
 
 Story::Story(int storyNum, World* world, SoundPlayer* soundPlayer) {
 	m_world_p = world;
-	m_nowEvent = NULL;
+	m_nowEvent = nullptr;
 	m_storyNum = storyNum;
 
 	ostringstream oss;
@@ -42,6 +42,16 @@ Story::Story(int storyNum, World* world, SoundPlayer* soundPlayer) {
 	for (unsigned int i = 0; i < objectData.size(); i++) {
 		m_objectLoader->addObject(objectData[i]);
 	}
+
+	// 時間帯を決定
+	vector<map<string, string> > dateData = csvReader2.getDomainData("DATE:");
+	if (dateData.size() > 0) {
+		m_date = stoi(dateData[0]["num"]);
+	}
+
+	// イベントの発火確認
+	checkFire();
+	soundPlayer->stopBGM();
 }
 
 Story::~Story() {
@@ -51,52 +61,65 @@ Story::~Story() {
 	for (unsigned int i = 0; i < m_subEvent.size(); i++) {
 		delete m_subEvent[i];
 	}
+	if (m_nowEvent != nullptr) {
+		delete m_nowEvent;
+	}
 	delete m_characterLoader;
 	delete m_objectLoader;
 }
 
 bool Story::play() {
-	if (m_nowEvent == NULL) {
+	if (m_nowEvent == nullptr) {
 		// 普通に世界を動かす
 		m_world_p->battle();
 		// イベントの発火確認
-		for (unsigned int i = 0; i < m_mustEvent.size(); i++) {
-			if (m_mustEvent[i]->fire()) {
-				m_nowEvent = m_mustEvent[i];
-				m_mustEvent[i] = m_mustEvent.back();
-				m_mustEvent.pop_back();
-				i--;
-			}
-		}
-		for (unsigned int i = 0; i < m_subEvent.size(); i++) {
-			if (m_subEvent[i]->fire()) {
-				m_nowEvent = m_subEvent[i];
-				m_subEvent[i] = m_subEvent.back();
-				m_subEvent.pop_back();
-				i--;
-			}
-		}
+		checkFire();
 	}
 	else {
 		// イベント進行中
 		EVENT_RESULT result = m_nowEvent->play();
-		// イベント終了
+		
+		// イベント失敗
+		if (result == EVENT_RESULT::FAILURE) {
+			// mustのイベントならタイトルへ戻る
+		}
+		// 成功または失敗したのでイベント終了
 		if (result != EVENT_RESULT::NOW) {
 			delete m_nowEvent;
-			m_nowEvent = NULL;
+			m_nowEvent = nullptr;
 		}
 	}
 
 	// 必須イベント全て終わり
-	if (m_mustEvent.size() == 0 && m_nowEvent == NULL) { 
+	if (m_mustEvent.size() == 0 && m_nowEvent == nullptr) { 
 		return true;
 	}
 	return false;
 }
 
+// イベントの発火確認
+void Story::checkFire() {
+	for (unsigned int i = 0; i < m_mustEvent.size(); i++) {
+		if (m_mustEvent[i]->fire()) {
+			m_nowEvent = m_mustEvent[i];
+			m_mustEvent[i] = m_mustEvent.back();
+			m_mustEvent.pop_back();
+			i--;
+		}
+	}
+	for (unsigned int i = 0; i < m_subEvent.size(); i++) {
+		if (m_subEvent[i]->fire()) {
+			m_nowEvent = m_subEvent[i];
+			m_subEvent[i] = m_subEvent.back();
+			m_subEvent.pop_back();
+			i--;
+		}
+	}
+}
+
 // ハートのスキル発動が可能かどうか
 bool Story::skillAble() {
-	if (m_nowEvent == NULL) {
+	if (m_nowEvent == nullptr) {
 		return true;
 	}
 	return m_nowEvent->skillAble();
@@ -105,7 +128,8 @@ bool Story::skillAble() {
 // セッタ
 void Story::setWorld(World* world) {
 	m_world_p = world;
-	if (m_nowEvent != NULL) {
+	m_world_p->setDate(m_date);
+	if (m_nowEvent != nullptr) {
 		m_nowEvent->setWorld(m_world_p);
 	}
 	for (unsigned int i = 0; i < m_mustEvent.size(); i++) {
@@ -114,4 +138,14 @@ void Story::setWorld(World* world) {
 	for (unsigned int i = 0; i < m_subEvent.size(); i++) {
 		m_subEvent[i]->setWorld(m_world_p);
 	}
+}
+
+// 前のセーブポイントへ戻る必要があるか
+bool Story::getBackPrevSaveFlag() const {
+	return m_nowEvent != nullptr ? m_nowEvent->getBackPrevSaveFlag() : false;
+}
+
+// 前のセーブポイントへ戻ったことを教えてもらう
+void Story::doneBackPrevSave() {
+	m_nowEvent->doneBackPrevSave();
 }

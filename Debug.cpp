@@ -1,3 +1,4 @@
+#include "Camera.h"
 #include "CharacterController.h"
 #include "CharacterAction.h"
 #include "Character.h"
@@ -11,6 +12,8 @@
 #include "Event.h"
 #include "Story.h"
 #include "Brain.h"
+#include "Sound.h"
+#include "Item.h"
 #include "DxLib.h"
 
 /*
@@ -19,9 +22,12 @@
 // Gameクラスのデバッグ
 void Game::debug(int x, int y, int color) const {
 	DrawFormatString(x, y, color, "**GAME**");
-	DrawFormatString(x, y + DRAW_FORMAT_STRING_SIZE, color, "StoryNum=%d", m_gameData->getStoryNum());
+	DrawFormatString(x, y + DRAW_FORMAT_STRING_SIZE, color, "StoryNum=%d, doorSum=%d", m_gameData->getStoryNum(), m_gameData->getDoorSum());
+	for (int i = 0; i < m_gameData->getDoorSum(); i++) {
+		DrawFormatString(x, y + DRAW_FORMAT_STRING_SIZE + ((i + 1) * DRAW_FORMAT_STRING_SIZE), color, "from=%d, to=%d", m_gameData->getFrom(i), m_gameData->getTo(i));
+	}
 	//m_story->debug(x + DRAW_FORMAT_STRING_SIZE, y + DRAW_FORMAT_STRING_SIZE * 2, color);
-	m_world->debug(x + DRAW_FORMAT_STRING_SIZE, y + DRAW_FORMAT_STRING_SIZE * 3, color);
+	m_world->debug(1000, y + DRAW_FORMAT_STRING_SIZE * 3, color);
 }
 
 
@@ -37,9 +43,16 @@ void debugObjects(int x, int y, int color, std::vector<Object*> objects) {
 // Worldクラスのデバッグ
 void World::debug(int x, int y, int color) const {
 	DrawFormatString(x, y, color, "**World**");
-	DrawFormatString(x, y + DRAW_FORMAT_STRING_SIZE, color, "CharacterSum=%d, ControllerSum=%d, anime=%d", m_characters.size(), m_characterControllers.size(), m_animations.size());
-	debugObjects(x, y + DRAW_FORMAT_STRING_SIZE * 2, color, m_attackObjects);
-	m_characters[1]->debug(x + DRAW_FORMAT_STRING_SIZE, y + DRAW_FORMAT_STRING_SIZE * 3, color);
+	DrawFormatString(x, y + DRAW_FORMAT_STRING_SIZE, color, "areaNum=%d, CharacterSum=%d, ControllerSum=%d", m_areaNum, m_characters.size(), m_characterControllers.size(), m_camera->getEx());
+	DrawFormatString(x, y + DRAW_FORMAT_STRING_SIZE * 2, color, "itemSum=%d", m_itemVector.size());
+	if (m_itemVector.size() > 0) {
+		DrawFormatString(x, y + DRAW_FORMAT_STRING_SIZE * 3, color, "itemY=%d", m_itemVector[0]->getY());
+	}
+	//debugObjects(x, y + DRAW_FORMAT_STRING_SIZE * 2, color, m_attackObjects);
+	//m_characterControllers[0]->debug(x + DRAW_FORMAT_STRING_SIZE, y + DRAW_FORMAT_STRING_SIZE * 3, color);
+	//if (m_movie_p != nullptr) {
+	//	DrawFormatString(x, y + DRAW_FORMAT_STRING_SIZE * 3, color, "Movie: cnt=%d", m_movie_p->getCnt());
+	//}
 }
 
 
@@ -88,7 +101,7 @@ void FollowNormalAI::debug(int x, int y, int color) const {
 // Actionクラスのデバッグ
 void CharacterAction::debugAction(int x, int y, int color) const {
 	DrawFormatString(x, y, color, "**CharacterAction**");
-	DrawFormatString(x, y + DRAW_FORMAT_STRING_SIZE, color, "state=%d, grand=%d(%d%d), (vx,vy)=(%d,%d), runCnt=%d", (int)m_state, m_grand, m_grandLeftSlope, m_grandRightSlope, m_vx, m_vy, m_runCnt);
+	DrawFormatString(x, y + DRAW_FORMAT_STRING_SIZE, color, "state=%d, grand=%d(%d%d), (vx,vy)=(%d,%d), slope=(%d,%d)", (int)m_state, m_grand, m_grandLeftSlope, m_grandRightSlope, m_vx, m_vy, m_grandLeftSlope, m_grandRightSlope);
 	DrawFormatString(x, y + DRAW_FORMAT_STRING_SIZE * 2, color, "制限中：(←, →, ↑, ↓)=(%d,%d,%d,%d)", m_leftLock, m_rightLock, m_upLock, m_downLock);
 	DrawFormatString(x, y + DRAW_FORMAT_STRING_SIZE * 3, color, "移動中：(←, →, ↑, ↓)=(%d,%d,%d,%d)", m_moveLeft, m_moveRight, m_moveUp, m_moveDown);
 	m_character_p->debug(x + DRAW_FORMAT_STRING_SIZE, y + DRAW_FORMAT_STRING_SIZE * 4, color);
@@ -97,6 +110,18 @@ void CharacterAction::debugAction(int x, int y, int color) const {
 // StickActionのデバッグ
 void StickAction::debug(int x, int y, int color) const {
 	DrawFormatString(x, y, color, "**StickAction**");
+	debugAction(x + DRAW_FORMAT_STRING_SIZE, y + DRAW_FORMAT_STRING_SIZE, color);
+}
+
+// ValkiriaActionのデバッグ
+void ValkiriaAction::debug(int x, int y, int color) const {
+	DrawFormatString(x, y, color, "**ValkiriaAction**");
+	debugAction(x + DRAW_FORMAT_STRING_SIZE, y + DRAW_FORMAT_STRING_SIZE, color);
+}
+
+// FlightActionのデバッグ
+void FlightAction::debug(int x, int y, int color) const {
+	DrawFormatString(x, y, color, "**FlightAction**");
 	debugAction(x + DRAW_FORMAT_STRING_SIZE, y + DRAW_FORMAT_STRING_SIZE, color);
 }
 

@@ -36,6 +36,10 @@ protected:
 	// 動かすキャラクター
 	Character* m_character_p;
 
+	// キャラのバージョン イベントでrunSpeedの変更した場合に対処するため
+	int m_characterVersion;
+	int m_characterMoveSpeed;
+
 	// キャラが地面にいる
 	bool m_grand;
 
@@ -67,6 +71,12 @@ protected:
 	int m_boostCnt;
 	const int BOOST_TIME = 10;
 
+	// やられ状態の時間
+	const int DAMAGE_TIME = 20;
+
+	// ノックバックなしのキャラならtrue
+	bool m_heavy = false;
+
 	// 移動中
 	bool m_moveRight;
 	bool m_moveLeft;
@@ -94,14 +104,22 @@ protected:
 
 	int m_damageCnt;
 
+private:
+	// キャラの画像を変更
+	virtual void switchHandle() = 0;
+
 public:
 	static const char* ACTION_NAME;
 	virtual const char* getActionName() const { return this->ACTION_NAME; }
 
 	CharacterAction();
 	CharacterAction(Character* character, SoundPlayer* soundPlayer_p);
+	virtual ~CharacterAction() {}
 
+	// コピー作成
 	virtual CharacterAction* createCopy(std::vector<Character*> characters) = 0;
+
+	// コピー作成用
 	void setParam(CharacterAction* action);
 
 	// デバッグ
@@ -123,11 +141,14 @@ public:
 	bool getUpLock() const { return m_upLock; }
 	bool getDownLock() const { return m_downLock; }
 	const SoundPlayer* getSoundPlayer() const { return m_soundPlayer_p; }
+	virtual int getPreJumpMax() const { return PRE_JUMP_MAX; }
 
 	// セッタ
 	void setState(CHARACTER_STATE state);
+	inline void setCharacterVersion(int version) { m_characterVersion = version; }
+	inline void setCharacterMoveSpeed(int moveSpeed) { m_characterMoveSpeed = moveSpeed; }
 	inline void setSimpleGrand(bool grand) { m_grand = grand; }
-	void setGrand(bool grand);
+	virtual void setGrand(bool grand);
 	void setRightLock(bool lock);
 	void setLeftLock(bool lock);
 	void setUpLock(bool lock);
@@ -149,6 +170,7 @@ public:
 	void setLandCnt(int landCnt) { m_landCnt = landCnt; }
 	void setBoostCnt(int boostCnt) { m_boostCnt = boostCnt; }
 	void setDamageCnt(int damageCnt) { m_damageCnt = damageCnt; }
+	void setHeavy(bool heavy) { m_heavy = heavy; }
 
 	// 今ダメージを受けていて動けない
 	inline bool damageFlag() const { return m_state == CHARACTER_STATE::DAMAGE; }
@@ -160,15 +182,13 @@ public:
 	void setCharacterX(int x);
 	void setCharacterY(int y);
 	void setCharacterLeftDirection(bool leftDirection);
+	void setCharacterFreeze(bool freeze);
 
 	// 行動前の処理 毎フレーム行う
-	virtual void init() = 0;
+	virtual void init();
 
 	// 物理演算 毎フレーム行う
 	virtual void action() = 0;
-
-	// キャラの画像を変更
-	virtual void switchHandle() = 0;
 
 	// 移動 引数は４方向分 キャラによっては斜めに移動できるため。
 	virtual void move(bool right, bool left, bool up, bool down) = 0;
@@ -182,8 +202,14 @@ public:
 	// 斬撃攻撃
 	virtual Object* slashAttack(int gx, int gy) = 0;
 
-	// ダメージ
-	virtual void damage(int vx, int vy, int damageValue) = 0;
+	// ダメージ 必要に応じてオーバーライド
+	virtual void damage(int vx, int vy, int damageValue);
+
+	// 斬撃開始の処理 必要に応じてオーバーライド
+	virtual void startSlash();
+
+	// 斬撃終了の処理 必要に応じてオーバーライド
+	virtual void finishSlash();
 
 	// 今無敵時間じゃない
 	bool ableDamage() const;
@@ -191,9 +217,17 @@ public:
 	// 今攻撃可能状態
 	bool ableAttack() const;
 
+	// 歩き始める
+	void startMoveLeft();
+	void startMoveRight();
+	void startMoveUp();
+	void startMoveDown();
+
 	// 歩くのをやめる
 	void stopMoveLeft();
 	void stopMoveRight();
+	void stopMoveUp();
+	void stopMoveDown();
 
 protected:
 	// 画像のサイズ変更による位置調整
@@ -232,8 +266,83 @@ public:
 
 	void debug(int x, int y, int color) const;
 
-	//行動前の処理 毎フレーム行う
-	void init();
+	// 物理演算 毎フレーム行う
+	void action();
+
+	// 移動 引数は４方向分
+	void move(bool right, bool left, bool up, bool down);
+
+	// ジャンプ cntフレーム目
+	void jump(int cnt);
+
+	// 射撃攻撃
+	Object* bulletAttack(int gx, int gy);
+
+	// 斬撃攻撃
+	Object* slashAttack(int gx, int gy);
+};
+
+
+/*
+* ヴァルキリア用Action
+*/
+class ValkiriaAction :
+	public StickAction
+{
+private:
+	// ジャンプのため時間の最大
+	const int PRE_JUMP_MAX = 30;
+
+	// 斬撃攻撃による移動速度
+	const int SLASH_MOVE_SPEED = 25;
+
+public:
+	static const char* ACTION_NAME;
+	const char* getActionName() const { return this->ACTION_NAME; }
+
+	ValkiriaAction(Character* character, SoundPlayer* soundPlayer_p);
+
+	CharacterAction* createCopy(std::vector<Character*> characters);
+
+	void debug(int x, int y, int color) const;
+
+	int getPreJumpMax() const { return PRE_JUMP_MAX; }
+
+	void setGrand(bool grand);
+
+	// 斬撃開始の処理
+	void startSlash();
+
+	// 斬撃終了の処理
+	void finishSlash();
+
+	// ダメージ
+	void damage(int vx, int vy, int damageValue);
+};
+
+
+/*
+* 空を飛ぶキャラ
+*/
+class FlightAction :
+	public CharacterAction
+{
+private:
+
+	// キャラの画像を状態(state)に応じて変更
+	void switchHandle();
+
+	void walk(bool right, bool left, bool up, bool down);
+
+public:
+	static const char* ACTION_NAME;
+	const char* getActionName() const { return this->ACTION_NAME; }
+
+	FlightAction(Character* character, SoundPlayer* soundPlayer_p);
+
+	CharacterAction* createCopy(std::vector<Character*> characters);
+
+	void debug(int x, int y, int color) const;
 
 	// 物理演算 毎フレーム行う
 	void action();
@@ -249,9 +358,7 @@ public:
 
 	// 斬撃攻撃
 	Object* slashAttack(int gx, int gy);
-
-	// ダメージ
-	void damage(int vx, int vy, int damageValue);
 };
+
 
 #endif
