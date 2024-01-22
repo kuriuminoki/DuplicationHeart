@@ -135,6 +135,10 @@ World::World(int fromAreaNum, int toAreaNum, SoundPlayer* soundPlayer) :
 			break;
 		}
 	}
+	// ƒvƒŒƒCƒ„[‚Ì•ûŒü‚ÖŒü‚©‚¹‚é
+	for (unsigned int i = 0; i < m_characterControllers.size(); i++) {
+		m_characterControllers[i]->setPlayerDirection(m_player_p, true);
+	}
 
 	m_camera->setEx(m_cameraMaxEx);
 
@@ -451,7 +455,9 @@ void World::asignedCharacterData(const char* name, CharacterData* data) {
 		Character* character = createCharacter(name);
 		asignedCharacter(character, data, true);
 		m_characters.push_back(character);
-		m_characterControllers.push_back(createControllerWithData(character, data));
+		CharacterController* controller = createControllerWithData(character, data);
+		controller->setPlayerDirection(m_player_p, true);
+		m_characterControllers.push_back(controller);
 		return;
 	}
 
@@ -461,6 +467,7 @@ void World::asignedCharacterData(const char* name, CharacterData* data) {
 		const Character* character = m_characterControllers[i]->getAction()->getCharacter();
 		if (name == character->getName()) {
 			CharacterController* controller = createControllerWithData(character, data);
+			controller->setPlayerDirection(m_player_p, true);
 			delete m_characterControllers[i];
 			m_characterControllers[i] = controller;
 		}
