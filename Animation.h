@@ -154,6 +154,7 @@ private:
 	GraphHandles* m_titleOrange;
 	GraphHandles* m_titleHeart;
 	GraphHandles* m_heartHide;
+	GraphHandles* m_heartHide2;
 
 	// part1
 	GraphHandles* m_darkHeart;

@@ -51,6 +51,7 @@ Story::Story(int storyNum, World* world, SoundPlayer* soundPlayer) {
 
 	// イベントの発火確認
 	checkFire();
+	soundPlayer->stopBGM();
 }
 
 Story::~Story() {
