@@ -24,6 +24,36 @@
 using namespace std;
 
 
+/*
+* 操作キャラ変更処理
+*/
+PlayerChanger::PlayerChanger() {
+
+}
+
+/*
+* controllers_pからplayer_pの仲間を特定し、操作キャラを変更する。
+* 変更先のキャラはIDで決まる。
+* カメラのセット・playerのBrain変更、controllers_pのBrain変更で完了
+*/
+void PlayerChanger::play(SoundPlayer* soundPlayer_p, Camera* camera_p, std::vector<CharacterController*> controllers_p, Character* player_p) {
+	// Eキーが
+	if (controlE() != 1) {
+		return;
+	}
+
+	Character* minCharacter;
+	Character* nextCharacter;
+	for (unsigned int i = 0; i < controllers_p.size(); i++) {
+		int groupId = controllers_p[i]->getAction()->getCharacter()->getGroupId();
+		int id = controllers_p[i]->getAction()->getCharacter()->getId();
+		if (groupId == player_p->getGroupId()) {
+
+		}
+	}
+}
+
+
 // vectorに入った全オブジェクトを削除する
 void deleteAllObject(vector<Object*>& objects) {
 	for (int i = (int)objects.size() - 1; i >= 0; i--) {
