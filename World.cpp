@@ -27,30 +27,57 @@ using namespace std;
 /*
 * 操作キャラ変更処理
 */
-PlayerChanger::PlayerChanger() {
-
+PlayerChanger::PlayerChanger(std::vector<CharacterController*> controllers_p, const Character* player_p) {
+	for (unsigned int i = 0; i < controllers_p.size(); i++) {
+		if (controllers_p[i]->getAction()->getCharacter()->getId() == player_p->getId()) {
+			m_prevBrainName = controllers_p[i]->getBrain()->getBrainName();
+			if (m_prevBrainName == "KeyboardBrain") {
+				m_prevBrainName = "FollowNormalAI";
+			}
+			break;
+		}
+	}
 }
 
 /*
-* controllers_pからplayer_pの仲間を特定し、操作キャラを変更する。
+* controllers_pからplayer_pの仲間を特定し、次の操作キャラを返す。
 * 変更先のキャラはIDで決まる。
 * カメラのセット・playerのBrain変更、controllers_pのBrain変更で完了
 */
-void PlayerChanger::play(SoundPlayer* soundPlayer_p, Camera* camera_p, std::vector<CharacterController*> controllers_p, Character* player_p) {
-	// Eキーが
+const Character* PlayerChanger::play(SoundPlayer* soundPlayer_p, std::vector<CharacterController*> controllers_p, const Character* player_p) {
+	// Eキーが押されていないなら何もしない
 	if (controlE() != 1) {
-		return;
+		return nullptr;
 	}
 
-	Character* minCharacter;
-	Character* nextCharacter;
+	const Character* minCharacter = nullptr;
+	const Character* nextPlayer = nullptr;
 	for (unsigned int i = 0; i < controllers_p.size(); i++) {
-		int groupId = controllers_p[i]->getAction()->getCharacter()->getGroupId();
-		int id = controllers_p[i]->getAction()->getCharacter()->getId();
+		const Character* target = controllers_p[i]->getAction()->getCharacter();
+		// 属するグループ
+		int groupId = target->getGroupId();
+		// ID
+		int id = target->getId();
+		if (id == player_p->getId()) { continue; }
+		// プレイヤーの仲間のみ対象
 		if (groupId == player_p->getGroupId()) {
-
+			// IDが最小のキャラ
+			if (minCharacter == nullptr || id < minCharacter->getId()) {
+				minCharacter = target;
+			}
+			// IDがプレイヤーの次に小さいキャラ
+			if (id > player_p->getId()) {
+				if (nextPlayer == nullptr || id < nextPlayer->getId()) {
+					nextPlayer = target;
+				}
+			}
 		}
 	}
+	// プレイヤーが最もIDの大きいキャラだった場合nullptrなのでIDが最も小さいキャラを選ぶ
+	if (nextPlayer == nullptr) {
+		nextPlayer = minCharacter;
+	}
+	return nextPlayer;
 }
 
 
@@ -165,6 +192,7 @@ World::World(int fromAreaNum, int toAreaNum, SoundPlayer* soundPlayer) :
 			break;
 		}
 	}
+	m_playerChanger = new PlayerChanger(m_characterControllers, m_player_p);
 
 	m_camera->setEx(m_cameraMaxEx);
 
@@ -197,6 +225,7 @@ World::World(const World* original) :
 		m_characters.push_back(copy);
 		if (copy->getId() == m_playerId) { m_player_p = copy; }
 	}
+	m_playerChanger = new PlayerChanger(m_characterControllers, m_player_p);
 	// コントローラをコピー
 	for (unsigned int i = 0; i < original->getCharacterControllers().size(); i++) {
 		CharacterController* copy;
@@ -264,6 +293,8 @@ World::~World() {
 	for (unsigned int i = 0; i < m_characters.size(); i++) {
 		delete m_characters[i];
 	}
+
+	delete m_playerChanger;
 
 	// 背景
 	if (!m_duplicationFlag) {
@@ -719,6 +750,45 @@ void World::battle() {
 	// アニメーションの更新
 	updateAnimation();
 
+	// 操作キャラ変更
+	changePlayer(m_playerChanger->play(m_soundPlayer_p, m_characterControllers, m_player_p));
+
+}
+
+void World::changePlayer(const Character* nextPlayer) {
+	if (nextPlayer == nullptr) { return; }
+	// 今操作しているキャラをNPCのBrainにする
+	for (unsigned int i = 0; i < m_characterControllers.size(); i++) {
+		if (m_characterControllers[i]->getAction()->getCharacter()->getId() == m_player_p->getId()) {
+			m_characterControllers[i]->setBrain(createBrain(m_playerChanger->getPrevBrainName(), m_camera));
+			m_characterControllers[i]->setActionSound(nullptr);
+			break;
+		}
+	}
+	// 次操作するキャラをKeyboardBrainにする
+	for (unsigned int i = 0; i < m_characterControllers.size(); i++) {
+		if (nextPlayer->getId() == m_characterControllers[i]->getAction()->getCharacter()->getId()) {
+			string brainName = m_characterControllers[i]->getBrain()->getBrainName();
+			m_characterControllers[i]->setBrain(new KeyboardBrain(m_camera));
+			m_playerChanger->setPrevBrainName(brainName);
+			m_characterControllers[i]->setActionSound(m_soundPlayer_p);
+			break;
+		}
+	}
+	// 次操作するキャラをPlayerとしてセット
+	for (unsigned int i = 0; i < m_characters.size(); i++) {
+		if (nextPlayer->getId() == m_characters[i]->getId()) {
+			m_player_p = m_characters[i];
+			m_playerId = m_player_p->getId();
+			for (int j = 0; j < m_characterControllers.size(); j++) {
+				if (m_characterControllers[j]->getBrain()->needSearchFollow()) {
+					m_characterControllers[j]->searchFollowCandidate(m_player_p);
+				}
+			}
+			break;
+		}
+	}
+	m_focusId = m_player_p->getId();
 }
 
 //  Battle：カメラの更新

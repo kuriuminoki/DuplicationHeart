@@ -12,6 +12,7 @@ class Object;
 class Camera;
 class Brain;
 class ControllerRecorder;
+class SoundPlayer;
 
 
 /*
@@ -91,6 +92,7 @@ public:
 	void setActionUpLock(bool lock);
 	void setActionDownLock(bool lock);
 	void setActionBoost();
+	void setActionSound(SoundPlayer* soundPlayer);
 
 	// キャラクターのセッタ
 	void setCharacterX(int x);
