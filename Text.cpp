@@ -381,7 +381,8 @@ void Conversation::loadNextBlock() {
 	else if (str == "@setWorldBGM") {
 		// WorldÇÃBGMÇïœçX
 		FileRead_gets(buff, size, m_fp);
-		m_originalBgmPath = buff;
+		m_originalBgmPath = "sound/";
+		m_originalBgmPath += buff;
 		loadNextBlock();
 	}
 	else if (str == "@startCnt") {

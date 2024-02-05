@@ -25,7 +25,7 @@ using namespace std;
 
 
 /*
-* ‘€ìƒLƒƒƒ‰•ÏXˆ—
+* æ“ä½œã‚­ãƒ£ãƒ©å¤‰æ›´å‡¦ç†
 */
 PlayerChanger::PlayerChanger(std::vector<CharacterController*> controllers_p, const Character* player_p) {
 	for (unsigned int i = 0; i < controllers_p.size(); i++) {
@@ -40,12 +40,12 @@ PlayerChanger::PlayerChanger(std::vector<CharacterController*> controllers_p, co
 }
 
 /*
-* controllers_p‚©‚çplayer_p‚Ì’‡ŠÔ‚ğ“Á’è‚µAŸ‚Ì‘€ìƒLƒƒƒ‰‚ğ•Ô‚·B
-* •ÏXæ‚ÌƒLƒƒƒ‰‚ÍID‚ÅŒˆ‚Ü‚éB
-* ƒJƒƒ‰‚ÌƒZƒbƒgEplayer‚ÌBrain•ÏXAcontrollers_p‚ÌBrain•ÏX‚ÅŠ®—¹
+* controllers_pã‹ã‚‰player_pã®ä»²é–“ã‚’ç‰¹å®šã—ã€æ¬¡ã®æ“ä½œã‚­ãƒ£ãƒ©ã‚’è¿”ã™ã€‚
+* å¤‰æ›´å…ˆã®ã‚­ãƒ£ãƒ©ã¯IDã§æ±ºã¾ã‚‹ã€‚
+* ã‚«ãƒ¡ãƒ©ã®ã‚»ãƒƒãƒˆãƒ»playerã®Brainå¤‰æ›´ã€controllers_pã®Brainå¤‰æ›´ã§å®Œäº†
 */
 const Character* PlayerChanger::play(SoundPlayer* soundPlayer_p, std::vector<CharacterController*> controllers_p, const Character* player_p) {
-	// EƒL[‚ª‰Ÿ‚³‚ê‚Ä‚¢‚È‚¢‚È‚ç‰½‚à‚µ‚È‚¢
+	// Eã‚­ãƒ¼ãŒæŠ¼ã•ã‚Œã¦ã„ãªã„ãªã‚‰ä½•ã‚‚ã—ãªã„
 	if (controlE() != 1) {
 		return nullptr;
 	}
@@ -54,18 +54,18 @@ const Character* PlayerChanger::play(SoundPlayer* soundPlayer_p, std::vector<Cha
 	const Character* nextPlayer = nullptr;
 	for (unsigned int i = 0; i < controllers_p.size(); i++) {
 		const Character* target = controllers_p[i]->getAction()->getCharacter();
-		// ‘®‚·‚éƒOƒ‹[ƒv
+		// å±ã™ã‚‹ã‚°ãƒ«ãƒ¼ãƒ—
 		int groupId = target->getGroupId();
 		// ID
 		int id = target->getId();
 		if (id == player_p->getId()) { continue; }
-		// ƒvƒŒƒCƒ„[‚Ì’‡ŠÔ‚Ì‚İ‘ÎÛ
+		// ãƒ—ãƒ¬ã‚¤ãƒ¤ãƒ¼ã®ä»²é–“ã®ã¿å¯¾è±¡
 		if (groupId == player_p->getGroupId()) {
-			// ID‚ªÅ¬‚ÌƒLƒƒƒ‰
+			// IDãŒæœ€å°ã®ã‚­ãƒ£ãƒ©
 			if (minCharacter == nullptr || id < minCharacter->getId()) {
 				minCharacter = target;
 			}
-			// ID‚ªƒvƒŒƒCƒ„[‚ÌŸ‚É¬‚³‚¢ƒLƒƒƒ‰
+			// IDãŒãƒ—ãƒ¬ã‚¤ãƒ¤ãƒ¼ã®æ¬¡ã«å°ã•ã„ã‚­ãƒ£ãƒ©
 			if (id > player_p->getId()) {
 				if (nextPlayer == nullptr || id < nextPlayer->getId()) {
 					nextPlayer = target;
@@ -73,7 +73,7 @@ const Character* PlayerChanger::play(SoundPlayer* soundPlayer_p, std::vector<Cha
 			}
 		}
 	}
-	// ƒvƒŒƒCƒ„[‚ªÅ‚àID‚Ì‘å‚«‚¢ƒLƒƒƒ‰‚¾‚Á‚½ê‡nullptr‚È‚Ì‚ÅID‚ªÅ‚à¬‚³‚¢ƒLƒƒƒ‰‚ğ‘I‚Ô
+	// ãƒ—ãƒ¬ã‚¤ãƒ¤ãƒ¼ãŒæœ€ã‚‚IDã®å¤§ãã„ã‚­ãƒ£ãƒ©ã ã£ãŸå ´åˆnullptrãªã®ã§IDãŒæœ€ã‚‚å°ã•ã„ã‚­ãƒ£ãƒ©ã‚’é¸ã¶
 	if (nextPlayer == nullptr) {
 		nextPlayer = minCharacter;
 	}
@@ -81,7 +81,7 @@ const Character* PlayerChanger::play(SoundPlayer* soundPlayer_p, std::vector<Cha
 }
 
 
-// vector‚É“ü‚Á‚½‘SƒIƒuƒWƒFƒNƒg‚ğíœ‚·‚é
+// vectorã«å…¥ã£ãŸå…¨ã‚ªãƒ–ã‚¸ã‚§ã‚¯ãƒˆã‚’å‰Šé™¤ã™ã‚‹
 void deleteAllObject(vector<Object*>& objects) {
 	for (int i = (int)objects.size() - 1; i >= 0; i--) {
 		delete objects[i];
@@ -89,13 +89,13 @@ void deleteAllObject(vector<Object*>& objects) {
 	}
 }
 
-// vector‚É“ü‚Á‚½deleteFlag‚ªtarue‚ÌƒIƒuƒWƒFƒNƒg‚ğíœ‚·‚é
+// vectorã«å…¥ã£ãŸdeleteFlagãŒtarueã®ã‚ªãƒ–ã‚¸ã‚§ã‚¯ãƒˆã‚’å‰Šé™¤ã™ã‚‹
 void deleteObject(vector<Object*>& objects) {
 	for (unsigned int i = 0; i < objects.size(); i++) {
-		// deleteFlag‚ªtrue‚È‚çíœ‚·‚é
+		// deleteFlagãŒtrueãªã‚‰å‰Šé™¤ã™ã‚‹
 		if (objects[i]->getDeleteFlag()) {
 			delete objects[i];
-			// ––”ö‚ğíœ‚·‚é•û‚ª‘¬‚¢
+			// æœ«å°¾ã‚’å‰Šé™¤ã™ã‚‹æ–¹ãŒé€Ÿã„
 			objects[i] = objects.back();
 			objects.pop_back();
 			i--;
@@ -103,16 +103,16 @@ void deleteObject(vector<Object*>& objects) {
 	}
 }
 
-// vector‚É“ü‚Á‚½‘SƒIƒuƒWƒFƒNƒg‚ğ“®‚©‚·
+// vectorã«å…¥ã£ãŸå…¨ã‚ªãƒ–ã‚¸ã‚§ã‚¯ãƒˆã‚’å‹•ã‹ã™
 void actionObject(vector<Object*>& objects) {
-	// •Ç‚â°ƒIƒuƒWƒFƒNƒg‚Ìˆ— (“–‚½‚è”»’è‚Æ“®‚«)
+	// å£ã‚„åºŠã‚ªãƒ–ã‚¸ã‚§ã‚¯ãƒˆã®å‡¦ç† (å½“ãŸã‚Šåˆ¤å®šã¨å‹•ã)
 	for (unsigned int i = 0; i < objects.size(); i++) {
-		// ƒIƒuƒWƒFƒNƒg‚Ì“®‚«
+		// ã‚ªãƒ–ã‚¸ã‚§ã‚¯ãƒˆã®å‹•ã
 		objects[i]->action();
-		// deleteFlag‚ªtrue‚È‚çíœ‚·‚é
+		// deleteFlagãŒtrueãªã‚‰å‰Šé™¤ã™ã‚‹
 		if (objects[i]->getDeleteFlag()) {
 			delete objects[i];
-			// ––”ö‚ğíœ‚·‚é•û‚ª‘¬‚¢
+			// æœ«å°¾ã‚’å‰Šé™¤ã™ã‚‹æ–¹ãŒé€Ÿã„
 			objects[i] = objects.back();
 			objects.pop_back();
 			i--;
@@ -120,35 +120,35 @@ void actionObject(vector<Object*>& objects) {
 	}
 }
 
-// ƒLƒƒƒ‰ƒNƒ^[‚ÆƒIƒuƒWƒFƒNƒg‚ÌŠÑ’Ê”»’è
+// ã‚­ãƒ£ãƒ©ã‚¯ã‚¿ãƒ¼ã¨ã‚ªãƒ–ã‚¸ã‚§ã‚¯ãƒˆã®è²«é€šæ™‚åˆ¤å®š
 void penetrationCharacterAndObject(CharacterController* controller, vector<Object*> objects) {
-	// •Ç‚â°ƒIƒuƒWƒFƒNƒg‚Ìˆ— (“–‚½‚è”»’è‚Æ“®‚«)
+	// å£ã‚„åºŠã‚ªãƒ–ã‚¸ã‚§ã‚¯ãƒˆã®å‡¦ç† (å½“ãŸã‚Šåˆ¤å®šã¨å‹•ã)
 	for (unsigned int i = 0; i < objects.size(); i++) {
-		// “–‚½‚è”»’è‚ğ‚±‚±‚Ås‚¤
+		// å½“ãŸã‚Šåˆ¤å®šã‚’ã“ã“ã§è¡Œã†
 		objects[i]->penetration(controller);
 	}
 }
 
 
 /*
-* ƒRƒ“ƒXƒgƒ‰ƒNƒ^
+* ã‚³ãƒ³ã‚¹ãƒˆãƒ©ã‚¯ã‚¿
 */
 World::World() {
 	m_duplicationFlag = false;
 
 	m_brightValue = 255;
 
-	// ‰ï˜bƒCƒxƒ“ƒg
+	// ä¼šè©±ã‚¤ãƒ™ãƒ³ãƒˆ
 	m_conversation_p = nullptr;
 	m_objectConversation = nullptr;
 
-	// ƒ€[ƒr[
+	// ãƒ ãƒ¼ãƒ“ãƒ¼
 	m_movie_p = nullptr;
 
-	// ƒXƒLƒ‹”­“®’†
+	// ã‚¹ã‚­ãƒ«ç™ºå‹•ä¸­
 	m_skillFlag = false;
 
-	// ƒJƒƒ‰‚Ì”{—¦‚ÌÅ‘åEÅ¬’l‚ğ‰ğ‘œ“x‚©‚çŒˆ’è
+	// ã‚«ãƒ¡ãƒ©ã®å€ç‡ã®æœ€å¤§ãƒ»æœ€å°å€¤ã‚’è§£åƒåº¦ã‹ã‚‰æ±ºå®š
 	getGameEx(m_exX, m_exY);
 	m_cameraMaxEx *= m_exX;
 	m_cameraMinEx *= m_exX;
@@ -160,20 +160,20 @@ World::World() {
 }
 
 /*
-* ƒIƒuƒWƒFƒNƒg‚Ìƒ[ƒh‚È‚Ç
+* ã‚ªãƒ–ã‚¸ã‚§ã‚¯ãƒˆã®ãƒ­ãƒ¼ãƒ‰ãªã©
 */
 World::World(int fromAreaNum, int toAreaNum, SoundPlayer* soundPlayer) :
 	World()
 {
 
-	// ƒTƒEƒ“ƒhƒvƒŒƒCƒ„[
+	// ã‚µã‚¦ãƒ³ãƒ‰ãƒ—ãƒ¬ã‚¤ãƒ¤ãƒ¼
 	m_soundPlayer_p = soundPlayer;
 
-	// ålŒö‚ÌƒXƒ^[ƒg’n“_
+	// ä¸»äººå…¬ã®ã‚¹ã‚¿ãƒ¼ãƒˆåœ°ç‚¹
 	m_areaNum = toAreaNum;
 	m_nextAreaNum = m_areaNum;
 
-	// ƒGƒŠƒA‚ğƒ[ƒh
+	// ã‚¨ãƒªã‚¢ã‚’ãƒ­ãƒ¼ãƒ‰
 	const AreaReader data(fromAreaNum, toAreaNum, m_soundPlayer_p);
 	m_camera = data.getCamera();
 	m_focusId = data.getFocusId();
@@ -185,14 +185,20 @@ World::World(int fromAreaNum, int toAreaNum, SoundPlayer* soundPlayer) :
 	m_doorObjects = data.getDoorObjects();
 	data.getBackGround(m_backGroundGraph, m_backGroundColor);
 
-	// ƒvƒŒƒCƒ„[‚ğƒZƒbƒg
+	// ãƒ—ãƒ¬ã‚¤ãƒ¤ãƒ¼ã‚’ã‚»ãƒƒãƒˆ
 	for (unsigned int i = 0; i < m_characters.size(); i++) {
 		if (m_playerId == m_characters[i]->getId()) {
 			m_player_p = m_characters[i];
 			break;
 		}
 	}
+
 	m_playerChanger = new PlayerChanger(m_characterControllers, m_player_p);
+
+	// ãƒ—ãƒ¬ã‚¤ãƒ¤ãƒ¼ã®æ–¹å‘ã¸å‘ã‹ã›ã‚‹
+	for (unsigned int i = 0; i < m_characterControllers.size(); i++) {
+		m_characterControllers[i]->setPlayerDirection(m_player_p, true);
+	}
 
 	m_camera->setEx(m_cameraMaxEx);
 
@@ -208,7 +214,7 @@ World::World(const World* original) :
 	m_duplicationFlag = true;
 	m_areaNum = original->getAreaNum();
 
-	// ƒGƒŠƒA‚ğƒRƒs[
+	// ã‚¨ãƒªã‚¢ã‚’ã‚³ãƒ”ãƒ¼
 	m_camera = new Camera(original->getCamera());
 	m_focusId = original->getFocusId();
 	m_playerId = original->getPlayerId();
@@ -218,7 +224,7 @@ World::World(const World* original) :
 	m_doorSound = original->getDoorSound();
 	m_date = original->getDate();
 
-	// ƒLƒƒƒ‰‚ğƒRƒs[
+	// ã‚­ãƒ£ãƒ©ã‚’ã‚³ãƒ”ãƒ¼
 	for (unsigned int i = 0; i < original->getCharacters().size(); i++) {
 		Character* copy;
 		copy = original->getCharacters()[i]->createCopy();
@@ -226,10 +232,10 @@ World::World(const World* original) :
 		if (copy->getId() == m_playerId) { m_player_p = copy; }
 	}
 	m_playerChanger = new PlayerChanger(m_characterControllers, m_player_p);
-	// ƒRƒ“ƒgƒ[ƒ‰‚ğƒRƒs[
+	// ã‚³ãƒ³ãƒˆãƒ­ãƒ¼ãƒ©ã‚’ã‚³ãƒ”ãƒ¼
 	for (unsigned int i = 0; i < original->getCharacterControllers().size(); i++) {
 		CharacterController* copy;
-		// Brain‚ÆActionƒRƒs[—p‚ÉCharacter‚ÆƒJƒƒ‰‚ğ“n‚·
+		// Brainã¨Actionã‚³ãƒ”ãƒ¼ç”¨ã«Characterã¨ã‚«ãƒ¡ãƒ©ã‚’æ¸¡ã™
 		copy = original->getCharacterControllers()[i]->createCopy(m_characters, m_camera);
 		m_characterControllers.push_back(copy);
 	}
@@ -266,37 +272,37 @@ World::World(const World* original) :
 }
 
 World::~World() {
-	// ƒJƒƒ‰‚ğíœ‚·‚é
+	// ã‚«ãƒ¡ãƒ©ã‚’å‰Šé™¤ã™ã‚‹
 	delete m_camera;
 
-	// ‘SƒIƒuƒWƒFƒNƒg‚ğíœ‚·‚éB
+	// å…¨ã‚ªãƒ–ã‚¸ã‚§ã‚¯ãƒˆã‚’å‰Šé™¤ã™ã‚‹ã€‚
 	deleteAllObject(m_stageObjects);
 	deleteAllObject(m_attackObjects);
 	deleteAllObject(m_doorObjects);
 
-	// UŒ‚ƒGƒtƒFƒNƒgíœ
+	// æ”»æ’ƒã‚¨ãƒ•ã‚§ã‚¯ãƒˆå‰Šé™¤
 	for (unsigned i = 0; i < m_animations.size(); i++) {
 		delete m_animations[i];
 	}
 
-	// ƒAƒCƒeƒ€íœ
+	// ã‚¢ã‚¤ãƒ†ãƒ å‰Šé™¤
 	for (unsigned i = 0; i < m_itemVector.size(); i++) {
 		delete m_itemVector[i];
 	}
 
-	// ‘SƒRƒ“ƒgƒ[ƒ‰‚ğíœ‚·‚éB
+	// å…¨ã‚³ãƒ³ãƒˆãƒ­ãƒ¼ãƒ©ã‚’å‰Šé™¤ã™ã‚‹ã€‚
 	for (unsigned int i = 0; i < m_characterControllers.size(); i++) {
 		delete m_characterControllers[i];
 	}
 
-	// ‘SƒLƒƒƒ‰ƒNƒ^[‚ğíœ‚·‚éB
+	// å…¨ã‚­ãƒ£ãƒ©ã‚¯ã‚¿ãƒ¼ã‚’å‰Šé™¤ã™ã‚‹ã€‚
 	for (unsigned int i = 0; i < m_characters.size(); i++) {
 		delete m_characters[i];
 	}
 
 	delete m_playerChanger;
 
-	// ”wŒi
+	// èƒŒæ™¯
 	if (!m_duplicationFlag) {
 		DeleteGraph(m_backGroundGraph);
 		delete m_characterDeadGraph;
@@ -309,7 +315,7 @@ World::~World() {
 	}
 }
 
-// Drawer—pFCharacterAction‚Ìvector‚ğ•Ô‚·
+// Drawerç”¨ï¼šCharacterActionã®vectorã‚’è¿”ã™
 vector<const CharacterAction*> World::getActions() const {
 	vector<const CharacterAction*> actions;
 	size_t size = m_characterControllers.size();
@@ -321,7 +327,7 @@ vector<const CharacterAction*> World::getActions() const {
 	return actions;
 }
 
-// Drawer—pFObject‚Ìvector‚ğ•Ô‚·
+// Drawerç”¨ï¼šObjectã®vectorã‚’è¿”ã™
 vector<const Object*> World::getFrontObjects() const {
 
 	vector<const Object*> allObjects;
@@ -330,7 +336,7 @@ vector<const Object*> World::getFrontObjects() const {
 	return allObjects;
 }
 
-// Drawer—pFƒLƒƒƒ‰‚æ‚èŒã‚ë‚É•`‰æ‚·‚éObject‚Ìvector‚ğ•Ô‚·
+// Drawerç”¨ï¼šã‚­ãƒ£ãƒ©ã‚ˆã‚Šå¾Œã‚ã«æç”»ã™ã‚‹Objectã®vectorã‚’è¿”ã™
 vector<const Object*> World::getBackObjects() const {
 
 	vector<const Object*> allObjects;
@@ -340,15 +346,15 @@ vector<const Object*> World::getBackObjects() const {
 	return allObjects;
 }
 
-// Drawer—pFAnimation‚Ìvector‚ğ•Ô‚·
+// Drawerç”¨ï¼šAnimationã®vectorã‚’è¿”ã™
 vector<const Animation*> World::getConstAnimations() const {
 
 	vector<const Animation*> allAnimations;
 
-	// ƒGƒtƒFƒNƒg
+	// ã‚¨ãƒ•ã‚§ã‚¯ãƒˆ
 	allAnimations.insert(allAnimations.end(), m_animations.begin(), m_animations.end());
 
-	// ƒAƒCƒeƒ€
+	// ã‚¢ã‚¤ãƒ†ãƒ 
 	for (unsigned int i = 0; i < m_itemVector.size(); i++) {
 		if (!m_itemVector[i]->getDeleteFlag()) {
 			allAnimations.push_back(m_itemVector[i]->getAnimation());
@@ -358,7 +364,7 @@ vector<const Animation*> World::getConstAnimations() const {
 	return allAnimations;
 }
 
-// –¼‘O‚ÅƒLƒƒƒ‰ŒŸõ
+// åå‰ã§ã‚­ãƒ£ãƒ©æ¤œç´¢
 Character* World::getCharacterWithName(string characterName) const {
 	for (unsigned int i = 0; i < m_characters.size(); i++) {
 		if (m_characters[i]->getName() == characterName) {
@@ -368,7 +374,7 @@ Character* World::getCharacterWithName(string characterName) const {
 	return nullptr;
 }
 
-// –¼‘O‚ÅƒRƒ“ƒgƒ[ƒ‰ŒŸõ
+// åå‰ã§ã‚³ãƒ³ãƒˆãƒ­ãƒ¼ãƒ©æ¤œç´¢
 CharacterController* World::getControllerWithName(string characterName) const {
 	for (unsigned int i = 0; i < m_characters.size(); i++) {
 		if (m_characterControllers[i]->getAction()->getCharacter()->getName() == characterName) {
@@ -378,7 +384,7 @@ CharacterController* World::getControllerWithName(string characterName) const {
 	return nullptr;
 }
 
-// ID‚ÅƒLƒƒƒ‰ŒŸõ
+// IDã§ã‚­ãƒ£ãƒ©æ¤œç´¢
 Character* World::getCharacterWithId(int id) const {
 	for (unsigned int i = 0; i < m_characters.size(); i++) {
 		if (m_characters[i]->getId() == id) {
@@ -388,7 +394,7 @@ Character* World::getCharacterWithId(int id) const {
 	return nullptr;
 }
 
-// IDw’è‚ÅBrain•ÏX
+// IDæŒ‡å®šã§Brainå¤‰æ›´
 void World::setBrainWithId(int id, Brain* brain) {
 	for (unsigned int i = 0; i < m_characterControllers.size(); i++) {
 		if (m_characterControllers[i]->getAction()->getCharacter()->getId() == id) {
@@ -397,55 +403,55 @@ void World::setBrainWithId(int id, Brain* brain) {
 	}
 }
 
-// ƒXƒg[ƒŠ[‚É‚æ‚é’Ç‰ÁƒLƒƒƒ‰ƒNƒ^[
+// ã‚¹ãƒˆãƒ¼ãƒªãƒ¼ã«ã‚ˆã‚‹è¿½åŠ ã‚­ãƒ£ãƒ©ã‚¯ã‚¿ãƒ¼
 void World::addCharacter(CharacterLoader* characterLoader) {
 	pair<vector<Character*>, vector<CharacterController*> > p = characterLoader->getCharacters(m_camera, m_soundPlayer_p, m_areaNum);
-	// ƒLƒƒƒ‰ƒNƒ^[
+	// ã‚­ãƒ£ãƒ©ã‚¯ã‚¿ãƒ¼
 	m_characters.insert(m_characters.end(), p.first.begin(), p.first.end());
-	// ƒRƒ“ƒgƒ[ƒ‰
+	// ã‚³ãƒ³ãƒˆãƒ­ãƒ¼ãƒ©
 	m_characterControllers.insert(m_characterControllers.end(), p.second.begin(), p.second.end());
 }
 
-// ƒXƒg[ƒŠ[‚É‚æ‚é’Ç‰ÁƒIƒuƒWƒFƒNƒg
+// ã‚¹ãƒˆãƒ¼ãƒªãƒ¼ã«ã‚ˆã‚‹è¿½åŠ ã‚ªãƒ–ã‚¸ã‚§ã‚¯ãƒˆ
 void World::addObject(ObjectLoader* objectLoader) {
 	pair<vector<Object*>, vector<Object*> > p = objectLoader->getObjects(m_areaNum);
-	// •Ç‚â°
+	// å£ã‚„åºŠ
 	m_stageObjects.insert(m_stageObjects.end(), p.first.begin(), p.first.end());
-	// ƒhƒA
+	// ãƒ‰ã‚¢
 	m_doorObjects.insert(m_doorObjects.end(), p.second.begin(), p.second.end());
 }
 
-// ƒvƒŒƒCƒ„[‚ÌHP‚ª0‚È‚çtrue
+// ãƒ—ãƒ¬ã‚¤ãƒ¤ãƒ¼ã®HPãŒ0ãªã‚‰true
 bool World::playerDead() {
 	return m_player_p->getHp() <= 0;
 }
 
-// ƒvƒŒƒCƒ„[‚ÌHP‚ğMAX‚É‚·‚é
+// ãƒ—ãƒ¬ã‚¤ãƒ¤ãƒ¼ã®HPã‚’MAXã«ã™ã‚‹
 void World::playerHpReset() {
 	m_player_p->setHp(m_player_p->getMaxHp());
 }
 
 
-// ƒXƒLƒ‹”­“®Fƒn[ƒg‚ğFreeze‚É‚·‚é
+// ã‚¹ã‚­ãƒ«ç™ºå‹•ï¼šãƒãƒ¼ãƒˆã‚’Freezeã«ã™ã‚‹
 void World::setSkillFlag(bool skillFlag) { 
 	m_skillFlag = skillFlag;
 	for (unsigned int i = 0; i < m_characterControllers.size(); i++) {
-		if (m_characterControllers[i]->getAction()->getCharacter()->getName() == "ƒn[ƒg") {
+		if (m_characterControllers[i]->getAction()->getCharacter()->getName() == "ãƒãƒ¼ãƒˆ") {
 			m_characterControllers[i]->setCharacterFreeze(skillFlag);
 		}
 	}
 }
 
-// ƒXƒLƒ‹”­“®F•¡»‚Ìƒn[ƒg’Ç‰Á—p
+// ã‚¹ã‚­ãƒ«ç™ºå‹•ï¼šè¤‡è£½ã®ãƒãƒ¼ãƒˆè¿½åŠ ç”¨
 void World::pushCharacter(Character* character, CharacterController* controller) {
 	m_characters.push_back(character);
 	m_characterControllers.push_back(controller);
 }
 
-// ƒXƒLƒ‹”­“®F•¡»‚Ìƒn[ƒgíœ—p
+// ã‚¹ã‚­ãƒ«ç™ºå‹•ï¼šè¤‡è£½ã®ãƒãƒ¼ãƒˆå‰Šé™¤ç”¨
 void World::popCharacterController(int id) {
 	for (unsigned int i = 0; i < m_characterControllers.size(); i++) {
-		if (m_characterControllers[i]->getAction()->getCharacter()->getName() == "ƒn[ƒg") {
+		if (m_characterControllers[i]->getAction()->getCharacter()->getName() == "ãƒãƒ¼ãƒˆ") {
 			continue;
 		}
 		if (m_characterControllers[i]->getAction()->getCharacter()->getId() == id) {
@@ -455,9 +461,9 @@ void World::popCharacterController(int id) {
 			i--;
 		}
 	}
-	// Target‚É‚µ‚Ä‚¢‚éAI‚ÍŠO‚µ‚Ä‚à‚ç‚¢‚½‚¢‚Ì‚ÅHP=0‚É‚·‚éB
+	// Targetã«ã—ã¦ã„ã‚‹AIã¯å¤–ã—ã¦ã‚‚ã‚‰ã„ãŸã„ã®ã§HP=0ã«ã™ã‚‹ã€‚
 	for (unsigned int i = 0; i < m_characters.size(); i++) {
-		if (m_characters[i]->getName() == "ƒn[ƒg") {
+		if (m_characters[i]->getName() == "ãƒãƒ¼ãƒˆ") {
 			continue;
 		}
 		if (m_characters[i]->getId() == id) {
@@ -466,10 +472,10 @@ void World::popCharacterController(int id) {
 	}
 }
 
-// ƒXƒLƒ‹”­“®FƒŒƒR[ƒ_‚ğì¬‚µg—p‚ğŠJn
+// ã‚¹ã‚­ãƒ«ç™ºå‹•ï¼šãƒ¬ã‚³ãƒ¼ãƒ€ã‚’ä½œæˆã—ä½¿ç”¨ã‚’é–‹å§‹
 void World::createRecorder() {
 	for (unsigned int i = 0; i < m_characterControllers.size(); i++) {
-		if (m_characterControllers[i]->getAction()->getCharacter()->getName() == "ƒn[ƒg") { continue; }
+		if (m_characterControllers[i]->getAction()->getCharacter()->getName() == "ãƒãƒ¼ãƒˆ") { continue; }
 		m_characterControllers[i]->setStickRecorder(new ControllerRecorder(0));
 		m_characterControllers[i]->setJumpRecorder(new ControllerRecorder(0));
 		m_characterControllers[i]->setSquatRecorder(new ControllerRecorder(0));
@@ -479,27 +485,27 @@ void World::createRecorder() {
 	}
 }
 
-// ƒXƒLƒ‹”­“®FƒŒƒR[ƒ_‚ÌŠÔ‚ğÅ‰‚É–ß‚·
+// ã‚¹ã‚­ãƒ«ç™ºå‹•ï¼šãƒ¬ã‚³ãƒ¼ãƒ€ã®æ™‚é–“ã‚’æœ€åˆã«æˆ»ã™
 void World::initRecorder() {
 	for (unsigned int i = 0; i < m_characterControllers.size(); i++) {
-		if (m_characterControllers[i]->getAction()->getCharacter()->getName() == "ƒn[ƒg") { continue; }
+		if (m_characterControllers[i]->getAction()->getCharacter()->getName() == "ãƒãƒ¼ãƒˆ") { continue; }
 		m_characterControllers[i]->initRecorder();
 	}
 }
 
-// ƒXƒLƒ‹”­“®FƒŒƒR[ƒ_‚Ìg—p‚ğ‚â‚ß‚Äíœ‚·‚é
+// ã‚¹ã‚­ãƒ«ç™ºå‹•ï¼šãƒ¬ã‚³ãƒ¼ãƒ€ã®ä½¿ç”¨ã‚’ã‚„ã‚ã¦å‰Šé™¤ã™ã‚‹
 void World::eraseRecorder() {
 	for (unsigned int i = 0; i < m_characterControllers.size(); i++) {
-		if (m_characterControllers[i]->getAction()->getCharacter()->getName() == "ƒn[ƒg") { continue; }
+		if (m_characterControllers[i]->getAction()->getCharacter()->getName() == "ãƒãƒ¼ãƒˆ") { continue; }
 		m_characterControllers[i]->eraseRecorder();
 	}
 }
 
-// ƒf[ƒ^ŠÇ—FƒLƒƒƒ‰‚Ìó‘Ô‚ğ•ÏX‚·‚é ‚¢‚È‚¢‚È‚çì¬‚·‚é
+// ãƒ‡ãƒ¼ã‚¿ç®¡ç†ï¼šã‚­ãƒ£ãƒ©ã®çŠ¶æ…‹ã‚’å¤‰æ›´ã™ã‚‹ ã„ãªã„ãªã‚‰ä½œæˆã™ã‚‹
 void World::asignedCharacterData(const char* name, CharacterData* data) {
 	if (data->areaNum() == -1) { return; }
 	size_t size = m_characters.size();
-	// ƒLƒƒƒ‰‚Ìİ’è
+	// ã‚­ãƒ£ãƒ©ã®è¨­å®š
 	bool flag = false;
 	for (unsigned i = 0; i < size; i++) {
 		if (name == m_characters[i]->getName()) {
@@ -507,28 +513,31 @@ void World::asignedCharacterData(const char* name, CharacterData* data) {
 			flag = true;
 		}
 	}
-	// ƒLƒƒƒ‰‚ğV‹Kì¬‚·‚éê‡i‚±‚ÌƒGƒŠƒA‚É‚¢‚é‚Í‚¸‚ÌƒLƒƒƒ‰‚¾‚ª‚Ü‚¾‚¢‚È‚¢j
-	if (!flag && (data->areaNum() == m_areaNum || data->followName() == "ƒn[ƒg")) {
+	// ã‚­ãƒ£ãƒ©ã‚’æ–°è¦ä½œæˆã™ã‚‹å ´åˆï¼ˆã“ã®ã‚¨ãƒªã‚¢ã«ã„ã‚‹ã¯ãšã®ã‚­ãƒ£ãƒ©ã ãŒã¾ã ã„ãªã„ï¼‰
+	if (!flag && (data->areaNum() == m_areaNum || data->followName() == "ãƒãƒ¼ãƒˆ")) {
 		Character* character = createCharacter(name);
 		asignedCharacter(character, data, true);
 		m_characters.push_back(character);
-		m_characterControllers.push_back(createControllerWithData(character, data));
+		CharacterController* controller = createControllerWithData(character, data);
+		controller->setPlayerDirection(m_player_p, true);
+		m_characterControllers.push_back(controller);
 		return;
 	}
 
-	// ƒRƒ“ƒgƒ[ƒ‰AƒAƒNƒVƒ‡ƒ“ABrain‚Ìİ’è
+	// ã‚³ãƒ³ãƒˆãƒ­ãƒ¼ãƒ©ã€ã‚¢ã‚¯ã‚·ãƒ§ãƒ³ã€Brainã®è¨­å®š
 	size_t controllerSize = m_characterControllers.size();
 	for (unsigned int i = 0; i < controllerSize; i++) {
 		const Character* character = m_characterControllers[i]->getAction()->getCharacter();
 		if (name == character->getName()) {
 			CharacterController* controller = createControllerWithData(character, data);
+			controller->setPlayerDirection(m_player_p, true);
 			delete m_characterControllers[i];
 			m_characterControllers[i] = controller;
 		}
 	}
 }
 
-// ƒf[ƒ^ŠÇ—FƒLƒƒƒ‰‚Ìó‘Ô‚ğ‹³‚¦‚é
+// ãƒ‡ãƒ¼ã‚¿ç®¡ç†ï¼šã‚­ãƒ£ãƒ©ã®çŠ¶æ…‹ã‚’æ•™ãˆã‚‹
 void World::asignCharacterData(const char* name, CharacterData* data, int fromAreaNum, bool notCharacterPoint) const {
 	size_t size = m_characterControllers.size();
 	for (unsigned i = 0; i < size; i++) {
@@ -542,7 +551,7 @@ void World::asignCharacterData(const char* name, CharacterData* data, int fromAr
 			data->setAreaNum(fromAreaNum);
 			if (!notCharacterPoint) {
 				data->setX(c->getX());
-				data->setY(c->getY() + c->getHeight()); // Y2À•W‚ğ•Û‘¶ ƒ[ƒh‚Íg’·‚Å•â³
+				data->setY(c->getY() + c->getHeight()); // Y2åº§æ¨™ã‚’ä¿å­˜ ãƒ­ãƒ¼ãƒ‰æ™‚ã¯èº«é•·ã§è£œæ­£
 			}
 			data->setBrainName(m_characterControllers[i]->getBrain()->getBrainName());
 			data->setTargetName(m_characterControllers[i]->getBrain()->getTargetName());
@@ -557,7 +566,7 @@ void World::asignCharacterData(const char* name, CharacterData* data, int fromAr
 	}
 }
 
-// ƒf[ƒ^ŠÇ—FDoor‚Ìó‘Ô‚ğ•ÏX‚·‚é ‚¢‚È‚¢‚È‚çì¬‚·‚é
+// ãƒ‡ãƒ¼ã‚¿ç®¡ç†ï¼šDoorã®çŠ¶æ…‹ã‚’å¤‰æ›´ã™ã‚‹ ã„ãªã„ãªã‚‰ä½œæˆã™ã‚‹
 void World::asignedDoorData(DoorData* data) {
 	if (data->from() != m_areaNum) { return; }
 	bool flag = false;
@@ -576,13 +585,13 @@ void World::asignedDoorData(DoorData* data) {
 	}
 }
 
-// ƒf[ƒ^ŠÇ—FDoor‚Ìó‘Ô‚ğ‹³‚¦‚é
+// ãƒ‡ãƒ¼ã‚¿ç®¡ç†ï¼šDoorã®çŠ¶æ…‹ã‚’æ•™ãˆã‚‹
 void World::asignDoorData(vector<DoorData*>& data, int fromAreaNum) const {
 	size_t size = data.size();
 	for (unsigned i = 0; i < m_doorObjects.size(); i++) {
-		// ƒhƒA‚¶‚á‚È‚¢
+		// ãƒ‰ã‚¢ã˜ã‚ƒãªã„
 		if (m_doorObjects[i]->getAreaNum() == -1) { continue; }
-		// ƒZ[ƒuƒf[ƒ^‚ÉƒhƒA‚ª‘¶İ‚·‚é‚©
+		// ã‚»ãƒ¼ãƒ–ãƒ‡ãƒ¼ã‚¿ã«ãƒ‰ã‚¢ãŒå­˜åœ¨ã™ã‚‹ã‹
 		bool flag = false;
 		for (unsigned j = 0; j < size; j++) {
 			if (data[j]->to() == m_doorObjects[i]->getAreaNum() && data[j]->from() == fromAreaNum) {
@@ -597,7 +606,7 @@ void World::asignDoorData(vector<DoorData*>& data, int fromAreaNum) const {
 				break;
 			}
 		}
-		if (!flag) { // V‚½‚ÈƒhƒA‚È‚çƒZ[ƒuƒf[ƒ^‚É’Ç‰Á
+		if (!flag) { // æ–°ãŸãªãƒ‰ã‚¢ãªã‚‰ã‚»ãƒ¼ãƒ–ãƒ‡ãƒ¼ã‚¿ã«è¿½åŠ 
 			data.push_back(new DoorData(m_doorObjects[i]->getX1(), m_doorObjects[i]->getY1(),
 				m_doorObjects[i]->getX2(), m_doorObjects[i]->getY2(),
 				fromAreaNum, m_doorObjects[i]->getAreaNum(), m_doorObjects[i]->getFileName()));
@@ -605,7 +614,7 @@ void World::asignDoorData(vector<DoorData*>& data, int fromAreaNum) const {
 	}
 }
 
-// ƒf[ƒ^ŠÇ—FƒvƒŒƒCƒ„[‚Æ‚»‚Ì’‡ŠÔ‚ğƒhƒA‚Ì‘O‚ÉˆÚ“®
+// ãƒ‡ãƒ¼ã‚¿ç®¡ç†ï¼šãƒ—ãƒ¬ã‚¤ãƒ¤ãƒ¼ã¨ãã®ä»²é–“ã‚’ãƒ‰ã‚¢ã®å‰ã«ç§»å‹•
 void World::setPlayerOnDoor(int from) {
 	int doorX1 = m_player_p->getX(), doorY2 = m_player_p->getY() + m_player_p->getHeight();
 	for (unsigned int i = 0; i < m_doorObjects.size(); i++) {
@@ -614,33 +623,33 @@ void World::setPlayerOnDoor(int from) {
 			doorY2 = m_doorObjects[i]->getY2();
 		}
 	}
-	// ƒvƒŒƒCƒ„[
+	// ãƒ—ãƒ¬ã‚¤ãƒ¤ãƒ¼
 	m_player_p->setX(doorX1);
 	m_player_p->setY(doorY2 - m_player_p->getHeight());
 
-	// ’‡ŠÔ‚àˆÚ“®
+	// ä»²é–“ã‚‚ç§»å‹•
 	setPlayerFollowerPoint();
 
-	// ƒJƒƒ‰ƒŠƒZƒbƒg
+	// ã‚«ãƒ¡ãƒ©ãƒªã‚»ãƒƒãƒˆ
 	cameraPointInit();
 }
 
-// ƒvƒŒƒCƒ„[‚ğ“Á’è‚ÌÀ•W‚ÖˆÚ“®
+// ãƒ—ãƒ¬ã‚¤ãƒ¤ãƒ¼ã‚’ç‰¹å®šã®åº§æ¨™ã¸ç§»å‹•
 void World::setPlayerPoint(CharacterData* characterData) {
 	m_player_p->setX(characterData->x());
 	m_player_p->setY(characterData->y() - m_player_p->getHeight());
-	// ƒJƒƒ‰ƒŠƒZƒbƒg
+	// ã‚«ãƒ¡ãƒ©ãƒªã‚»ãƒƒãƒˆ
 	cameraPointInit();
 }
 
-// ’‡ŠÔ‚ğƒvƒŒƒCƒ„[‚ÌˆÊ’u‚ÖˆÚ“®
+// ä»²é–“ã‚’ãƒ—ãƒ¬ã‚¤ãƒ¤ãƒ¼ã®ä½ç½®ã¸ç§»å‹•
 void World::setPlayerFollowerPoint() {
-	// ƒvƒŒƒCƒ„[‚Ì’‡ŠÔ
+	// ãƒ—ãƒ¬ã‚¤ãƒ¤ãƒ¼ã®ä»²é–“
 	for (unsigned int i = 0; i < m_characterControllers.size(); i++) {
 		const Character* follow = m_characterControllers[i]->getBrain()->getFollow();
-		// ’ÇÕ‘ÎÛ‚ªƒvƒŒƒCƒ„[‚È‚ç
+		// è¿½è·¡å¯¾è±¡ãŒãƒ—ãƒ¬ã‚¤ãƒ¤ãƒ¼ãªã‚‰
 		if (follow != nullptr && m_playerId == follow->getId()) {
-			// Controller‚É‘Î‰‚·‚éCharacter‚É•ÏX‚ğ‰Á‚¦‚é
+			// Controllerã«å¯¾å¿œã™ã‚‹Characterã«å¤‰æ›´ã‚’åŠ ãˆã‚‹
 			for (unsigned int j = 0; j < m_characters.size(); j++) {
 				if (m_characterControllers[i]->getAction()->getCharacter()->getId() == m_characters[j]->getId()) {
 					m_characters[j]->setX(m_player_p->getX());
@@ -652,7 +661,7 @@ void World::setPlayerFollowerPoint() {
 	}
 }
 
-// ƒf[ƒ^ŠÇ—FƒJƒƒ‰‚ÌˆÊ’u‚ğƒŠƒZƒbƒg
+// ãƒ‡ãƒ¼ã‚¿ç®¡ç†ï¼šã‚«ãƒ¡ãƒ©ã®ä½ç½®ã‚’ãƒªã‚»ãƒƒãƒˆ
 void World::cameraPointInit() {
 	for (unsigned int i = 0; i < m_characters.size(); i++) {
 		if (m_characters[i]->getId() == m_focusId) {
@@ -662,26 +671,26 @@ void World::cameraPointInit() {
 	}
 }
 
-// ƒf[ƒ^ŠÇ—FƒLƒƒƒ‰1‘Ì‚Ìî•ñ‚ğ¢ŠE‚É”½‰f
+// ãƒ‡ãƒ¼ã‚¿ç®¡ç†ï¼šã‚­ãƒ£ãƒ©1ä½“ã®æƒ…å ±ã‚’ä¸–ç•Œã«åæ˜ 
 void World::asignedCharacter(Character* character, CharacterData* data, bool changePosition) {
 	character->changeInfoVersion(data->version());
 	if (data->id() != -1) {
-		// ‚±‚ÌƒQ[ƒ€‚Å‰“oê‚¶‚á‚È‚¢
+		// ã“ã®ã‚²ãƒ¼ãƒ ã§åˆç™»å ´ã˜ã‚ƒãªã„
 		character->setHp(data->hp());
 	}
 	character->setInvincible(data->invincible());
 	character->setGroupId(data->groupId());
 	if (changePosition) {
 		character->setX(data->x());
-		// YÀ•W‚Íg’·‚É‡‚í‚¹‚Ä’²®
+		// Yåº§æ¨™ã¯èº«é•·ã«åˆã‚ã›ã¦èª¿æ•´
 		character->setY(data->y() - character->getHeight());
 	}
 }
 
-// ƒf[ƒ^ŠÇ—FƒRƒ“ƒgƒ[ƒ‰1ŒÂ‚Ìî•ñ‚ğ¢ŠE‚É”½‰f
+// ãƒ‡ãƒ¼ã‚¿ç®¡ç†ï¼šã‚³ãƒ³ãƒˆãƒ­ãƒ¼ãƒ©1å€‹ã®æƒ…å ±ã‚’ä¸–ç•Œã«åæ˜ 
 CharacterController* World::createControllerWithData(const Character* character, CharacterData* data) {
 	size_t size = m_characters.size();
-	// Action‚ğì¬
+	// Actionã‚’ä½œæˆ
 	CharacterAction* action = nullptr;
 	for (unsigned int j = 0; j < size; j++) {
 		if (m_characters[j]->getName() == character->getName()) {
@@ -689,7 +698,7 @@ CharacterController* World::createControllerWithData(const Character* character,
 			break;
 		}
 	}
-	// Brain‚ğì¬
+	// Brainã‚’ä½œæˆ
 	Brain* brain = createBrain(data->brainName(), m_camera);
 	brain->setCharacterAction(action);
 	string follow = data->followName();
@@ -699,24 +708,27 @@ CharacterController* World::createControllerWithData(const Character* character,
 			break;
 		}
 	}
-	// Controller‚ğì¬
+	// Controllerã‚’ä½œæˆ
 	return createController(data->controllerName(), brain, action);
 }
 
 /*
-*  í‚í‚¹‚é
+*  æˆ¦ã‚ã›ã‚‹
 */
 void World::battle() {
-	// ‰æ–ÊˆÃ“]’† ƒGƒŠƒAˆÚ“®‚©ƒvƒŒƒCƒ„[‚â‚ç‚ê
+	if (!m_soundPlayer_p->checkBGMplay()) {
+		m_soundPlayer_p->playBGM();
+	}
+	// ç”»é¢æš—è»¢ä¸­ ã‚¨ãƒªã‚¢ç§»å‹•ã‹ãƒ—ãƒ¬ã‚¤ãƒ¤ãƒ¼ã‚„ã‚‰ã‚Œæ™‚
 	if (m_brightValue != 255 || playerDead()) {
 		m_brightValue = max(0, m_brightValue - 10);
 		if (!playerDead()) { return; }
 	}
 
-	// ƒIƒuƒWƒFƒNƒg‚ğ’²‚×‚½‚ÌƒeƒLƒXƒg
+	// ã‚ªãƒ–ã‚¸ã‚§ã‚¯ãƒˆã‚’èª¿ã¹ãŸæ™‚ã®ãƒ†ã‚­ã‚¹ãƒˆ
 	if (m_objectConversation != nullptr) {
 		m_objectConversation->play();
-		// ‰ï˜bI—¹
+		// ä¼šè©±çµ‚äº†
 		if (m_objectConversation->getFinishFlag()) {
 			delete m_objectConversation;
 			m_objectConversation = nullptr;
@@ -724,40 +736,40 @@ void World::battle() {
 		return;
 	}
 
-	// deleteFlag‚ªtrue‚ÌƒIƒuƒWƒFƒNƒg‚ğíœ‚·‚éB
+	// deleteFlagãŒtrueã®ã‚ªãƒ–ã‚¸ã‚§ã‚¯ãƒˆã‚’å‰Šé™¤ã™ã‚‹ã€‚
 	deleteObject(m_stageObjects);
 	deleteObject(m_attackObjects);
 
-	// ƒLƒƒƒ‰‚ÌXViUŒ‚‘ÎÛ‚Ì•ÏXj
-	// ã‚ÅƒLƒƒƒ‰‚ğíœ‚µ‚½‚©‚çXV‚µ‚½‚©‚ç•K—v
+	// ã‚­ãƒ£ãƒ©ã®æ›´æ–°ï¼ˆæ”»æ’ƒå¯¾è±¡ã®å¤‰æ›´ï¼‰
+	// ä¸Šã§ã‚­ãƒ£ãƒ©ã‚’å‰Šé™¤ã—ãŸã‹ã‚‰æ›´æ–°ã—ãŸã‹ã‚‰å¿…è¦
 	updateCharacter();
 
-	// ƒLƒƒƒ‰ƒNƒ^[‚Ì“®‚«
+	// ã‚­ãƒ£ãƒ©ã‚¯ã‚¿ãƒ¼ã®å‹•ã
 	controlCharacter();
 
-	// ƒIƒuƒWƒFƒNƒg‚Ì“®‚«
+	// ã‚ªãƒ–ã‚¸ã‚§ã‚¯ãƒˆã®å‹•ã
 	controlObject();
 
-	// ƒAƒCƒeƒ€‚Ì“®‚«
+	// ã‚¢ã‚¤ãƒ†ãƒ ã®å‹•ã
 	controlItem();
 
-	// ƒJƒƒ‰‚ÌXV
+	// ã‚«ãƒ¡ãƒ©ã®æ›´æ–°
 	adjustBattleCamera();
 
-	// ƒTƒEƒ“ƒhƒvƒŒƒCƒ„[‚Ìƒpƒ“İ’è—p
+	// ã‚µã‚¦ãƒ³ãƒ‰ãƒ—ãƒ¬ã‚¤ãƒ¤ãƒ¼ã®ãƒ‘ãƒ³è¨­å®šç”¨
 	m_soundPlayer_p->setCameraX(m_camera->getX());
 
-	// ƒAƒjƒ[ƒVƒ‡ƒ“‚ÌXV
+	// ã‚¢ãƒ‹ãƒ¡ãƒ¼ã‚·ãƒ§ãƒ³ã®æ›´æ–°
 	updateAnimation();
 
-	// ‘€ìƒLƒƒƒ‰•ÏX
+	// æ“ä½œã‚­ãƒ£ãƒ©å¤‰æ›´
 	changePlayer(m_playerChanger->play(m_soundPlayer_p, m_characterControllers, m_player_p));
 
 }
 
 void World::changePlayer(const Character* nextPlayer) {
 	if (nextPlayer == nullptr) { return; }
-	// ¡‘€ì‚µ‚Ä‚¢‚éƒLƒƒƒ‰‚ğNPC‚ÌBrain‚É‚·‚é
+	// ä»Šæ“ä½œã—ã¦ã„ã‚‹ã‚­ãƒ£ãƒ©ã‚’NPCã®Brainã«ã™ã‚‹
 	for (unsigned int i = 0; i < m_characterControllers.size(); i++) {
 		if (m_characterControllers[i]->getAction()->getCharacter()->getId() == m_player_p->getId()) {
 			m_characterControllers[i]->setBrain(createBrain(m_playerChanger->getPrevBrainName(), m_camera));
@@ -765,7 +777,7 @@ void World::changePlayer(const Character* nextPlayer) {
 			break;
 		}
 	}
-	// Ÿ‘€ì‚·‚éƒLƒƒƒ‰‚ğKeyboardBrain‚É‚·‚é
+	// æ¬¡æ“ä½œã™ã‚‹ã‚­ãƒ£ãƒ©ã‚’KeyboardBrainã«ã™ã‚‹
 	for (unsigned int i = 0; i < m_characterControllers.size(); i++) {
 		if (nextPlayer->getId() == m_characterControllers[i]->getAction()->getCharacter()->getId()) {
 			string brainName = m_characterControllers[i]->getBrain()->getBrainName();
@@ -775,7 +787,7 @@ void World::changePlayer(const Character* nextPlayer) {
 			break;
 		}
 	}
-	// Ÿ‘€ì‚·‚éƒLƒƒƒ‰‚ğPlayer‚Æ‚µ‚ÄƒZƒbƒg
+	// æ¬¡æ“ä½œã™ã‚‹ã‚­ãƒ£ãƒ©ã‚’Playerã¨ã—ã¦ã‚»ãƒƒãƒˆ
 	for (unsigned int i = 0; i < m_characters.size(); i++) {
 		if (nextPlayer->getId() == m_characters[i]->getId()) {
 			m_player_p = m_characters[i];
@@ -791,39 +803,39 @@ void World::changePlayer(const Character* nextPlayer) {
 	m_focusId = m_player_p->getId();
 }
 
-//  BattleFƒJƒƒ‰‚ÌXV
+//  Battleï¼šã‚«ãƒ¡ãƒ©ã®æ›´æ–°
 void World::updateCamera(int gx, int gy, double gex) {
 
-	// ƒJƒƒ‰‚ğ—h‚ç‚·
+	// ã‚«ãƒ¡ãƒ©ã‚’æºã‚‰ã™
 	m_camera->shaking();
 
-	// Šg‘å—¦ƒZƒbƒg
+	// æ‹¡å¤§ç‡ã‚»ãƒƒãƒˆ
 	m_camera->setEx(gex);
 
-	// –Ú•WˆÊ’uƒZƒbƒg
+	// ç›®æ¨™ä½ç½®ã‚»ãƒƒãƒˆ
 	m_camera->setGPoint(gx, gy);
 	
-	// ƒJƒƒ‰‚ğ–Ú•WˆÊ’u‚Ö‹ß‚Ã‚¯‚é
+	// ã‚«ãƒ¡ãƒ©ã‚’ç›®æ¨™ä½ç½®ã¸è¿‘ã¥ã‘ã‚‹
 	m_camera->move();
 }
 
-// BattleFí“¬’†‚ÌƒJƒƒ‰‘€ì
+// Battleï¼šæˆ¦é—˜ä¸­ã®ã‚«ãƒ¡ãƒ©æ“ä½œ
 void World::adjustBattleCamera() {
 
-	// –Ú•WÀ•W
+	// ç›®æ¨™åº§æ¨™
 	int gx = 0, gy = 0;
-	// ƒLƒƒƒ‰‚ÆƒJƒƒ‰‚Ì‹——£‚ÌÅ‘å’l‚ğ’²‚×‚é
+	// ã‚­ãƒ£ãƒ©ã¨ã‚«ãƒ¡ãƒ©ã®è·é›¢ã®æœ€å¤§å€¤ã‚’èª¿ã¹ã‚‹
 	int max_dx = 0, max_dy = 0;
-	// ‰æ–Ê“à‚É“ü‚ê‚æ‚¤‚Æ‚·‚é‹——£‚ÌÅ‘å@‚±‚ê‚æ‚è—£‚ê‚½ƒLƒƒƒ‰‚Í–³‹
+	// ç”»é¢å†…ã«å…¥ã‚Œã‚ˆã†ã¨ã™ã‚‹è·é›¢ã®æœ€å¤§ã€€ã“ã‚Œã‚ˆã‚Šé›¢ã‚ŒãŸã‚­ãƒ£ãƒ©ã¯ç„¡è¦–
 	const int MAX_DISABLE = 3000;
 	size_t size = m_characters.size();
 	for (unsigned int i = 0; i < size; i++) {
-		// ¡ƒtƒH[ƒJƒX‚µ‚Ä‚¢‚éƒLƒƒƒ‰‚ÌÀ•W‚É‡‚í‚¹‚é
+		// ä»Šãƒ•ã‚©ãƒ¼ã‚«ã‚¹ã—ã¦ã„ã‚‹ã‚­ãƒ£ãƒ©ã®åº§æ¨™ã«åˆã‚ã›ã‚‹
 		if (m_focusId == m_characters[i]->getId()) {
 			gx = m_characters[i]->getCenterX();
 			gy = m_characters[i]->getCenterY();
 		}
-		// ƒtƒH[ƒJƒX‚µ‚Ä‚¢‚éƒLƒƒƒ‰ˆÈŠO‚È‚ç‹——£‚ğ’²‚×‚é
+		// ãƒ•ã‚©ãƒ¼ã‚«ã‚¹ã—ã¦ã„ã‚‹ã‚­ãƒ£ãƒ©ä»¥å¤–ãªã‚‰è·é›¢ã‚’èª¿ã¹ã‚‹
 		else if (m_characters[i]->getHp() > 0) {
 			int x = m_characters[i]->getX();
 			if (m_camera->getX() < x) { x += m_characters[i]->getWide(); }
@@ -835,8 +847,8 @@ void World::adjustBattleCamera() {
 		}
 	}
 
-	// ƒJƒƒ‰‚ÌŠg‘åEk¬
-	// ‘å‚«‚­•ÏX‚·‚é•K—v‚ª‚ ‚éê‡‚Ù‚ÇA‘å‚«‚­Šg‘å—¦‚ğ•ÏX‚·‚éB
+	// ã‚«ãƒ¡ãƒ©ã®æ‹¡å¤§ãƒ»ç¸®å°
+	// å¤§ããå¤‰æ›´ã™ã‚‹å¿…è¦ãŒã‚ã‚‹å ´åˆã»ã©ã€å¤§ããæ‹¡å¤§ç‡ã‚’å¤‰æ›´ã™ã‚‹ã€‚
 	double nowEx = m_camera->getEx();
 	double gex = nowEx;
 	int shift = controlLeftShift() + controlRightShift();
@@ -851,22 +863,22 @@ void World::adjustBattleCamera() {
 		max_dx = (int)(max_dx / m_exX);
 		max_dy = (int)(max_dy / m_exY);
 		if (nowEx > m_cameraMinEx && (max_dx > nowWide || max_dy > nowHeight)) {
-			// k¬
+			// ç¸®å°
 			double d = double(max(max_dx - nowWide, max_dy - nowHeight));
 			gex = nowEx - min(0.1, d / 100000);
 		}
 		else if (nowEx < m_cameraMaxEx && (max_dx < nowWide && max_dy < nowHeight)) {
-			// Šg‘å
+			// æ‹¡å¤§
 			double d = double(max(nowWide - max_dx, nowHeight - max_dy));
 			gex = nowEx + min(0.005, d / 100000);
 		}
 	}
 
-	// ƒJƒƒ‰‚ÌXV
+	// ã‚«ãƒ¡ãƒ©ã®æ›´æ–°
 	updateCamera(gx, gy, gex);
 }
 
-//  BattleFƒAƒjƒ[ƒVƒ‡ƒ“‚ÌXV
+//  Battleï¼šã‚¢ãƒ‹ãƒ¡ãƒ¼ã‚·ãƒ§ãƒ³ã®æ›´æ–°
 void World::updateAnimation() {
 	for (unsigned int i = 0; i < m_animations.size(); i++) {
 		m_animations[i]->count();
@@ -879,11 +891,11 @@ void World::updateAnimation() {
 	}
 }
 
-//  BattleFƒLƒƒƒ‰‚ÌXViUŒ‚‘ÎÛ‚Ì•ÏXj
+//  Battleï¼šã‚­ãƒ£ãƒ©ã®æ›´æ–°ï¼ˆæ”»æ’ƒå¯¾è±¡ã®å¤‰æ›´ï¼‰
 void World::updateCharacter() {
 	size_t size = m_characterControllers.size();
 	for (unsigned int i = 0; i < size; i++) {
-		// Brain‚Ì—v¿‚ÅUŒ‚‘ÎÛ•ÏX
+		// Brainã®è¦è«‹ã§æ”»æ’ƒå¯¾è±¡å¤‰æ›´
 		if (m_characterControllers[i]->getBrain()->needSearchTarget()) {
 			Character* target = m_characters[GetRand((int)m_characters.size() - 1)];
 			m_characterControllers[i]->searchTargetCandidate(target);
@@ -891,71 +903,71 @@ void World::updateCharacter() {
 	}
 }
 
-//  BattleFƒLƒƒƒ‰ƒNƒ^[‚Ì“®‚«
+//  Battleï¼šã‚­ãƒ£ãƒ©ã‚¯ã‚¿ãƒ¼ã®å‹•ã
 void World::controlCharacter() {
 	size_t size = m_characterControllers.size();
 	for (unsigned int i = 0; i < size; i++) {
 		CharacterController* controller = m_characterControllers[i];
 
-		// HP‚ª0‚È‚çƒXƒLƒbƒv
+		// HPãŒ0ãªã‚‰ã‚¹ã‚­ãƒƒãƒ—
 		if (controller->getAction()->getCharacter()->getHp() == 0) { continue; }
 
-		// s“®‘O‚Ìˆ—
+		// è¡Œå‹•å‰ã®å‡¦ç†
 		controller->init();
 
-		// ƒIƒuƒWƒFƒNƒg‚Æ‚Ì“–‚½‚è”»’è
+		// ã‚ªãƒ–ã‚¸ã‚§ã‚¯ãƒˆã¨ã®å½“ãŸã‚Šåˆ¤å®š
 		atariCharacterAndObject(controller, m_stageObjects);
 		atariCharacterAndObject(controller, m_attackObjects);
-		atariCharacterAndObject(controller, m_stageObjects); // 2‰ñ–ÚŒÄ‚Ô‚Ì‚Í‘Ã‹¦ˆÄ@1‰ñ–Ú‚ÅÎ–Ê‚É‚¢‚é‚©‚ª‚í‚©‚èA‚»‚ê‚É‚æ‚Á‚Äˆ—‚ª•Ï‚í‚é‚½‚ß2‰ñ–Ú‚ª•K—v
+		atariCharacterAndObject(controller, m_stageObjects); // 2å›ç›®å‘¼ã¶ã®ã¯å¦¥å”æ¡ˆã€€1å›ç›®ã§æ–œé¢ã«ã„ã‚‹ã‹ãŒã‚ã‹ã‚Šã€ãã‚Œã«ã‚ˆã£ã¦å‡¦ç†ãŒå¤‰ã‚ã‚‹ãŸã‚2å›ç›®ãŒå¿…è¦
 		if (controller->getAction()->getCharacter()->getId() == m_playerId) {
 			atariCharacterAndDoor(controller, m_doorObjects);
 		}
 
-		// ‘€ì original‚Ìƒn[ƒg‚ÍƒtƒŠ[ƒY
+		// æ“ä½œ originalã®ãƒãƒ¼ãƒˆã¯ãƒ•ãƒªãƒ¼ã‚º
 		if (!m_duplicationFlag || m_characterControllers[i]->getAction()->getCharacter()->getId() != m_playerId) {
 			controller->control();
 			controller->setPlayerDirection(m_player_p);
 		}
 
-		// ËŒ‚UŒ‚
+		// å°„æ’ƒæ”»æ’ƒ
 		Object* bulletAttack = controller->bulletAttack();
 		if (bulletAttack != nullptr) { m_attackObjects.push_back(bulletAttack); }
 
-		// aŒ‚UŒ‚
+		// æ–¬æ’ƒæ”»æ’ƒ
 		Object* slashAttack = controller->slashAttack();
 		if (slashAttack != nullptr) { m_attackObjects.push_back(slashAttack); }
 
-		// ”½‰f original‚Ìƒn[ƒg‚ÍƒtƒŠ[ƒY
+		// åæ˜  originalã®ãƒãƒ¼ãƒˆã¯ãƒ•ãƒªãƒ¼ã‚º
 		if (!m_duplicationFlag || m_characterControllers[i]->getAction()->getCharacter()->getId() != m_playerId) {
 			controller->action();
 		}
 
-		// ƒIƒuƒWƒFƒNƒg‚Æ‚ÌŠÑ’Ê”»’è
+		// ã‚ªãƒ–ã‚¸ã‚§ã‚¯ãƒˆã¨ã®è²«é€šåˆ¤å®š
 		penetrationCharacterAndObject(controller, m_stageObjects);
 	}
 }
 
-//  BattleFƒIƒuƒWƒFƒNƒg‚Ì“®‚«
+//  Battleï¼šã‚ªãƒ–ã‚¸ã‚§ã‚¯ãƒˆã®å‹•ã
 void World::controlObject() {
-	// •Ç‚â°‚Ì“®‚«
+	// å£ã‚„åºŠã®å‹•ã
 	actionObject(m_stageObjects);
 
-	// UŒ‚“–‚½‚è”»’è‚Ì“®‚«
+	// æ”»æ’ƒå½“ãŸã‚Šåˆ¤å®šã®å‹•ã
 	actionObject(m_attackObjects);
 
-	// •Ç‚â°<->UŒ‚‚Ì“–‚½‚è”»’è
+	// å£ã‚„åºŠ<->æ”»æ’ƒã®å½“ãŸã‚Šåˆ¤å®š
 	atariStageAndAttack();
 
-	// UŒ‚<->UŒ‚‚Ì“–‚½‚è”»’è
+	// æ”»æ’ƒ<->æ”»æ’ƒã®å½“ãŸã‚Šåˆ¤å®š
 	atariAttackAndAttack();
 }
 
-// BattleFƒAƒCƒeƒ€‚Ì“®‚«
+// Battleï¼šã‚¢ã‚¤ãƒ†ãƒ ã®å‹•ã
 void World::controlItem() {
 	for (unsigned int i = 0; i < m_itemVector.size(); i++) {
-		// æ“¾Ï‚İ
+		// å–å¾—æ¸ˆã¿
 		if (m_itemVector[i]->getDeleteFlag()) {
-			// Œø‰Ê‰¹‚ªÄ¶’†‚Å‚È‚¢‚È‚çíœ
+			// åŠ¹æœéŸ³ãŒå†ç”Ÿä¸­ã§ãªã„ãªã‚‰å‰Šé™¤
 			if (CheckSoundMem(m_itemVector[i]->getSound()) == 0) {
 				delete m_itemVector[i];
 				m_itemVector[i] = m_itemVector.back();
@@ -964,9 +976,9 @@ void World::controlItem() {
 			}
 			continue;
 		}
-		// ‰Šú‰»
+		// åˆæœŸåŒ–
 		m_itemVector[i]->init();
-		// •Ç°‚Æ‚Ì“–‚½‚è”»’è
+		// å£åºŠã¨ã®å½“ãŸã‚Šåˆ¤å®š
 		for (unsigned int j = 0; j < m_stageObjects.size(); j++) {
 			int x1 = 0, y1 = 0, x2 = 0, y2 = 0;
 			m_itemVector[i]->getPoint(&x1, &y1, &x2, &y2);
@@ -975,45 +987,45 @@ void World::controlItem() {
 				m_itemVector[i]->setY(m_stageObjects[j]->getY(m_itemVector[i]->getX()));
 			}
 		}
-		// ƒLƒƒƒ‰‚Æ‚Ì“–‚½‚è”»’è
+		// ã‚­ãƒ£ãƒ©ã¨ã®å½“ãŸã‚Šåˆ¤å®š
 		if (m_itemVector[i]->atariCharacter(m_player_p)) {
 			m_soundPlayer_p->pushSoundQueue(m_itemVector[i]->getSound());
 		}
-		// “®‚«
+		// å‹•ã
 		m_itemVector[i]->action();
 	}
 }
 
-//  BattleFƒLƒƒƒ‰ƒNƒ^[‚ÆƒIƒuƒWƒFƒNƒg‚Ì“–‚½‚è”»’è
+//  Battleï¼šã‚­ãƒ£ãƒ©ã‚¯ã‚¿ãƒ¼ã¨ã‚ªãƒ–ã‚¸ã‚§ã‚¯ãƒˆã®å½“ãŸã‚Šåˆ¤å®š
 void World::atariCharacterAndObject(CharacterController* controller, vector<Object*>& objects) {
-	// •Ç‚â°ƒIƒuƒWƒFƒNƒg‚Ìˆ— (“–‚½‚è”»’è‚Æ“®‚«)
+	// å£ã‚„åºŠã‚ªãƒ–ã‚¸ã‚§ã‚¯ãƒˆã®å‡¦ç† (å½“ãŸã‚Šåˆ¤å®šã¨å‹•ã)
 	for (unsigned int i = 0; i < objects.size(); i++) {
-		// “–‚½‚è”»’è‚ğ‚±‚±‚Ås‚¤
+		// å½“ãŸã‚Šåˆ¤å®šã‚’ã“ã“ã§è¡Œã†
 		if (objects[i]->atari(controller)) {
 			const Character* character = controller->getAction()->getCharacter();
-			// ƒGƒtƒFƒNƒgì¬
+			// ã‚¨ãƒ•ã‚§ã‚¯ãƒˆä½œæˆ
 			int x = character->getCenterX();
 			int y = character->getCenterY();
 			m_animations.push_back(objects[i]->createAnimation(x, y, 3));
-			// Œø‰Ê‰¹
+			// åŠ¹æœéŸ³
 			int soundHandle = objects[i]->getSoundHandle();
 			int panPal = adjustPanSound(x, m_camera->getX());
 			m_soundPlayer_p->pushSoundQueue(soundHandle, panPal);
-			// HP = 0‚É‚È‚Á‚½‚Æ‚«i‚â‚ç‚ê‚½‚Æ‚«j
+			// HP = 0ã«ãªã£ãŸã¨ãï¼ˆã‚„ã‚‰ã‚ŒãŸã¨ãï¼‰
 			if (character->getHp() == 0) {
 				m_animations.push_back(new Animation(x, y, 3, m_characterDeadGraph));
 				m_camera->shakingStart(20, 20);
 				m_soundPlayer_p->pushSoundQueue(m_characterDeadSound, panPal);
 				if (!m_duplicationFlag && character->getGroupId() != m_player_p->getGroupId() && GetRand(100) < 20) {
-					// ƒXƒLƒ‹”­“®’†‚Å‚È‚¯‚ê‚ÎŠm—¦‚ÅƒAƒCƒeƒ€‚ª—‚¿‚é
+					// ã‚¹ã‚­ãƒ«ç™ºå‹•ä¸­ã§ãªã‘ã‚Œã°ç¢ºç‡ã§ã‚¢ã‚¤ãƒ†ãƒ ãŒè½ã¡ã‚‹
 					m_itemVector.push_back(new CureItem("cure", x, y, 50));
 				}
 			}
 		}
-		// deleteFlag‚ªtrue‚È‚çíœ‚·‚é
+		// deleteFlagãŒtrueãªã‚‰å‰Šé™¤ã™ã‚‹
 		if (objects[i]->getDeleteFlag()) {
 			delete objects[i];
-			// ––”ö‚ğíœ‚·‚é•û‚ª‘¬‚¢
+			// æœ«å°¾ã‚’å‰Šé™¤ã™ã‚‹æ–¹ãŒé€Ÿã„
 			objects[i] = objects.back();
 			objects.pop_back();
 			i--;
@@ -1021,30 +1033,30 @@ void World::atariCharacterAndObject(CharacterController* controller, vector<Obje
 	}
 }
 
-//  BattleFƒLƒƒƒ‰ƒNƒ^[‚Æ”àƒIƒuƒWƒFƒNƒg‚Ì“–‚½‚è”»’è
+//  Battleï¼šã‚­ãƒ£ãƒ©ã‚¯ã‚¿ãƒ¼ã¨æ‰‰ã‚ªãƒ–ã‚¸ã‚§ã‚¯ãƒˆã®å½“ãŸã‚Šåˆ¤å®š
 void World::atariCharacterAndDoor(CharacterController* controller, vector<Object*>& objects) {
 
-	// ƒXƒLƒ‹”­“®’†‚Í”à‚É“ü‚ê‚È‚¢
+	// ã‚¹ã‚­ãƒ«ç™ºå‹•ä¸­ã¯æ‰‰ã«å…¥ã‚Œãªã„
 	if (m_skillFlag) { return; }
 
-	// •Ç‚â°ƒIƒuƒWƒFƒNƒg‚Ìˆ— (“–‚½‚è”»’è‚Æ“®‚«)
+	// å£ã‚„åºŠã‚ªãƒ–ã‚¸ã‚§ã‚¯ãƒˆã®å‡¦ç† (å½“ãŸã‚Šåˆ¤å®šã¨å‹•ã)
 	for (unsigned int i = 0; i < objects.size(); i++) {
 		if (m_areaLock) {
 			objects[i]->setTextDisp(false);
 			continue;
 		}
-		// “–‚½‚è”»’è‚ğ‚±‚±‚Ås‚¤
+		// å½“ãŸã‚Šåˆ¤å®šã‚’ã“ã“ã§è¡Œã†
 		if (objects[i]->atari(controller) && controller->getActionKey()) {
 			if (objects[i]->getAreaNum() == -1) {
-				// ƒhƒA‚¶‚á‚È‚¢
+				// ãƒ‰ã‚¢ã˜ã‚ƒãªã„
 				if (objects[i]->getTextNum() != -1) {
 					m_objectConversation = new Conversation(objects[i]->getTextNum(), this, m_soundPlayer_p);
 				}
 			}
 			else {
-				// “–‚½‚Á‚½ê‡ ƒGƒŠƒAˆÚ“®‚ª”­¶
+				// å½“ãŸã£ãŸå ´åˆ ã‚¨ãƒªã‚¢ç§»å‹•ãŒç™ºç”Ÿ
 				m_nextAreaNum = objects[i]->getAreaNum();
-				// ‰æ–Ê‚ğˆÃ“]
+				// ç”»é¢ã‚’æš—è»¢
 				m_brightValue--;
 				m_soundPlayer_p->pushSoundQueue(m_doorSound);
 			}
@@ -1053,13 +1065,13 @@ void World::atariCharacterAndDoor(CharacterController* controller, vector<Object
 
 }
 
-//  BattleF•Ç‚â°<->UŒ‚‚Ì“–‚½‚è”»’è
+//  Battleï¼šå£ã‚„åºŠ<->æ”»æ’ƒã®å½“ãŸã‚Šåˆ¤å®š
 void World::atariStageAndAttack() {
 	for (unsigned int i = 0; i < m_attackObjects.size(); i++) {
 		for (unsigned int j = 0; j < m_stageObjects.size(); j++) {
-			// UŒ‚‚ª•Ç°‚É“–‚½‚Á‚Ä‚¢‚é‚©”»’è
+			// æ”»æ’ƒãŒå£åºŠã«å½“ãŸã£ã¦ã„ã‚‹ã‹åˆ¤å®š
 			if (m_stageObjects[j]->atariObject(m_attackObjects[i])) {
-				// “–‚½‚Á‚½ê‡ ƒGƒtƒFƒNƒgì¬
+				// å½“ãŸã£ãŸå ´åˆ ã‚¨ãƒ•ã‚§ã‚¯ãƒˆä½œæˆ
 				int x = m_attackObjects[i]->getCenterX();
 				int y = m_attackObjects[i]->getCenterY();
 				m_animations.push_back(m_attackObjects[i]->createAnimation(x, y, 3));
@@ -1067,7 +1079,7 @@ void World::atariStageAndAttack() {
 				int panPal = adjustPanSound(x, m_camera->getX());
 				m_soundPlayer_p->pushSoundQueue(soundHandle, panPal);
 			}
-			// •Ç°‚ÌdeleteFlag‚ªtrue‚È‚çíœ‚·‚é
+			// å£åºŠã®deleteFlagãŒtrueãªã‚‰å‰Šé™¤ã™ã‚‹
 			if (m_stageObjects[j]->getDeleteFlag()) {
 				delete m_stageObjects[j];
 				m_stageObjects[j] = m_stageObjects.back();
@@ -1075,7 +1087,7 @@ void World::atariStageAndAttack() {
 				j--;
 			}
 		}
-		// UŒ‚‚ÌdeleteFlag‚ªtrue‚È‚çíœ‚·‚é
+		// æ”»æ’ƒã®deleteFlagãŒtrueãªã‚‰å‰Šé™¤ã™ã‚‹
 		if (m_attackObjects[i]->getDeleteFlag()) {
 			delete m_attackObjects[i];
 			m_attackObjects[i] = m_attackObjects.back();
@@ -1085,14 +1097,14 @@ void World::atariStageAndAttack() {
 	}
 }
 
-//  BattleFUŒ‚<->UŒ‚‚Ì“–‚½‚è”»’è
+//  Battleï¼šæ”»æ’ƒ<->æ”»æ’ƒã®å½“ãŸã‚Šåˆ¤å®š
 void World::atariAttackAndAttack() {
 	if (m_attackObjects.size() == 0) { return; }
 	for (unsigned int i = 0; i < m_attackObjects.size() - 1; i++) {
 		for (unsigned int j = i + 1; j < m_attackObjects.size(); j++) {
-			// UŒ‚‚ª•Ç°‚É“–‚½‚Á‚Ä‚¢‚é‚©”»’è
+			// æ”»æ’ƒãŒå£åºŠã«å½“ãŸã£ã¦ã„ã‚‹ã‹åˆ¤å®š
 			if (m_attackObjects[j]->atariObject(m_attackObjects[i])) {
-				// “–‚½‚Á‚½ê‡ ƒGƒtƒFƒNƒgì¬
+				// å½“ãŸã£ãŸå ´åˆ ã‚¨ãƒ•ã‚§ã‚¯ãƒˆä½œæˆ
 				int x = m_attackObjects[i]->getCenterX();
 				int y = m_attackObjects[i]->getCenterY();
 				m_animations.push_back(m_attackObjects[j]->createAnimation(x, y, 3));
@@ -1104,82 +1116,82 @@ void World::atariAttackAndAttack() {
 	}
 }
 
-// ŠeƒLƒƒƒ‰‚ª–Ú•W’n“_‚ÖˆÚ“®‚·‚é‚¾‚¯ ‘Sˆõ“’B‚µ‚½‚çtrue‚ğ•Ô‚·
+// å„ã‚­ãƒ£ãƒ©ãŒç›®æ¨™åœ°ç‚¹ã¸ç§»å‹•ã™ã‚‹ã ã‘ å…¨å“¡åˆ°é”ã—ãŸã‚‰trueã‚’è¿”ã™
 bool World::moveGoalCharacter() {
-	// deleteFlag‚ªtrue‚ÌƒIƒuƒWƒFƒNƒg‚ğíœ‚·‚éB
+	// deleteFlagãŒtrueã®ã‚ªãƒ–ã‚¸ã‚§ã‚¯ãƒˆã‚’å‰Šé™¤ã™ã‚‹ã€‚
 	deleteObject(m_stageObjects);
 	deleteObject(m_attackObjects);
 
-	// ƒLƒƒƒ‰‚ÌXViUŒ‚‘ÎÛ‚Ì•ÏXj
-	// ã‚ÅƒLƒƒƒ‰‚ğíœ‚µ‚½‚©‚çXV‚µ‚½‚©‚ç•K—v
+	// ã‚­ãƒ£ãƒ©ã®æ›´æ–°ï¼ˆæ”»æ’ƒå¯¾è±¡ã®å¤‰æ›´ï¼‰
+	// ä¸Šã§ã‚­ãƒ£ãƒ©ã‚’å‰Šé™¤ã—ãŸã‹ã‚‰æ›´æ–°ã—ãŸã‹ã‚‰å¿…è¦
 	updateCharacter();
 
-	// ƒLƒƒƒ‰ƒNƒ^[‚Ì“®‚«
+	// ã‚­ãƒ£ãƒ©ã‚¯ã‚¿ãƒ¼ã®å‹•ã
 	bool allCharacterAlreadyGoal = true;
 	size_t size = m_characterControllers.size();
 	for (unsigned int i = 0; i < size; i++) {
 		CharacterController* controller = m_characterControllers[i];
 
-		// HP‚ª0‚È‚çƒXƒLƒbƒv
+		// HPãŒ0ãªã‚‰ã‚¹ã‚­ãƒƒãƒ—
 		if (controller->getAction()->getCharacter()->getHp() == 0) { continue; }
 
-		// s“®‘O‚Ìˆ—
+		// è¡Œå‹•å‰ã®å‡¦ç†
 		controller->init();
 
-		// ƒIƒuƒWƒFƒNƒg‚Æ‚Ì“–‚½‚è”»’è
+		// ã‚ªãƒ–ã‚¸ã‚§ã‚¯ãƒˆã¨ã®å½“ãŸã‚Šåˆ¤å®š
 		atariCharacterAndObject(controller, m_stageObjects);
 		atariCharacterAndObject(controller, m_attackObjects);
-		atariCharacterAndObject(controller, m_stageObjects); // 2‰ñ–ÚŒÄ‚Ô‚Ì‚Í‘Ã‹¦ˆÄ@1‰ñ–Ú‚ÅÎ–Ê‚É‚¢‚é‚©‚ª‚í‚©‚èA‚»‚ê‚É‚æ‚Á‚Äˆ—‚ª•Ï‚í‚é‚½‚ß2‰ñ–Ú‚ª•K—v
+		atariCharacterAndObject(controller, m_stageObjects); // 2å›ç›®å‘¼ã¶ã®ã¯å¦¥å”æ¡ˆã€€1å›ç›®ã§æ–œé¢ã«ã„ã‚‹ã‹ãŒã‚ã‹ã‚Šã€ãã‚Œã«ã‚ˆã£ã¦å‡¦ç†ãŒå¤‰ã‚ã‚‹ãŸã‚2å›ç›®ãŒå¿…è¦
 
-		// –Ú•W’n“_‚ÖˆÚ“®‚·‚é‘€ì original‚Ìƒn[ƒg‚ÍƒtƒŠ[ƒY
+		// ç›®æ¨™åœ°ç‚¹ã¸ç§»å‹•ã™ã‚‹æ“ä½œ originalã®ãƒãƒ¼ãƒˆã¯ãƒ•ãƒªãƒ¼ã‚º
 		if (!m_duplicationFlag || m_characterControllers[i]->getAction()->getCharacter()->getId() != m_playerId) {
 			allCharacterAlreadyGoal &= controller->moveGoal();
 			controller->setPlayerDirection(m_player_p);
 		}
 
-		// ”½‰f original‚Ìƒn[ƒg‚ÍƒtƒŠ[ƒY
+		// åæ˜  originalã®ãƒãƒ¼ãƒˆã¯ãƒ•ãƒªãƒ¼ã‚º
 		if (!m_duplicationFlag || m_characterControllers[i]->getAction()->getCharacter()->getId() != m_playerId) {
 			controller->action();
 		}
 
-		// ƒIƒuƒWƒFƒNƒg‚Æ‚ÌŠÑ’Ê”»’è
+		// ã‚ªãƒ–ã‚¸ã‚§ã‚¯ãƒˆã¨ã®è²«é€šåˆ¤å®š
 		penetrationCharacterAndObject(controller, m_stageObjects);
 	}
 
-	// ƒIƒuƒWƒFƒNƒg‚Ì“®‚«
+	// ã‚ªãƒ–ã‚¸ã‚§ã‚¯ãƒˆã®å‹•ã
 	controlObject();
 
-	// ƒAƒCƒeƒ€‚Ì“®‚«
+	// ã‚¢ã‚¤ãƒ†ãƒ ã®å‹•ã
 	controlItem();
 
-	// ƒJƒƒ‰‚ÌXV
+	// ã‚«ãƒ¡ãƒ©ã®æ›´æ–°
 	adjustBattleCamera();
 
-	// ƒTƒEƒ“ƒhƒvƒŒƒCƒ„[‚Ìƒpƒ“İ’è—p
+	// ã‚µã‚¦ãƒ³ãƒ‰ãƒ—ãƒ¬ã‚¤ãƒ¤ãƒ¼ã®ãƒ‘ãƒ³è¨­å®šç”¨
 	m_soundPlayer_p->setCameraX(m_camera->getX());
 
-	// ƒAƒjƒ[ƒVƒ‡ƒ“‚ÌXV
+	// ã‚¢ãƒ‹ãƒ¡ãƒ¼ã‚·ãƒ§ãƒ³ã®æ›´æ–°
 	updateAnimation();
 
 	return allCharacterAlreadyGoal;
 }
 
-// ‰ï˜b‚³‚¹‚é
+// ä¼šè©±ã•ã›ã‚‹
 void World::talk() {
 	if (m_conversation_p != nullptr) {
 		m_conversation_p->play();
-		// ‰ï˜bI—¹
+		// ä¼šè©±çµ‚äº†
 		if (m_conversation_p->getFinishFlag()) {
 			m_conversation_p = nullptr;
 		}
 	}
 }
 
-// ƒ€[ƒr[‚ğ—¬‚·
+// ãƒ ãƒ¼ãƒ“ãƒ¼ã‚’æµã™
 void World::moviePlay() {
 	if (m_movie_p != nullptr) {
 		m_movie_p->play();
-		// ƒ€[ƒr[I—¹
+		// ãƒ ãƒ¼ãƒ“ãƒ¼çµ‚äº†
 		if (m_movie_p->getFinishFlag()) {
 			m_movie_p = nullptr;
 		}
