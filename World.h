@@ -25,6 +25,15 @@ class ObjectLoader;
 class SoundPlayer;
 
 
+class PlayerChanger {
+
+public:
+	PlayerChanger();
+
+	void play(SoundPlayer* soundPlayer_p, Camera* camera_p, std::vector<CharacterController*> controllers_p, Character* player_p);
+};
+
+
 class World {
 private:
 
@@ -247,7 +256,10 @@ private:
 	CharacterController* createControllerWithData(const Character* character, CharacterData* data);
 
 	// Battle：カメラの更新
-	void updateCamera();
+	void updateCamera(int gx, int gy, double gex);
+
+	// Battle：戦闘中のカメラ操作
+	void adjustBattleCamera();
 
 	// Battle：アニメーションの更新
 	void updateAnimation();

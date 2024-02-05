@@ -69,6 +69,11 @@ int controlD() {
 	return Key[KEY_INPUT_D];
 }
 
+// Eキー（キャラチェンジキー）
+int controlE() {
+	return Key[KEY_INPUT_E];
+}
+
 // Fキー（スキル発動）
 int controlF() {
 	return Key[KEY_INPUT_F];

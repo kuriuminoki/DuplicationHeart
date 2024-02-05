@@ -711,7 +711,7 @@ void World::battle() {
 	controlItem();
 
 	// カメラの更新
-	updateCamera();
+	adjustBattleCamera();
 
 	// サウンドプレイヤーのパン設定用
 	m_soundPlayer_p->setCameraX(m_camera->getX());
@@ -722,11 +722,26 @@ void World::battle() {
 }
 
 //  Battle：カメラの更新
-void World::updateCamera() {
+void World::updateCamera(int gx, int gy, double gex) {
 
 	// カメラを揺らす
 	m_camera->shaking();
 
+	// 拡大率セット
+	m_camera->setEx(gex);
+
+	// 目標位置セット
+	m_camera->setGPoint(gx, gy);
+	
+	// カメラを目標位置へ近づける
+	m_camera->move();
+}
+
+// Battle：戦闘中のカメラ操作
+void World::adjustBattleCamera() {
+
+	// 目標座標
+	int gx = 0, gy = 0;
 	// キャラとカメラの距離の最大値を調べる
 	int max_dx = 0, max_dy = 0;
 	// 画面内に入れようとする距離の最大　これより離れたキャラは無視
@@ -735,7 +750,8 @@ void World::updateCamera() {
 	for (unsigned int i = 0; i < size; i++) {
 		// 今フォーカスしているキャラの座標に合わせる
 		if (m_focusId == m_characters[i]->getId()) {
-			m_camera->setGPoint(m_characters[i]->getCenterX(), m_characters[i]->getCenterY());
+			gx = m_characters[i]->getCenterX();
+			gy = m_characters[i]->getCenterY();
 		}
 		// フォーカスしているキャラ以外なら距離を調べる
 		else if (m_characters[i]->getHp() > 0) {
@@ -749,16 +765,14 @@ void World::updateCamera() {
 		}
 	}
 
-	// カメラを目標位置へ近づける
-	m_camera->move();
-
 	// カメラの拡大・縮小
 	// 大きく変更する必要がある場合ほど、大きく拡大率を変更する。
 	double nowEx = m_camera->getEx();
+	double gex = nowEx;
 	int shift = controlLeftShift() + controlRightShift();
 	if (shift > 0) {
 		if (nowEx > m_cameraMinEx) {
-			m_camera->setEx(max(nowEx - 0.01, 0.1));
+			gex = max(nowEx - 0.01, 0.1);
 		}
 	}
 	else {
@@ -769,14 +783,17 @@ void World::updateCamera() {
 		if (nowEx > m_cameraMinEx && (max_dx > nowWide || max_dy > nowHeight)) {
 			// 縮小
 			double d = double(max(max_dx - nowWide, max_dy - nowHeight));
-			m_camera->setEx(nowEx - min(0.1, d / 100000));
+			gex = nowEx - min(0.1, d / 100000);
 		}
 		else if (nowEx < m_cameraMaxEx && (max_dx < nowWide && max_dy < nowHeight)) {
 			// 拡大
 			double d = double(max(nowWide - max_dx, nowHeight - max_dy));
-			m_camera->setEx(nowEx + min(0.005, d / 100000));
+			gex = nowEx + min(0.005, d / 100000);
 		}
 	}
+
+	// カメラの更新
+	updateCamera(gx, gy, gex);
 }
 
 //  Battle：アニメーションの更新
@@ -1066,7 +1083,7 @@ bool World::moveGoalCharacter() {
 	controlItem();
 
 	// カメラの更新
-	updateCamera();
+	adjustBattleCamera();
 
 	// サウンドプレイヤーのパン設定用
 	m_soundPlayer_p->setCameraX(m_camera->getX());
