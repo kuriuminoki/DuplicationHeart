@@ -413,6 +413,7 @@ Game::Game(const char* saveFilePath, int storyNum) {
 
 	// 世界
 	m_world = new World(-1, m_gameData->getAreaNum(), m_soundPlayer);
+	m_soundPlayer->stopBGM();
 
 	// ストーリー
 	m_story = new Story(m_gameData->getStoryNum(), m_world, m_soundPlayer);
