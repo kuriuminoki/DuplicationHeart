@@ -710,7 +710,7 @@ void World::updateCamera() {
 	// キャラとカメラの距離の最大値を調べる
 	int max_dx = 0, max_dy = 0;
 	// 画面内に入れようとする距離の最大　これより離れたキャラは無視
-	const int MAX_DISABLE = 3000;
+	const int MAX_DISABLE = 2000;
 	size_t size = m_characters.size();
 	for (unsigned int i = 0; i < size; i++) {
 		// 今フォーカスしているキャラの座標に合わせる
