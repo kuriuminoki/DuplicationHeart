@@ -22,8 +22,6 @@ Story::Story(int storyNum, World* world, SoundPlayer* soundPlayer) {
 	ostringstream oss;
 	oss << "data/story/story" << storyNum << ".csv";
 	loadCsvData(oss.str().c_str(), world, soundPlayer);
-	m_world_p->changeCharacterVersion(m_version);
-	m_world_p->setDate(m_date);
 
 	// イベントの発火確認
 	checkFire();

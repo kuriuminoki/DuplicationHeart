@@ -59,6 +59,8 @@ public:
 
 	// ƒQƒbƒ^
 	inline int getStoryNum() const { return m_storyNum; }
+	inline int getDate() const { return m_date; }
+	inline int getVersion() const { return m_version; }
 	inline CharacterLoader* getCharacterLoader() const { return m_characterLoader; }
 	inline ObjectLoader* getObjectLoader() const { return m_objectLoader; }
 	inline const World* getWorld() const { return m_world_p; }

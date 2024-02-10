@@ -421,6 +421,8 @@ Game::Game(const char* saveFilePath, int storyNum) {
 
 	// ストーリー
 	m_story = new Story(m_gameData->getStoryNum(), m_world, m_soundPlayer);
+	m_world->changeCharacterVersion(m_story->getVersion());
+	m_world->setDate(m_story->getDate());
 
 	// セーブデータに上書き
 	m_gameData->updateStory(m_story);
