@@ -349,6 +349,13 @@ void World::addCharacter(CharacterLoader* characterLoader) {
 	m_characterControllers.insert(m_characterControllers.end(), p.second.begin(), p.second.end());
 }
 
+// ストーリーによるキャラの性能変化
+void World::changeCharacterVersion(int version) {
+	for (unsigned int i = 0; i < m_characters.size(); i++) {
+		m_characters[i]->changeInfoVersion(version);
+	}
+}
+
 // ストーリーによる追加オブジェクト
 void World::addObject(ObjectLoader* objectLoader) {
 	pair<vector<Object*>, vector<Object*> > p = objectLoader->getObjects(m_areaNum);

@@ -403,7 +403,7 @@ ChangeInfoVersionEvent::ChangeInfoVersionEvent(World* world, std::vector<string>
 	m_character_p = m_world_p->getCharacterWithName(param[2]);
 }
 EVENT_RESULT ChangeInfoVersionEvent::play() {
-	// 対象のキャラのGroupIdを変更する
+	// 対象のキャラのversionを変更する
 	m_character_p->changeInfoVersion(m_version);
 	return EVENT_RESULT::SUCCESS;
 }
