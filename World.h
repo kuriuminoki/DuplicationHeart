@@ -175,6 +175,9 @@ public:
 	// ストーリーによるキャラ追加
 	void addCharacter(CharacterLoader* characterLoader);
 
+	// ストーリーによるキャラの性能変化
+	void changeCharacterVersion(int version);
+
 	// ストーリーによるオブジェクト追加
 	void addObject(ObjectLoader* objectLoader);
 
