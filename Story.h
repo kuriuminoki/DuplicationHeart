@@ -22,6 +22,9 @@ private:
 	// 時間帯
 	int m_date;
 
+	// Emote Onlineのversion
+	int m_version;
+
 	// 進行中のイベント
 	Event* m_nowEvent;
 	
@@ -41,6 +44,9 @@ public:
 	Story(int storyNum, World* world, SoundPlayer* soundPlayer);
 	~Story();
 
+	// csvファイルを読み込む
+	void loadCsvData(const char* fileName, World* world, SoundPlayer* soundPlayer);
+
 	void debug(int x, int y, int color);
 
 	bool play();
@@ -54,6 +60,7 @@ public:
 	// ゲッタ
 	inline int getStoryNum() const { return m_storyNum; }
 	inline int getDate() const { return m_date; }
+	inline int getVersion() const { return m_version; }
 	inline CharacterLoader* getCharacterLoader() const { return m_characterLoader; }
 	inline ObjectLoader* getObjectLoader() const { return m_objectLoader; }
 	inline const World* getWorld() const { return m_world_p; }

@@ -85,6 +85,37 @@ public:
 
 
 /*
+* キャラの眼の瞬きを処理するクラス
+*/
+class CharacterEyeClose {
+private:
+
+	// 眼を閉じる時間
+	static const int EYE_CLOSE_MIN_TIME = 5;
+	static const int EYE_CLOSE_MAX_TIME = 10;
+	
+	// 眼を閉じる残り時間
+	int m_cnt;
+
+public:
+
+	CharacterEyeClose();
+
+	// 瞬きスタートでtrue
+	bool closeFlag();
+
+private:
+
+	// 眼を閉じる時間をカウント
+	void count();
+
+	// 瞬き中ならtrue
+	inline bool closeNow() { return m_cnt > 0; }
+
+};
+
+
+/*
 * キャラの画像を管理するクラス
 */
 class CharacterGraphHandle {
@@ -95,6 +126,9 @@ private:
 	double m_ex;
 
 	int m_wide, m_height;
+
+	// 瞬き
+	CharacterEyeClose m_characterEyeClose;
 
 	// キャラのパーツの画像
 	// 斬撃攻撃画像
@@ -148,6 +182,10 @@ private:
 
 	// 空中斬撃画像
 	GraphHandles* m_airSlashHandles;
+
+	// 瞬き画像
+	GraphHandles* m_closeHandles;
+
 public:
 	// デフォルト値で初期化
 	CharacterGraphHandle();
@@ -179,6 +217,7 @@ public:
 	inline GraphHandles* getBoostHandle() { return m_boostHandles; }
 	inline GraphHandles* getAirBulletHandle() { return m_airBulletHandles; }
 	inline GraphHandles* getAirSlashHandle() { return m_airSlashHandles; }
+	inline GraphHandles* getCloseHandle() { return m_closeHandles; }
 
 	// 画像サイズをセット
 	void setGraphSize();
@@ -217,6 +256,8 @@ public:
 	void switchAirBullet(int index = 0);
 	// 空中斬撃画像をセット
 	void switchAirSlash(int index = 0);
+	// 瞬き画像をセット
+	void switchClose(int index = 0);
 };
 
 
