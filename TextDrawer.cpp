@@ -128,7 +128,7 @@ void ConversationDrawer::draw() {
 		int y2 = y1 + SKIP_HEIGHT * m_exY;
 		DrawBox(x1, y1, x15, y2, BLACK, TRUE);
 		DrawBox(x15, y1, x2, y2, GRAY, TRUE);
-		DrawStringToHandle(x1 + 5, y1 + 5, "Zキー長押しでスキップ", WHITE, m_textHandle);
+		DrawStringToHandle(x1 + 5, y1 + 5, "Ｚキー長押しでスキップ", WHITE, m_textHandle);
 	}
 	
 	// 画面右下のクリック要求アイコン
