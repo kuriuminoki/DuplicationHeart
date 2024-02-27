@@ -7,6 +7,10 @@
 class Button;
 class SoundPlayer;
 
+
+/*
+* セーブデータ選択画面やタイトルのオプション画面に使う背景画像
+*/
 class TitleBackGround {
 private:
 
@@ -123,6 +127,40 @@ public:
 
 
 /*
+* チュートリアルの描画
+*/
+class TutorialDisp {
+private:
+
+	// フォント
+	int m_font_p;
+	int m_fontSize;
+
+	// 1920を基準としたGAME_WIDEの倍率
+	double m_exX;
+	// 1080を基準としたGAME_HEIGHTの倍率
+	double m_exY;
+
+	// 描画範囲 設定しなくてもいい
+	int m_x1, m_y1, m_x2, m_y2;
+
+public:
+
+	TutorialDisp(int font_p, int fontSize, double exX, double exY);
+
+	void setPoint(int x1, int y1, int x2, int y2) {
+		m_x1 = x1;
+		m_y1 = y1;
+		m_x2 = x2;
+		m_y2 = y2;
+	}
+
+	void draw();
+	void draw(int x1, int y1, int x2, int y2);
+};
+
+
+/*
 * ゲーム中に開くオプション画面 タイトルに戻るボタンやチュートリアルがある
 */
 class BattleOption :
@@ -151,6 +189,9 @@ private:
 	// タイトルへ戻るボタン
 	Button* m_titleButton;
 	bool m_titleFlag;
+
+	// 操作説明
+	TutorialDisp* m_tutorialDisp;
 
 public:
 	BattleOption(SoundPlayer* soundPlayer);

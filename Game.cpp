@@ -175,7 +175,7 @@ GameData::GameData() {
 	}
 
 	// 主要キャラを設定
-	const int mainSum = 13;
+	const int mainSum = 14;
 	const char* mainCharacters[mainSum] = {
 		"ハート",
 		"シエスタ",
@@ -189,7 +189,8 @@ GameData::GameData() {
 		"アーカイブ",
 		"アイギス",
 		"コハル",
-		"マスカーラ"
+		"マスカーラ",
+		"ヴェルメリア"
 	};
 	for (int i = 0; i < mainSum; i++) {
 		m_characterData.push_back(new CharacterData(mainCharacters[i]));
@@ -294,6 +295,7 @@ bool GameData::load() {
 	fread(&m_storyNum, sizeof(m_storyNum), 1, intFp);
 	fread(&m_latestStoryNum, sizeof(m_latestStoryNum), 1, intFp);
 	for (unsigned int i = 0; i < m_characterData.size(); i++) {
+		if (feof(intFp) != 0 || feof(strFp) != 0) { break; }
 		m_characterData[i]->load(intFp, strFp);
 	}
 	int doorSum = 0;

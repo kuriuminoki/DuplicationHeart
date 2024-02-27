@@ -262,7 +262,7 @@ OpMovie::OpMovie(SoundPlayer* soundPlayer_p):
 
 	// キャラ
 	double charaEx = m_ex * 1.1;
-	m_archive = new GraphHandles((path + "アーカイブ").c_str(), 1, charaEx);
+	m_archive = new GraphHandles((path + "アーカイブ").c_str(), 5, charaEx);
 	m_aigis = new GraphHandles((path + "アイギス").c_str(), 4, charaEx, 0, false, true);
 	m_assault = new GraphHandles((path + "アサルト03").c_str(), 4, charaEx);
 	m_vermelia = new GraphHandles((path + "ヴェルメリア").c_str(), 1, charaEx);
@@ -680,6 +680,7 @@ void OpMovie::draw() {
 		int alpha = min(255, m_cnt - 4350);
 		SetDrawBlendMode(DX_BLENDMODE_ALPHA, alpha);
 	}
+	SetDrawMode(DX_DRAWMODE_BILINEAR);
 	Movie::draw();
 	SetDrawBlendMode(DX_BLENDMODE_ALPHA, 255);
 	if (m_cnt > 980 && m_cnt < 1470) {
@@ -692,4 +693,5 @@ void OpMovie::draw() {
 		DrawBox(0, 0, GAME_WIDE, GAME_HEIGHT, BLACK, TRUE);
 	}
 	drawFlame();
+	SetDrawMode(DX_DRAWMODE_NEAREST);
 }
