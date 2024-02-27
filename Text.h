@@ -113,6 +113,9 @@ private:
 	// FINISH_CINT -> 0で発言開始
 	int m_startCnt;
 
+	// Zキーの長押し時間
+	int m_skipCnt;
+
 	// イベント終了したか
 	bool m_finishFlag;
 
@@ -198,6 +201,7 @@ public:
 	inline bool getNoFace() const { return m_noFace; }
 	inline 	std::string getSpeakerName() const { return m_speakerName; }
 	inline int getFinishCnt() const { return m_finishCnt; }
+	inline int getSkipCnt() const { return m_skipCnt; }
 	inline int getStartCnt() const { return m_startCnt; }
 	inline bool getFinishFlag() const { return m_finishFlag; }
 	inline int getTextNow() const { return m_textNow; }

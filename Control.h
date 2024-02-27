@@ -28,6 +28,9 @@ int controlF();
 // Qキー（一時停止）
 int controlQ();
 
+// Zキー（イベントスキップ）
+int controlZ();
+
 //FPS表示のオンオフ
 int controlDebug();
 
