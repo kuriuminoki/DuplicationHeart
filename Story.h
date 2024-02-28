@@ -4,10 +4,12 @@
 #include <vector>
 
 class Event;
+class EventData;
 class World;
 class SoundPlayer;
 class CharacterLoader;
 class ObjectLoader;
+
 
 // ストーリ－
 class Story {
@@ -34,6 +36,9 @@ private:
 	// クリア任意イベント
 	std::vector<Event*> m_subEvent;
 
+	// イベントのクリア状況 Gameクラスからもらう
+	EventData* m_eventData_p;
+
 	// キャラクターのデータ
 	CharacterLoader* m_characterLoader;
 
@@ -41,7 +46,7 @@ private:
 	ObjectLoader* m_objectLoader;
 
 public:
-	Story(int storyNum, World* world, SoundPlayer* soundPlayer);
+	Story(int storyNum, World* world, SoundPlayer* soundPlayer, EventData* eventData);
 	~Story();
 
 	// csvファイルを読み込む

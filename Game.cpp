@@ -152,6 +152,48 @@ void DoorData::load(FILE* intFp, FILE* strFp) {
 
 
 /*
+* クリアしたイベントのリスト
+*/
+EventData::EventData() {
+	
+}
+EventData::EventData(FILE* eventFp) {
+	load(eventFp);
+}
+
+// セーブ
+void EventData::save(FILE* eventFp) {
+	for (unsigned int i = 0; i < m_clearEvent.size(); i++) {
+		fwrite(&m_clearEvent[i], sizeof(int), 1, eventFp);
+	}
+}
+
+// ロード
+void EventData::load(FILE* eventFp) {
+	while (feof(eventFp) == 0) {
+		int num;
+		fread(&num, sizeof(int), 1, eventFp);
+		setClearEvent(num);
+	}
+}
+
+// 特定のイベントをクリアしてるか
+bool EventData::checkClearEvent(int eventNum) {
+	for (unsigned int i = 0; i < m_clearEvent.size(); i++) {
+		if (m_clearEvent[i] == eventNum) { return true; }
+	}
+	return false;
+}
+
+//特定のイベントをクリアした
+void EventData::setClearEvent(int eventNum) {
+	if (!checkClearEvent(eventNum)) {
+		m_clearEvent.push_back(eventNum);
+	}
+}
+
+
+/*
 * ゲームのセーブデータ
 */
 // 初期状態のデータを作成
@@ -195,6 +237,10 @@ GameData::GameData() {
 	for (int i = 0; i < mainSum; i++) {
 		m_characterData.push_back(new CharacterData(mainCharacters[i]));
 	}
+
+	// クリアしたイベント
+	m_eventData = new EventData();
+
 }
 
 // ファイルを指定してデータを復元
@@ -233,6 +279,7 @@ GameData::~GameData() {
 	for (unsigned int i = 0; i < m_doorData.size(); i++) {
 		delete m_doorData[i];
 	}
+	delete m_eventData;
 }
 
 CharacterData* GameData::getCharacterData(string characterName) {
@@ -249,14 +296,16 @@ bool GameData::save() {
 
 	// 今やっているチャプターが最新ならセーブ
 	if (m_storyNum == m_latestStoryNum) {
-		FILE* intFp = nullptr, * strFp = nullptr;
+		FILE* intFp = nullptr, * strFp = nullptr, * eventFp = nullptr;
 
 		// 全セーブデータ共通
 		if (!saveCommon(m_soundVolume, GAME_WIDE, GAME_HEIGHT)) { return false; }
 
 		// セーブデータ固有
 		string fileName = m_saveFilePath;
-		if (fopen_s(&intFp, (fileName + "intData.dat").c_str(), "wb") != 0 || fopen_s(&strFp, (fileName + "strData.dat").c_str(), "wb") != 0) {
+		if (fopen_s(&intFp, (fileName + "intData.dat").c_str(), "wb") != 0 ||
+			fopen_s(&strFp, (fileName + "strData.dat").c_str(), "wb") != 0 ||
+			fopen_s(&eventFp, (fileName + "eventData.dat").c_str(), "wb") != 0) {
 			return false;
 		}
 		// Write
@@ -271,23 +320,27 @@ bool GameData::save() {
 		for (unsigned int i = 0; i < m_doorData.size(); i++) {
 			m_doorData[i]->save(intFp, strFp);
 		}
+		m_eventData->save(eventFp);
 		// ファイルを閉じる
 		fclose(intFp);
 		fclose(strFp);
+		fclose(eventFp);
 	}
 	return true;
 }
 
 // ロード
 bool GameData::load() {
-	FILE* intFp = nullptr, * strFp = nullptr, * commonFp = nullptr;
+	FILE* intFp = nullptr, * strFp = nullptr, * eventFp = nullptr;
 
 	// 全セーブデータ共通
 	if (!loadCommon(&m_soundVolume, &GAME_WIDE, &GAME_HEIGHT)) { return false; }
 
 	// セーブデータ固有
 	string fileName = m_saveFilePath;
-	if (fopen_s(&intFp, (fileName + "intData.dat").c_str(), "rb") != 0 || fopen_s(&strFp, (fileName + "strData.dat").c_str(), "rb") != 0) {
+	if (fopen_s(&intFp, (fileName + "intData.dat").c_str(), "rb") != 0 || 
+		fopen_s(&strFp, (fileName + "strData.dat").c_str(), "rb") != 0 ||
+		fopen_s(&eventFp, (fileName + "eventData.dat").c_str(), "rb") != 0) {
 		return false;
 	}
 	// Read
@@ -304,9 +357,11 @@ bool GameData::load() {
 	for (int i = 0; i < doorSum; i++) {
 		m_doorData.push_back(new DoorData(intFp, strFp));
 	}
+	m_eventData->load(eventFp);
 	// ファイルを閉じる
 	fclose(intFp);
 	fclose(strFp);
+	fclose(eventFp);
 	return true;
 }
 
@@ -320,6 +375,7 @@ bool GameData::saveChapter() {
 	string filePath = m_saveFilePath;
 	m_saveFilePath = oss.str() + "/";
 	save();
+	// パスをもとに戻す
 	m_saveFilePath = filePath;
 
 	return true;
@@ -357,6 +413,7 @@ void GameData::removeSaveData() {
 	string fileName = m_saveFilePath;
 	remove((fileName + "intData.dat").c_str());
 	remove((fileName + "strData.dat").c_str());
+	remove((fileName + "eventData.dat").c_str());
 }
 
 // 自身のデータをWorldにデータ反映させる
@@ -422,7 +479,7 @@ Game::Game(const char* saveFilePath, int storyNum) {
 	m_soundPlayer->stopBGM();
 
 	// ストーリー
-	m_story = new Story(m_gameData->getStoryNum(), m_world, m_soundPlayer);
+	m_story = new Story(m_gameData->getStoryNum(), m_world, m_soundPlayer, m_gameData->getEventData());
 	m_world->changeCharacterVersion(m_story->getVersion());
 	m_world->setDate(m_story->getDate());
 
@@ -537,7 +594,7 @@ bool Game::play() {
 		// 次のストーリーへ
 		int nextStoryNum = m_gameData->getStoryNum() + 1;
 		delete m_story;
-		m_story = new Story(nextStoryNum, m_world, m_soundPlayer);
+		m_story = new Story(nextStoryNum, m_world, m_soundPlayer, m_gameData->getEventData());
 		// ストーリーの影響でオブジェクトが追加される（一度追加されると今後GameDataでデータは保持され続ける）
 		// セーブデータに上書き
 		m_gameData->updateStory(m_story);

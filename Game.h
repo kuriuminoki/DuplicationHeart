@@ -139,6 +139,32 @@ public:
 };
 
 
+/*
+* クリアしたイベントのリスト
+*/
+class EventData {
+private:
+
+	// クリアしたイベント番号
+	std::vector<int> m_clearEvent;
+
+public:
+
+	EventData();
+	EventData(FILE* eventFp);
+
+	void save(FILE* eventFp);
+	void load(FILE* eventFp);
+
+	// 特定のイベントをクリアしてるか
+	bool checkClearEvent(int eventNum);
+
+	//特定のイベントをクリアした
+	void setClearEvent(int eventNum);
+
+};
+
+
 // セーブデータ
 class GameData {
 private:
@@ -153,6 +179,9 @@ private:
 
 	// ドアのデータ
 	std::vector<DoorData*> m_doorData;
+
+	// イベントのデータ
+	EventData* m_eventData;
 
 	// 今いるエリア
 	int m_areaNum;
@@ -190,6 +219,7 @@ public:
 	inline int getFrom(int i) const { return m_doorData[i]->from(); }
 	inline int getTo(int i) const { return m_doorData[i]->to(); }
 	inline int getLatestStoryNum() const { return m_latestStoryNum; }
+	inline EventData* getEventData() { return m_eventData; }
 	CharacterData* getCharacterData(std::string characterName);
 
 	// セッタ

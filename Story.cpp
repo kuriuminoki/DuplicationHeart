@@ -1,4 +1,5 @@
 #include "Story.h"
+#include "Game.h"
 #include "Event.h"
 #include "CsvReader.h"
 #include "World.h"
@@ -10,10 +11,11 @@
 using namespace std;
 
 
-Story::Story(int storyNum, World* world, SoundPlayer* soundPlayer) {
+Story::Story(int storyNum, World* world, SoundPlayer* soundPlayer, EventData* eventData) {
 	m_world_p = world;
 	m_nowEvent = nullptr;
 	m_storyNum = storyNum;
+	m_eventData_p = eventData;
 
 	m_characterLoader = new CharacterLoader;
 	m_objectLoader = new ObjectLoader;
@@ -51,9 +53,24 @@ void Story::loadCsvData(const char* fileName, World* world, SoundPlayer* soundPl
 	for (unsigned int i = 0; i < eventData.size(); i++) {
 		int eventNum = stoi(eventData[i]["num"]);
 		bool mustFlag = (bool)stoi(eventData[i]["mustFlag"]);
-		Event* eventOne = new Event(eventNum, world, soundPlayer);
-		if (mustFlag) { m_mustEvent.push_back(eventOne); }
-		else { m_subEvent.push_back(eventOne); }
+		string condition = eventData[i]["condition"];
+		string secondNum = eventData[i]["secondNum"];
+		// conditionがクリア済みならsecondNumのイベントを代わりにセット
+		if (condition != "" && m_eventData_p->checkClearEvent(stoi(eventData[i]["condition"]))) {
+			if (secondNum != "") {
+				// 代わりのイベントをセット
+				eventNum = stoi(eventData[i]["secondNum"]);
+			}
+			else {
+				// 代わりのイベントはない
+				eventNum = -1;
+			}
+		}
+		if (eventNum != -1) {
+			Event* eventOne = new Event(eventNum, world, soundPlayer);
+			if (mustFlag) { m_mustEvent.push_back(eventOne); }
+			else { m_subEvent.push_back(eventOne); }
+		}
 	}
 
 	// キャラクターを用意
@@ -97,6 +114,10 @@ bool Story::play() {
 		// イベント進行中
 		EVENT_RESULT result = m_nowEvent->play();
 		
+		// イベントクリア
+		if (result == EVENT_RESULT::SUCCESS) {
+			m_eventData_p->setClearEvent(m_nowEvent->getEventNum());
+		}
 		// イベント失敗
 		if (result == EVENT_RESULT::FAILURE) {
 			// mustのイベントならタイトルへ戻る
