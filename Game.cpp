@@ -199,6 +199,8 @@ void EventData::setClearEvent(int eventNum) {
 // 初期状態のデータを作成
 GameData::GameData() {
 
+	m_noticeSaveDone = 0;
+
 	m_exist = false;
 
 	m_soundVolume = 50;
@@ -325,6 +327,10 @@ bool GameData::save() {
 		fclose(intFp);
 		fclose(strFp);
 		fclose(eventFp);
+	}
+	// セーブ完了通知 Chapter 1だけはしない
+	if (m_storyNum > 1) {
+		m_noticeSaveDone = NOTICE_SAVE_DONE_TIME;
 	}
 	return true;
 }
@@ -616,6 +622,9 @@ bool Game::play() {
 			m_world->setSkillFlag(false);
 		}
 	}
+
+	// セーブ完了通知
+	m_gameData->setNoticeSaveDone(max(0, m_gameData->getNoticeSaveDone() - 1));
 
 	// 音
 	m_soundPlayer->play();
