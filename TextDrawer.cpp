@@ -122,10 +122,10 @@ void ConversationDrawer::draw() {
 	static const int SKIP_HEIGHT = 100;
 	if (skipCnt > 0) {
 		int x2 = GAME_WIDE - 10;
-		int x1 = x2 - SKIP_WIDE * m_exX;
-		int x15 = x1 + skipCnt * (SKIP_WIDE / 60) * m_exX;
+		int x1 = x2 - (int)(SKIP_WIDE * m_exX);
+		int x15 = (int)(x1 + skipCnt * (SKIP_WIDE / 60) * m_exX);
 		int y1 = 10;
-		int y2 = y1 + SKIP_HEIGHT * m_exY;
+		int y2 = y1 + (int)(SKIP_HEIGHT * m_exY);
 		DrawBox(x1, y1, x15, y2, BLACK, TRUE);
 		DrawBox(x15, y1, x2, y2, GRAY, TRUE);
 		DrawStringToHandle(x1 + 5, y1 + 5, "Ｚキー長押しでスキップ", WHITE, m_textHandle);
