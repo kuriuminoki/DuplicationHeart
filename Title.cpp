@@ -82,6 +82,14 @@ bool SelectSaveData::saveDataExist() {
 	return false;
 }
 
+int SelectSaveData::getLatestStoryNum() {
+	int maxStoryNum = -1;
+	for (int i = 0; i < GAME_DATA_SUM; i++) {
+		maxStoryNum = max(maxStoryNum, m_gameData[i]->getStoryNum());
+	}
+	return maxStoryNum;
+}
+
 // セーブデータ選択画面の処理
 bool SelectSaveData::play(int handX, int handY) {
 
@@ -173,10 +181,14 @@ Title::Title() {
 	// セーブデータ選択画面
 	m_selectSaveData = new SelectSaveData();
 
-	// セーブデータがあるならOP用意と音量セット
+	// セーブデータがあるなら音量セット
 	if (m_selectSaveData->saveDataExist()) { 
 		m_soundPlayer->setVolume(m_selectSaveData->getSoundVolume());
-		m_movie = new OpMovie(m_soundPlayer);
+		int s = m_selectSaveData->getLatestStoryNum();
+		if (s >= 9) {
+			// 初めてOPを見るのは9章なので、それ以降のセーブデータがあるならOP用意
+			m_movie = new OpMovie(m_soundPlayer);
+		}
 	}
 	else {
 		m_movie = nullptr;

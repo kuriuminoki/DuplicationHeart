@@ -18,6 +18,7 @@ Animation::Animation(int x, int y, int flameCnt, GraphHandles* graphHandles) {
 	m_y = y;
 	m_handles_p = graphHandles;
 	m_flameCnt = flameCnt;
+	m_loopFlag = false;
 	init();
 }
 
@@ -47,7 +48,12 @@ void Animation::changeGraph(GraphHandles* nextGraph, int flameCnt) {
 // カウント
 void Animation::count() { 
 	if (m_cnt == m_finishCnt) {
-		m_finishFlag = true;
+		if (m_loopFlag) {
+			init();
+		}
+		else {
+			m_finishFlag = true;
+		}
 	}
 	else {
 		m_cnt++;
@@ -158,7 +164,7 @@ void PartOneCharacter::play() {
 		m_vy = 0;
 	}
 	if (m_y == m_initY && GetRand(100) < 1) {
-		m_vy = -20 * m_ex;
+		m_vy = (int)(-20 * m_ex);
 	}
 }
 void PartOneCharacter::draw() {
@@ -170,21 +176,21 @@ void OpMovie::pushPartOneCharacter(int index, bool front, GraphHandle* character
 	int y = GAME_HEIGHT * 5 / 6 - m_flameHeight / 2;
 	int vx = -8;
 	double ex = m_ex;
-	int wide = 800 * m_ex;
+	int wide = (int)(800 * m_ex);
 	int x = 0;
 	if (!front) { // 後ろのキャラ
 		double backEx = 0.3;
 		y = GAME_HEIGHT/ 5 + m_flameHeight / 2;
-		vx = 5 * m_ex;
+		vx = (int)(5 * m_ex);
 		ex *= backEx;
-		wide = 400 * m_ex;
+		wide = (int)(400 * m_ex);
 		x = index * (-wide) + (GAME_WIDE / 2);
 	}
 	else {
 		double frontEx = 0.7;
-		vx = -10 * m_ex;
+		vx = (int)(-10 * m_ex);
 		ex *= frontEx;
-		wide = 700 * m_ex;
+		wide = (int)(700 * m_ex);
 		x = GAME_WIDE / 2 + (index * wide);
 	}
 	m_partOneCharacters.push_back(new PartOneCharacter(character, x, y, vx, ex));
@@ -309,7 +315,9 @@ OpMovie::OpMovie(SoundPlayer* soundPlayer_p):
 	characterQueue.push(make_pair(m_siesta, CHARA_TIME));
 
 	// サビ
-	m_heartFlame = new GraphHandles((path + "sabi/" + "heartFlame").c_str(), 1, m_ex);
+	m_orange = new GraphHandles((path + "sabi/" + "orange").c_str(), 3, m_ex, 0, true);
+	m_duplications = new GraphHandles((path + "sabi/" + "duplication").c_str(), 16, m_ex, 0, true);
+	m_heartFlame = new GraphHandles((path + "sabi/" + "heartFlame").c_str(), 1, m_ex, 0, true);
 	m_rmem = new GraphHandles((path + "sabi/" + "rmem").c_str(), 8, m_ex);
 	m_heartSabi = new GraphHandles((path + "sabi/" + "heart").c_str(), 2, m_ex);
 	m_tvSiesta = new GraphHandles((path + "sabi/" + "シエスタ").c_str(), 1, m_ex);
@@ -325,6 +333,11 @@ OpMovie::OpMovie(SoundPlayer* soundPlayer_p):
 	m_centerX = GAME_WIDE / 2;
 	m_centerY = GAME_HEIGHT / 2;
 	m_animation = new Animation(m_centerX, m_centerY, 120, m_titleH);
+
+	// サビ用
+	m_orangeAnime = new Animation(m_centerX, m_centerY, 10, m_orange);
+	m_orangeAnime->setLoopFlag(true);
+	m_duplicationsAnime = new Animation(m_centerX, m_centerY, 42, m_duplications);
 
 	// BGM
 	m_bgmPath = "sound/movie/kobune.mp3";
@@ -403,6 +416,10 @@ OpMovie::~OpMovie() {
 	delete m_tank;
 
 	// サビ
+	delete m_orange;
+	delete m_duplications;
+	delete m_orangeAnime;
+	delete m_duplicationsAnime;
 	delete m_heartFlame;
 	delete m_rmem;
 	delete m_heartSabi;
@@ -581,6 +598,10 @@ void OpMovie::play() {
 		}
 	}
 	else if (m_cnt < 3750 && m_cnt >= 3050) { // サビ1
+		m_orangeAnime->count();
+		if (m_cnt > 3100) {
+			m_duplicationsAnime->count();
+		}
 		if (m_cnt == 3050) {
 			m_animation->setX(m_centerX);
 			m_animation->setY(m_centerY);
@@ -681,6 +702,14 @@ void OpMovie::draw() {
 		SetDrawBlendMode(DX_BLENDMODE_ALPHA, alpha);
 	}
 	SetDrawMode(DX_DRAWMODE_BILINEAR);
+	if (m_cnt < 3750 && m_cnt >= 3050) {
+		m_animationDrawer->setAnimation(m_orangeAnime);
+		m_animationDrawer->drawAnimation();
+		if (m_cnt > 3100 && (m_cnt / 2) % 2 == 0) {
+			m_animationDrawer->setAnimation(m_duplicationsAnime);
+			m_animationDrawer->drawAnimation();
+		}
+	}
 	Movie::draw();
 	SetDrawBlendMode(DX_BLENDMODE_ALPHA, 255);
 	if (m_cnt > 980 && m_cnt < 1470) {
