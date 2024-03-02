@@ -363,6 +363,7 @@ bool GameData::load() {
 	for (int i = 0; i < doorSum; i++) {
 		m_doorData.push_back(new DoorData(intFp, strFp));
 	}
+	m_eventData->init();
 	m_eventData->load(eventFp);
 	// ƒtƒ@ƒCƒ‹‚ð•Â‚¶‚é
 	fclose(intFp);

@@ -156,6 +156,9 @@ public:
 	void save(FILE* eventFp);
 	void load(FILE* eventFp);
 
+	// 初期化
+	void init() { m_clearEvent.clear(); }
+
 	// 特定のイベントをクリアしてるか
 	bool checkClearEvent(int eventNum);
 
