@@ -755,8 +755,6 @@ void World::updateCamera() {
 	else {
 		int nowWide = (int)(GAME_WIDE / 2 / nowEx);
 		int nowHeight = (int)(GAME_HEIGHT / 2 / nowEx);
-		//max_dx = (int)(max_dx / m_exX);
-		//max_dy = (int)(max_dy / m_exY);
 		if (nowEx > m_cameraMinEx && (max_dx > nowWide || max_dy > nowHeight)) {
 			// èkè¨
 			double d = double(max(max_dx - nowWide, max_dy - nowHeight));
