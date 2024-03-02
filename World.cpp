@@ -733,8 +733,8 @@ void World::updateCamera() {
 			if (dx < MAX_DISABLE) {
 				max_dx = max(max_dx, dx);
 				int y = m_characters[i]->getY();
-				if (m_camera->getY() < y) { y += m_characters[i]->getHeight() * 2; }
-				else { y -= m_characters[i]->getHeight(); }
+				if (m_camera->getY() < y) { y += m_characters[i]->getHeight() * 3 / 2; }
+				else { y -= m_characters[i]->getHeight() / 2; }
 				max_dy = max(max_dy, abs(m_camera->getY() - y));
 			}
 		}
