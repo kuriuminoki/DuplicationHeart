@@ -290,7 +290,6 @@ OpMovie::OpMovie(SoundPlayer* soundPlayer_p):
 	m_memoryB = new GraphHandles((path + "memB").c_str(), 10, m_ex);
 	m_yuri = new GraphHandles((path + "ユーリ").c_str(), 4, charaEx);
 	m_rabbi = new GraphHandles((path + "ラビ―").c_str(), 4, charaEx);
-	m_tank = new GraphHandles((path + "棒タンク").c_str(), 4, charaEx);
 	// 表示する順にpush
 	const int CHARA_TIME = 35;
 	characterQueue.push(make_pair(m_koharu, CHARA_TIME));
@@ -413,7 +412,6 @@ OpMovie::~OpMovie() {
 	delete m_memoryB;
 	delete m_yuri;
 	delete m_rabbi;
-	delete m_tank;
 
 	// サビ
 	delete m_orange;

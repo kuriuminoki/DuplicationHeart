@@ -219,7 +219,6 @@ private:
 	GraphHandles* m_memoryB;
 	GraphHandles* m_yuri;
 	GraphHandles* m_rabbi;
-	GraphHandles* m_tank;
 
 	// ÉTÉr
 	GraphHandles* m_orange;
