@@ -57,6 +57,9 @@ public:
 	// セーブデータが1つでも存在するか
 	bool saveDataExist();
 
+	// 最大のStoryNum
+	int getLatestStoryNum();
+
 	// セーブデータ選択画面の処理
 	bool play(int handX, int handY);
 

@@ -30,6 +30,9 @@ private:
 	// アニメーションが終了
 	bool m_finishFlag;
 
+	// ループ再生
+	bool m_loopFlag;
+
 public:
 	Animation(int x, int y, int flameCnt, GraphHandles* graphHandles);
 
@@ -46,7 +49,8 @@ public:
 	inline void setY(int y) { m_y = y; }
 	inline void setCnt(int cnt) { m_cnt = cnt; }
 	inline void setFinishCnt(int finishCnt) { m_finishCnt = finishCnt; }
-	inline void setFinishFlag(int finishFlag) { m_finishFlag = finishFlag; }
+	inline void setFinishFlag(bool finishFlag) { m_finishFlag = finishFlag; }
+	inline void setLoopFlag(bool loopFlag) { m_loopFlag = loopFlag; }
 
 	// 初期化
 	void init();
@@ -218,6 +222,10 @@ private:
 	GraphHandles* m_tank;
 
 	// サビ
+	GraphHandles* m_orange;
+	GraphHandles* m_duplications;
+	Animation* m_orangeAnime;
+	Animation* m_duplicationsAnime;
 	GraphHandles* m_heartFlame;
 	GraphHandles* m_rmem;
 	GraphHandles* m_heartSabi;
