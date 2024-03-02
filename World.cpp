@@ -727,11 +727,15 @@ void World::updateCamera() {
 		// フォーカスしているキャラ以外なら距離を調べる
 		else if (m_characters[i]->getHp() > 0) {
 			int x = m_characters[i]->getX();
-			if (m_camera->getX() < x) { x += m_characters[i]->getWide(); }
+			if (m_camera->getX() < x) { x += m_characters[i]->getWide() * 2; }
+			else { x -= m_characters[i]->getWide(); }
 			int dx = abs(m_camera->getX() - x);
 			if (dx < MAX_DISABLE) {
 				max_dx = max(max_dx, dx);
-				max_dy = max(max_dy, abs(m_camera->getY() - m_characters[i]->getY()) + m_characters[i]->getHeight());
+				int y = m_characters[i]->getY();
+				if (m_camera->getY() < y) { y += m_characters[i]->getHeight() * 2; }
+				else { y -= m_characters[i]->getHeight(); }
+				max_dy = max(max_dy, abs(m_camera->getY() - y));
 			}
 		}
 	}
@@ -745,23 +749,23 @@ void World::updateCamera() {
 	int shift = controlLeftShift() + controlRightShift();
 	if (shift > 0) {
 		if (nowEx > m_cameraMinEx) {
-			m_camera->setEx(max(nowEx - 0.01, 0.1));
+			m_camera->setEx(max(nowEx - 0.01 * m_exX, 0.1));
 		}
 	}
 	else {
 		int nowWide = (int)(GAME_WIDE / 2 / nowEx);
 		int nowHeight = (int)(GAME_HEIGHT / 2 / nowEx);
-		max_dx = (int)(max_dx / m_exX);
-		max_dy = (int)(max_dy / m_exY);
+		//max_dx = (int)(max_dx / m_exX);
+		//max_dy = (int)(max_dy / m_exY);
 		if (nowEx > m_cameraMinEx && (max_dx > nowWide || max_dy > nowHeight)) {
 			// 縮小
 			double d = double(max(max_dx - nowWide, max_dy - nowHeight));
-			m_camera->setEx(nowEx - min(0.1, d / 100000));
+			m_camera->setEx(nowEx - min(0.1, d / 100000) * m_exX);
 		}
 		else if (nowEx < m_cameraMaxEx && (max_dx < nowWide && max_dy < nowHeight)) {
 			// 拡大
 			double d = double(max(nowWide - max_dx, nowHeight - max_dy));
-			m_camera->setEx(nowEx + min(0.005, d / 100000));
+			m_camera->setEx(nowEx + min(0.005, d / 100000) * m_exX);
 		}
 	}
 }
