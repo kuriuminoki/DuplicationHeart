@@ -103,6 +103,9 @@ public:
 	Event(int eventNum, World* world, SoundPlayer* soundPlayer);
 	~Event();
 
+	// ƒQƒbƒ^
+	inline int getEventNum() { return m_eventNum; }
+
 	// ”­‰Î
 	bool fire();
 

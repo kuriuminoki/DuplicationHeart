@@ -349,6 +349,13 @@ void World::addCharacter(CharacterLoader* characterLoader) {
 	m_characterControllers.insert(m_characterControllers.end(), p.second.begin(), p.second.end());
 }
 
+// ストーリーによるキャラの性能変化
+void World::changeCharacterVersion(int version) {
+	for (unsigned int i = 0; i < m_characters.size(); i++) {
+		m_characters[i]->changeInfoVersion(version);
+	}
+}
+
 // ストーリーによる追加オブジェクト
 void World::addObject(ObjectLoader* objectLoader) {
 	pair<vector<Object*>, vector<Object*> > p = objectLoader->getObjects(m_areaNum);
@@ -710,7 +717,7 @@ void World::updateCamera() {
 	// キャラとカメラの距離の最大値を調べる
 	int max_dx = 0, max_dy = 0;
 	// 画面内に入れようとする距離の最大　これより離れたキャラは無視
-	const int MAX_DISABLE = 3000;
+	const int MAX_DISABLE = 2000;
 	size_t size = m_characters.size();
 	for (unsigned int i = 0; i < size; i++) {
 		// 今フォーカスしているキャラの座標に合わせる
@@ -720,11 +727,15 @@ void World::updateCamera() {
 		// フォーカスしているキャラ以外なら距離を調べる
 		else if (m_characters[i]->getHp() > 0) {
 			int x = m_characters[i]->getX();
-			if (m_camera->getX() < x) { x += m_characters[i]->getWide(); }
+			if (m_camera->getX() < x) { x += m_characters[i]->getWide() * 2; }
+			else { x -= m_characters[i]->getWide(); }
 			int dx = abs(m_camera->getX() - x);
 			if (dx < MAX_DISABLE) {
 				max_dx = max(max_dx, dx);
-				max_dy = max(max_dy, abs(m_camera->getY() - m_characters[i]->getY()) + m_characters[i]->getHeight());
+				int y = m_characters[i]->getY();
+				if (m_camera->getY() < y) { y += m_characters[i]->getHeight() * 2; }
+				else { y -= m_characters[i]->getHeight(); }
+				max_dy = max(max_dy, abs(m_camera->getY() - y));
 			}
 		}
 	}
@@ -738,23 +749,21 @@ void World::updateCamera() {
 	int shift = controlLeftShift() + controlRightShift();
 	if (shift > 0) {
 		if (nowEx > m_cameraMinEx) {
-			m_camera->setEx(max(nowEx - 0.01, 0.1));
+			m_camera->setEx(max(nowEx - 0.01 * m_exX, 0.1));
 		}
 	}
 	else {
 		int nowWide = (int)(GAME_WIDE / 2 / nowEx);
 		int nowHeight = (int)(GAME_HEIGHT / 2 / nowEx);
-		max_dx = (int)(max_dx / m_exX);
-		max_dy = (int)(max_dy / m_exY);
 		if (nowEx > m_cameraMinEx && (max_dx > nowWide || max_dy > nowHeight)) {
 			// 縮小
 			double d = double(max(max_dx - nowWide, max_dy - nowHeight));
-			m_camera->setEx(nowEx - min(0.1, d / 100000));
+			m_camera->setEx(nowEx - min(0.1, d / 100000) * m_exX);
 		}
 		else if (nowEx < m_cameraMaxEx && (max_dx < nowWide && max_dy < nowHeight)) {
 			// 拡大
 			double d = double(max(nowWide - max_dx, nowHeight - max_dy));
-			m_camera->setEx(nowEx + min(0.005, d / 100000));
+			m_camera->setEx(nowEx + min(0.005, d / 100000) * m_exX);
 		}
 	}
 }

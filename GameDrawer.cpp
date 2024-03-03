@@ -22,12 +22,21 @@ GameDrawer::GameDrawer(const Game* game) {
 	m_skillHandle = CreateFontToHandle(nullptr, (int)(SKILL_SIZE * m_exX), 10);
 
 	m_gameoverHandle = LoadGraph("picture/system/gameover.png");
+
+	m_noticeSaveDataHandle = LoadGraph("picture/system/noticeSaveDone.png");
+	m_noticeEx = 0.7;
+	GetGraphSize(m_noticeSaveDataHandle, &m_noticeX, &m_noticeY);
+	m_noticeX = (int)(m_noticeX * (m_exX / 2 * m_noticeEx));
+	m_noticeY = (int)(m_noticeY * (m_exY / 2 * m_noticeEx));
+	m_noticeX += (int)(10 * m_exX);
+	m_noticeY = GAME_HEIGHT - m_noticeY - (int)(10 * m_exY);
 }
 
 GameDrawer::~GameDrawer() {
 	delete m_worldDrawer;
 	DeleteFontToHandle(m_skillHandle);
 	DeleteGraph(m_gameoverHandle);
+	DeleteGraph(m_noticeSaveDataHandle);
 }
 
 void GameDrawer::draw() {
@@ -51,6 +60,24 @@ void GameDrawer::draw() {
 		m_worldDrawer->setWorld(m_game->getWorld());
 	}
 	m_worldDrawer->draw();
+
+	// セーブ完了通知
+	int noticeSaveDone = m_game->getGameData()->getNoticeSaveDone();
+	int alpha = 0;
+	if (noticeSaveDone > 0) {
+		if (noticeSaveDone * 3 > m_game->getGameData()->NOTICE_SAVE_DONE_TIME * 2) {
+			alpha = min(255, (m_game->getGameData()->NOTICE_SAVE_DONE_TIME - noticeSaveDone) * 3);
+		}
+		else if (noticeSaveDone * 3 > m_game->getGameData()->NOTICE_SAVE_DONE_TIME ) {
+			alpha = 255;
+		}
+		else {
+			alpha = max(0, noticeSaveDone * 3);
+		}
+		SetDrawBlendMode(DX_BLENDMODE_ALPHA, alpha);
+		DrawRotaGraph(m_noticeX, m_noticeY, min(m_exX, m_exY) * m_noticeEx, 0.0, m_noticeSaveDataHandle, TRUE);
+		SetDrawBlendMode(DX_BLENDMODE_ALPHA, 255);
+	}
 
 	// スキルの時間等を描画
 	if (skill != nullptr) {

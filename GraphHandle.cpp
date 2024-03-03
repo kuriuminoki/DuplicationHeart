@@ -147,6 +147,35 @@ void GraphHandles::draw(int x, int y, int index) {
 
 
 /*
+* キャラクターの目の瞬きの処理をするクラス
+*/
+CharacterEyeClose::CharacterEyeClose() {
+	m_cnt = 0;
+}
+
+// 瞬きスタートでtrue
+bool CharacterEyeClose::closeFlag() {
+	count();
+	// 眼を閉じている
+	if (closeNow()) {
+		return true;
+	}
+	// 眼を閉じ始める
+	if (GetRand(100) < 1) {
+		m_cnt = EYE_CLOSE_MIN_TIME + GetRand(EYE_CLOSE_MAX_TIME - EYE_CLOSE_MIN_TIME);
+		return true;
+	}
+	// 眼を開けている
+	return false;
+}
+
+// 眼を閉じる時間をカウント
+void CharacterEyeClose::count() {
+	m_cnt = m_cnt > 0 ? m_cnt - 1 : 0;
+}
+
+
+/*
 * キャラの画像
 */
 // 画像ロード用
@@ -196,28 +225,30 @@ CharacterGraphHandle::CharacterGraphHandle(const char* characterName, double dra
 	loadCharacterGraph(dir, characterName, m_boostHandles, "boost", data, m_ex);
 	loadCharacterGraph(dir, characterName, m_airBulletHandles, "airBullet", data, m_ex);
 	loadCharacterGraph(dir, characterName, m_airSlashHandles, "airSlash", data, m_ex);
+	loadCharacterGraph(dir, characterName, m_closeHandles, "close", data, m_ex);
 
 	switchStand();
 }
 // 画像を削除
 CharacterGraphHandle::~CharacterGraphHandle() {
 	if (m_standHandles != nullptr) { delete m_standHandles; }
-	if (m_standHandles != nullptr) { delete m_slashHandles; }
-	if (m_standHandles != nullptr) { delete m_bulletHandles; }
-	if (m_standHandles != nullptr) { delete m_squatHandles; }
-	if (m_standHandles != nullptr) { delete m_squatBulletHandles; }
-	if (m_standHandles != nullptr) { delete m_standBulletHandles; }
-	if (m_standHandles != nullptr) { delete m_standSlashHandles; }
-	if (m_standHandles != nullptr) { delete m_runHandles; }
-	if (m_standHandles != nullptr) { delete m_runBulletHandles; }
-	if (m_standHandles != nullptr) { delete m_landHandles; }
-	if (m_standHandles != nullptr) { delete m_jumpHandles; }
-	if (m_standHandles != nullptr) { delete m_downHandles; }
-	if (m_standHandles != nullptr) { delete m_preJumpHandles; }
-	if (m_standHandles != nullptr) { delete m_damageHandles; }
-	if (m_standHandles != nullptr) { delete m_boostHandles; }
-	if (m_standHandles != nullptr) { delete m_airBulletHandles; }
-	if (m_standHandles != nullptr) { delete m_airSlashHandles; }
+	if (m_slashHandles != nullptr) { delete m_slashHandles; }
+	if (m_bulletHandles != nullptr) { delete m_bulletHandles; }
+	if (m_squatHandles != nullptr) { delete m_squatHandles; }
+	if (m_squatBulletHandles != nullptr) { delete m_squatBulletHandles; }
+	if (m_standBulletHandles != nullptr) { delete m_standBulletHandles; }
+	if (m_standSlashHandles != nullptr) { delete m_standSlashHandles; }
+	if (m_runHandles != nullptr) { delete m_runHandles; }
+	if (m_runBulletHandles != nullptr) { delete m_runBulletHandles; }
+	if (m_landHandles != nullptr) { delete m_landHandles; }
+	if (m_jumpHandles != nullptr) { delete m_jumpHandles; }
+	if (m_downHandles != nullptr) { delete m_downHandles; }
+	if (m_preJumpHandles != nullptr) { delete m_preJumpHandles; }
+	if (m_damageHandles != nullptr) { delete m_damageHandles; }
+	if (m_boostHandles != nullptr) { delete m_boostHandles; }
+	if (m_airBulletHandles != nullptr) { delete m_airBulletHandles; }
+	if (m_airSlashHandles != nullptr) { delete m_airSlashHandles; }
+	if (m_closeHandles != nullptr) { delete m_closeHandles; }
 }
 
 // 画像のサイズをセット
@@ -242,7 +273,12 @@ void CharacterGraphHandle::setGraph(GraphHandle* graphHandle) {
 
 // 立ち画像をセット
 void CharacterGraphHandle::switchStand(int index){
-	setGraph(m_standHandles, index);
+	if (m_closeHandles != nullptr && m_characterEyeClose.closeFlag()) {
+		setGraph(m_closeHandles, index);
+	}
+	else {
+		setGraph(m_standHandles, index);
+	}
 }
 // 立ち射撃画像をセット
 void CharacterGraphHandle::switchBullet(int index){
@@ -304,6 +340,10 @@ void CharacterGraphHandle::switchAirBullet(int index){
 // 空中斬撃画像をセット
 void CharacterGraphHandle::switchAirSlash(int index){
 	setGraph(m_airSlashHandles, index);
+}
+// 瞬き画像をセット
+void CharacterGraphHandle::switchClose(int index) {
+	setGraph(m_closeHandles, index);
 }
 
 

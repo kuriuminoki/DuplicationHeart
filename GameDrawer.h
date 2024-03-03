@@ -21,6 +21,11 @@ private:
 	// ゲームオーバーの画像
 	int m_gameoverHandle;
 
+	// セーブ完了通知の画像
+	int m_noticeSaveDataHandle;
+	int m_noticeX, m_noticeY;
+	double m_noticeEx;
+
 public:
 	GameDrawer(const Game* game);
 

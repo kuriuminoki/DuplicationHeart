@@ -4,10 +4,12 @@
 #include <vector>
 
 class Event;
+class EventData;
 class World;
 class SoundPlayer;
 class CharacterLoader;
 class ObjectLoader;
+
 
 // ストーリ－
 class Story {
@@ -22,6 +24,9 @@ private:
 	// 時間帯
 	int m_date;
 
+	// Emote Onlineのversion
+	int m_version;
+
 	// 進行中のイベント
 	Event* m_nowEvent;
 	
@@ -31,6 +36,9 @@ private:
 	// クリア任意イベント
 	std::vector<Event*> m_subEvent;
 
+	// イベントのクリア状況 Gameクラスからもらう
+	EventData* m_eventData_p;
+
 	// キャラクターのデータ
 	CharacterLoader* m_characterLoader;
 
@@ -38,8 +46,11 @@ private:
 	ObjectLoader* m_objectLoader;
 
 public:
-	Story(int storyNum, World* world, SoundPlayer* soundPlayer);
+	Story(int storyNum, World* world, SoundPlayer* soundPlayer, EventData* eventData);
 	~Story();
+
+	// csvファイルを読み込む
+	void loadCsvData(const char* fileName, World* world, SoundPlayer* soundPlayer);
 
 	void debug(int x, int y, int color);
 
@@ -54,6 +65,7 @@ public:
 	// ゲッタ
 	inline int getStoryNum() const { return m_storyNum; }
 	inline int getDate() const { return m_date; }
+	inline int getVersion() const { return m_version; }
 	inline CharacterLoader* getCharacterLoader() const { return m_characterLoader; }
 	inline ObjectLoader* getObjectLoader() const { return m_objectLoader; }
 	inline const World* getWorld() const { return m_world_p; }

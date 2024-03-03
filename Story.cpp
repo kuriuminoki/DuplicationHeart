@@ -1,4 +1,5 @@
 #include "Story.h"
+#include "Game.h"
 #include "Event.h"
 #include "CsvReader.h"
 #include "World.h"
@@ -10,44 +11,19 @@
 using namespace std;
 
 
-Story::Story(int storyNum, World* world, SoundPlayer* soundPlayer) {
+Story::Story(int storyNum, World* world, SoundPlayer* soundPlayer, EventData* eventData) {
 	m_world_p = world;
 	m_nowEvent = nullptr;
 	m_storyNum = storyNum;
+	m_eventData_p = eventData;
 
+	m_characterLoader = new CharacterLoader;
+	m_objectLoader = new ObjectLoader;
+
+	// story○○.csvをロード
 	ostringstream oss;
 	oss << "data/story/story" << storyNum << ".csv";
-	CsvReader2 csvReader2(oss.str().c_str());
-
-	// イベント生成
-	vector<map<string, string> > eventData = csvReader2.getDomainData("EVENT:");
-	for (unsigned int i = 0; i < eventData.size(); i++) {
-		int eventNum = stoi(eventData[i]["num"]);
-		bool mustFlag = (bool)stoi(eventData[i]["mustFlag"]);
-		Event* eventOne = new Event(eventNum, world, soundPlayer);
-		if (mustFlag) { m_mustEvent.push_back(eventOne); }
-		else { m_subEvent.push_back(eventOne); }
-	}
-
-	// キャラクターを用意
-	vector<map<string, string> > characterData = csvReader2.getDomainData("CHARACTER:");
-	m_characterLoader = new CharacterLoader;
-	for (unsigned int i = 0; i < characterData.size(); i++) {
-		m_characterLoader->addCharacter(characterData[i]);
-	}
-
-	// オブジェクトを用意
-	vector<map<string, string> > objectData = csvReader2.getDomainData("OBJECT:");
-	m_objectLoader = new ObjectLoader;
-	for (unsigned int i = 0; i < objectData.size(); i++) {
-		m_objectLoader->addObject(objectData[i]);
-	}
-
-	// 時間帯を決定
-	vector<map<string, string> > dateData = csvReader2.getDomainData("DATE:");
-	if (dateData.size() > 0) {
-		m_date = stoi(dateData[0]["num"]);
-	}
+	loadCsvData(oss.str().c_str(), world, soundPlayer);
 
 	// イベントの発火確認
 	checkFire();
@@ -68,6 +44,65 @@ Story::~Story() {
 	delete m_objectLoader;
 }
 
+// csvファイルを読み込む
+void Story::loadCsvData(const char* fileName, World* world, SoundPlayer* soundPlayer) {
+	CsvReader2 csvReader2(fileName);
+
+	// イベント生成
+	vector<map<string, string> > eventData = csvReader2.getDomainData("EVENT:");
+	for (unsigned int i = 0; i < eventData.size(); i++) {
+		int eventNum = stoi(eventData[i]["num"]);
+		bool mustFlag = (bool)stoi(eventData[i]["mustFlag"]);
+		string condition = eventData[i]["condition"];
+		string secondNum = eventData[i]["secondNum"];
+		// conditionがクリア済みならsecondNumのイベントを代わりにセット
+		if (condition != "" && m_eventData_p->checkClearEvent(stoi(eventData[i]["condition"]))) {
+			if (secondNum != "") {
+				// 代わりのイベントをセット
+				eventNum = stoi(eventData[i]["secondNum"]);
+			}
+			else {
+				// 代わりのイベントはない
+				eventNum = -1;
+			}
+		}
+		if (eventNum != -1) {
+			Event* eventOne = new Event(eventNum, world, soundPlayer);
+			if (mustFlag) { m_mustEvent.push_back(eventOne); }
+			else { m_subEvent.push_back(eventOne); }
+		}
+	}
+
+	// キャラクターを用意
+	vector<map<string, string> > characterData = csvReader2.getDomainData("CHARACTER:");
+	for (unsigned int i = 0; i < characterData.size(); i++) {
+		m_characterLoader->addCharacter(characterData[i]);
+	}
+
+	// オブジェクトを用意
+	vector<map<string, string> > objectData = csvReader2.getDomainData("OBJECT:");
+	for (unsigned int i = 0; i < objectData.size(); i++) {
+		m_objectLoader->addObject(objectData[i]);
+	}
+
+	// 時間帯を決定
+	vector<map<string, string> > dateData = csvReader2.getDomainData("DATE:");
+	if (dateData.size() > 0) {
+		m_date = stoi(dateData[0]["num"]);
+	}
+
+	// 世界のバージョンを取得しロードする 変化ない(updateが0)ならロードしない
+	vector<map<string, string> > versionData = csvReader2.getDomainData("VERSION:");
+	if (versionData.size() > 0) {
+		m_version = stoi(versionData[0]["num"]);
+		if (m_version > 0 && (bool)stoi(versionData[0]["update"])) {
+			ostringstream oss;
+			oss << "data/story/version" << m_version << ".csv";
+			loadCsvData(oss.str().c_str(), world, soundPlayer);
+		}
+	}
+}
+
 bool Story::play() {
 	if (m_nowEvent == nullptr) {
 		// 普通に世界を動かす
@@ -79,6 +114,10 @@ bool Story::play() {
 		// イベント進行中
 		EVENT_RESULT result = m_nowEvent->play();
 		
+		// イベントクリア
+		if (result == EVENT_RESULT::SUCCESS) {
+			m_eventData_p->setClearEvent(m_nowEvent->getEventNum());
+		}
 		// イベント失敗
 		if (result == EVENT_RESULT::FAILURE) {
 			// mustのイベントならタイトルへ戻る
@@ -128,6 +167,7 @@ bool Story::skillAble() {
 // セッタ
 void Story::setWorld(World* world) {
 	m_world_p = world;
+	m_world_p->changeCharacterVersion(m_version);
 	m_world_p->setDate(m_date);
 	if (m_nowEvent != nullptr) {
 		m_nowEvent->setWorld(m_world_p);

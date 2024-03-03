@@ -139,6 +139,35 @@ public:
 };
 
 
+/*
+* クリアしたイベントのリスト
+*/
+class EventData {
+private:
+
+	// クリアしたイベント番号
+	std::vector<int> m_clearEvent;
+
+public:
+
+	EventData();
+	EventData(FILE* eventFp);
+
+	void save(FILE* eventFp);
+	void load(FILE* eventFp);
+
+	// 初期化
+	void init() { m_clearEvent.clear(); }
+
+	// 特定のイベントをクリアしてるか
+	bool checkClearEvent(int eventNum);
+
+	//特定のイベントをクリアした
+	void setClearEvent(int eventNum);
+
+};
+
+
 // セーブデータ
 class GameData {
 private:
@@ -154,6 +183,9 @@ private:
 	// ドアのデータ
 	std::vector<DoorData*> m_doorData;
 
+	// イベントのデータ
+	EventData* m_eventData;
+
 	// 今いるエリア
 	int m_areaNum;
 
@@ -166,11 +198,17 @@ private:
 	// 音量
 	int m_soundVolume;
 
+	// セーブ完了の通知を表示する残り時間
+	int m_noticeSaveDone;
+
 public:
 	GameData();
 	GameData(const char* saveFilePath);
 	GameData(const char* saveFilePath, int storyNum);
 	~GameData();
+
+	// セーブ完了の通知を表示する時間
+	const int NOTICE_SAVE_DONE_TIME = 300;
 
 	// セーブとロード
 	bool save();
@@ -190,12 +228,15 @@ public:
 	inline int getFrom(int i) const { return m_doorData[i]->from(); }
 	inline int getTo(int i) const { return m_doorData[i]->to(); }
 	inline int getLatestStoryNum() const { return m_latestStoryNum; }
+	inline EventData* getEventData() { return m_eventData; }
+	inline int getNoticeSaveDone() const { return m_noticeSaveDone; }
 	CharacterData* getCharacterData(std::string characterName);
 
 	// セッタ
 	inline void setAreaNum(int areaNum) { m_areaNum = areaNum; }
 	inline void setStoryNum(int storyNum) { m_storyNum = storyNum; }
 	inline void setSoundVolume(int soundVolume) { m_soundVolume = soundVolume; }
+	inline void setNoticeSaveDone(int noticeSaveDone) { m_noticeSaveDone = noticeSaveDone; }
 
 	// セーブデータ削除
 	void removeSaveData();
@@ -310,6 +351,7 @@ public:
 	BattleOption* getGamePause() const { return m_battleOption; }
 	bool getRebootFlag() const { return m_rebootFlag; }
 	inline int getGameoverCnt() const { return m_gameoverCnt; }
+	inline const GameData* getGameData() const { return m_gameData; }
 
 	// デバッグ
 	void debug(int x, int y, int color) const;
