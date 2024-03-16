@@ -27,6 +27,9 @@ private:
 	// Emote Onlineのversion
 	int m_version;
 
+	// Storyを画面暗転の状態からスタートならtrue
+	bool m_initDark;
+
 	// 進行中のイベント
 	Event* m_nowEvent;
 	
@@ -66,6 +69,7 @@ public:
 	inline int getStoryNum() const { return m_storyNum; }
 	inline int getDate() const { return m_date; }
 	inline int getVersion() const { return m_version; }
+	inline bool getInitDark() const { return m_initDark; }
 	inline CharacterLoader* getCharacterLoader() const { return m_characterLoader; }
 	inline ObjectLoader* getObjectLoader() const { return m_objectLoader; }
 	inline const World* getWorld() const { return m_world_p; }

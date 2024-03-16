@@ -70,12 +70,55 @@ WorldDrawer::~WorldDrawer() {
 	DeleteGraph(m_nightHaikei);
 }
 
+
 // 描画する
 void WorldDrawer::draw() {
 	
 	int bright = m_world->getBrightValue();
 	SetDrawBright(bright, bright, bright);
 
+	// カメラを取得
+	const Camera* camera = m_world->getCamera();
+
+	// 戦場
+	if (!m_world->getBlindFlag()) {
+		drawBattleField(camera, bright);
+	}
+
+	// ムービー
+	Movie* movie = m_world->getMovie();
+	if (movie != nullptr) {
+		DrawBox(0, 0, GAME_WIDE, GAME_HEIGHT, BLACK, TRUE);
+		movie->draw();
+	}
+
+	// テキストイベント
+	const Conversation* conversation = m_world->getConversation();
+	if (conversation != nullptr) {
+		m_conversationDrawer->setConversation(conversation);
+		m_conversationDrawer->draw();
+	}
+	else {
+		// StageObjectを調べた際のテキストイベント
+		conversation = m_world->getObjectConversation();
+		if (conversation != nullptr) {
+			m_conversationDrawer->setConversation(conversation);
+			m_conversationDrawer->draw();
+		}
+	}
+
+	if (movie == nullptr && conversation == nullptr) {
+		// ターゲット
+		m_targetDrawer.setEx(camera->getEx());
+		m_targetDrawer.draw();
+	}
+
+	SetDrawBright(255, 255, 255);
+}
+
+
+// 戦場の描画
+void WorldDrawer::drawBattleField(const Camera* camera, int bright) {
 	// 背景
 	int groundGraph = m_world->getBackGroundGraph();
 	if (groundGraph != -1) {
@@ -106,9 +149,6 @@ void WorldDrawer::draw() {
 			break;
 		}
 	}
-
-	// カメラを取得
-	const Camera* camera = m_world->getCamera();
 
 	// 各Objectを描画
 	vector<const Object*> objects = m_world->getBackObjects();
@@ -161,34 +201,4 @@ void WorldDrawer::draw() {
 			m_characterDrawer->drawPlayerHpBar(m_world->getCharacters()[i], m_hpBarGraph);
 		}
 	}
-
-	// ムービー
-	Movie* movie = m_world->getMovie();
-	if (movie != nullptr) {
-		DrawBox(0, 0, GAME_WIDE, GAME_HEIGHT, BLACK, TRUE);
-		movie->draw();
-	}
-
-	// テキストイベント
-	const Conversation* conversation = m_world->getConversation();
-	if (conversation != nullptr) {
-		m_conversationDrawer->setConversation(conversation);
-		m_conversationDrawer->draw();
-	}
-	else {
-		// StageObjectを調べた際のテキストイベント
-		conversation = m_world->getObjectConversation();
-		if (conversation != nullptr) {
-			m_conversationDrawer->setConversation(conversation);
-			m_conversationDrawer->draw();
-		}
-	}
-
-	if (movie == nullptr && conversation == nullptr) {
-		// ターゲット
-		m_targetDrawer.setEx(camera->getEx());
-		m_targetDrawer.draw();
-	}
-
-	SetDrawBright(255, 255, 255);
 }

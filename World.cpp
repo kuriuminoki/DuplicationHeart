@@ -81,6 +81,10 @@ World::World() {
 
 	m_brightValue = 255;
 
+	m_resetBgmFlag = false;
+
+	m_blindFlag = false;
+
 	// 会話イベント
 	m_conversation_p = nullptr;
 	m_objectConversation = nullptr;

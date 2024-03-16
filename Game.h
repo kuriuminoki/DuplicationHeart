@@ -361,6 +361,9 @@ public:
 
 	// セーブデータをロード（前のセーブポイントへ戻る）
 	void backPrevSave();
+
+	// 描画していいならtrue
+	bool ableDraw();
 };
 
 #endif

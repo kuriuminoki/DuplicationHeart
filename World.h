@@ -57,9 +57,15 @@ private:
 	// プレイヤー（ハート）のID
 	int m_playerId;
 
-	// いま世界のどのエリアにいるか（メモリ節約のためプレイヤーの付近のみを読み込む）
+	// いま世界のどのエリアにいるか
 	int m_areaNum;
 	int m_nextAreaNum;
+
+	// エリア移動時にBGMをいったん止めるならtrue
+	bool m_resetBgmFlag;
+
+	// 描画するかどうか(動画とテキストは除く)
+	bool m_blindFlag;
 
 	// 時間帯 0は昼、1は夕方、2は夜
 	int m_date;
@@ -127,6 +133,8 @@ public:
 	inline int getAreaNum() const { return m_areaNum; }
 	inline int getNextAreaNum() const { return m_nextAreaNum; }
 	inline int getDate() const { return m_date; }
+	inline bool getResetBgmFlag() const { return m_resetBgmFlag; }
+	inline bool getBlindFlag() const { return m_blindFlag; }
 	inline const Camera* getCamera() const { return m_camera; }
 	std::vector<CharacterController*> getCharacterControllers() const { return m_characterControllers; }
 	std::vector<Character*> getCharacters() const { return m_characters; }
@@ -168,6 +176,10 @@ public:
 	inline void setMovie(Movie* movie) { m_movie_p = movie; }
 	inline void setAreaLock(bool lock) { m_areaLock = lock; }
 	inline void setDate(int date) { m_date = date; }
+	inline void setBlindFlag(bool blindFlag) { m_blindFlag = blindFlag; }
+
+	// 強制的にエリア移動
+	inline void moveArea(int nextArea) { m_brightValue = 0; m_nextAreaNum = nextArea; m_resetBgmFlag = true; }
 
 	// ID指定でBrain変更
 	void setBrainWithId(int id, Brain* brain);

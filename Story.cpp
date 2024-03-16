@@ -20,6 +20,10 @@ Story::Story(int storyNum, World* world, SoundPlayer* soundPlayer, EventData* ev
 	m_characterLoader = new CharacterLoader;
 	m_objectLoader = new ObjectLoader;
 
+	m_date = 0;
+	m_version = 0;
+	m_initDark = false;
+
 	// story››.csv‚ğƒ[ƒh
 	ostringstream oss;
 	oss << "data/story/story" << storyNum << ".csv";
@@ -101,9 +105,16 @@ void Story::loadCsvData(const char* fileName, World* world, SoundPlayer* soundPl
 			loadCsvData(oss.str().c_str(), world, soundPlayer);
 		}
 	}
+
+	// Story‚Ì‰Šúó‘Ô
+	vector<map<string, string> > initData = csvReader2.getDomainData("INIT:");
+	if (initData.size() > 0) {
+		m_initDark = (bool)stoi(initData[0]["dark"]);
+	}
 }
 
 bool Story::play() {
+	m_initDark = false;
 	if (m_nowEvent == nullptr) {
 		// •’Ê‚É¢ŠE‚ğ“®‚©‚·
 		m_world_p->battle();

@@ -21,11 +21,11 @@ using namespace std;
 
 
 // どこまで
-const int FINISH_STORY = 9;
+const int FINISH_STORY = 10;
 // エリア0でデバッグするときはtrueにする
 const bool TEST_MODE = false;
 // スキルが発動可能になるストーリー番号
-const int SKILL_USEABLE_STORY = 10;
+const int SKILL_USEABLE_STORY = 13;
 
 
 /*
@@ -602,6 +602,7 @@ bool Game::play() {
 		int nextStoryNum = m_gameData->getStoryNum() + 1;
 		delete m_story;
 		m_story = new Story(nextStoryNum, m_world, m_soundPlayer, m_gameData->getEventData());
+		if (m_story->getInitDark()) { m_soundPlayer->stopBGM(); }
 		// ストーリーの影響でオブジェクトが追加される（一度追加されると今後GameDataでデータは保持され続ける）
 		// セーブデータに上書き
 		m_gameData->updateStory(m_story);
@@ -648,8 +649,10 @@ bool Game::play() {
 		int fromAreaNum = m_world->getAreaNum();
 		int toAreaNum = m_world->getNextAreaNum();
 		m_gameData->asignedWorld(m_world, false);
+		bool resetBgmFlag = m_world->getResetBgmFlag();
 		delete m_world;
 		m_world = new World(fromAreaNum, toAreaNum, m_soundPlayer);
+		if(resetBgmFlag){ m_soundPlayer->stopBGM(); }
 		m_gameData->asignWorld(m_world);
 		m_world->setPlayerOnDoor(fromAreaNum);
 		m_story->setWorld(m_world);
@@ -673,6 +676,11 @@ void Game::backPrevSave() {
 	m_world->setPlayerPoint(prevData.getCharacterData("ハート"));
 	m_world->setPlayerFollowerPoint();
 	m_story->setWorld(m_world);
+}
+
+// 描画していいならtrue
+bool Game::ableDraw() {
+	return !m_story->getInitDark();
 }
 
 
