@@ -515,6 +515,8 @@ Game::Game(const char* saveFilePath, int storyNum) {
 	// データを世界に反映
 	m_gameData->asignWorld(m_world, true);
 
+	m_world->cameraPointInit();
+
 	// スキル
 	m_skill = nullptr;
 

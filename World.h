@@ -232,6 +232,9 @@ public:
 	// データ管理：プレイヤーをドアの前まで移動
 	void setPlayerOnDoor(int from);
 
+	// データ管理：カメラの位置をリセット
+	void cameraPointInit();
+
 	// プレイヤーを特定の座標へ移動
 	void setPlayerPoint(CharacterData* characterData);
 
@@ -254,9 +257,6 @@ public:
 	void moviePlay();
 
 private:
-
-	// データ管理：カメラの位置をリセット
-	void cameraPointInit();
 
 	// データ管理：キャラのセーブデータを自身に反映させる
 	void asignedCharacter(Character* character, CharacterData* data, bool changePosition);
