@@ -149,6 +149,12 @@ void Event::createElement(vector<string> param, World* world, SoundPlayer* sound
 	else if (param0 == "PlayerDead") {
 		element = new PlayerDeadEvent(world, param);
 	}
+	else if (param0 == "MoveArea"){
+		element = new MoveAreaEvent(world, param);
+	}
+	else if (param0 == "BlindWorld") {
+		element = new BlindWorldEvent(world, param);
+	}
 
 	if (element != nullptr) { 
 		m_eventElement = element;
@@ -580,4 +586,34 @@ EVENT_RESULT PlayerDeadEvent::play() {
 		return EVENT_RESULT::SUCCESS;
 	}
 	return EVENT_RESULT::NOW;
+}
+
+
+// 特定のエリアへ強制的に移動する
+MoveAreaEvent::MoveAreaEvent(World* world, std::vector<std::string> param) :
+	EventElement(world)
+{
+	m_areaNum = stoi(param[1]);
+}
+EVENT_RESULT MoveAreaEvent::play() {
+	m_world_p->dealBrightValue();
+	if (m_world_p->getNextAreaNum() != m_areaNum) {
+		m_world_p->moveArea(m_areaNum);
+	}
+	else if (m_world_p->getAreaNum() == m_areaNum) {
+		return EVENT_RESULT::SUCCESS;
+	}
+	return EVENT_RESULT::NOW;
+}
+
+
+// 世界の描画をする・しない
+BlindWorldEvent::BlindWorldEvent(World* world, std::vector<std::string> param) :
+	EventElement(world)
+{
+	m_flag = (bool)stoi(param[1]);
+}
+EVENT_RESULT BlindWorldEvent::play() {
+	m_world_p->setBlindFlag(m_flag);
+	return EVENT_RESULT::SUCCESS;
 }

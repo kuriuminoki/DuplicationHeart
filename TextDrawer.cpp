@@ -3,6 +3,7 @@
 #include "GraphHandle.h"
 #include "Animation.h"
 #include "AnimationDrawer.h"
+#include "DrawTool.h"
 #include "Define.h"
 #include "DxLib.h"
 #include <string>
@@ -116,6 +117,9 @@ void ConversationDrawer::draw() {
 			}
 		}
 	}
+
+	// Zキー長押しでスキップの表示
+	drawSkip(m_conversation->getSkipCnt(), m_exX, m_exY, m_textHandle);
 	
 	// 画面右下のクリック要求アイコン
 	bool textFinish = m_conversation->finishText() && m_conversation->getFinishCnt() == 0 && m_conversation->getStartCnt() == 0 && m_conversation->nextTextAble();

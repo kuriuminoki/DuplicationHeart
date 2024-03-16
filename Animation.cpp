@@ -1,7 +1,9 @@
 #include "Animation.h"
 #include "AnimationDrawer.h"
+#include "Control.h"
 #include "GraphHandle.h"
 #include "Sound.h"
+#include "DrawTool.h"
 #include "Define.h"
 #include "DxLib.h"
 
@@ -18,6 +20,7 @@ Animation::Animation(int x, int y, int flameCnt, GraphHandles* graphHandles) {
 	m_y = y;
 	m_handles_p = graphHandles;
 	m_flameCnt = flameCnt;
+	m_loopFlag = false;
 	init();
 }
 
@@ -47,7 +50,12 @@ void Animation::changeGraph(GraphHandles* nextGraph, int flameCnt) {
 // カウント
 void Animation::count() { 
 	if (m_cnt == m_finishCnt) {
-		m_finishFlag = true;
+		if (m_loopFlag) {
+			init();
+		}
+		else {
+			m_finishFlag = true;
+		}
 	}
 	else {
 		m_cnt++;
@@ -65,9 +73,8 @@ GraphHandle* Animation::getHandle() const {
 * 動画の基底クラス
 */
 Movie::Movie(SoundPlayer* soundPlayer_p) {
-	double exX, exY;
-	getGameEx(exX, exY);
-	m_ex = min(exX, exY);
+	getGameEx(m_exX, m_exY);
+	m_ex = min(m_exX, m_exY);
 	m_finishFlag = false;
 	m_cnt = 0;
 	m_animation = nullptr;
@@ -78,6 +85,9 @@ Movie::Movie(SoundPlayer* soundPlayer_p) {
 
 	m_flameWide = (GAME_WIDE - (int)(GAME_WIDE_DEFAULT * m_ex)) / 2;
 	m_flameHeight = (GAME_HEIGHT - (int)(GAME_HEIGHT_DEFAULT * m_ex)) / 2;
+
+	// フォントデータ
+	m_textHandle = CreateFontToHandle(nullptr, (int)(TEXT_SIZE * m_exX), 3);
 }
 
 Movie::~Movie() {
@@ -85,6 +95,8 @@ Movie::~Movie() {
 		delete m_animation;
 	}
 	m_soundPlayer_p->setBGM(m_originalBgmPath);
+	// フォントデータ削除
+	DeleteFontToHandle(m_textHandle);
 }
 
 void Movie::play() {
@@ -110,6 +122,14 @@ void Movie::play() {
 			m_subAnimation.push(subAnimation);
 		}
 	}
+
+	// Zキー長押しで終了
+	if (controlZ() > 0) {
+		if (m_skipCnt++ == 60) {
+			m_finishFlag = true;
+		}
+	}
+	else { m_skipCnt = 0; }
 }
 
 void Movie::draw() {
@@ -158,7 +178,7 @@ void PartOneCharacter::play() {
 		m_vy = 0;
 	}
 	if (m_y == m_initY && GetRand(100) < 1) {
-		m_vy = -20 * m_ex;
+		m_vy = (int)(-20 * m_ex);
 	}
 }
 void PartOneCharacter::draw() {
@@ -170,21 +190,21 @@ void OpMovie::pushPartOneCharacter(int index, bool front, GraphHandle* character
 	int y = GAME_HEIGHT * 5 / 6 - m_flameHeight / 2;
 	int vx = -8;
 	double ex = m_ex;
-	int wide = 800 * m_ex;
+	int wide = (int)(800 * m_ex);
 	int x = 0;
 	if (!front) { // 後ろのキャラ
 		double backEx = 0.3;
 		y = GAME_HEIGHT/ 5 + m_flameHeight / 2;
-		vx = 5 * m_ex;
+		vx = (int)(5 * m_ex);
 		ex *= backEx;
-		wide = 400 * m_ex;
+		wide = (int)(400 * m_ex);
 		x = index * (-wide) + (GAME_WIDE / 2);
 	}
 	else {
 		double frontEx = 0.7;
-		vx = -10 * m_ex;
+		vx = (int)(-10 * m_ex);
 		ex *= frontEx;
-		wide = 700 * m_ex;
+		wide = (int)(700 * m_ex);
 		x = GAME_WIDE / 2 + (index * wide);
 	}
 	m_partOneCharacters.push_back(new PartOneCharacter(character, x, y, vx, ex));
@@ -262,7 +282,7 @@ OpMovie::OpMovie(SoundPlayer* soundPlayer_p):
 
 	// キャラ
 	double charaEx = m_ex * 1.1;
-	m_archive = new GraphHandles((path + "アーカイブ").c_str(), 1, charaEx);
+	m_archive = new GraphHandles((path + "アーカイブ").c_str(), 5, charaEx);
 	m_aigis = new GraphHandles((path + "アイギス").c_str(), 4, charaEx, 0, false, true);
 	m_assault = new GraphHandles((path + "アサルト03").c_str(), 4, charaEx);
 	m_vermelia = new GraphHandles((path + "ヴェルメリア").c_str(), 1, charaEx);
@@ -284,7 +304,6 @@ OpMovie::OpMovie(SoundPlayer* soundPlayer_p):
 	m_memoryB = new GraphHandles((path + "memB").c_str(), 10, m_ex);
 	m_yuri = new GraphHandles((path + "ユーリ").c_str(), 4, charaEx);
 	m_rabbi = new GraphHandles((path + "ラビ―").c_str(), 4, charaEx);
-	m_tank = new GraphHandles((path + "棒タンク").c_str(), 4, charaEx);
 	// 表示する順にpush
 	const int CHARA_TIME = 35;
 	characterQueue.push(make_pair(m_koharu, CHARA_TIME));
@@ -309,7 +328,9 @@ OpMovie::OpMovie(SoundPlayer* soundPlayer_p):
 	characterQueue.push(make_pair(m_siesta, CHARA_TIME));
 
 	// サビ
-	m_heartFlame = new GraphHandles((path + "sabi/" + "heartFlame").c_str(), 1, m_ex);
+	m_orange = new GraphHandles((path + "sabi/" + "orange").c_str(), 3, m_ex, 0, true);
+	m_duplications = new GraphHandles((path + "sabi/" + "duplication").c_str(), 16, m_ex, 0, true);
+	m_heartFlame = new GraphHandles((path + "sabi/" + "heartFlame").c_str(), 1, m_ex, 0, true);
 	m_rmem = new GraphHandles((path + "sabi/" + "rmem").c_str(), 8, m_ex);
 	m_heartSabi = new GraphHandles((path + "sabi/" + "heart").c_str(), 2, m_ex);
 	m_tvSiesta = new GraphHandles((path + "sabi/" + "シエスタ").c_str(), 1, m_ex);
@@ -325,6 +346,11 @@ OpMovie::OpMovie(SoundPlayer* soundPlayer_p):
 	m_centerX = GAME_WIDE / 2;
 	m_centerY = GAME_HEIGHT / 2;
 	m_animation = new Animation(m_centerX, m_centerY, 120, m_titleH);
+
+	// サビ用
+	m_orangeAnime = new Animation(m_centerX, m_centerY, 10, m_orange);
+	m_orangeAnime->setLoopFlag(true);
+	m_duplicationsAnime = new Animation(m_centerX, m_centerY, 42, m_duplications);
 
 	// BGM
 	m_bgmPath = "sound/movie/kobune.mp3";
@@ -400,9 +426,12 @@ OpMovie::~OpMovie() {
 	delete m_memoryB;
 	delete m_yuri;
 	delete m_rabbi;
-	delete m_tank;
 
 	// サビ
+	delete m_orange;
+	delete m_duplications;
+	delete m_orangeAnime;
+	delete m_duplicationsAnime;
 	delete m_heartFlame;
 	delete m_rmem;
 	delete m_heartSabi;
@@ -581,6 +610,10 @@ void OpMovie::play() {
 		}
 	}
 	else if (m_cnt < 3750 && m_cnt >= 3050) { // サビ1
+		m_orangeAnime->count();
+		if (m_cnt > 3100) {
+			m_duplicationsAnime->count();
+		}
 		if (m_cnt == 3050) {
 			m_animation->setX(m_centerX);
 			m_animation->setY(m_centerY);
@@ -680,6 +713,15 @@ void OpMovie::draw() {
 		int alpha = min(255, m_cnt - 4350);
 		SetDrawBlendMode(DX_BLENDMODE_ALPHA, alpha);
 	}
+	SetDrawMode(DX_DRAWMODE_BILINEAR);
+	if (m_cnt < 3750 && m_cnt >= 3050) {
+		m_animationDrawer->setAnimation(m_orangeAnime);
+		m_animationDrawer->drawAnimation();
+		if (m_cnt > 3100 && (m_cnt / 2) % 2 == 0) {
+			m_animationDrawer->setAnimation(m_duplicationsAnime);
+			m_animationDrawer->drawAnimation();
+		}
+	}
 	Movie::draw();
 	SetDrawBlendMode(DX_BLENDMODE_ALPHA, 255);
 	if (m_cnt > 980 && m_cnt < 1470) {
@@ -692,4 +734,8 @@ void OpMovie::draw() {
 		DrawBox(0, 0, GAME_WIDE, GAME_HEIGHT, BLACK, TRUE);
 	}
 	drawFlame();
+	SetDrawMode(DX_DRAWMODE_NEAREST);
+
+	// Zキー長押しでスキップの表示
+	drawSkip(m_skipCnt, m_exX, m_exY, m_textHandle);
 }

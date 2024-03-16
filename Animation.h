@@ -30,6 +30,9 @@ private:
 	// アニメーションが終了
 	bool m_finishFlag;
 
+	// ループ再生
+	bool m_loopFlag;
+
 public:
 	Animation(int x, int y, int flameCnt, GraphHandles* graphHandles);
 
@@ -46,7 +49,8 @@ public:
 	inline void setY(int y) { m_y = y; }
 	inline void setCnt(int cnt) { m_cnt = cnt; }
 	inline void setFinishCnt(int finishCnt) { m_finishCnt = finishCnt; }
-	inline void setFinishFlag(int finishFlag) { m_finishFlag = finishFlag; }
+	inline void setFinishFlag(bool finishFlag) { m_finishFlag = finishFlag; }
+	inline void setLoopFlag(bool loopFlag) { m_loopFlag = loopFlag; }
 
 	// 初期化
 	void init();
@@ -68,11 +72,21 @@ protected:
 
 	// 解像度の変更に対応
 	double m_ex;
+	// テキストやフォントのサイズの倍率
+	double m_exX;
+	double m_exY;
+
+	// フォント（テキスト）
+	int m_textHandle;
+	const int TEXT_SIZE = 50;
 
 	int m_flameWide, m_flameHeight;
 
 	// 終了したらtrue
 	bool m_finishFlag;
+
+	// Zキーの長押し時間
+	int m_skipCnt;
 
 	// 開始からの経過時間
 	int m_cnt;
@@ -99,9 +113,10 @@ public:
 	virtual ~Movie();
 
 	// ゲッタ
-	bool getFinishFlag() const { return m_finishFlag; }
-	Animation* getAnimation() const { return m_animation; }
-	std::queue<Animation*> getSubAnimation() const { return m_subAnimation; }
+	inline bool getFinishFlag() const { return m_finishFlag; }
+	inline bool getSkipCnt() const { return m_skipCnt; }
+	inline Animation* getAnimation() const { return m_animation; }
+	inline std::queue<Animation*> getSubAnimation() const { return m_subAnimation; }
 	inline int getCnt() const { return m_cnt; }
 
 	// 再生
@@ -215,9 +230,12 @@ private:
 	GraphHandles* m_memoryB;
 	GraphHandles* m_yuri;
 	GraphHandles* m_rabbi;
-	GraphHandles* m_tank;
 
 	// サビ
+	GraphHandles* m_orange;
+	GraphHandles* m_duplications;
+	Animation* m_orangeAnime;
+	Animation* m_duplicationsAnime;
 	GraphHandles* m_heartFlame;
 	GraphHandles* m_rmem;
 	GraphHandles* m_heartSabi;

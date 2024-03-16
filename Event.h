@@ -103,6 +103,9 @@ public:
 	Event(int eventNum, World* world, SoundPlayer* soundPlayer);
 	~Event();
 
+	// ゲッタ
+	inline int getEventNum() { return m_eventNum; }
+
 	// 発火
 	bool fire();
 
@@ -552,6 +555,36 @@ public:
 
 	// クリア時に前のセーブポイントへ戻る必要があるか
 	bool needBackPrevSave() { return true; }
+};
+
+// 特定のエリアへ強制的に移動する
+class MoveAreaEvent :
+	public EventElement
+{
+private:
+	
+	int m_areaNum;
+
+public:
+	MoveAreaEvent(World* world, std::vector<std::string> param);
+
+	// プレイ
+	EVENT_RESULT play();
+};
+
+// 世界の描画をする・しない
+class BlindWorldEvent :
+	public EventElement
+{
+private:
+
+	int m_flag;
+
+public:
+	BlindWorldEvent(World* world, std::vector<std::string> param);
+
+	// プレイ
+	EVENT_RESULT play();
 };
 
 #endif

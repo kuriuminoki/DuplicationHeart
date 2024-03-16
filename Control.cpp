@@ -84,6 +84,11 @@ int controlQ() {
 	return Key[KEY_INPUT_Q];
 }
 
+// Zキー（イベントスキップ）
+int controlZ() {
+	return Key[KEY_INPUT_Z];
+}
+
 //デバッグモード起動用
 int controlDebug() {
 	if (Key[KEY_INPUT_P] == 1) { // Pキーが押されていたら

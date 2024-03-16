@@ -112,6 +112,7 @@ void TextAction::play() {
 Conversation::Conversation(int textNum, World* world, SoundPlayer* soundPlayer) {
 
 	m_finishCnt = 0;
+	m_skipCnt = 0;
 	m_startCnt = FINISH_COUNT;
 	m_finishFlag = false;
 	m_world_p = world;
@@ -227,8 +228,14 @@ bool Conversation::play() {
 		m_animations.push_back(new Animation(handX, handY, 4, m_clickGraph));
 	}
 
-	// クリック長押しで終了
-	if (leftClick() == 60) { m_finishFlag = true; return true; }
+	// Zキー長押しで終了
+	if (controlZ() > 0) { 
+		if (m_skipCnt++ == 60) {
+			m_finishFlag = true;
+			return true;
+		}
+	}
+	else { m_skipCnt = 0; }
 
 	// 終了処理
 	if (m_finishCnt > 0) {

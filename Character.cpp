@@ -795,12 +795,12 @@ Character* SlashOnly::createCopy() {
 ParabolaOnly::ParabolaOnly(const char* name, int hp, int x, int y, int groupId) :
 	Heart(name, hp, x, y, groupId)
 {
-
+	m_bulletColor = GRAY;
 }
 ParabolaOnly::ParabolaOnly(const char* name, int hp, int x, int y, int groupId, AttackInfo* attackInfo) :
 	Heart(name, hp, x, y, groupId, attackInfo)
 {
-
+	m_bulletColor = GRAY;
 }
 
 Character* ParabolaOnly::createCopy() {

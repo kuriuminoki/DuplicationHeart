@@ -1,4 +1,5 @@
 #include "Story.h"
+#include "Game.h"
 #include "Event.h"
 #include "CsvReader.h"
 #include "World.h"
@@ -10,13 +11,19 @@
 using namespace std;
 
 
-Story::Story(int storyNum, World* world, SoundPlayer* soundPlayer) {
+Story::Story(int storyNum, World* world, SoundPlayer* soundPlayer, EventData* eventData) {
 	m_world_p = world;
 	m_nowEvent = nullptr;
 	m_storyNum = storyNum;
+	m_eventData_p = eventData;
 
 	m_characterLoader = new CharacterLoader;
 	m_objectLoader = new ObjectLoader;
+
+	m_date = 0;
+	m_version = 0;
+	m_resetWorld = false;
+	m_initDark = false;
 
 	// story○○.csvをロード
 	ostringstream oss;
@@ -51,9 +58,24 @@ void Story::loadCsvData(const char* fileName, World* world, SoundPlayer* soundPl
 	for (unsigned int i = 0; i < eventData.size(); i++) {
 		int eventNum = stoi(eventData[i]["num"]);
 		bool mustFlag = (bool)stoi(eventData[i]["mustFlag"]);
-		Event* eventOne = new Event(eventNum, world, soundPlayer);
-		if (mustFlag) { m_mustEvent.push_back(eventOne); }
-		else { m_subEvent.push_back(eventOne); }
+		string condition = eventData[i]["condition"];
+		string secondNum = eventData[i]["secondNum"];
+		// conditionがクリア済みならsecondNumのイベントを代わりにセット
+		if (condition != "" && m_eventData_p->checkClearEvent(stoi(eventData[i]["condition"]))) {
+			if (secondNum != "") {
+				// 代わりのイベントをセット
+				eventNum = stoi(eventData[i]["secondNum"]);
+			}
+			else {
+				// 代わりのイベントはない
+				eventNum = -1;
+			}
+		}
+		if (eventNum != -1) {
+			Event* eventOne = new Event(eventNum, world, soundPlayer);
+			if (mustFlag) { m_mustEvent.push_back(eventOne); }
+			else { m_subEvent.push_back(eventOne); }
+		}
 	}
 
 	// キャラクターを用意
@@ -84,9 +106,17 @@ void Story::loadCsvData(const char* fileName, World* world, SoundPlayer* soundPl
 			loadCsvData(oss.str().c_str(), world, soundPlayer);
 		}
 	}
+
+	// Storyの初期状態
+	vector<map<string, string> > initData = csvReader2.getDomainData("INIT:");
+	if (initData.size() > 0) {
+		m_initDark = (bool)stoi(initData[0]["dark"]);
+		m_resetWorld = (bool)stoi(initData[0]["resetWorld"]);
+	}
 }
 
 bool Story::play() {
+	m_initDark = false;
 	if (m_nowEvent == nullptr) {
 		// 普通に世界を動かす
 		m_world_p->battle();
@@ -97,6 +127,10 @@ bool Story::play() {
 		// イベント進行中
 		EVENT_RESULT result = m_nowEvent->play();
 		
+		// イベントクリア
+		if (result == EVENT_RESULT::SUCCESS) {
+			m_eventData_p->setClearEvent(m_nowEvent->getEventNum());
+		}
 		// イベント失敗
 		if (result == EVENT_RESULT::FAILURE) {
 			// mustのイベントならタイトルへ戻る

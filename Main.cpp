@@ -44,9 +44,7 @@ void Wait() {
 int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 	SetWindowSizeChangeEnableFlag(TRUE);//windowサイズ変更可能
 	SetUseDirectInputFlag(TRUE);
-	GameData* gameData = new GameData();
 	SetGraphMode(GAME_WIDE, GAME_HEIGHT, GAME_COLOR_BIT_NUM);
-	delete gameData;
 
 	ChangeWindowMode(WINDOW), DxLib_Init(), SetDrawScreen(DX_SCREEN_BACK);
 	
@@ -96,7 +94,9 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 				SetMouseDispFlag(MOUSE_DISP);//マウス表示
 				title = new Title();
 			}
-			else{ gameDrawer->draw(); }
+			else if(game->ableDraw()){ 
+				gameDrawer->draw();
+			}
 		}
 		else {
 			Title::TITLE_RESULT result = title->play();
