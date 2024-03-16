@@ -596,8 +596,14 @@ MoveAreaEvent::MoveAreaEvent(World* world, std::vector<std::string> param) :
 	m_areaNum = stoi(param[1]);
 }
 EVENT_RESULT MoveAreaEvent::play() {
-	m_world_p->moveArea(m_areaNum);
-	return EVENT_RESULT::SUCCESS;
+	m_world_p->dealBrightValue();
+	if (m_world_p->getNextAreaNum() != m_areaNum) {
+		m_world_p->moveArea(m_areaNum);
+	}
+	else if (m_world_p->getAreaNum() == m_areaNum) {
+		return EVENT_RESULT::SUCCESS;
+	}
+	return EVENT_RESULT::NOW;
 }
 
 

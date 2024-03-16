@@ -72,11 +72,21 @@ protected:
 
 	// 解像度の変更に対応
 	double m_ex;
+	// テキストやフォントのサイズの倍率
+	double m_exX;
+	double m_exY;
+
+	// フォント（テキスト）
+	int m_textHandle;
+	const int TEXT_SIZE = 50;
 
 	int m_flameWide, m_flameHeight;
 
 	// 終了したらtrue
 	bool m_finishFlag;
+
+	// Zキーの長押し時間
+	int m_skipCnt;
 
 	// 開始からの経過時間
 	int m_cnt;
@@ -103,9 +113,10 @@ public:
 	virtual ~Movie();
 
 	// ゲッタ
-	bool getFinishFlag() const { return m_finishFlag; }
-	Animation* getAnimation() const { return m_animation; }
-	std::queue<Animation*> getSubAnimation() const { return m_subAnimation; }
+	inline bool getFinishFlag() const { return m_finishFlag; }
+	inline bool getSkipCnt() const { return m_skipCnt; }
+	inline Animation* getAnimation() const { return m_animation; }
+	inline std::queue<Animation*> getSubAnimation() const { return m_subAnimation; }
 	inline int getCnt() const { return m_cnt; }
 
 	// 再生

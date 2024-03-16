@@ -141,6 +141,9 @@
     <ClCompile Include="Item.cpp">
       <Filter>ソース ファイル\Domain</Filter>
     </ClCompile>
+    <ClCompile Include="DrawTool.cpp">
+      <Filter>ソース ファイル\ui</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Define.h">
@@ -232,6 +235,9 @@
     </ClInclude>
     <ClInclude Include="Item.h">
       <Filter>ヘッダー ファイル\Domain</Filter>
+    </ClInclude>
+    <ClInclude Include="DrawTool.h">
+      <Filter>ヘッダー ファイル\ui</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

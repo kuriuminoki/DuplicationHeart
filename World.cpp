@@ -667,11 +667,9 @@ void World::battle() {
 	if (!m_soundPlayer_p->checkBGMplay()) {
 		m_soundPlayer_p->playBGM();
 	}
-	// 画面暗転中 エリア移動かプレイヤーやられ時
-	if (m_brightValue != 255 || playerDead()) {
-		m_brightValue = max(0, m_brightValue - 10);
-		if (!playerDead()) { return; }
-	}
+	
+	// 画面暗転処理
+	if (dealBrightValue()) { return; }
 
 	// オブジェクトを調べた時のテキスト
 	if (m_objectConversation != nullptr) {
@@ -1068,6 +1066,15 @@ bool World::moveGoalCharacter() {
 	updateAnimation();
 
 	return allCharacterAlreadyGoal;
+}
+
+bool World::dealBrightValue() {
+	// 画面暗転中 エリア移動かプレイヤーやられ時
+	if (m_brightValue != 255 || playerDead()) {
+		m_brightValue = max(0, m_brightValue - 10);
+		if (!playerDead()) { return true; }
+	}
+	return false;
 }
 
 // 会話させる

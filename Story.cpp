@@ -22,6 +22,7 @@ Story::Story(int storyNum, World* world, SoundPlayer* soundPlayer, EventData* ev
 
 	m_date = 0;
 	m_version = 0;
+	m_resetWorld = false;
 	m_initDark = false;
 
 	// story››.csv‚ğƒ[ƒh
@@ -110,6 +111,7 @@ void Story::loadCsvData(const char* fileName, World* world, SoundPlayer* soundPl
 	vector<map<string, string> > initData = csvReader2.getDomainData("INIT:");
 	if (initData.size() > 0) {
 		m_initDark = (bool)stoi(initData[0]["dark"]);
+		m_resetWorld = (bool)stoi(initData[0]["resetWorld"]);
 	}
 }
 

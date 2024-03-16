@@ -179,7 +179,7 @@ public:
 	inline void setBlindFlag(bool blindFlag) { m_blindFlag = blindFlag; }
 
 	// 強制的にエリア移動
-	inline void moveArea(int nextArea) { m_brightValue = 0; m_nextAreaNum = nextArea; m_resetBgmFlag = true; }
+	inline void moveArea(int nextArea) { m_brightValue--; m_nextAreaNum = nextArea; m_resetBgmFlag = true; }
 
 	// ID指定でBrain変更
 	void setBrainWithId(int id, Brain* brain);
@@ -243,6 +243,9 @@ public:
 
 	// 各キャラが目標地点へ移動するだけ
 	bool moveGoalCharacter();
+
+	// 画面が暗転するだけ キャラが動けない期間ならtrue
+	bool dealBrightValue();
 
 	// キャラに会話させる
 	void talk();

@@ -1,7 +1,9 @@
 #include "Animation.h"
 #include "AnimationDrawer.h"
+#include "Control.h"
 #include "GraphHandle.h"
 #include "Sound.h"
+#include "DrawTool.h"
 #include "Define.h"
 #include "DxLib.h"
 
@@ -71,9 +73,8 @@ GraphHandle* Animation::getHandle() const {
 * 動画の基底クラス
 */
 Movie::Movie(SoundPlayer* soundPlayer_p) {
-	double exX, exY;
-	getGameEx(exX, exY);
-	m_ex = min(exX, exY);
+	getGameEx(m_exX, m_exY);
+	m_ex = min(m_exX, m_exY);
 	m_finishFlag = false;
 	m_cnt = 0;
 	m_animation = nullptr;
@@ -84,6 +85,9 @@ Movie::Movie(SoundPlayer* soundPlayer_p) {
 
 	m_flameWide = (GAME_WIDE - (int)(GAME_WIDE_DEFAULT * m_ex)) / 2;
 	m_flameHeight = (GAME_HEIGHT - (int)(GAME_HEIGHT_DEFAULT * m_ex)) / 2;
+
+	// フォントデータ
+	m_textHandle = CreateFontToHandle(nullptr, (int)(TEXT_SIZE * m_exX), 3);
 }
 
 Movie::~Movie() {
@@ -91,6 +95,8 @@ Movie::~Movie() {
 		delete m_animation;
 	}
 	m_soundPlayer_p->setBGM(m_originalBgmPath);
+	// フォントデータ削除
+	DeleteFontToHandle(m_textHandle);
 }
 
 void Movie::play() {
@@ -116,6 +122,14 @@ void Movie::play() {
 			m_subAnimation.push(subAnimation);
 		}
 	}
+
+	// Zキー長押しで終了
+	if (controlZ() > 0) {
+		if (m_skipCnt++ == 60) {
+			m_finishFlag = true;
+		}
+	}
+	else { m_skipCnt = 0; }
 }
 
 void Movie::draw() {
@@ -721,4 +735,7 @@ void OpMovie::draw() {
 	}
 	drawFlame();
 	SetDrawMode(DX_DRAWMODE_NEAREST);
+
+	// Zキー長押しでスキップの表示
+	drawSkip(m_skipCnt, m_exX, m_exY, m_textHandle);
 }

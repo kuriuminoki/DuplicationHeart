@@ -21,7 +21,7 @@ using namespace std;
 
 
 // どこまで
-const int FINISH_STORY = 10;
+const int FINISH_STORY = 12;
 // エリア0でデバッグするときはtrueにする
 const bool TEST_MODE = false;
 // スキルが発動可能になるストーリー番号
@@ -264,14 +264,8 @@ GameData::GameData(const char* saveFilePath, int storyNum) :
 	// いったん最新のデータを読み込む
 	m_exist = load();
 	
-	// 古いチャプターのデータを読み込んで上書き latestStoryNumだけは変わらない
-	int latestStoryNum = m_latestStoryNum;
-	ostringstream oss;
-	oss << m_saveFilePath << "chapter/" << storyNum << "/";
-	m_saveFilePath = oss.str();
-	load();
-	m_saveFilePath = saveFilePath;
-	m_latestStoryNum = latestStoryNum;
+	// 古いチャプターのデータを読み込んで上書き
+	loadChapter(storyNum);
 }
 
 GameData::~GameData() {
@@ -293,11 +287,11 @@ CharacterData* GameData::getCharacterData(string characterName) {
 	return nullptr;
 }
 
-// セーブ
-bool GameData::save() {
+// セーブ forceがfalseなら最新のチャプター以外のセーブを拒否する
+bool GameData::save(bool force) {
 
 	// 今やっているチャプターが最新ならセーブ
-	if (m_storyNum == m_latestStoryNum) {
+	if (m_storyNum == m_latestStoryNum || force) {
 		FILE* intFp = nullptr, * strFp = nullptr, * eventFp = nullptr;
 
 		// 全セーブデータ共通
@@ -375,17 +369,30 @@ bool GameData::load() {
 // バックアップを取る（チャプター巻き戻し機能用）
 bool GameData::saveChapter() {
 
+	string filePath = m_saveFilePath;
 	// savedata/<セーブデータ番号>/chapter/<storyNum>/
 	ostringstream oss;
 	oss << m_saveFilePath << "chapter/" << m_storyNum;
 	_mkdir(oss.str().c_str());
-	string filePath = m_saveFilePath;
 	m_saveFilePath = oss.str() + "/";
-	save();
+	save(true);
 	// パスをもとに戻す
 	m_saveFilePath = filePath;
 
 	return true;
+}
+
+// チャプターを指定してロード、latestStoryNumだけは変わらない
+bool GameData::loadChapter(int storyNum) {
+	int latestStoryNum = m_latestStoryNum;
+	string filePath = m_saveFilePath;
+	ostringstream oss;
+	oss << m_saveFilePath << "chapter/" << storyNum << "/";
+	m_saveFilePath = oss.str();
+	bool flag = load();
+	m_saveFilePath = filePath;
+	m_latestStoryNum = latestStoryNum;
+	return flag;
 }
 
 // 全セーブデータ共通
@@ -449,6 +456,8 @@ void GameData::asignedWorld(const World* world, bool notCharacterPoint) {
 
 // ストーリーが進んだ時にセーブデータを更新する エリア外（World以外）も考慮する
 void GameData::updateStory(Story* story) {
+
+	// 新しいStoryの情報取得
 	m_areaNum = story->getWorld()->getAreaNum();
 	m_storyNum = story->getStoryNum();
 	m_latestStoryNum = max(m_latestStoryNum, m_storyNum);
@@ -463,6 +472,16 @@ void GameData::updateStory(Story* story) {
 	ObjectLoader* objectLoader = story->getObjectLoader();
 	objectLoader->saveDoorData(m_doorData);
 }
+
+// 世界のやり直し
+void GameData::resetWorld() {
+	for (unsigned int i = 0; i < m_characterData.size(); i++) {
+		m_characterData[i]->setId(-1);
+		m_characterData[i]->setAreaNum(-1);
+	}
+	m_doorData.clear();
+}
+
 
 
 /*
@@ -602,13 +621,21 @@ bool Game::play() {
 		int nextStoryNum = m_gameData->getStoryNum() + 1;
 		delete m_story;
 		m_story = new Story(nextStoryNum, m_world, m_soundPlayer, m_gameData->getEventData());
-		if (m_story->getInitDark()) { m_soundPlayer->stopBGM(); }
+		// Blind状態はStoryが変わった時にリセット
+		m_world->setBlindFlag(false);
+		// 世界のやり直しが起きる場合ドアやキャラのデータを初期化
+		if (m_story->getResetWorld()) {
+			m_gameData->resetWorld();
+			m_gameData->asignWorld(m_world, true);
+			m_soundPlayer->stopBGM();
+		}
 		// ストーリーの影響でオブジェクトが追加される（一度追加されると今後GameDataでデータは保持され続ける）
 		// セーブデータに上書き
 		m_gameData->updateStory(m_story);
-		m_gameData->asignedWorld(m_world, false);
+		if (!m_story->getResetWorld()) {
+			m_gameData->asignedWorld(m_world, false);
+		}
 		// Worldに反映
-		//m_world->setDate(m_story->getDate());
 		m_world->addCharacter(m_story->getCharacterLoader());
 		m_world->addObject(m_story->getObjectLoader());
 		// セーブ
@@ -650,8 +677,10 @@ bool Game::play() {
 		int toAreaNum = m_world->getNextAreaNum();
 		m_gameData->asignedWorld(m_world, false);
 		bool resetBgmFlag = m_world->getResetBgmFlag();
+		bool blindFlag = m_world->getBlindFlag();
 		delete m_world;
 		m_world = new World(fromAreaNum, toAreaNum, m_soundPlayer);
+		m_world->setBlindFlag(blindFlag);
 		if(resetBgmFlag){ m_soundPlayer->stopBGM(); }
 		m_gameData->asignWorld(m_world);
 		m_world->setPlayerOnDoor(fromAreaNum);

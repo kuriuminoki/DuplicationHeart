@@ -107,7 +107,7 @@ void WorldDrawer::draw() {
 		}
 	}
 
-	if (movie == nullptr && conversation == nullptr) {
+	if (!m_world->getBlindFlag() && movie == nullptr && conversation == nullptr) {
 		// ターゲット
 		m_targetDrawer.setEx(camera->getEx());
 		m_targetDrawer.draw();
