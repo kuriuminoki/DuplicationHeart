@@ -181,6 +181,7 @@
     <ClCompile Include="Text.cpp" />
     <ClCompile Include="TextDrawer.cpp" />
     <ClCompile Include="Title.cpp" />
+    <ClCompile Include="DrawTool.cpp" />
     <ClCompile Include="World.cpp" />
     <ClCompile Include="WorldDrawer.cpp" />
   </ItemGroup>
@@ -199,6 +200,7 @@
     <ClInclude Include="ControllerRecorder.h" />
     <ClInclude Include="CsvReader.h" />
     <ClInclude Include="Define.h" />
+    <ClInclude Include="DrawTool.h" />
     <ClInclude Include="Event.h" />
     <ClInclude Include="Game.h" />
     <ClInclude Include="GameDrawer.h" />
