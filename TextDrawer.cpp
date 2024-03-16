@@ -3,6 +3,7 @@
 #include "GraphHandle.h"
 #include "Animation.h"
 #include "AnimationDrawer.h"
+#include "DrawTool.h"
 #include "Define.h"
 #include "DxLib.h"
 #include <string>
@@ -117,19 +118,8 @@ void ConversationDrawer::draw() {
 		}
 	}
 
-	int skipCnt = m_conversation->getSkipCnt();
-	static const int SKIP_WIDE = 600;
-	static const int SKIP_HEIGHT = 100;
-	if (skipCnt > 0) {
-		int x2 = GAME_WIDE - 10;
-		int x1 = x2 - (int)(SKIP_WIDE * m_exX);
-		int x15 = (int)(x1 + skipCnt * (SKIP_WIDE / 60) * m_exX);
-		int y1 = 10;
-		int y2 = y1 + (int)(SKIP_HEIGHT * m_exY);
-		DrawBox(x1, y1, x15, y2, BLACK, TRUE);
-		DrawBox(x15, y1, x2, y2, GRAY, TRUE);
-		DrawStringToHandle(x1 + 5, y1 + 5, "Ｚキー長押しでスキップ", WHITE, m_textHandle);
-	}
+	// Zキー長押しでスキップの表示
+	drawSkip(m_conversation->getSkipCnt(), m_exX, m_exY, m_textHandle);
 	
 	// 画面右下のクリック要求アイコン
 	bool textFinish = m_conversation->finishText() && m_conversation->getFinishCnt() == 0 && m_conversation->getStartCnt() == 0 && m_conversation->nextTextAble();

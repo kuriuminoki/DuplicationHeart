@@ -81,6 +81,10 @@ World::World() {
 
 	m_brightValue = 255;
 
+	m_resetBgmFlag = false;
+
+	m_blindFlag = false;
+
 	// 会話イベント
 	m_conversation_p = nullptr;
 	m_objectConversation = nullptr;
@@ -663,11 +667,9 @@ void World::battle() {
 	if (!m_soundPlayer_p->checkBGMplay()) {
 		m_soundPlayer_p->playBGM();
 	}
-	// 画面暗転中 エリア移動かプレイヤーやられ時
-	if (m_brightValue != 255 || playerDead()) {
-		m_brightValue = max(0, m_brightValue - 10);
-		if (!playerDead()) { return; }
-	}
+	
+	// 画面暗転処理
+	if (dealBrightValue()) { return; }
 
 	// オブジェクトを調べた時のテキスト
 	if (m_objectConversation != nullptr) {
@@ -733,8 +735,8 @@ void World::updateCamera() {
 			if (dx < MAX_DISABLE) {
 				max_dx = max(max_dx, dx);
 				int y = m_characters[i]->getY();
-				if (m_camera->getY() < y) { y += m_characters[i]->getHeight() * 2; }
-				else { y -= m_characters[i]->getHeight(); }
+				if (m_camera->getY() < y) { y += m_characters[i]->getHeight() * 3 / 2; }
+				else { y -= m_characters[i]->getHeight() / 2; }
 				max_dy = max(max_dy, abs(m_camera->getY() - y));
 			}
 		}
@@ -1064,6 +1066,15 @@ bool World::moveGoalCharacter() {
 	updateAnimation();
 
 	return allCharacterAlreadyGoal;
+}
+
+bool World::dealBrightValue() {
+	// 画面暗転中 エリア移動かプレイヤーやられ時
+	if (m_brightValue != 255 || playerDead()) {
+		m_brightValue = max(0, m_brightValue - 10);
+		if (!playerDead()) { return true; }
+	}
+	return false;
 }
 
 // 会話させる
