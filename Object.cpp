@@ -19,7 +19,7 @@ const double OBJECT_DEFAULT_SIZE = 0.3;
 Object::Object() :
 	Object(0, 0, 0, 0, -1)
 {
-
+	
 }
 
 Object::Object(int x1, int y1, int x2, int y2, int hp) {
@@ -34,6 +34,7 @@ Object::Object(int x1, int y1, int x2, int y2, int hp) {
 	m_handle = nullptr;
 
 	m_hp = hp;
+	m_bomb = false;
 	m_damageCnt = 0;
 
 	m_deleteFlag = false;
@@ -543,6 +544,7 @@ BulletObject::BulletObject(int x, int y, int color, int gx, int gy, AttackInfo* 
 	m_damage = attackInfo->bulletDamage();
 	m_d = attackInfo->bulletDistance();
 	m_hp = attackInfo->bulletHp();
+	m_bomb = attackInfo->bulletBomb();
 
 	// 角度を計算し、VXとVYを決定
 	int dx = gx - x;
@@ -645,6 +647,14 @@ void BulletObject::action() {
 	}
 }
 
+// 画像ハンドルを返す
+GraphHandle* BulletObject::getHandle() const {
+	if (m_handle == nullptr) { return nullptr; }
+	if (m_vx < 0) { m_handle->setReverseX(true); }
+	else { m_handle->setReverseX(false); }
+	return m_handle;
+}
+
 
 ParabolaBullet::ParabolaBullet(int x, int y, int color, int gx, int gy, AttackInfo* attackInfo):
 	BulletObject(x, y, color, gx, gy, attackInfo)
@@ -652,9 +662,8 @@ ParabolaBullet::ParabolaBullet(int x, int y, int color, int gx, int gy, AttackIn
 
 }
 ParabolaBullet::ParabolaBullet(int x, int y, GraphHandle* handle, int gx, int gy, AttackInfo* attackInfo):
-	BulletObject(x, y, -1, gx, gy, attackInfo)
+	BulletObject(x, y, handle, gx, gy, attackInfo)
 {
-	m_handle = handle;
 	// 攻撃範囲に合わせて画像の拡大率を設定
 	int attackSize = max(attackInfo->bulletRx(), attackInfo->bulletRy());
 	int graphX = 0, graphY = 0;
@@ -678,7 +687,7 @@ void ParabolaBullet::action() {
 }
 
 // 画像ハンドルを返す
-GraphHandle* BulletObject::getHandle() const { 
+GraphHandle* ParabolaBullet::getHandle() const {
 	if (m_handle == nullptr) { return nullptr; }
 	double r = atan2((double)m_vy, (double)m_vx);
 	if (m_vy == 0) { r = 0; }
@@ -767,8 +776,8 @@ bool SlashObject::atari(CharacterController* characterController) {
 
 	// 当たり判定
 	if (characterX2 > m_x1 && characterX1 < m_x2 && characterY2 > m_y1 && characterY1 < m_y2 && characterController->getAction()->ableDamage()) {
-		// 貫通弾じゃないなら消滅
-		 // m_deleteFlag = true;
+		// 貫通しない斬撃なら消滅
+		// m_deleteFlag = true;
 		if (characterX1 + characterX2 < m_x1 + m_x2) {
 			characterController->damage(-m_slashImpactX, -m_slashImpactY, m_damage);
 		}
@@ -805,6 +814,111 @@ void SlashObject::action() {
 		m_deleteFlag = true;
 	}
 }
+
+
+BombObject::BombObject(int x, int y, int dx, int dy, int damage, Animation* bombAnimation) :
+	Object(x - dx / 2, y - dy / 2, x + dx / 2, y + dy / 2, -1)
+{
+	m_animation = bombAnimation;
+	m_x = x;
+	m_y = y;
+	m_dx = dx;
+	m_dy = dy;
+	dx /= 2;
+	dy /= 2;
+	m_distance = (int)sqrt(dx * dx + dy * dy);
+	m_damage = damage;
+	// デフォルトでは無敵キャラ以外の全員に当たる
+	m_characterId = -1;
+	m_groupId = -1;
+}
+
+BombObject::~BombObject() {
+	delete m_animation;
+}
+
+// キャラとの当たり判定
+// 当たっているならキャラを操作する。
+bool BombObject::atari(CharacterController* characterController) {
+	// まだ判定なし
+	if (ableDamage()) { return false; }
+
+	// 自滅防止
+	if (m_characterId == characterController->getAction()->getCharacter()->getId()) {
+		return false;
+	}
+	// チームキル防止
+	int groupId = characterController->getAction()->getCharacter()->getGroupId();
+	if (m_groupId == groupId || groupId == -1) {
+		return false;
+	}
+
+	// キャラの情報　座標と移動スピード
+	int characterX1 = characterController->getAction()->getCharacter()->getX();
+	int characterY1 = characterController->getAction()->getCharacter()->getY();
+	int characterX2 = characterX1 + characterController->getAction()->getCharacter()->getWide();
+	int characterY2 = characterY1 + characterController->getAction()->getCharacter()->getHeight();
+
+	// 当たり判定
+	if (characterX2 > m_x1 && characterX1 < m_x2 && characterY2 > m_y1 && characterY1 < m_y2 && characterController->getAction()->ableDamage()) {
+		double damageRate = calcDamageRate(characterController->getAction()->getCharacter()->getCenterX(), characterController->getAction()->getCharacter()->getCenterY());
+		int bombImpact = (int)(damageRate * BOMB_IMPACT);
+		if (characterX1 + characterX2 < m_x1 + m_x2) {
+			characterController->damage(-bombImpact, -bombImpact, (int)(m_damage * damageRate));
+		}
+		else {
+			characterController->damage(bombImpact, -bombImpact, (int)(m_damage * damageRate));
+		}
+		return true;
+	}
+	return false;
+}
+
+// 他攻撃オブジェクトとの当たり判定
+bool BombObject::atariObject(Object* object) {
+	// まだ判定なし
+	if (ableDamage()) { return false; }
+	// どちらかが破壊不能オブジェクト
+	if (!object->getAbleDelete() || !getAbleDelete() || m_groupId == object->getGroupId()) {
+		return false;
+	}
+	// 当たっているなら
+	if (m_x2 > object->getX1() && m_x1 < object->getX2() && m_y2 > object->getY1() && m_y1 < object->getY2()) {
+		int damage = (int)(m_damage * calcDamageRate(min(abs(m_x - object->getX1()), abs(m_x - object->getX2())), min(abs(m_y - object->getY1()), abs(m_y - object->getY2()))));
+		object->decreaseHp(damage);
+		decreaseHp(object->getDamage());
+		return true;
+	}
+	return false;
+}
+
+// 動くオブジェクト用 毎フレーム行う
+void BombObject::action() {
+	m_animation->count();
+	if (m_animation->getFinishFlag()) {
+		m_deleteFlag = true;
+	}
+	else {
+		m_handle = m_animation->getHandle();
+		// 攻撃範囲に合わせて画像の拡大率を設定
+		int graphX = 0, graphY = 0;
+		GetGraphSize(m_handle->getHandle(), &graphX, &graphY);
+		int graphSize = min(graphX, graphY);
+		m_handle->setEx((double)m_distance / (double)graphSize);
+	}
+}
+
+double BombObject::calcDamageRate(int x, int y) {
+	x -= m_x;
+	y -= m_y;
+	double distance = sqrt(x * x + y + y);
+	return (m_distance - distance) / m_distance;
+}
+
+bool BombObject::ableDamage() {
+	return m_animation->getAnimeNum() > 2 && m_animation->getAnimeNum() < 6;
+}
+
 
 DoorObject::DoorObject(int x1, int y1, int x2, int y2, const char* fileName, int areaNum) :
 	Object(x1, y1, x2, y2)
@@ -916,6 +1030,10 @@ void SlashObject::setSlashParam(SlashObject* object) {
 	object->setSlashImpactX(m_slashImpactX);
 	object->setSlashImpactY(m_slashImpactY);
 	object->setEffectHandles(m_effectHandles_p);
+}
+Object* BombObject::createCopy() {
+	BombObject* res = new BombObject(m_x, m_y, m_dx, m_dy, m_damage, m_animation->createCopy());
+	return res;
 }
 Object* DoorObject::createCopy() {
 	DoorObject* res = new DoorObject(m_x1, m_y1, m_x2, m_y2, m_fileName.c_str(), m_areaNum);

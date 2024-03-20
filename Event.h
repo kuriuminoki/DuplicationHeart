@@ -587,4 +587,15 @@ public:
 	EVENT_RESULT play();
 };
 
+// 永遠にbattle テスト用
+class BattleForever :
+	public EventElement
+{
+public:
+	BattleForever(World* world, std::vector<std::string> param);
+
+	// プレイ
+	EVENT_RESULT play();
+};
+
 #endif

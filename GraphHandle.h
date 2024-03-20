@@ -134,6 +134,9 @@ private:
 	// aŒ‚UŒ‚‰æ‘œ
 	GraphHandles* m_slashHandles;
 
+	// ‹ó’†aŒ‚UŒ‚‰æ‘œ
+	GraphHandles* m_airSlashEffectHandles;
+
 	// ËŒ‚UŒ‚‰æ‘œ
 	GraphHandles* m_bulletHandles;
 
@@ -201,6 +204,7 @@ public:
 
 	// ‰æ‘œ‚ÌƒQƒbƒ^
 	inline GraphHandles* getSlashHandle() { return m_slashHandles; }
+	inline GraphHandles* getAirSlashEffectHandle() { return m_airSlashEffectHandles; }
 	inline GraphHandles* getBulletHandle() { return m_bulletHandles; }
 	inline GraphHandles* getStandHandle() { return m_standHandles; }
 	inline GraphHandles* getStandBulletHandle() { return m_standBulletHandles; }

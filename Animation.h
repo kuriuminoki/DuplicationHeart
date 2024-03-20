@@ -12,7 +12,7 @@ class AnimationDrawer;
 
 class Animation {
 private:
-	// 画像ハンドル
+	// 画像ハンドル deleteはこのクラスでしない
 	GraphHandles* m_handles_p;
 
 	// 座標
@@ -63,6 +63,9 @@ public:
 
 	// 描画用
 	GraphHandle* getHandle() const;
+
+	// 今何枚目か
+	int getAnimeNum() const { return m_cnt / m_flameCnt; }
 };
 
 

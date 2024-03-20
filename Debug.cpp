@@ -213,6 +213,16 @@ void SlashObject::debug(int x, int y, int color) const {
 
 
 /*
+* 爆発のデバッグ
+*/
+void BombObject::debug(int x, int y, int color) const {
+	DrawFormatString(x, y, color, "**BombObject**");
+	//DrawFormatString(x, y + DRAW_FORMAT_STRING_SIZE, color, "cnt=%d", m_cnt);
+	// DrawBox(m_x1, m_y1, m_x2, m_y2, color, FALSE);
+}
+
+
+/*
 * 扉オブジェクトのデバッグ
 */
 void DoorObject::debug(int x, int y, int color) const {

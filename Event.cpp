@@ -155,6 +155,9 @@ void Event::createElement(vector<string> param, World* world, SoundPlayer* sound
 	else if (param0 == "BlindWorld") {
 		element = new BlindWorldEvent(world, param);
 	}
+	else if (param0 == "BattleForever") {
+		element = new BattleForever(world, param);
+	}
 
 	if (element != nullptr) { 
 		m_eventElement = element;
@@ -616,4 +619,16 @@ BlindWorldEvent::BlindWorldEvent(World* world, std::vector<std::string> param) :
 EVENT_RESULT BlindWorldEvent::play() {
 	m_world_p->setBlindFlag(m_flag);
 	return EVENT_RESULT::SUCCESS;
+}
+
+
+// 永遠にbattle テスト用
+BattleForever::BattleForever(World* world, std::vector<std::string> param) :
+	EventElement(world)
+{
+
+}
+EVENT_RESULT BattleForever::play() {
+	m_world_p->battle();
+	return EVENT_RESULT::NOW;
 }

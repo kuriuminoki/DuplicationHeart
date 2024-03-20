@@ -711,7 +711,7 @@ Object* StickAction::slashAttack(int gx, int gy) {
 		startSlash();
 	}
 	// 攻撃のタイミングじゃないならnullptrが返る
-	return m_character_p->slashAttack(m_attackLeftDirection, m_slashCnt, m_soundPlayer_p);
+	return m_character_p->slashAttack(m_attackLeftDirection, m_slashCnt, m_grand, m_soundPlayer_p);
 }
 
 
@@ -1048,5 +1048,5 @@ Object* FlightAction::slashAttack(int gx, int gy) {
 		startSlash();
 	}
 	// 攻撃のタイミングじゃないならnullptrが返る
-	return m_character_p->slashAttack(m_attackLeftDirection, m_slashCnt, m_soundPlayer_p);
+	return m_character_p->slashAttack(m_attackLeftDirection, m_slashCnt, m_grand, m_soundPlayer_p);
 }

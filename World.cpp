@@ -147,7 +147,9 @@ World::World(int fromAreaNum, int toAreaNum, SoundPlayer* soundPlayer) :
 	m_camera->setEx(m_cameraMaxEx);
 
 	m_characterDeadGraph = new GraphHandles("picture/effect/dead", 5, 1.0, 0, true);
+	m_bombGraph = new GraphHandles("picture/effect/bomb", 9, 1.0, 0, true);
 	m_characterDeadSound = LoadSoundMem("sound/battle/dead.wav");
+	m_bombSound = LoadSoundMem("sound/battle/bomb.wav");
 	m_doorSound = LoadSoundMem("sound/battle/door.wav");
 
 }
@@ -156,26 +158,31 @@ World::World(const World* original) :
 	World()
 {
 	m_duplicationFlag = true;
-	m_areaNum = original->getAreaNum();
 
-	// エリアをコピー
-	m_camera = new Camera(original->getCamera());
+	// エリアをコピー (プリミティブ型)
+	m_areaNum = original->getAreaNum();
 	m_focusId = original->getFocusId();
 	m_playerId = original->getPlayerId();
-	m_soundPlayer_p = original->getSoundPlayer();
-	m_characterDeadGraph = original->getCharacterDeadGraph();
-	m_characterDeadSound = original->getCharacterDeadSound();
-	m_doorSound = original->getDoorSound();
 	m_date = original->getDate();
 
-	// キャラをコピー
+	// エリアをコピー (コピー元と共有するもの)
+	m_soundPlayer_p = original->getSoundPlayer();
+	m_characterDeadGraph = original->getCharacterDeadGraph();
+	m_bombGraph = original->getBombGraph();
+	m_characterDeadSound = original->getCharacterDeadSound();
+	m_bombSound = original->getBombSound();
+	m_doorSound = original->getDoorSound();
+	m_backGroundGraph = original->getBackGroundGraph();
+	m_backGroundColor = original->getBackGroundColor();
+
+	// 新規作成するもの (ポインタが変わる)
+	m_camera = new Camera(original->getCamera());
 	for (unsigned int i = 0; i < original->getCharacters().size(); i++) {
 		Character* copy;
 		copy = original->getCharacters()[i]->createCopy();
 		m_characters.push_back(copy);
 		if (copy->getId() == m_playerId) { m_player_p = copy; }
 	}
-	// コントローラをコピー
 	for (unsigned int i = 0; i < original->getCharacterControllers().size(); i++) {
 		CharacterController* copy;
 		// BrainとActionコピー用にCharacterとカメラを渡す
@@ -207,9 +214,8 @@ World::World(const World* original) :
 		copy = original->getItemVector()[i]->createCopy();
 		m_itemVector.push_back(copy);
 	}
-	m_backGroundGraph = original->getBackGroundGraph();
-	m_backGroundColor = original->getBackGroundColor();
 
+	// 初期設定
 	m_camera->setEx(m_cameraMaxEx);
 
 }
@@ -247,7 +253,9 @@ World::~World() {
 	if (!m_duplicationFlag) {
 		DeleteGraph(m_backGroundGraph);
 		delete m_characterDeadGraph;
+		delete m_bombGraph;
 		DeleteSoundMem(m_characterDeadSound);
+		DeleteSoundMem(m_bombSound);
 		DeleteSoundMem(m_doorSound);
 	}
 
@@ -898,7 +906,10 @@ void World::atariCharacterAndObject(CharacterController* controller, vector<Obje
 			// エフェクト作成
 			int x = character->getCenterX();
 			int y = character->getCenterY();
-			m_animations.push_back(objects[i]->createAnimation(x, y, 3));
+			Animation* atariAnimation = objects[i]->createAnimation(x, y, 3);
+			if (atariAnimation != nullptr) {
+				m_animations.push_back(atariAnimation);
+			}
 			// 効果音
 			int soundHandle = objects[i]->getSoundHandle();
 			int panPal = adjustPanSound(x, m_camera->getX());
@@ -960,13 +971,16 @@ void World::atariCharacterAndDoor(CharacterController* controller, vector<Object
 //  Battle：壁や床<->攻撃の当たり判定
 void World::atariStageAndAttack() {
 	for (unsigned int i = 0; i < m_attackObjects.size(); i++) {
+		int x = m_attackObjects[i]->getCenterX();
+		int y = m_attackObjects[i]->getCenterY();
 		for (unsigned int j = 0; j < m_stageObjects.size(); j++) {
 			// 攻撃が壁床に当たっているか判定
 			if (m_stageObjects[j]->atariObject(m_attackObjects[i])) {
-				// 当たった場合 エフェクト作成
-				int x = m_attackObjects[i]->getCenterX();
-				int y = m_attackObjects[i]->getCenterY();
-				m_animations.push_back(m_attackObjects[i]->createAnimation(x, y, 3));
+				// エフェクト作成
+				Animation* atariAnimation = m_attackObjects[i]->createAnimation(x, y, 3);
+				if (atariAnimation != nullptr) {
+					m_animations.push_back(atariAnimation);
+				}
 				int soundHandle = m_attackObjects[i]->getSoundHandle();
 				int panPal = adjustPanSound(x, m_camera->getX());
 				m_soundPlayer_p->pushSoundQueue(soundHandle, panPal);
@@ -981,6 +995,7 @@ void World::atariStageAndAttack() {
 		}
 		// 攻撃のdeleteFlagがtrueなら削除する
 		if (m_attackObjects[i]->getDeleteFlag()) {
+			createBomb(x, y, m_attackObjects[i]);
 			delete m_attackObjects[i];
 			m_attackObjects[i] = m_attackObjects.back();
 			m_attackObjects.pop_back();
@@ -993,18 +1008,35 @@ void World::atariStageAndAttack() {
 void World::atariAttackAndAttack() {
 	if (m_attackObjects.size() == 0) { return; }
 	for (unsigned int i = 0; i < m_attackObjects.size() - 1; i++) {
+		int x = m_attackObjects[i]->getCenterX();
+		int y = m_attackObjects[i]->getCenterY();
 		for (unsigned int j = i + 1; j < m_attackObjects.size(); j++) {
 			// 攻撃が壁床に当たっているか判定
 			if (m_attackObjects[j]->atariObject(m_attackObjects[i])) {
-				// 当たった場合 エフェクト作成
-				int x = m_attackObjects[i]->getCenterX();
-				int y = m_attackObjects[i]->getCenterY();
-				m_animations.push_back(m_attackObjects[j]->createAnimation(x, y, 3));
+				// エフェクト作成
+				Animation* atariAnimation = m_attackObjects[j]->createAnimation(x, y, 3);
+				if (atariAnimation != nullptr) {
+					m_animations.push_back(atariAnimation);
+				}
+				createBomb(x, y, m_attackObjects[i]);
 				int soundHandle = m_attackObjects[i]->getSoundHandle();
 				int panPal = adjustPanSound(x, m_camera->getX());
 				m_soundPlayer_p->pushSoundQueue(soundHandle, panPal);
 			}
 		}
+	}
+}
+
+// Battle: 爆発を起こす
+void World::createBomb(int x, int y, Object* attackObject) {
+	if (attackObject->getBomb()) {
+		// 爆発
+		BombObject* bomb = new BombObject(x, y, 500, 500, attackObject->getDamage(), new Animation(x, y, 3, m_bombGraph));
+		bomb->setCharacterId(attackObject->getCharacterId());
+		bomb->setGroupId(attackObject->getGroupId());
+		m_attackObjects.push_back(bomb);
+		// 効果音
+		m_soundPlayer_p->pushSoundQueue(m_bombSound, adjustPanSound(x, m_camera->getX()));
 	}
 }
 

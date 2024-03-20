@@ -210,6 +210,7 @@ CharacterGraphHandle::CharacterGraphHandle(const char* characterName, double dra
 	const char* dir = "picture/stick/";
 	loadCharacterGraph(dir, characterName, m_standHandles, "stand", data, m_ex);
 	loadCharacterGraph(dir, characterName, m_slashHandles, "slash", data, m_ex);
+	loadCharacterGraph(dir, characterName, m_airSlashEffectHandles, "airSlashEffect", data, m_ex);
 	loadCharacterGraph(dir, characterName, m_bulletHandles, "bullet", data, m_ex);
 	loadCharacterGraph(dir, characterName, m_squatHandles, "squat", data, m_ex);
 	loadCharacterGraph(dir, characterName, m_squatBulletHandles, "squatBullet", data, m_ex);
@@ -233,6 +234,7 @@ CharacterGraphHandle::CharacterGraphHandle(const char* characterName, double dra
 CharacterGraphHandle::~CharacterGraphHandle() {
 	if (m_standHandles != nullptr) { delete m_standHandles; }
 	if (m_slashHandles != nullptr) { delete m_slashHandles; }
+	if (m_airSlashEffectHandles != nullptr) { delete m_airSlashEffectHandles; }
 	if (m_bulletHandles != nullptr) { delete m_bulletHandles; }
 	if (m_squatHandles != nullptr) { delete m_squatHandles; }
 	if (m_squatBulletHandles != nullptr) { delete m_squatBulletHandles; }
