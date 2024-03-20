@@ -841,7 +841,7 @@ BombObject::~BombObject() {
 // 当たっているならキャラを操作する。
 bool BombObject::atari(CharacterController* characterController) {
 	// まだ判定なし
-	if (ableDamage()) { return false; }
+	if (!ableDamage()) { return false; }
 
 	// 自滅防止
 	if (m_characterId == characterController->getAction()->getCharacter()->getId()) {
@@ -877,7 +877,7 @@ bool BombObject::atari(CharacterController* characterController) {
 // 他攻撃オブジェクトとの当たり判定
 bool BombObject::atariObject(Object* object) {
 	// まだ判定なし
-	if (ableDamage()) { return false; }
+	if (!ableDamage()) { return false; }
 	// どちらかが破壊不能オブジェクト
 	if (!object->getAbleDelete() || !getAbleDelete() || m_groupId == object->getGroupId()) {
 		return false;
