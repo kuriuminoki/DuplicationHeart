@@ -338,6 +338,8 @@ public:
 	virtual void switchAirBullet(int cnt = 0);
 	// ‹ó’†ŽaŒ‚‰æ‘œ‚ðƒZƒbƒg
 	virtual void switchAirSlash(int cnt = 0);
+	// ‚â‚ç‚ê‰æ‘œ‚ðƒZƒbƒg
+	virtual void switchDead(int cnt = 0);
 
 	// HPŒ¸­
 	void damageHp(int value);
@@ -358,6 +360,9 @@ public:
 	bool haveBulletAttack() const { return m_attackInfo->bulletDamage() != 0; }
 	// ŽaŒ‚UŒ‚‚ðŽ‚Á‚Ä‚¢‚é‚©
 	bool haveSlashAttack() const { return m_attackInfo->slashDamage() != 0; }
+
+	// ‚â‚ç‚ê‰æ‘œ‚ª‚ ‚é‚©
+	bool haveDeadGraph() const;
 };
 
 

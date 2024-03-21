@@ -318,6 +318,10 @@ void Character::moveDown(int d) {
 	m_y += d;
 }
 
+bool Character::haveDeadGraph() const {
+	return !(m_graphHandle->getDeadHandle() == nullptr);
+}
+
 // 立ち画像をセット
 void Character::switchStand(int cnt) { m_graphHandle->switchStand(); }
 // 立ち射撃画像をセット
@@ -348,6 +352,8 @@ void Character::switchBoost(int cnt) { m_graphHandle->switchBoost(); }
 void Character::switchAirBullet(int cnt) { m_graphHandle->switchAirBullet(); }
 // 空中斬撃画像をセット
 void Character::switchAirSlash(int cnt) { m_graphHandle->switchAirSlash(); }
+// やられ画像をセット
+void Character::switchDead(int cnt) { m_graphHandle->switchDead(); }
 
 
 /*

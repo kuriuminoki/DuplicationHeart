@@ -269,7 +269,7 @@ vector<const CharacterAction*> World::getActions() const {
 	vector<const CharacterAction*> actions;
 	size_t size = m_characterControllers.size();
 	for (unsigned int i = 0; i < size; i++) {
-		if (m_characterControllers[i]->getAction()->getCharacter()->getHp() > 0) {
+		if (m_characterControllers[i]->getAction()->getCharacter()->getHp() > 0 || m_characterControllers[i]->getAction()->getCharacter()->haveDeadGraph()) {
 			actions.push_back(m_characterControllers[i]->getAction());
 		}
 	}
@@ -810,14 +810,18 @@ void World::controlCharacter() {
 		CharacterController* controller = m_characterControllers[i];
 
 		// HPが0ならスキップ
-		if (controller->getAction()->getCharacter()->getHp() == 0) { continue; }
+		if (controller->getAction()->getCharacter()->getHp() == 0 && !controller->getAction()->getCharacter()->haveDeadGraph()) {
+			continue;
+		}
 
 		// 行動前の処理
 		controller->init();
 
 		// オブジェクトとの当たり判定
 		atariCharacterAndObject(controller, m_stageObjects);
-		atariCharacterAndObject(controller, m_attackObjects);
+		if (controller->getAction()->getCharacter()->getHp() > 0) {
+			atariCharacterAndObject(controller, m_attackObjects);
+		}
 		atariCharacterAndObject(controller, m_stageObjects); // 2回目呼ぶのは妥協案　1回目で斜面にいるかがわかり、それによって処理が変わるため2回目が必要
 		if (controller->getAction()->getCharacter()->getId() == m_playerId) {
 			atariCharacterAndDoor(controller, m_doorObjects);
@@ -915,7 +919,7 @@ void World::atariCharacterAndObject(CharacterController* controller, vector<Obje
 			int panPal = adjustPanSound(x, m_camera->getX());
 			m_soundPlayer_p->pushSoundQueue(soundHandle, panPal);
 			// HP = 0になったとき（やられたとき）
-			if (character->getHp() == 0) {
+			if (!character->haveDeadGraph() && character->getHp() == 0) {
 				m_animations.push_back(new Animation(x, y, 3, m_characterDeadGraph));
 				m_camera->shakingStart(20, 20);
 				m_soundPlayer_p->pushSoundQueue(m_characterDeadSound, panPal);
@@ -1057,14 +1061,18 @@ bool World::moveGoalCharacter() {
 		CharacterController* controller = m_characterControllers[i];
 
 		// HPが0ならスキップ
-		if (controller->getAction()->getCharacter()->getHp() == 0) { continue; }
+		if (controller->getAction()->getCharacter()->getHp() == 0 && !controller->getAction()->getCharacter()->haveDeadGraph()) { 
+			continue;
+		}
 
 		// 行動前の処理
 		controller->init();
 
 		// オブジェクトとの当たり判定
 		atariCharacterAndObject(controller, m_stageObjects);
-		atariCharacterAndObject(controller, m_attackObjects);
+		if (controller->getAction()->getCharacter()->getHp() > 0) {
+			atariCharacterAndObject(controller, m_attackObjects);
+		}
 		atariCharacterAndObject(controller, m_stageObjects); // 2回目呼ぶのは妥協案　1回目で斜面にいるかがわかり、それによって処理が変わるため2回目が必要
 
 		// 目標地点へ移動する操作 originalのハートはフリーズ

@@ -281,7 +281,10 @@ void NormalController::control() {
 
 	// 移動 stickなどの入力状態を更新する
 	int rightStick = 0, leftStick = 0, upStick = 0, downStick = 0;
-	if (m_stickRecorder != nullptr) {
+	if (m_characterAction->getCharacter()->getHp() == 0) {
+		// やられているから何もしない
+	}
+	else if (m_stickRecorder != nullptr) {
 		if (m_stickRecorder->existRecord()) {
 			int input = m_stickRecorder->checkInput();
 			if (((input >> 0) & 1) == 1) { 
@@ -313,7 +316,10 @@ void NormalController::control() {
 
 	// ジャンプ
 	int jump = 0;
-	if (m_jumpRecorder != nullptr) {
+	if (m_characterAction->getCharacter()->getHp() == 0) {
+		// やられているから何もしない
+	}
+	else if (m_jumpRecorder != nullptr) {
 		if (m_jumpRecorder->existRecord()) {
 			jump = m_jumpRecorder->checkInput();
 		}
@@ -333,7 +339,10 @@ void NormalController::control() {
 
 	// しゃがみ
 	int squat = 0;
-	if (m_squatRecorder != nullptr) {
+	if (m_characterAction->getCharacter()->getHp() == 0) {
+		// やられているから何もしない
+	}
+	else if (m_squatRecorder != nullptr) {
 		if (m_squatRecorder->existRecord()) {
 			squat = m_squatRecorder->checkInput();
 		}
@@ -350,6 +359,10 @@ void NormalController::control() {
 }
 
 Object* NormalController::bulletAttack() {
+
+	if (m_characterAction->getCharacter()->getHp() == 0) {
+		return nullptr;
+	}
 
 	// 攻撃目標
 	int targetX = 0, targetY = 0;
@@ -389,6 +402,10 @@ Object* NormalController::bulletAttack() {
 }
 
 Object* NormalController::slashAttack() {
+
+	if (m_characterAction->getCharacter()->getHp() == 0) {
+		return nullptr;
+	}
 
 	// 攻撃目標
 	int targetX = 0, targetY = 0;

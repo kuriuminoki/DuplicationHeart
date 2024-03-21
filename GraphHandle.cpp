@@ -227,6 +227,7 @@ CharacterGraphHandle::CharacterGraphHandle(const char* characterName, double dra
 	loadCharacterGraph(dir, characterName, m_airBulletHandles, "airBullet", data, m_ex);
 	loadCharacterGraph(dir, characterName, m_airSlashHandles, "airSlash", data, m_ex);
 	loadCharacterGraph(dir, characterName, m_closeHandles, "close", data, m_ex);
+	loadCharacterGraph(dir, characterName, m_deadHandles, "dead", data, m_ex);
 
 	switchStand();
 }
@@ -251,6 +252,7 @@ CharacterGraphHandle::~CharacterGraphHandle() {
 	if (m_airBulletHandles != nullptr) { delete m_airBulletHandles; }
 	if (m_airSlashHandles != nullptr) { delete m_airSlashHandles; }
 	if (m_closeHandles != nullptr) { delete m_closeHandles; }
+	if (m_deadHandles != nullptr) { delete m_deadHandles; }
 }
 
 // 画像のサイズをセット
@@ -346,6 +348,10 @@ void CharacterGraphHandle::switchAirSlash(int index){
 // 瞬き画像をセット
 void CharacterGraphHandle::switchClose(int index) {
 	setGraph(m_closeHandles, index);
+}
+// やられ画像をセット
+void CharacterGraphHandle::switchDead(int index) {
+	setGraph(m_deadHandles, index);
 }
 
 

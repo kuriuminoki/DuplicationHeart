@@ -468,7 +468,11 @@ void StickAction::switchHandle() {
 	// セット前の画像のサイズ
 	int wide, height;
 	m_character_p->getHandleSize(wide, height);
-	if (m_grand) { // 地面にいるとき
+	// やられ画像
+	if (m_grand && m_character_p->getHp() == 0 && m_character_p->haveDeadGraph() && getState() != CHARACTER_STATE::DAMAGE) {
+		m_character_p->switchDead();
+	}
+	else if (m_grand) { // 地面にいるとき
 		switch (getState()) {
 		case CHARACTER_STATE::STAND: //立ち状態
 			if (m_slashCnt > 0) {
@@ -580,16 +584,20 @@ void StickAction::walk(bool right, bool left) {
 	if (!right || m_rightLock || m_squat || damageFlag()) {
 		stopMoveRight();
 	}
-	if ((m_slashCnt > 0 || m_bulletCnt > 0) && !m_attackLeftDirection && (m_rightLock || damageFlag()) && m_vx > 0) {
+	if (m_slashCnt > 0 && !m_attackLeftDirection && (m_rightLock || damageFlag()) && m_vx > 0) {
 		finishSlash();
+	}
+	if (m_bulletCnt > 0 && !m_attackLeftDirection && m_rightLock && m_vx > 0) {
 		finishBullet();
 	}
 	// 左へ歩くのをやめる
 	if (!left || m_leftLock || m_squat || damageFlag()) {
 		stopMoveLeft();
 	}
-	if ((m_slashCnt > 0 || m_bulletCnt > 0) && m_attackLeftDirection && (m_leftLock || damageFlag()) && m_vx < 0) {
+	if (m_slashCnt > 0 && m_attackLeftDirection && (m_leftLock || damageFlag()) && m_vx < 0) {
 		finishSlash();
+	}
+	if (m_bulletCnt > 0 && m_attackLeftDirection && m_leftLock && m_vx < 0) {
 		finishBullet();
 	}
 	if (damageFlag()) {
@@ -690,7 +698,7 @@ void StickAction::jump(int cnt) {
 // 射撃攻撃
 Object* StickAction::bulletAttack(int gx, int gy) {
 	if (damageFlag() && m_boostCnt == 0) {
-		if (m_bulletCnt > 0) { finishBullet(); }
+		finishBullet();
 		return nullptr;
 	}
 	// 射撃可能状態なら
@@ -1036,7 +1044,7 @@ void FlightAction::jump(int cnt) {
 // 射撃攻撃
 Object* FlightAction::bulletAttack(int gx, int gy) {
 	if (damageFlag() && m_boostCnt == 0) {
-		if (m_bulletCnt > 0) { finishBullet(); }
+		finishBullet();
 		return nullptr;
 	}
 	// 射撃可能状態なら
@@ -1098,7 +1106,7 @@ CharacterAction* KoharuAction::createCopy(vector<Character*> characters) {
 // 射撃攻撃
 Object* KoharuAction::bulletAttack(int gx, int gy) {
 	if (damageFlag() && m_boostCnt == 0) {
-		if (m_bulletCnt > 0) { finishBullet(); }
+		finishBullet();
 		return nullptr;
 	}
 	// 射撃可能状態なら

@@ -189,6 +189,9 @@ private:
 	// 瞬き画像
 	GraphHandles* m_closeHandles;
 
+	// やられ画像
+	GraphHandles* m_deadHandles;
+
 public:
 	// デフォルト値で初期化
 	CharacterGraphHandle();
@@ -222,6 +225,7 @@ public:
 	inline GraphHandles* getAirBulletHandle() { return m_airBulletHandles; }
 	inline GraphHandles* getAirSlashHandle() { return m_airSlashHandles; }
 	inline GraphHandles* getCloseHandle() { return m_closeHandles; }
+	inline GraphHandles* getDeadHandle() { return m_deadHandles; }
 
 	// 画像サイズをセット
 	void setGraphSize();
@@ -262,6 +266,8 @@ public:
 	void switchAirSlash(int index = 0);
 	// 瞬き画像をセット
 	void switchClose(int index = 0);
+	// やられ画像をセット
+	void switchDead(int index = 0);
 };
 
 
