@@ -125,6 +125,12 @@ void FlightAction::debug(int x, int y, int color) const {
 	debugAction(x + DRAW_FORMAT_STRING_SIZE, y + DRAW_FORMAT_STRING_SIZE, color);
 }
 
+// FlightActionのデバッグ
+void KoharuAction::debug(int x, int y, int color) const {
+	DrawFormatString(x, y, color, "**KoharuAction**");
+	debugAction(x + DRAW_FORMAT_STRING_SIZE, y + DRAW_FORMAT_STRING_SIZE, color);
+}
+
 
 /*
 * Character

@@ -776,7 +776,8 @@ Character* Koharu::createCopy() {
 // ËŒ‚UŒ‚‚ğ‚·‚é
 Object* Koharu::bulletAttack(int gx, int gy, SoundPlayer* soundPlayer) {
 	// ƒoƒY[ƒJ‚ÌeŒû‚©‚ço‚é‚æ‚¤‚ÉŒ©‚¹‚é
-	BulletObject* attackObject = new BulletObject(getCenterX(), getY() + 70, m_graphHandle->getBulletHandle()->getGraphHandle(), gx, gy, m_attackInfo);
+	gy = getY() + getHeight() - 160;
+	BulletObject* attackObject = new BulletObject(getCenterX(), gy, m_graphHandle->getBulletHandle()->getGraphHandle(), gx, gy, m_attackInfo);
 	// ©–Å–h~
 	attackObject->setCharacterId(m_id);
 	// ƒ`[ƒ€ƒLƒ‹–h~
