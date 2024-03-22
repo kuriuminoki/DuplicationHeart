@@ -125,7 +125,7 @@ World::World(int fromAreaNum, int toAreaNum, SoundPlayer* soundPlayer) :
 	m_camera = data.getCamera();
 	m_focusId = data.getFocusId();
 	m_playerId = data.getPlayerId();
-	m_soundPlayer_p->setBGM(data.getBgm(), data.getBgmVolume());
+	m_soundPlayer_p->setBGM(data.getBgm());
 	m_characters = data.getCharacters();
 	m_characterControllers = data.getCharacterControllers();
 	m_stageObjects = data.getObjects();
