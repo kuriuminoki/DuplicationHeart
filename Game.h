@@ -368,6 +368,11 @@ public:
 
 	// •`‰æ‚µ‚Ä‚¢‚¢‚È‚çtrue
 	bool ableDraw();
+
+private:
+
+	bool skillUsable();
+
 };
 
 #endif

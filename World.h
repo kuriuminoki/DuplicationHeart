@@ -134,6 +134,12 @@ private:
 	// キャラがやられた時のエフェクト画像
 	GraphHandles* m_characterDeadGraph;
 
+	// 爆発の画像
+	GraphHandles* m_bombGraph;
+
+	// 爆発の効果音
+	int m_bombSound;
+
 	// キャラがやられた時の効果音
 	int m_characterDeadSound;
 
@@ -179,7 +185,9 @@ public:
 	inline double getCameraMaxEx() const { return m_cameraMaxEx; }
 	inline double getCameraMinEx() const { return m_cameraMinEx; }
 	inline GraphHandles* getCharacterDeadGraph() const { return m_characterDeadGraph; }
+	inline GraphHandles* getBombGraph() const { return m_bombGraph; }
 	inline int getCharacterDeadSound() const { return m_characterDeadSound; }
+	inline int getBombSound() const { return m_bombSound; }
 	inline int getDoorSound() const { return m_doorSound; }
 
 	// Drawer用のゲッタ
@@ -326,6 +334,9 @@ private:
 
 	// Battle：攻撃<->攻撃の当たり判定
 	void atariAttackAndAttack();
+
+	// Battle: 爆発を起こす
+	void createBomb(int x, int y, Object* attackObject);
 
 };
 

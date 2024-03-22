@@ -593,23 +593,17 @@ bool Game::play() {
 		return false;
 	}
 
+	// スキル発動
+	if (controlF() == 1 && skillUsable()) {
+		m_world->setSkillFlag(true);
+		m_skill = new HeartSkill(1, m_world, m_soundPlayer);
+	}
+
 	// これ以上ストーリーを進ませない（テスト用）
-	if (m_gameData->getStoryNum() == FINISH_STORY || m_gameData->getStoryNum() == 0) {
+	if (m_gameData->getStoryNum() == FINISH_STORY) {
 		m_world->battle();
 		m_soundPlayer->play();
 		return false;
-	}
-
-	// スキル発動 Fキーかつスキル未発動状態かつ発動可能なイベント中（もしくはイベント中でない）かつエリア移動中でない
-	if (m_gameData->getStoryNum() >= SKILL_USEABLE_STORY) { // ストーリーの最初は発動できない
-		if (controlF() == 1 && m_skill == nullptr) { // Fキーで発動、ただしスキル身発動時
-			if (m_story->skillAble() && m_world->getBrightValue() == 255) { // 特定のイベント時やエリア移動中はダメ
-				if (m_world->getCharacterWithName("ハート")->getHp() > 0) {
-					m_world->setSkillFlag(true);
-					m_skill = new HeartSkill(1, m_world, m_soundPlayer);
-				}
-			}
-		}
 	}
 	
 	// スキル発動中で、操作記録中
@@ -645,7 +639,7 @@ bool Game::play() {
 		// チャプターのバックアップ
 		m_gameData->saveChapter();
 	}
-	else if (m_skill != nullptr) {
+	else if (m_skill != nullptr) { // スキル発動中で、最後のループ中
 		if (m_skill->play()) {
 			// スキル終了
 			delete m_skill;
@@ -659,6 +653,9 @@ bool Game::play() {
 
 	// 音
 	m_soundPlayer->play();
+
+	// テストは以降を実行しない
+	if (TEST_MODE) { return false; }
 
 	// 前のセーブポイントへ戻ることが要求された
 	if (m_story->getBackPrevSaveFlag()) {
@@ -712,6 +709,24 @@ void Game::backPrevSave() {
 // 描画していいならtrue
 bool Game::ableDraw() {
 	return !m_story->getInitDark();
+}
+
+// スキル発動可能かチェック
+bool Game::skillUsable() {
+	if (TEST_MODE) {
+		return true;
+	}
+	// スキル発動 Fキーかつスキル未発動状態かつ発動可能なイベント中（もしくはイベント中でない）かつエリア移動中でない
+	if (m_gameData->getStoryNum() >= SKILL_USEABLE_STORY) { // ストーリーの最初は発動できない
+		if (m_skill == nullptr) { // スキル未発動時
+			if (m_story->skillAble() && m_world->getBrightValue() == 255) { // 特定のイベント時やエリア移動中はダメ
+				if (m_world->getCharacterWithName("ハート")->getHp() > 0) {
+					return true;
+				}
+			}
+		}
+	}
+	return false;
 }
 
 

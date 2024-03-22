@@ -134,6 +134,9 @@ private:
 	// 斬撃攻撃画像
 	GraphHandles* m_slashHandles;
 
+	// 空中斬撃攻撃画像
+	GraphHandles* m_airSlashEffectHandles;
+
 	// 射撃攻撃画像
 	GraphHandles* m_bulletHandles;
 
@@ -186,6 +189,9 @@ private:
 	// 瞬き画像
 	GraphHandles* m_closeHandles;
 
+	// やられ画像
+	GraphHandles* m_deadHandles;
+
 public:
 	// デフォルト値で初期化
 	CharacterGraphHandle();
@@ -201,6 +207,7 @@ public:
 
 	// 画像のゲッタ
 	inline GraphHandles* getSlashHandle() { return m_slashHandles; }
+	inline GraphHandles* getAirSlashEffectHandle() { return m_airSlashEffectHandles; }
 	inline GraphHandles* getBulletHandle() { return m_bulletHandles; }
 	inline GraphHandles* getStandHandle() { return m_standHandles; }
 	inline GraphHandles* getStandBulletHandle() { return m_standBulletHandles; }
@@ -218,6 +225,7 @@ public:
 	inline GraphHandles* getAirBulletHandle() { return m_airBulletHandles; }
 	inline GraphHandles* getAirSlashHandle() { return m_airSlashHandles; }
 	inline GraphHandles* getCloseHandle() { return m_closeHandles; }
+	inline GraphHandles* getDeadHandle() { return m_deadHandles; }
 
 	// 画像サイズをセット
 	void setGraphSize();
@@ -258,6 +266,8 @@ public:
 	void switchAirSlash(int index = 0);
 	// 瞬き画像をセット
 	void switchClose(int index = 0);
+	// やられ画像をセット
+	void switchDead(int index = 0);
 };
 
 

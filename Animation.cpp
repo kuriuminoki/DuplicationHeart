@@ -104,6 +104,7 @@ void Movie::play() {
 	if (m_cnt == 0) {
 		// ‰¹ŠyŠJŽn
 		m_soundPlayer_p->setBGM(m_bgmPath.c_str());
+		m_soundPlayer_p->playBGM();
 		m_soundPlayer_p->clearSoundQueue();
 	}
 

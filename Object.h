@@ -28,6 +28,9 @@ protected:
 	// HP -1なら無敵
 	int m_hp;
 
+	// (破壊時)着弾時に爆発するか
+	bool m_bomb;
+
 	// ダメージ状態（描画用）
 	int m_damageCnt;
 	const int DAMAGE_CNT_SUM = 5;
@@ -63,9 +66,11 @@ public:
 	inline int getCenterY() const { return (m_y1 + m_y2) / 2; }
 	inline int getSoundHandle() const { return m_soundHandle_p; }
 	inline int getHp() const { return m_hp; }
+	inline int getBomb() const { return m_bomb; }
 	inline int getDamageCnt() const { return m_damageCnt; }
 	virtual const char* getFileName() const { return ""; }
 	virtual bool getTextDisp() const { return false; }
+
 
 	// セッタ
 	inline void setDeleteFlag(bool deleteFlag) { m_deleteFlag = deleteFlag; }
@@ -85,7 +90,8 @@ public:
 	// HPを減らす
 	void decreaseHp(int damageValue);
 
-	// グループIDのゲッタ
+	// IDのゲッタ
+	virtual inline int getCharacterId() const { return -1; }
 	virtual inline int getGroupId() const { return -1; }
 
 	// 攻撃力 攻撃オブジェクト用
@@ -279,6 +285,7 @@ public:
 	void drawObject(int x1, int y1, int x2, int y2) const;
 
 	// ゲッタ
+	inline int getCharacterId() const { return m_characterId; }
 	inline int getGroupId() const { return m_groupId; }
 
 	// 画像ハンドルを返す
@@ -334,6 +341,9 @@ public:
 	void debug(int x, int y, int color) const;
 
 	inline void setGraphHandle(GraphHandle* handle) { m_handle = handle; }
+
+	// 画像ハンドルを返す
+	GraphHandle* getHandle() const;
 
 	// 動くオブジェクト用 毎フレーム行う
 	void action();
@@ -413,6 +423,72 @@ public:
 
 	// アニメーション作成
 	Animation* createAnimation(int x, int y, int flameCnt);
+};
+
+
+/*
+* 爆発の当たり判定
+*/
+class BombObject :
+	public Object
+{
+public:
+
+	// この攻撃を出したキャラのＩＤ 自滅やチームキル防止用
+	int m_characterId;
+
+	// この攻撃が当たらないグループのID チームキル防止用
+	int m_groupId;
+
+	// 中心の攻撃力
+	int m_damage;
+
+	// 中心の座標
+	int m_x, m_y;
+	
+	int m_dx, m_dy;
+
+	int m_distance;
+
+	// 爆発のアニメ
+	Animation* m_animation;
+
+	const int BOMB_IMPACT = 30;
+
+public:
+
+	BombObject(int x, int y, int dx, int dy, int damage, Animation* bombAnimation);
+
+	~BombObject();
+
+	// ゲッタ
+	inline int getCharacterId() const { return m_characterId; }
+	inline int getGroupId() const { return m_groupId; }
+
+	// セッタ
+	void setCharacterId(int characterId) { m_characterId = characterId; }
+	void setGroupId(int groupId) { m_groupId = groupId; }
+
+	Object* createCopy();
+
+	void debug(int x, int y, int color) const;
+
+	// キャラとの当たり判定
+	// 当たっているならキャラを操作する。
+	bool atari(CharacterController* characterController);
+
+	// 攻撃オブジェクトとの当たり判定
+	bool atariObject(Object* object);
+
+	// 動くオブジェクト用 毎フレーム行う
+	void action();
+
+private:
+
+	double calcDamageRate(int x, int y);
+
+	bool ableDamage();
+
 };
 
 

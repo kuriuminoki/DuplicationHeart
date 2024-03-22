@@ -206,6 +206,12 @@ public:
 	// ダメージ 必要に応じてオーバーライド
 	virtual void damage(int vx, int vy, int damageValue);
 
+	// 射撃開始の処理 必要に応じてオーバーライド
+	virtual void startBullet();
+
+	// 射撃終了の処理 必要に応じてオーバーライド
+	virtual void finishBullet();
+
 	// 斬撃開始の処理 必要に応じてオーバーライド
 	virtual void startSlash();
 
@@ -216,7 +222,10 @@ public:
 	bool ableDamage() const;
 
 	// 今攻撃可能状態
-	bool ableAttack() const;
+	virtual bool ableAttack() const;
+
+	// 今歩ける状態
+	virtual bool ableWalk() const;
 
 	// 歩き始める
 	void startMoveLeft();
@@ -359,6 +368,40 @@ public:
 
 	// 斬撃攻撃
 	Object* slashAttack(int gx, int gy);
+};
+
+
+/*
+* コハル用Action
+*/
+class KoharuAction :
+	public StickAction
+{
+private:
+
+	// 射撃攻撃による移動速度
+	const int BULLET_MOVE_SPEED = 2;
+
+public:
+	static const char* ACTION_NAME;
+	const char* getActionName() const { return this->ACTION_NAME; }
+
+	KoharuAction(Character* character, SoundPlayer* soundPlayer_p);
+
+	CharacterAction* createCopy(std::vector<Character*> characters);
+
+	void debug(int x, int y, int color) const;
+
+	// 射撃攻撃
+	Object* bulletAttack(int gx, int gy);
+
+	void startBullet();
+
+	void finishBullet();
+
+	bool ableAttack() const;
+
+	bool ableWalk() const;
 };
 
 

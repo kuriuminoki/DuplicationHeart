@@ -210,6 +210,7 @@ CharacterGraphHandle::CharacterGraphHandle(const char* characterName, double dra
 	const char* dir = "picture/stick/";
 	loadCharacterGraph(dir, characterName, m_standHandles, "stand", data, m_ex);
 	loadCharacterGraph(dir, characterName, m_slashHandles, "slash", data, m_ex);
+	loadCharacterGraph(dir, characterName, m_airSlashEffectHandles, "airSlashEffect", data, m_ex);
 	loadCharacterGraph(dir, characterName, m_bulletHandles, "bullet", data, m_ex);
 	loadCharacterGraph(dir, characterName, m_squatHandles, "squat", data, m_ex);
 	loadCharacterGraph(dir, characterName, m_squatBulletHandles, "squatBullet", data, m_ex);
@@ -226,6 +227,7 @@ CharacterGraphHandle::CharacterGraphHandle(const char* characterName, double dra
 	loadCharacterGraph(dir, characterName, m_airBulletHandles, "airBullet", data, m_ex);
 	loadCharacterGraph(dir, characterName, m_airSlashHandles, "airSlash", data, m_ex);
 	loadCharacterGraph(dir, characterName, m_closeHandles, "close", data, m_ex);
+	loadCharacterGraph(dir, characterName, m_deadHandles, "dead", data, m_ex);
 
 	switchStand();
 }
@@ -233,6 +235,7 @@ CharacterGraphHandle::CharacterGraphHandle(const char* characterName, double dra
 CharacterGraphHandle::~CharacterGraphHandle() {
 	if (m_standHandles != nullptr) { delete m_standHandles; }
 	if (m_slashHandles != nullptr) { delete m_slashHandles; }
+	if (m_airSlashEffectHandles != nullptr) { delete m_airSlashEffectHandles; }
 	if (m_bulletHandles != nullptr) { delete m_bulletHandles; }
 	if (m_squatHandles != nullptr) { delete m_squatHandles; }
 	if (m_squatBulletHandles != nullptr) { delete m_squatBulletHandles; }
@@ -249,6 +252,7 @@ CharacterGraphHandle::~CharacterGraphHandle() {
 	if (m_airBulletHandles != nullptr) { delete m_airBulletHandles; }
 	if (m_airSlashHandles != nullptr) { delete m_airSlashHandles; }
 	if (m_closeHandles != nullptr) { delete m_closeHandles; }
+	if (m_deadHandles != nullptr) { delete m_deadHandles; }
 }
 
 // 画像のサイズをセット
@@ -344,6 +348,10 @@ void CharacterGraphHandle::switchAirSlash(int index){
 // 瞬き画像をセット
 void CharacterGraphHandle::switchClose(int index) {
 	setGraph(m_closeHandles, index);
+}
+// やられ画像をセット
+void CharacterGraphHandle::switchDead(int index) {
+	setGraph(m_deadHandles, index);
 }
 
 

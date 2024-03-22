@@ -13,6 +13,7 @@ const char* CharacterAction::ACTION_NAME = "CharacterAction";
 const char* StickAction::ACTION_NAME = "StickAction";
 const char* ValkiriaAction::ACTION_NAME = "ValkiriaAction";
 const char* FlightAction::ACTION_NAME = "FlightAction";
+const char* KoharuAction::ACTION_NAME = "KoharuAction";
 
 // クラス名からCharacterActionを作成する関数
 CharacterAction* createAction(const string actionName, Character* character, SoundPlayer* soundPlayer_p) {
@@ -37,6 +38,9 @@ CharacterAction* createAction(const string actionName, Character* character, Sou
 	}
 	else if (tmp == FlightAction::ACTION_NAME) {
 		action = new FlightAction(character, soundPlayer_p);
+	}
+	else if (tmp == KoharuAction::ACTION_NAME) {
+		action = new KoharuAction(character, soundPlayer_p);
 	}
 
 	action->setHeavy(heavy);
@@ -200,6 +204,14 @@ void CharacterAction::damage(int vx, int vy, int damageValue) {
 	m_boostCnt = 0;
 }
 
+void CharacterAction::startBullet() {
+
+}
+
+void CharacterAction::finishBullet() {
+	m_bulletCnt = 0;
+}
+
 void CharacterAction::startSlash() {
 
 }
@@ -209,15 +221,15 @@ void CharacterAction::finishSlash() {
 }
 
 bool CharacterAction::ableDamage() const {
-	if (m_state == CHARACTER_STATE::DAMAGE || m_damageCnt > 0) { return false; }
-	return true;
+	return !(m_state == CHARACTER_STATE::DAMAGE || m_damageCnt > 0);
 }
 
 bool CharacterAction::ableAttack() const {
-	if (m_bulletCnt > 0 || m_slashCnt > 0) {
-		return false;
-	}
-	return true;
+	return !(m_bulletCnt > 0 || m_slashCnt > 0);
+}
+
+bool CharacterAction::ableWalk() const {
+	return !m_moveRight && !m_moveLeft && !m_squat;
 }
 
 // 着地
@@ -389,7 +401,10 @@ void StickAction::action() {
 	switchHandle();
 
 	// 射撃のインターバル処理
-	if (m_bulletCnt > 0) { m_bulletCnt--; }
+	if (m_bulletCnt > 0) { 
+		m_bulletCnt--;
+		if (m_bulletCnt == 0) { finishBullet(); }
+	}
 
 	// 斬撃のインターバル処理
 	if (m_slashCnt > 0) { 
@@ -453,7 +468,11 @@ void StickAction::switchHandle() {
 	// セット前の画像のサイズ
 	int wide, height;
 	m_character_p->getHandleSize(wide, height);
-	if (m_grand) { // 地面にいるとき
+	// やられ画像
+	if (m_grand && m_character_p->getHp() == 0 && m_character_p->haveDeadGraph() && getState() != CHARACTER_STATE::DAMAGE) {
+		m_character_p->switchDead();
+	}
+	else if (m_grand) { // 地面にいるとき
 		switch (getState()) {
 		case CHARACTER_STATE::STAND: //立ち状態
 			if (m_slashCnt > 0) {
@@ -565,26 +584,32 @@ void StickAction::walk(bool right, bool left) {
 	if (!right || m_rightLock || m_squat || damageFlag()) {
 		stopMoveRight();
 	}
-	if (m_slashCnt > 0 && !m_attackLeftDirection && (m_rightLock || damageFlag())) {
+	if (m_slashCnt > 0 && !m_attackLeftDirection && (m_rightLock || damageFlag()) && m_vx > 0) {
 		finishSlash();
+	}
+	if (m_bulletCnt > 0 && !m_attackLeftDirection && m_rightLock && m_vx > 0) {
+		finishBullet();
 	}
 	// 左へ歩くのをやめる
 	if (!left || m_leftLock || m_squat || damageFlag()) {
 		stopMoveLeft();
 	}
-	if (m_slashCnt > 0 && m_attackLeftDirection && (m_leftLock || damageFlag())) {
+	if (m_slashCnt > 0 && m_attackLeftDirection && (m_leftLock || damageFlag()) && m_vx < 0) {
 		finishSlash();
+	}
+	if (m_bulletCnt > 0 && m_attackLeftDirection && m_leftLock && m_vx < 0) {
+		finishBullet();
 	}
 	if (damageFlag()) {
 		return;
 	}
 
 	// 右へ歩き始める
-	if (!m_rightLock && !m_moveRight && !m_moveLeft && right && (!left || !m_character_p->getLeftDirection()) && !m_squat) { // 右へ歩く
+	if (!m_rightLock && ableWalk() && right && (!left || !m_character_p->getLeftDirection())) { // 右へ歩く
 		startMoveRight();
 	}
 	// 左へ歩き始める
-	if (!m_leftLock && !m_moveRight && !m_moveLeft && left && (!right || m_character_p->getLeftDirection()) && !m_squat) { // 左へ歩く
+	if (!m_leftLock && ableWalk() && left && (!right || m_character_p->getLeftDirection())) { // 左へ歩く
 		startMoveLeft();
 	}
 	// アニメーション用にカウント
@@ -673,7 +698,7 @@ void StickAction::jump(int cnt) {
 // 射撃攻撃
 Object* StickAction::bulletAttack(int gx, int gy) {
 	if (damageFlag() && m_boostCnt == 0) {
-		m_bulletCnt = 0;
+		finishBullet();
 		return nullptr;
 	}
 	// 射撃可能状態なら
@@ -684,6 +709,7 @@ Object* StickAction::bulletAttack(int gx, int gy) {
 		if (m_character_p->getCharacterInfo()->sameBulletDirection()) {
 			m_character_p->setLeftDirection(m_character_p->getCenterX() > gx);
 		}
+		startBullet();
 		// 攻撃を返す
 		return m_character_p->bulletAttack(gx, gy, m_soundPlayer_p);
 	}
@@ -711,7 +737,7 @@ Object* StickAction::slashAttack(int gx, int gy) {
 		startSlash();
 	}
 	// 攻撃のタイミングじゃないならnullptrが返る
-	return m_character_p->slashAttack(m_attackLeftDirection, m_slashCnt, m_soundPlayer_p);
+	return m_character_p->slashAttack(m_attackLeftDirection, m_slashCnt, m_grand, m_soundPlayer_p);
 }
 
 
@@ -767,13 +793,13 @@ void ValkiriaAction::startSlash() {
 }
 
 void ValkiriaAction::finishSlash() {
+	CharacterAction::finishSlash();
 	if (m_attackLeftDirection && !m_leftLock) {
 		m_vx += SLASH_MOVE_SPEED;
 	}
 	else if(!m_rightLock) {
 		m_vx -= SLASH_MOVE_SPEED;
 	}
-	m_slashCnt = 0;
 }
 
 // ダメージを受ける ヴァルキリアは斬撃中はHPが減るだけ
@@ -877,7 +903,10 @@ void FlightAction::action() {
 	switchHandle();
 
 	// 射撃のインターバル処理
-	if (m_bulletCnt > 0) { m_bulletCnt--; }
+	if (m_bulletCnt > 0) { 
+		m_bulletCnt--;
+		if (m_bulletCnt == 0) { finishBullet(); }
+	}
 
 	// 斬撃のインターバル処理
 	if (m_slashCnt > 0) {
@@ -1015,7 +1044,7 @@ void FlightAction::jump(int cnt) {
 // 射撃攻撃
 Object* FlightAction::bulletAttack(int gx, int gy) {
 	if (damageFlag() && m_boostCnt == 0) {
-		m_bulletCnt = 0;
+		finishBullet();
 		return nullptr;
 	}
 	// 射撃可能状態なら
@@ -1026,6 +1055,7 @@ Object* FlightAction::bulletAttack(int gx, int gy) {
 		if (m_character_p->getCharacterInfo()->sameBulletDirection()) {
 			m_character_p->setLeftDirection(m_character_p->getCenterX() > gx);
 		}
+		startBullet();
 		// 攻撃を返す
 		return m_character_p->bulletAttack(gx, gy, m_soundPlayer_p);
 	}
@@ -1048,5 +1078,87 @@ Object* FlightAction::slashAttack(int gx, int gy) {
 		startSlash();
 	}
 	// 攻撃のタイミングじゃないならnullptrが返る
-	return m_character_p->slashAttack(m_attackLeftDirection, m_slashCnt, m_soundPlayer_p);
+	return m_character_p->slashAttack(m_attackLeftDirection, m_slashCnt, m_grand, m_soundPlayer_p);
+}
+
+
+/*
+* コハル用Action 斬撃時に移動する
+*/
+KoharuAction::KoharuAction(Character* character, SoundPlayer* soundPlayer_p) :
+	StickAction(character, soundPlayer_p)
+{
+
+}
+
+CharacterAction* KoharuAction::createCopy(vector<Character*> characters) {
+	CharacterAction* res = nullptr;
+	for (unsigned int i = 0; i < characters.size(); i++) {
+		if (m_character_p->getId() == characters[i]->getId()) {
+			res = new KoharuAction(characters[i], m_soundPlayer_p);
+			// コピーする
+			setParam(res);
+		}
+	}
+	return res;
+}
+
+// 射撃攻撃
+Object* KoharuAction::bulletAttack(int gx, int gy) {
+	if (damageFlag() && m_boostCnt == 0) {
+		finishBullet();
+		return nullptr;
+	}
+	// 射撃可能状態なら
+	if (ableAttack()) {
+		// 射撃不可能状態にして
+		m_bulletCnt = m_character_p->getBulletRapid();
+		stopMoveRight();
+		stopMoveLeft();
+		if (m_bulletCnt == 0) {
+			if (gx > m_character_p->getCenterX()) {
+				m_vx -= BULLET_MOVE_SPEED;
+			}
+			else {
+				m_vx += BULLET_MOVE_SPEED;
+			}
+		}
+		// 撃つ方向へ向く
+		if (m_character_p->getCharacterInfo()->sameBulletDirection()) {
+			m_character_p->setLeftDirection(m_character_p->getCenterX() > gx);
+		}
+		startBullet();
+		// 攻撃を返す
+		return m_character_p->bulletAttack(gx, gy, m_soundPlayer_p);
+	}
+	return nullptr;
+}
+
+void KoharuAction::startBullet() {
+	if (m_character_p->getLeftDirection()) {
+		m_vx += BULLET_MOVE_SPEED;
+	}
+	else {
+		m_vx -= BULLET_MOVE_SPEED;
+	}
+}
+
+void KoharuAction::finishBullet() {
+	if (m_bulletCnt > 0) { 
+		StickAction::finishBullet();
+	}
+	if (m_character_p->getLeftDirection() && !m_rightLock) {
+		m_vx -= BULLET_MOVE_SPEED;
+	}
+	else if(!m_leftLock){
+		m_vx += BULLET_MOVE_SPEED;
+	}
+}
+
+bool KoharuAction::ableAttack() const {
+	return !(m_bulletCnt > 0 || m_slashCnt > 0);
+}
+
+bool KoharuAction::ableWalk() const {
+	return StickAction::ableWalk() && m_bulletCnt == 0;
 }

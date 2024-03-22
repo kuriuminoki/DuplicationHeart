@@ -125,6 +125,12 @@ void FlightAction::debug(int x, int y, int color) const {
 	debugAction(x + DRAW_FORMAT_STRING_SIZE, y + DRAW_FORMAT_STRING_SIZE, color);
 }
 
+// FlightActionのデバッグ
+void KoharuAction::debug(int x, int y, int color) const {
+	DrawFormatString(x, y, color, "**KoharuAction**");
+	debugAction(x + DRAW_FORMAT_STRING_SIZE, y + DRAW_FORMAT_STRING_SIZE, color);
+}
+
 
 /*
 * Character
@@ -208,6 +214,16 @@ void SlashObject::debug(int x, int y, int color) const {
 	DrawFormatString(x, y, color, "**SlashObject**");
 	DrawFormatString(x, y + DRAW_FORMAT_STRING_SIZE, color, "cnt=%d", m_cnt);
 	debugObject(x + DRAW_FORMAT_STRING_SIZE, y + DRAW_FORMAT_STRING_SIZE * 2, color);
+	// DrawBox(m_x1, m_y1, m_x2, m_y2, color, FALSE);
+}
+
+
+/*
+* 爆発のデバッグ
+*/
+void BombObject::debug(int x, int y, int color) const {
+	DrawFormatString(x, y, color, "**BombObject**");
+	//DrawFormatString(x, y + DRAW_FORMAT_STRING_SIZE, color, "cnt=%d", m_cnt);
 	// DrawBox(m_x1, m_y1, m_x2, m_y2, color, FALSE);
 }
 

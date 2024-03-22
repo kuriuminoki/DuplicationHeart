@@ -47,19 +47,20 @@ void SoundPlayer::setVolume(int volume) {
 }
 
 // BGMをセット（変更）
-void SoundPlayer::setBGM(std::string bgmName, int volume) {
+void SoundPlayer::setBGM(std::string bgmName) {
 	if (bgmName == m_bgmName || bgmName == "" || bgmName == "null") { return; }
 	DeleteSoundMem(m_bgmHandle);
 	m_bgmName = bgmName;
 	m_bgmHandle = LoadSoundMem(bgmName.c_str());
 	// 音量調整
-	changeSoundVolume(m_volume * volume / 100, m_bgmHandle);
-	playBGM();
+	changeSoundVolume(m_volume, m_bgmHandle);
 }
 
 // BGMを再生
 void SoundPlayer::playBGM() {
-	PlaySoundMem(m_bgmHandle, DX_PLAYTYPE_LOOP, FALSE);
+	if (!checkBGMplay()) {
+		PlaySoundMem(m_bgmHandle, DX_PLAYTYPE_LOOP, FALSE);
+	}
 }
 
 // BGMをストップ
