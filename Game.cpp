@@ -670,7 +670,7 @@ bool Game::play() {
 		m_gameoverCnt++;
 	}
 	// ƒGƒŠƒAˆÚ“®
-	if (m_world->getBrightValue() == 0 && CheckSoundMem(m_world->getDoorSound()) == 0) {
+	else if (m_world->getBrightValue() == 0 && CheckSoundMem(m_world->getDoorSound()) == 0) {
 		int fromAreaNum = m_world->getAreaNum();
 		int toAreaNum = m_world->getNextAreaNum();
 		m_gameData->asignedWorld(m_world, false);
@@ -682,7 +682,7 @@ bool Game::play() {
 		if(resetBgmFlag){ m_soundPlayer->stopBGM(); }
 		m_gameData->asignWorld(m_world);
 		m_world->setPlayerOnDoor(fromAreaNum);
-		m_story->setWorld(m_world);//
+		m_story->setWorld(m_world);
 		m_gameData->setAreaNum(toAreaNum);
 		return true;
 	}
