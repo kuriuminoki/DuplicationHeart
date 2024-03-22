@@ -154,6 +154,7 @@ public:
 	void setUpLock(bool lock);
 	void setDownLock(bool lock);
 	inline void setBoost() { if(!m_grand) m_boostCnt = BOOST_TIME; }
+	inline void setSoundPlayer(SoundPlayer* soundPlayer) { m_soundPlayer_p = soundPlayer; }
 	inline void setGrandRightSlope(bool grand) { m_grandRightSlope = grand; }
 	inline void setGrandLeftSlope(bool grand) { m_grandLeftSlope = grand; }
 	void setRunCnt(int runCnt) { m_runCnt = runCnt; }

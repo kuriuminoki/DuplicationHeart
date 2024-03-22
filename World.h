@@ -25,6 +25,30 @@ class ObjectLoader;
 class SoundPlayer;
 
 
+/*
+* 操作するキャラを変更するクラス
+*/
+class PlayerChanger {
+private:
+
+	// 今操作しているキャラがNPCのときのBrain名
+	std::string m_prevBrainName;
+
+public:
+
+	PlayerChanger(std::vector<CharacterController*> controllers_p, const Character* player_p);
+
+	// 捜査対象のキャラを返す 変更ないならnullptr
+	const Character* play(SoundPlayer* soundPlayer_p, std::vector<CharacterController*> controllers_p, const Character* player_p);
+
+	inline void setPrevBrainName(std::string prevBrainName) { m_prevBrainName = prevBrainName; }
+	inline std::string getPrevBrainName() { return m_prevBrainName; }
+};
+
+
+/*
+* キャラが存在し行動する世界
+*/
 class World {
 private:
 
@@ -85,6 +109,9 @@ private:
 
 	// プレイヤー 毎回for文でID検索しない用
 	Character* m_player_p;
+
+	// プレイヤー変更処理
+	PlayerChanger* m_playerChanger;
 
 	// 戦闘のためにキャラを動かすコントローラ Worldがデリートする
 	std::vector<CharacterController*> m_characterControllers;
@@ -252,6 +279,9 @@ public:
 	// キャラに戦わせる
 	void battle();
 
+	// 操作キャラ変更
+	void changePlayer(const Character* nextPlayer);
+
 	// 各キャラが目標地点へ移動するだけ
 	bool moveGoalCharacter();
 
@@ -273,7 +303,10 @@ private:
 	CharacterController* createControllerWithData(const Character* character, CharacterData* data);
 
 	// Battle：カメラの更新
-	void updateCamera();
+	void updateCamera(int gx, int gy, double gex);
+
+	// Battle：戦闘中のカメラ操作
+	void adjustBattleCamera();
 
 	// Battle：アニメーションの更新
 	void updateAnimation();

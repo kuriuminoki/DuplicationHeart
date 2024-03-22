@@ -173,6 +173,9 @@ void CharacterController::setActionDownLock(bool lock) {
 void CharacterController::setActionBoost() {
 	m_characterAction->setBoost();
 }
+void CharacterController::setActionSound(SoundPlayer* soundPlayer) {
+	m_characterAction->setSoundPlayer(soundPlayer);
+}
 
 // キャラクターのセッタ
 void CharacterController::setCharacterX(int x) {
