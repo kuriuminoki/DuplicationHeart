@@ -34,6 +34,9 @@ Character* createCharacter(const char* characterName, int hp, int x, int y, int 
 	else if (name == "ƒgƒƒC") {
 		character = new Troy(name.c_str(), hp, x, y, groupId);
 	}
+	else if (name == "ƒRƒnƒ‹") {
+		character = new Koharu(name.c_str(), hp, x, y, groupId);
+	}
 	else if (name == "–_lŠÔ" || name == "ƒNƒlŠÔ") {
 		character = new SlashOnly(name.c_str(), hp, x, y, groupId);
 	}
@@ -130,8 +133,8 @@ AttackInfo::AttackInfo(const char* characterName, double drawEx) {
 
 	// UŒ‚‚ÌƒGƒtƒFƒNƒg
 	string path = "picture/effect/";
-	m_bulletEffectHandles = new GraphHandles((path + data["bulletEffect"]).c_str(), 4, drawEx, 0.0, true);
-	m_slashEffectHandles = new GraphHandles((path + data["slashEffect"]).c_str(), 4, drawEx, 0.0, true);
+	m_bulletEffectHandles = new GraphHandles((path + data["bulletEffect"]).c_str(), stoi(data["bulletEffectSum"]), drawEx, 0.0, true);
+	m_slashEffectHandles = new GraphHandles((path + data["slashEffect"]).c_str(), stoi(data["slashEffectSum"]), drawEx, 0.0, true);
 	// ƒTƒEƒ“ƒh
 	path = "sound/stick/";
 	m_bulletSoundHandle = LoadSoundMem((path + data["bulletSound"]).c_str());
@@ -177,6 +180,7 @@ void AttackInfo::setParam(map<string, string>& data) {
 	m_bulletDistance = stoi(data["bulletDistance"]);
 	m_bulletImpactX = stoi(data["bulletImpactX"]);
 	m_bulletImpactY = stoi(data["bulletImpactY"]);
+	m_bulletBomb = (bool)stoi(data["bulletBomb"]);
 	m_slashHp = stoi(data["slashHp"]);
 	m_slashDamage = stoi(data["slashDamage"]);
 	m_slashLenX = stoi(data["slashLenX"]);
@@ -314,6 +318,10 @@ void Character::moveDown(int d) {
 	m_y += d;
 }
 
+bool Character::haveDeadGraph() const {
+	return !(m_graphHandle->getDeadHandle() == nullptr);
+}
+
 // —§‚¿‰æ‘œ‚ğƒZƒbƒg
 void Character::switchStand(int cnt) { m_graphHandle->switchStand(); }
 // —§‚¿ËŒ‚‰æ‘œ‚ğƒZƒbƒg
@@ -344,6 +352,8 @@ void Character::switchBoost(int cnt) { m_graphHandle->switchBoost(); }
 void Character::switchAirBullet(int cnt) { m_graphHandle->switchAirBullet(); }
 // ‹ó’†aŒ‚‰æ‘œ‚ğƒZƒbƒg
 void Character::switchAirSlash(int cnt) { m_graphHandle->switchAirSlash(); }
+// ‚â‚ç‚ê‰æ‘œ‚ğƒZƒbƒg
+void Character::switchDead(int cnt) { m_graphHandle->switchDead(); }
 
 
 /*
@@ -388,9 +398,6 @@ Heart::Heart(const char* name, int hp, int x, int y, int groupId, AttackInfo* at
 
 	m_bulletColor = WHITE;
 
-	// ‚Æ‚è‚ ‚¦‚¸—§‚¿‰æ‘œ‚ÅƒXƒ^[ƒg
-	//switchStand();
-	//m_y -= getHeight();
 }
 
 // ƒfƒXƒgƒ‰ƒNƒ^
@@ -428,7 +435,7 @@ void Heart::switchPreJump(int cnt) {
 	m_graphHandle->switchPreJump(index);
 }
 
-// ËŒ‚UŒ‚‚ğ‚·‚é(ƒLƒƒƒ‰‚²‚Æ‚Éˆá‚¤)
+// ËŒ‚UŒ‚‚ğ‚·‚é
 Object* Heart::bulletAttack(int gx, int gy, SoundPlayer* soundPlayer) {
 
 	// ’e‚Ìì¬
@@ -452,8 +459,8 @@ Object* Heart::bulletAttack(int gx, int gy, SoundPlayer* soundPlayer) {
 	return attackObject;
 }
 
-// aŒ‚UŒ‚‚ğ‚·‚é(ƒLƒƒƒ‰‚²‚Æ‚Éˆá‚¤)
-Object* Heart::slashAttack(bool leftDirection, int cnt, SoundPlayer* soundPlayer) {
+// aŒ‚UŒ‚‚ğ‚·‚é
+Object* Heart::slashAttack(bool leftDirection, int cnt, bool grand, SoundPlayer* soundPlayer) {
 	// UŒ‚”ÍˆÍ‚ğŒˆ’è
 	int centerX = getCenterX();
 	int height = m_attackInfo->slashLenY() / 2;
@@ -471,7 +478,11 @@ Object* Heart::slashAttack(bool leftDirection, int cnt, SoundPlayer* soundPlayer
 	int index = 0;
 	int slashCountSum = m_attackInfo->slashCountSum() / 3 + 1;
 	SlashObject* attackObject = nullptr;
-	GraphHandles* slashHandles = m_graphHandle->getSlashHandle();
+	GraphHandles* slashHandles = m_graphHandle->getAirSlashEffectHandle();
+	if (grand || slashHandles == nullptr) {
+		// ’nã‚É‚¢‚éA‚à‚µ‚­‚Í‹ó’†aŒ‚‰æ‘œ‚ª‚È‚¢‚È‚ç’nã—p‚Ì‰æ‘œ‚ğg‚¤
+		slashHandles = m_graphHandle->getSlashHandle();
+	}
 	// UŒ‚‚Ì•ûŒü
 	slashHandles->setReverseX(m_leftDirection);
 	// cnt‚ªUŒ‚‚Ìƒ^ƒCƒ~ƒ“ƒO‚È‚çƒIƒuƒWƒFƒNƒg¶¬
@@ -526,7 +537,7 @@ Character* Siesta::createCopy() {
 	return res;
 }
 
-// ËŒ‚UŒ‚‚ğ‚·‚é(ƒLƒƒƒ‰‚²‚Æ‚Éˆá‚¤)
+// ËŒ‚UŒ‚‚ğ‚·‚é
 Object* Siesta::bulletAttack(int gx, int gy, SoundPlayer* soundPlayer) {
 	ParabolaBullet *attackObject = new ParabolaBullet(getCenterX(), getCenterY(), m_graphHandle->getBulletHandle()->getGraphHandle(), gx, gy, m_attackInfo);
 	// ©–Å–h~
@@ -542,8 +553,8 @@ Object* Siesta::bulletAttack(int gx, int gy, SoundPlayer* soundPlayer) {
 	return attackObject;
 }
 
-// aŒ‚UŒ‚‚ğ‚·‚é(ƒLƒƒƒ‰‚²‚Æ‚Éˆá‚¤)
-Object* Siesta::slashAttack(bool leftDirection, int cnt, SoundPlayer* soundPlayer) {
+// aŒ‚UŒ‚‚ğ‚·‚é
+Object* Siesta::slashAttack(bool leftDirection, int cnt, bool grand, SoundPlayer* soundPlayer) {
 	// UŒ‚”ÍˆÍ‚ğŒˆ’è
 	int centerX = getCenterX();
 	int height = getHeight();
@@ -618,7 +629,7 @@ Character* Hierarchy::createCopy() {
 	return res;
 }
 
-// ËŒ‚UŒ‚‚ğ‚·‚é(ƒLƒƒƒ‰‚²‚Æ‚Éˆá‚¤)
+// ËŒ‚UŒ‚‚ğ‚·‚é
 Object* Hierarchy::bulletAttack(int gx, int gy, SoundPlayer* soundPlayer) {
 	BulletObject* attackObject = new BulletObject(getCenterX(), getCenterY(), m_graphHandle->getBulletHandle()->getGraphHandle(), gx, gy, m_attackInfo);
 	// ©–Å–h~
@@ -634,8 +645,8 @@ Object* Hierarchy::bulletAttack(int gx, int gy, SoundPlayer* soundPlayer) {
 	return attackObject;
 }
 
-// aŒ‚UŒ‚‚ğ‚·‚é(ƒLƒƒƒ‰‚²‚Æ‚Éˆá‚¤)
-Object* Hierarchy::slashAttack(bool leftDirection, int cnt, SoundPlayer* soundPlayer) {
+// aŒ‚UŒ‚‚ğ‚·‚é
+Object* Hierarchy::slashAttack(bool leftDirection, int cnt, bool grand, SoundPlayer* soundPlayer) {
 	return nullptr;
 }
 
@@ -670,8 +681,8 @@ void Valkyria::switchPreJump(int cnt) {
 	m_graphHandle->switchPreJump(index);
 }
 
-// aŒ‚UŒ‚‚ğ‚·‚é(ƒLƒƒƒ‰‚²‚Æ‚Éˆá‚¤)
-Object* Valkyria::slashAttack(bool leftDirection, int cnt, SoundPlayer* soundPlayer) {
+// aŒ‚UŒ‚‚ğ‚·‚é
+Object* Valkyria::slashAttack(bool leftDirection, int cnt, bool grand, SoundPlayer* soundPlayer) {
 	// UŒ‚”ÍˆÍ‚ğŒˆ’è
 	int attackWide, attackHeight;
 	GetGraphSize(m_graphHandle->getStandSlashHandle()->getHandle(0), &attackWide, &attackHeight);
@@ -742,9 +753,48 @@ Character* Troy::createCopy() {
 	return res;
 }
 
-// aŒ‚UŒ‚‚ğ‚·‚é(ƒLƒƒƒ‰‚²‚Æ‚Éˆá‚¤)
-Object* Troy::slashAttack(bool leftDirection, int cnt, SoundPlayer* soundPlayer) {
+// aŒ‚UŒ‚‚ğ‚·‚é
+Object* Troy::slashAttack(bool leftDirection, int cnt, bool grand, SoundPlayer* soundPlayer) {
 	return nullptr;
+}
+
+
+/*
+* ƒRƒnƒ‹
+*/
+Koharu::Koharu(const char* name, int hp, int x, int y, int groupId) :
+	Heart(name, hp, x, y, groupId)
+{
+
+}
+Koharu::Koharu(const char* name, int hp, int x, int y, int groupId, AttackInfo* attackInfo) :
+	Heart(name, hp, x, y, groupId, attackInfo)
+{
+
+}
+
+Character* Koharu::createCopy() {
+	Character* res = new Koharu(m_characterInfo->name().c_str(), m_hp, m_x, m_y, m_groupId, m_attackInfo);
+	setParam(res);
+	return res;
+}
+
+// ËŒ‚UŒ‚‚ğ‚·‚é
+Object* Koharu::bulletAttack(int gx, int gy, SoundPlayer* soundPlayer) {
+	// ƒoƒY[ƒJ‚ÌeŒû‚©‚ço‚é‚æ‚¤‚ÉŒ©‚¹‚é
+	gy = getY() + getHeight() - 160;
+	BulletObject* attackObject = new BulletObject(getCenterX(), gy, m_graphHandle->getBulletHandle()->getGraphHandle(), gx, gy, m_attackInfo);
+	// ©–Å–h~
+	attackObject->setCharacterId(m_id);
+	// ƒ`[ƒ€ƒLƒ‹–h~
+	attackObject->setGroupId(m_groupId);
+	// Œø‰Ê‰¹
+	if (soundPlayer != nullptr) {
+		soundPlayer->pushSoundQueue(m_attackInfo->bulletStartSoundeHandle(),
+			adjustPanSound(getCenterX(),
+				soundPlayer->getCameraX()));
+	}
+	return attackObject;
 }
 
 
@@ -809,7 +859,7 @@ Character* ParabolaOnly::createCopy() {
 	return res;
 }
 
-// ËŒ‚UŒ‚‚ğ‚·‚é(ƒLƒƒƒ‰‚²‚Æ‚Éˆá‚¤)
+// ËŒ‚UŒ‚‚ğ‚·‚é
 Object* ParabolaOnly::bulletAttack(int gx, int gy, SoundPlayer* soundPlayer) {
 	ParabolaBullet* attackObject = new ParabolaBullet(getCenterX(), getCenterY(), m_bulletColor, gx, gy, m_attackInfo);
 	// ©–Å–h~
