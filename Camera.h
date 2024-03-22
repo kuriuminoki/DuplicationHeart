@@ -29,6 +29,9 @@ private:
 	// 揺れる残り時間
 	int m_shakingTime;
 
+	// trueなら常にカメラ最低倍率
+	bool m_zoomOutMode;
+
 public:
 	Camera();
 	Camera(int x, int y, double ex, int speed=0);
@@ -45,6 +48,7 @@ public:
 	inline int getMaxSpeed() const { return m_maxSpeed; }
 	inline int getShakingWidth() const { return m_shakingWidth; }
 	inline int getShakingTime() const { return m_shakingTime; }
+	inline int getZoomOutMode() const { return m_zoomOutMode; }
 
 	// セッタ
 	inline void setPoint(int x, int y) { m_x = x; m_y = y; }
@@ -55,6 +59,7 @@ public:
 	inline void setGy(int y) { m_gy = y; }
 	inline void setSpeed(int speed) { m_speed = speed; }
 	inline void setEx(double ex) { m_ex = ex; }
+	inline void setZoomOutMode(bool zoomOutMode) { m_zoomOutMode = zoomOutMode; }
 
 	// カメラの動き
 	void move();
