@@ -757,9 +757,12 @@ void World::updateCamera() {
 	// 大きく変更する必要がある場合ほど、大きく拡大率を変更する。
 	double nowEx = m_camera->getEx();
 	int shift = controlLeftShift() + controlRightShift();
-	if (shift > 0) {
+	if (shift == 1) {
+		m_camera->setZoomOutMode(!m_camera->getZoomOutMode());
+	}
+	if (m_camera->getZoomOutMode()) {
 		if (nowEx > m_cameraMinEx) {
-			m_camera->setEx(max(nowEx - 0.01 * m_exX, 0.1));
+			m_camera->setEx(max(nowEx - 0.02 * m_exX, 0.1));
 		}
 	}
 	else {
@@ -1041,6 +1044,8 @@ void World::createBomb(int x, int y, Object* attackObject) {
 		m_attackObjects.push_back(bomb);
 		// 効果音
 		m_soundPlayer_p->pushSoundQueue(m_bombSound, adjustPanSound(x, m_camera->getX()));
+		// 画面の揺れ
+		m_camera->shakingStart(20, 20);
 	}
 }
 
@@ -1120,6 +1125,7 @@ bool World::dealBrightValue() {
 // 会話させる
 void World::talk() {
 	if (m_conversation_p != nullptr) {
+		updateCamera();
 		m_conversation_p->play();
 		// 会話終了
 		if (m_conversation_p->getFinishFlag()) {

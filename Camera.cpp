@@ -21,6 +21,7 @@ Camera::Camera(int x, int y, double ex, int speed) {
 	m_centerY = GAME_HEIGHT / 2;
 	m_shakingWidth = 0;
 	m_shakingTime = 0;
+	m_zoomOutMode = false;
 }
 
 Camera::Camera(const Camera* original) {
@@ -35,6 +36,7 @@ Camera::Camera(const Camera* original) {
 	m_centerY = GAME_HEIGHT / 2;
 	m_shakingWidth = original->getShakingWidth();
 	m_shakingTime = original->getShakingTime();
+	m_zoomOutMode = original->getZoomOutMode();
 }
 
 // カメラの移動 目標地点が近いほど鈍感になる
