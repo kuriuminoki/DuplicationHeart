@@ -35,7 +35,7 @@ vector<string> mapParam2vector(map<string, string> paramMap) {
 /*
 * イベント
 */
-Event::Event(int eventNum, World* world, SoundPlayer* soundPlayer) {
+Event::Event(int eventNum, World* world, SoundPlayer* soundPlayer, int version) {
 
 	m_eventNum = eventNum;
 	m_nowElement = 0;
@@ -43,6 +43,7 @@ Event::Event(int eventNum, World* world, SoundPlayer* soundPlayer) {
 
 	m_world_p = world;
 	m_soundPlayer_p = soundPlayer;
+	m_version = version;
 
 	ostringstream oss;
 	oss << "data/event/event" << m_eventNum << ".csv";
@@ -110,8 +111,8 @@ void Event::createElement(vector<string> param, World* world, SoundPlayer* sound
 	if (param0 == "LockArea") {
 		element = new LockAreaEvent(world, param);
 	}
-	else if (param0 == "Invincinble") {
-		element = new InvincinbleEvent(world, param);
+	else if (param0 == "Invincible") {
+		element = new InvincibleEvent(world, param);
 	}
 	else if (param0 == "SetGoalPoint") {
 		element = new SetGoalPointEvent(world, param);
@@ -154,6 +155,9 @@ void Event::createElement(vector<string> param, World* world, SoundPlayer* sound
 	}
 	else if (param0 == "BlindWorld") {
 		element = new BlindWorldEvent(world, param);
+	}
+	else if (param0 == "PushCharacter") {
+		element = new PushCharacterEvent(world, param, m_version);
 	}
 	else if (param0 == "BattleForever") {
 		element = new BattleForever(world, param);
@@ -302,21 +306,21 @@ EVENT_RESULT LockAreaEvent::play() {
 }
 
 // キャラを無敵にする
-InvincinbleEvent::InvincinbleEvent(World* world, vector<string> param) :
+InvincibleEvent::InvincibleEvent(World* world, vector<string> param) :
 	EventElement(world)
 {
 	m_invincible = param[1] == "1" ? true : false;
 	m_character_p = m_world_p->getCharacterWithName(param[2]);
 	m_param = param;
 }
-EVENT_RESULT InvincinbleEvent::play() {
+EVENT_RESULT InvincibleEvent::play() {
 
 	// 対象のキャラを無敵にする
 	m_character_p->setInvincible(m_invincible);
 
 	return EVENT_RESULT::SUCCESS;
 }
-void InvincinbleEvent::setWorld(World* world) {
+void InvincibleEvent::setWorld(World* world) {
 	EventElement::setWorld(world);
 	m_character_p = m_world_p->getCharacterWithName(m_param[2]);
 }
@@ -618,6 +622,34 @@ BlindWorldEvent::BlindWorldEvent(World* world, std::vector<std::string> param) :
 }
 EVENT_RESULT BlindWorldEvent::play() {
 	m_world_p->setBlindFlag(m_flag);
+	return EVENT_RESULT::SUCCESS;
+}
+
+
+// キャラの追加
+PushCharacterEvent::PushCharacterEvent(World* world, std::vector<std::string> param, int version) :
+	EventElement(world)
+{
+	m_name = param[1];
+	m_x = stoi(param[2]);
+	m_y = stoi(param[3]);
+	m_sound = (bool)stoi(param[4]);
+	m_groupId = stoi(param[5]);
+	m_action = param[6];
+	m_brain = param[7];
+	m_controller = param[8];
+	m_version = version;
+}
+EVENT_RESULT PushCharacterEvent::play() {
+	Character* character = createCharacter(m_name.c_str());
+	character->changeInfoVersion(m_version);
+	character->setGroupId(m_groupId);
+	character->setX(m_x);
+	character->setY(m_y - character->getHeight());
+	CharacterAction* action = createAction(m_action, character, m_sound ? m_world_p->getSoundPlayer() : nullptr);
+	Brain* brain = createBrain(m_brain, m_world_p->getCamera());
+	CharacterController* controller = createController(m_controller, brain, action);
+	m_world_p->pushCharacter(character, controller);
 	return EVENT_RESULT::SUCCESS;
 }
 

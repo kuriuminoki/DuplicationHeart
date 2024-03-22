@@ -99,8 +99,11 @@ private:
 	// 前のセーブポイントへ戻る要求
 	bool m_backPrevSaveFlag;
 
+	// 世界のバージョン
+	int m_version;
+
 public:
-	Event(int eventNum, World* world, SoundPlayer* soundPlayer);
+	Event(int eventNum, World* world, SoundPlayer* soundPlayer, int version);
 	~Event();
 
 	// ゲッタ
@@ -242,7 +245,7 @@ public:
 
 };
 // キャラを無敵にする
-class InvincinbleEvent :
+class InvincibleEvent :
 	public EventElement
 {
 private:
@@ -257,7 +260,7 @@ private:
 	Character* m_character_p;
 
 public:
-	InvincinbleEvent(World* world, std::vector<std::string> param);
+	InvincibleEvent(World* world, std::vector<std::string> param);
 
 	// プレイ
 	EVENT_RESULT play();
@@ -582,6 +585,29 @@ private:
 
 public:
 	BlindWorldEvent(World* world, std::vector<std::string> param);
+
+	// プレイ
+	EVENT_RESULT play();
+};
+
+// キャラの追加
+class PushCharacterEvent :
+	public EventElement
+{
+private:
+
+	// 追加するキャラの情報
+	std::string m_name;
+	int m_x, m_y;
+	bool m_sound;
+	int m_groupId;
+	std::string m_action;
+	std::string m_brain;
+	std::string m_controller;
+	int m_version;
+
+public:
+	PushCharacterEvent(World* world, std::vector<std::string> param, int version);
 
 	// プレイ
 	EVENT_RESULT play();
