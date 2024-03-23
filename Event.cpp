@@ -489,6 +489,7 @@ void ChangeCharacterDirectionEvent::setWorld(World* world) {
 DeadCharacterEvent::DeadCharacterEvent(World* world, std::vector<std::string> param) :
 	EventElement(world)
 {
+	m_param = param;
 	m_character_p = m_world_p->getCharacterWithName(param[1]);
 }
 EVENT_RESULT DeadCharacterEvent::play() {
