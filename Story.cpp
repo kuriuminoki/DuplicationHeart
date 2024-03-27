@@ -72,7 +72,7 @@ void Story::loadCsvData(const char* fileName, World* world, SoundPlayer* soundPl
 			}
 		}
 		if (eventNum != -1) {
-			Event* eventOne = new Event(eventNum, world, soundPlayer);
+			Event* eventOne = new Event(eventNum, world, soundPlayer, m_version);
 			if (mustFlag) { m_mustEvent.push_back(eventOne); }
 			else { m_subEvent.push_back(eventOne); }
 		}
