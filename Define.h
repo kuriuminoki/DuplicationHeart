@@ -1,10 +1,10 @@
 #ifndef DEFINE_H_INCLUDED
 #define DEFINE_H_INCLUDED
 
-#include"DxLib.h"
+#include "DxLib.h"
 
 // フルスクリーンならFALSE
-static int WINDOW = TRUE;
+static int WINDOW = FALSE;
 // マウスを表示するならFALSE
 static int MOUSE_DISP = TRUE;
 
@@ -20,6 +20,9 @@ extern int GAME_HEIGHT;
 
 // 解像度の倍率
 void getGameEx(double& exX, double& exY);
+
+// 解像度変更
+void ChangeGameResolution();
 
 #define GAME_COLOR_BIT_NUM 16
 
