@@ -121,7 +121,7 @@ public:
 	// ダメージ
 	virtual void damage(int vx, int vy, int damageValue) = 0;
 
-	// BrainがFreezeならプレイヤーの方向を向かせる allがtrueなら全キャラが対象
+	// BrainがFreezeならプレイヤーの方向を向かせる allがtrueならFreeze以外の全キャラが対象
 	void setPlayerDirection(Character* player_p, bool all = false);
 
 	// AIの目標地点を設定

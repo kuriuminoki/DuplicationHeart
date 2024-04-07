@@ -140,7 +140,7 @@ public:
 	void debug(int x, int y, int color) const { }
 
 	// ƒZƒbƒ^
-	void setCharacterAction(const CharacterAction* characterAction) {  }
+	void setCharacterAction(const CharacterAction* characterAction) { m_characterAction_p = characterAction; }
 
 	bool actionOrder() { return false; }
 	void bulletTargetPoint(int& x, int& y) {  }
