@@ -151,6 +151,8 @@ World::World(int fromAreaNum, int toAreaNum, SoundPlayer* soundPlayer) :
 	m_characterDeadSound = LoadSoundMem("sound/battle/dead.wav");
 	m_bombSound = LoadSoundMem("sound/battle/bomb.wav");
 	m_doorSound = LoadSoundMem("sound/battle/door.wav");
+	m_cameraInSound = LoadSoundMem("sound/battle/cameraIn.mp3");
+	m_cameraOutSound = LoadSoundMem("sound/battle/cameraOut.mp3");
 
 }
 
@@ -257,6 +259,8 @@ World::~World() {
 		DeleteSoundMem(m_characterDeadSound);
 		DeleteSoundMem(m_bombSound);
 		DeleteSoundMem(m_doorSound);
+		DeleteSoundMem(m_cameraInSound);
+		DeleteSoundMem(m_cameraOutSound);
 	}
 
 	if (m_objectConversation != nullptr) {
@@ -758,7 +762,14 @@ void World::updateCamera() {
 	double nowEx = m_camera->getEx();
 	int shift = controlLeftShift() + controlRightShift();
 	if (shift == 1) {
-		m_camera->setZoomOutMode(!m_camera->getZoomOutMode());
+		bool zoomOutMode = m_camera->getZoomOutMode();
+		m_camera->setZoomOutMode(!zoomOutMode);
+		if (zoomOutMode) {
+			m_soundPlayer_p->pushSoundQueue(m_cameraInSound);
+		}
+		else {
+			m_soundPlayer_p->pushSoundQueue(m_cameraOutSound);
+		}
 	}
 	if (m_camera->getZoomOutMode()) {
 		if (nowEx > m_cameraMinEx) {
