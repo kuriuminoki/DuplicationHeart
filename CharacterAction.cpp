@@ -232,6 +232,13 @@ bool CharacterAction::ableWalk() const {
 	return !m_moveRight && !m_moveLeft && !m_squat;
 }
 
+bool CharacterAction::ableChangeDirection() const {
+	if (m_bulletCnt > 0 || m_slashCnt > 0 || m_moveLeft || m_moveRight || m_moveUp || m_moveDown || m_damageCnt > 0) {
+		return false;
+	}
+	return true;
+}
+
 // 着地
 void CharacterAction::setGrand(bool grand) {
 	if (m_vy > 0) { // 着地モーションになる

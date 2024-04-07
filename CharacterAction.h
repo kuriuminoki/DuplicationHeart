@@ -226,6 +226,9 @@ public:
 	// ¡•à‚¯‚éó‘Ô
 	virtual bool ableWalk() const;
 
+	// •ûŒü“]Š·‰Â”\
+	virtual bool ableChangeDirection() const;
+
 	// •à‚«n‚ß‚é
 	void startMoveLeft();
 	void startMoveRight();
