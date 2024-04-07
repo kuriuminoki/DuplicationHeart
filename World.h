@@ -119,6 +119,10 @@ private:
 	// ドアに入った時の効果音
 	int m_doorSound;
 
+	// カメラのズームイン・アウトの効果音
+	int m_cameraInSound;
+	int m_cameraOutSound;
+
 	// 背景
 	int m_backGroundGraph;
 	int m_backGroundColor;
