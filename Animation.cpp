@@ -714,7 +714,6 @@ void OpMovie::draw() {
 		int alpha = min(255, m_cnt - 4350);
 		SetDrawBlendMode(DX_BLENDMODE_ALPHA, alpha);
 	}
-	SetDrawMode(DX_DRAWMODE_BILINEAR);
 	if (m_cnt < 3750 && m_cnt >= 3050) {
 		m_animationDrawer->setAnimation(m_orangeAnime);
 		m_animationDrawer->drawAnimation();
@@ -735,7 +734,6 @@ void OpMovie::draw() {
 		DrawBox(0, 0, GAME_WIDE, GAME_HEIGHT, BLACK, TRUE);
 	}
 	drawFlame();
-	SetDrawMode(DX_DRAWMODE_NEAREST);
 
 	// Zキー長押しでスキップの表示
 	drawSkip(m_skipCnt, m_exX, m_exY, m_textHandle);

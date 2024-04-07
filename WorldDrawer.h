@@ -63,6 +63,8 @@ private:
 	// 会話イベント
 	ConversationDrawer* m_conversationDrawer;
 
+	int m_enemyNotice;
+
 public:
 	WorldDrawer(const World* world);
 
