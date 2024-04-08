@@ -141,6 +141,7 @@ public:
 	bool getUpLock() const { return m_upLock; }
 	bool getDownLock() const { return m_downLock; }
 	const SoundPlayer* getSoundPlayer() const { return m_soundPlayer_p; }
+	inline int getPreJumpCnt() const { return m_preJumpCnt; }
 	virtual int getPreJumpMax() const { return PRE_JUMP_MAX; }
 
 	// ƒZƒbƒ^

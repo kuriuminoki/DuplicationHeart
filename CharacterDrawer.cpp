@@ -65,7 +65,8 @@ void CharacterDrawer::drawCharacter(const Camera* const camera, int enemyNoticeH
 	camera->setCamera(&x, &y, &ex);
 
 	// ‰æ–ÊŠO
-	wide *= camera->getEx(); height *= camera->getEx();
+	wide = (int)(wide * camera->getEx());
+	height = (int)(height * camera->getEx());
 	if (x - wide / 2 > GAME_WIDE || y - height / 2 > GAME_HEIGHT || x + wide / 2 < 0 || y + height / 2 < 0) {
 		drawEnemyNotice(x, y, 0.5, enemyNoticeHandle);
 		return;
