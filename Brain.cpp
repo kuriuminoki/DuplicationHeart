@@ -349,13 +349,14 @@ int NormalAI::jumpOrder() {
 	// ダメージを食らったらリセット
 	if (m_characterAction_p->getState() == CHARACTER_STATE::DAMAGE) {
 		m_jumpCnt = 0;
+		// 受け身
 		if (GetRand(120) == 0) { return 1; }
 	}
 
 	int maxJump = m_characterAction_p->getPreJumpMax();
 	int minJump = maxJump / 3;
 
-	if (m_jumpCnt == 0) {
+	if (m_characterAction_p->getPreJumpCnt() == -1) {
 		// ランダムでジャンプ
 		if (m_squatCnt == 0 && GetRand(99) == 0) { m_jumpCnt = GetRand(maxJump - minJump) + minJump; }
 
