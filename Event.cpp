@@ -159,6 +159,9 @@ void Event::createElement(vector<string> param, World* world, SoundPlayer* sound
 	else if (param0 == "PushCharacter") {
 		element = new PushCharacterEvent(world, param, m_version);
 	}
+	else if (param0 == "Wait") {
+		element = new WaitEvent(world, param);
+	}
 	else if (param0 == "BattleForever") {
 		element = new BattleForever(world, param);
 	}
@@ -294,6 +297,7 @@ EventElement::~EventElement() {
 
 }
 
+
 // エリア移動を禁止する
 LockAreaEvent::LockAreaEvent(World* world, std::vector<std::string> param):
 	EventElement(world)
@@ -304,6 +308,7 @@ EVENT_RESULT LockAreaEvent::play() {
 	m_world_p->setAreaLock(m_lock);
 	return EVENT_RESULT::SUCCESS;
 }
+
 
 // キャラを無敵にする
 InvincibleEvent::InvincibleEvent(World* world, vector<string> param) :
@@ -324,6 +329,7 @@ void InvincibleEvent::setWorld(World* world) {
 	EventElement::setWorld(world);
 	m_character_p = m_world_p->getCharacterWithName(m_param[2]);
 }
+
 
 // キャラのBrainを変更する
 ChangeBrainEvent::ChangeBrainEvent(World* world, vector<string> param) :
@@ -355,6 +361,7 @@ void ChangeBrainEvent::setWorld(World* world) {
 	m_controller_p = m_world_p->getControllerWithName(m_param[2]);
 }
 
+
 // キャラの目標地点を設定を変える
 SetGoalPointEvent::SetGoalPointEvent(World* world, vector<string> param) :
 	EventElement(world)
@@ -376,6 +383,7 @@ void SetGoalPointEvent::setWorld(World* world) {
 	m_controller_p = m_world_p->getControllerWithName(m_param[3]);
 }
 
+
 // 全キャラが目標地点へ移動するまで待機
 MoveGoalEvent::MoveGoalEvent(World* world, std::vector<std::string> param) :
 	EventElement(world)
@@ -388,6 +396,7 @@ EVENT_RESULT MoveGoalEvent::play() {
 	}
 	return EVENT_RESULT::NOW;
 }
+
 
 // キャラのGroupIDを変更する
 ChangeGroupEvent::ChangeGroupEvent(World* world, std::vector<string> param) :
@@ -407,6 +416,7 @@ void ChangeGroupEvent::setWorld(World* world) {
 	m_character_p = m_world_p->getCharacterWithName(m_param[2]);
 }
 
+
 // キャラのversionを変更する
 ChangeInfoVersionEvent::ChangeInfoVersionEvent(World* world, std::vector<string> param) :
 	EventElement(world)
@@ -424,6 +434,7 @@ void ChangeInfoVersionEvent::setWorld(World* world) {
 	EventElement::setWorld(world);
 	m_character_p = m_world_p->getCharacterWithName(m_param[2]);
 }
+
 
 // キャラの座標を変える
 ChangeCharacterPointEvent::ChangeCharacterPointEvent(World* world, std::vector<string> param) :
@@ -444,6 +455,7 @@ void ChangeCharacterPointEvent::setWorld(World* world) {
 	EventElement::setWorld(world);
 	m_character_p = m_world_p->getCharacterWithName(m_param[2]);
 }
+
 
 // キャラの向きを変える
 ChangeCharacterDirectionEvent::ChangeCharacterDirectionEvent(World* world, std::vector<string> param) :
@@ -485,6 +497,7 @@ void ChangeCharacterDirectionEvent::setWorld(World* world) {
 	m_character_p = m_world_p->getCharacterWithName(m_param[2]);
 }
 
+
 // 特定のキャラのHPが0になるまで戦う
 DeadCharacterEvent::DeadCharacterEvent(World* world, std::vector<std::string> param) :
 	EventElement(world)
@@ -508,6 +521,7 @@ void DeadCharacterEvent::setWorld(World* world) {
 	m_character_p = m_world_p->getCharacterWithName(m_param[1]);
 }
 
+
 // 特定のグループが全滅するまで戦う
 DeadGroupEvent::DeadGroupEvent(World* world, std::vector<std::string> param) :
 	EventElement(world)
@@ -530,6 +544,7 @@ EVENT_RESULT DeadGroupEvent::play() {
 }
 
 
+// 会話イベント
 TalkEvent::TalkEvent(World* world, SoundPlayer* soundPlayer, std::vector<std::string> param):
 	EventElement(world)
 {
@@ -556,6 +571,7 @@ void TalkEvent::setWorld(World* world) {
 }
 
 
+// ムービーイベント
 MovieEvent::MovieEvent(World* world, SoundPlayer* soundPlayer, std::vector<std::string> param) :
 	EventElement(world)
 {
@@ -652,6 +668,23 @@ EVENT_RESULT PushCharacterEvent::play() {
 	CharacterController* controller = createController(m_controller, brain, action);
 	m_world_p->pushCharacter(character, controller);
 	return EVENT_RESULT::SUCCESS;
+}
+
+
+WaitEvent::WaitEvent(World* world, std::vector<std::string> param) :
+	EventElement(world)
+{
+	m_cnt = 0;
+	m_time = stoi(param[1]);
+}
+
+// プレイ
+EVENT_RESULT WaitEvent::play() {
+	m_world_p->moveGoalCharacter();
+	if (m_cnt++ == m_time) {
+		return EVENT_RESULT::SUCCESS;
+	}
+	return EVENT_RESULT::NOW;
 }
 
 

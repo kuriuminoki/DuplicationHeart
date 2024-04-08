@@ -613,6 +613,19 @@ public:
 	EVENT_RESULT play();
 };
 
+// 待機
+class WaitEvent :
+	public EventElement
+{
+	int m_cnt;
+	int m_time;
+public:
+	WaitEvent(World* world, std::vector<std::string> param);
+
+	// プレイ
+	EVENT_RESULT play();
+};
+
 // 永遠にbattle テスト用
 class BattleForever :
 	public EventElement
