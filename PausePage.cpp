@@ -204,7 +204,7 @@ void TutorialDisp::draw(int x1, int y1, int x2, int y2) {
 	i += m_fontSize * 2;
 	DrawStringToHandle(x1 + m_fontSize, y1 + i, "会話をスキップ：Ｚキー長押し", BLACK, m_font_p);
 	i += m_fontSize * 2;
-	DrawStringToHandle(x1 + m_fontSize, y1 + i, "ズームアウト：シフトキー長押し", BLACK, m_font_p);
+	DrawStringToHandle(x1 + m_fontSize, y1 + i, "カメラのモード切り替え：シフトキー", BLACK, m_font_p);
 }
 
 
