@@ -576,7 +576,7 @@ MovieEvent::MovieEvent(World* world, SoundPlayer* soundPlayer, std::vector<std::
 	EventElement(world)
 {
 	if (param[1] == "op") {
-		m_movie = new OpMovie(soundPlayer);
+		m_movie = new OpMovieMp4(soundPlayer);
 	}
 }
 
