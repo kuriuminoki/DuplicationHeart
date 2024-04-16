@@ -188,7 +188,7 @@ Title::Title() {
 		int s = m_selectSaveData->getLatestStoryNum();
 		if (s >= 9) {
 			// 初めてOPを見るのは9章なので、それ以降のセーブデータがあるならOP用意
-			m_movie = new OpMovie(m_soundPlayer);
+			m_movie = new OpMovieMp4(m_soundPlayer);
 		}
 	}
 	else {
