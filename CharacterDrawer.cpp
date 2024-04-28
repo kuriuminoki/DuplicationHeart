@@ -38,9 +38,19 @@ int CharacterDrawer::PREV_HP_COLOR = GetColor(255, 0, 0);
 int CharacterDrawer::DAMAGE_COLOR = GetColor(0, 0, 0);
 
 CharacterDrawer::CharacterDrawer(const CharacterAction* const characterAction) {
-	m_characterAction = characterAction;
+	
 	m_cnt = 0;
 	getGameEx(m_exX, m_exY);
+
+	// デバッグ用
+	m_guideHandle = LoadGraph("picture/stick/atariGuide.png");
+	m_characterAction = characterAction;
+
+}
+
+CharacterDrawer::~CharacterDrawer() {
+	// デバッグ用
+	DeleteGraph(m_guideHandle);
 }
 
 // キャラを描画する
@@ -96,6 +106,14 @@ void CharacterDrawer::drawCharacter(const Camera* const camera, int enemyNoticeH
 		// 体力の描画
 		drawHpBar(x - wide, y - height, x + wide, y, character->getHp(), character->getPrevHp(), character->getMaxHp(), DAMAGE_COLOR, PREV_HP_COLOR, HP_COLOR);
 	}
+
+	// デバッグ用
+	int x2 = 0, y2 = 0;
+	character->getAtariArea(&x1, &y1, &x2, &y2);
+	camera->setCamera(&x1, &y1, &ex);
+	camera->setCamera(&x2, &y2, &ex);
+	DrawExtendGraph(x1, y1, x2, y2, m_guideHandle, TRUE);
+
 }
 
 void CharacterDrawer::drawPlayerHpBar(const Character* player, int hpBarGraph) {

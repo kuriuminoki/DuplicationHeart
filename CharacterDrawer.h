@@ -12,6 +12,9 @@ void drawHpBar(int x1, int y1, int x2, int y2, int hp, int prevHp, int maxHp, in
 class CharacterDrawer {
 private:
 
+	// デバッグ用
+	int m_guideHandle;
+
 	// キャラの動きの情報 const関数しか呼ばない
 	const CharacterAction* m_characterAction;
 
@@ -32,6 +35,8 @@ private:
 public:
 
 	CharacterDrawer(const CharacterAction* const characterAction);
+
+	~CharacterDrawer();
 
 	// セッタ
 	void setCharacterAction(const CharacterAction* action) { m_characterAction = action; }

@@ -328,55 +328,26 @@ void CharacterAction::stopMoveDown() {
 
 // 画像のサイズ変更による位置調整 (座標は画像の左上であることに注意)
 void CharacterAction::afterChangeGraph(int beforeWide, int beforeHeight, int afterWide, int afterHeight) {
-	// 下へ行けないなら
-	if (m_downLock) {
-		// 上へ動かす
-		m_character_p->moveUp((afterHeight - beforeHeight));
-	}
-	// 上へ行けないなら
-	else if (m_upLock) {
-		// 下へ動かす必要はない（画像が下方向に拡大されるから）
-	}
-	// 上下どっちにでも行ける
-	else {
-		// 両方に広げる
-		int d = afterHeight - beforeHeight;
-		if (d % 2 == 1) {
-			if (d < 0) {
-				m_character_p->moveUp((d - 1) / 2);
-			}
-			else {
-				m_character_p->moveUp((d + 1) / 2);
-			}
+	if(afterHeight != beforeHeight) {
+		// 下へ行けないなら
+		if (m_downLock) {
+			// 上へ動かす
+			m_character_p->moveUp((afterHeight - beforeHeight - 1) / 2);
 		}
 		else {
-			m_character_p->moveUp(d / 2);
+			m_character_p->moveUp((afterHeight - beforeHeight + 1) / 2);
 		}
 	}
 
-	// 右へ行けないなら
-	if (m_rightLock && !m_leftLock) {
-		// 左へ動かす
-		m_character_p->moveLeft((afterWide - beforeWide));
-	}
-	// 左へ行けないなら
-	else if (m_leftLock && !m_rightLock) {
-		// 右へ動かす必要はない（画像が右方向に拡大されるから）
-	}
 	// 左右どっちにでも行ける、もしくはいけない
-	else {
-		// 両方に広げる
-		int d = afterWide - beforeWide;
-		if (d % 2 == 1) {
-			if (d < 0) {
-				m_character_p->moveLeft((d - 1) / 2);
-			}
-			else {
-				m_character_p->moveLeft((d + 1) / 2);
-			}
+	if(afterWide != beforeWide) {
+		// 右へ行けないなら
+		if (m_rightLock && !m_leftLock) {
+			// 左へ動かす
+			m_character_p->moveLeft((afterWide - beforeWide - 1) / 2);
 		}
 		else {
-			m_character_p->moveLeft(d / 2);
+			m_character_p->moveLeft((afterWide - beforeWide + 1) / 2);
 		}
 	}
 }
@@ -473,7 +444,9 @@ void StickAction::action() {
 // 状態に応じて画像セット
 void StickAction::switchHandle() {
 	// セット前の画像のサイズ
-	int wide, height;
+	int x1 = 0, y1 = 0, x2 = 0, y2 = 0;
+	m_character_p->getAtariArea(&x1, &y1, &x2, &y2);
+	int wide = x2 - x1, height = y2 - y1;
 	m_character_p->getHandleSize(wide, height);
 	// やられ画像
 	if (m_grand && m_character_p->getHp() == 0 && m_character_p->haveDeadGraph() && getState() != CHARACTER_STATE::DAMAGE) {
@@ -576,7 +549,8 @@ void StickAction::switchHandle() {
 		}
 	}
 	// セット後の画像のサイズ
-	int afterWide, afterHeight;
+	m_character_p->getAtariArea(&x1, &y1, &x2, &y2);
+	int afterWide = x2 - x1, afterHeight = y2 - y1;
 	m_character_p->getHandleSize(afterWide, afterHeight);
 
 	// サイズ変更による位置調整

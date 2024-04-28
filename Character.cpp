@@ -268,6 +268,22 @@ void Character::getHandleSize(int& wide, int& height) const {
 	height = getHeight();
 }
 
+// 当たり判定の範囲を取得
+void Character::getAtariArea(int* x1, int* y1, int* x2, int* y2) const {
+	const int wide = 100;
+	const int height = 150;
+	const int minusWide = (wide - m_graphHandle->getWide()) / 2;
+	const int minusHeight = (height - m_graphHandle->getHeight()) / 2;
+	*x2 = m_x + m_graphHandle->getWide() + minusWide;
+	*y2 = m_y + m_graphHandle->getHeight() + minusHeight;
+	*x1 = *x2 - wide;
+	*y1 = *y2 - height;
+	//*x1 = m_x + 50;
+	//*y1 = m_y + 50;
+	//*x2 = m_x + 150;
+	//*y2 = m_y + 200;
+}
+
 // Infoのバージョンを変更する
 void Character::changeInfoVersion(int version) {
 	m_version = version;
