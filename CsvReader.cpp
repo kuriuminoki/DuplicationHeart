@@ -170,35 +170,6 @@ CsvReader2::CsvReader2(const char* fileName) {
 }
 
 
-/*
-* ドメイン名がdomainNameのデータから、
-* カラム名がvalueのデータを取得
-* 例：findOne("name", "キャラ名");
-* 見つからなかったら空のデータを返す
-*/
-map<string, string> CsvReader2::findOne(const char* domainName, const char* columnName, const char* value) {
-
-	// m_data[i][columnName] == valueとなるiを調べる
-	map<string, string>::iterator ite;
-	for (int i = 0; i < m_data.size(); i++) {
-
-		// カラム名に対応する値を取得
-		ite = m_data[domainName][i].find(columnName);
-
-		// そのカラム名が存在しない
-		if (ite == m_data[domainName][i].end()) { continue; }
-
-		// 条件に一致
-		if (ite->second == value) {
-			return m_data[domainName][i];
-		}
-	}
-
-	// 空のデータを返す
-	map<string, string> res;
-	return res;
-}
-
 
 /*
 * area/area?.csvからキャラクターやオブジェクトをロードする
