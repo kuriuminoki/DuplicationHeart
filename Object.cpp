@@ -160,7 +160,8 @@ bool BoxObject::atari(CharacterController* characterController) {
 			// 段差とみなして乗り越える
 			if (slope && characterY2 - STAIR_HEIGHT <= m_y1) {
 				// 適切な座標へ
-				characterController->setCharacterX(m_x1 - characterWide / 2 - characterVx);
+				int wide = characterX2 - characterController->getAction()->getCharacter()->getX();
+				characterController->setCharacterX(m_x1 - wide + characterVx);
 				int height = characterY2 - characterController->getAction()->getCharacter()->getY();
 				characterController->setCharacterY(m_y1 - height);
 				// 着地
@@ -181,7 +182,8 @@ bool BoxObject::atari(CharacterController* characterController) {
 		else if (characterX1 >= m_x2 && characterX1 + characterVx <= m_x2) {
 			if (slope && characterY2 - STAIR_HEIGHT <= m_y1) {
 				// 適切な座標へ
-				characterController->setCharacterX(m_x2 - characterWide / 2 + characterVx);
+				int leftD = characterX1 - characterController->getAction()->getCharacter()->getX();
+				characterController->setCharacterX(m_x2 - leftD - characterVx);
 				int height = characterY2 - characterController->getAction()->getCharacter()->getY();
 				characterController->setCharacterY(m_y1 - height);
 				// 着地
@@ -499,7 +501,24 @@ void TriangleObject::penetration(CharacterController* characterController) {
 	int slopeY = getY(characterX1_5);
 	// 万が一オブジェクトの中に入り込んでしまったら
 	if (characterY2 > slopeY && characterY1 < m_y2 && characterX2 > m_x1 && characterX1 < m_x2) {
-		if (characterY1 < slopeY || characterY2 > m_y2) {
+		// キャラが横にはみ出しているなら
+		if ((characterX1 < m_x1 || characterX2 > m_x2) && (characterX1_5 > m_x2 || characterX1_5 < m_x1)) {
+			if ((characterX1 + characterX2) < (m_x1 + m_x2)) {
+				// 密着状態まで移動させる
+				int wide = characterX2 - characterController->getAction()->getCharacter()->getX();
+				characterController->setCharacterX(m_x1 - wide);
+				// キャラは右へ移動できない
+				characterController->setActionRightLock(true);
+			}
+			else {
+				// 密着状態まで移動させる
+				int leftD = characterX1 - characterController->getAction()->getCharacter()->getX();
+				characterController->setCharacterX(m_x2 - leftD);
+				// キャラは左へ移動できない
+				characterController->setActionLeftLock(true);
+			}
+		}
+		else if (characterY1 < slopeY || characterY2 > m_y2) {
 			if ((characterY1 + characterY2) < (slopeY + m_y2)) {
 				// 真上へ
 				int height = characterY2 - characterController->getAction()->getCharacter()->getY();
@@ -515,23 +534,6 @@ void TriangleObject::penetration(CharacterController* characterController) {
 				characterController->setCharacterY(m_y2 - topD);
 				// キャラは上へ移動できない
 				characterController->setActionUpLock(true);
-			}
-		}
-		// キャラが横にはみ出しているなら
-		else if (characterX1 < m_x1 || characterX2 > m_x2) {
-			if ((characterX1 + characterX2) < (m_x1 + m_x2)) {
-				// 密着状態まで移動させる
-				int wide = characterX2 - characterController->getAction()->getCharacter()->getX();
-				characterController->setCharacterX(m_x1 - wide);
-				// キャラは右へ移動できない
-				characterController->setActionRightLock(true);
-			}
-			else {
-				// 密着状態まで移動させる
-				int leftD = characterX1 - characterController->getAction()->getCharacter()->getX();
-				characterController->setCharacterX(m_x2 - leftD);
-				// キャラは左へ移動できない
-				characterController->setActionLeftLock(true);
 			}
 		}
 	}

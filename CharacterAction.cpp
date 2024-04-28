@@ -329,25 +329,31 @@ void CharacterAction::stopMoveDown() {
 // 画像のサイズ変更による位置調整 (座標は画像の左上であることに注意)
 void CharacterAction::afterChangeGraph(int beforeWide, int beforeHeight, int afterWide, int afterHeight) {
 	if(afterHeight != beforeHeight) {
-		// 下へ行けないなら
+		// 両方に広げる
+		int d = afterHeight - beforeHeight;
 		if (m_downLock) {
-			// 上へ動かす
-			m_character_p->moveUp((afterHeight - beforeHeight - 1) / 2);
+			m_character_p->moveUp((d - 1) / 2);
+		}
+		else if (m_upLock) {
+			m_character_p->moveUp((d + 1) / 2);
 		}
 		else {
-			m_character_p->moveUp((afterHeight - beforeHeight + 1) / 2);
+			m_character_p->moveUp((d) / 2);
 		}
 	}
 
 	// 左右どっちにでも行ける、もしくはいけない
 	if(afterWide != beforeWide) {
-		// 右へ行けないなら
-		if (m_rightLock && !m_leftLock) {
-			// 左へ動かす
-			m_character_p->moveLeft((afterWide - beforeWide - 1) / 2);
+		// 両方に広げる
+		int d = afterWide - beforeWide;
+		if (m_rightLock) {
+			m_character_p->moveLeft((d - 1) / 2);
+		}
+		else if (m_leftLock) {
+			m_character_p->moveLeft((d + 1) / 2);
 		}
 		else {
-			m_character_p->moveLeft((afterWide - beforeWide + 1) / 2);
+			m_character_p->moveLeft((d) / 2);
 		}
 	}
 }
