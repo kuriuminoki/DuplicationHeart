@@ -832,11 +832,11 @@ void World::controlCharacter() {
 		controller->init();
 
 		// オブジェクトとの当たり判定
-		atariCharacterAndObject(controller, m_stageObjects);
+		atariCharacterAndObject(controller, m_stageObjects, true);
+		atariCharacterAndObject(controller, m_stageObjects, false); // 1回目で斜面にいるかがわかり、それによって処理が変わるため2回目が必要
 		if (controller->getAction()->getCharacter()->getHp() > 0) {
-			atariCharacterAndObject(controller, m_attackObjects);
+			atariCharacterAndObject(controller, m_attackObjects, false);
 		}
-		atariCharacterAndObject(controller, m_stageObjects); // 2回目呼ぶのは妥協案　1回目で斜面にいるかがわかり、それによって処理が変わるため2回目が必要
 		if (controller->getAction()->getCharacter()->getId() == m_playerId) {
 			atariCharacterAndDoor(controller, m_doorObjects);
 		}
@@ -915,9 +915,10 @@ void World::controlItem() {
 }
 
 //  Battle：キャラクターとオブジェクトの当たり判定
-void World::atariCharacterAndObject(CharacterController* controller, vector<Object*>& objects) {
+void World::atariCharacterAndObject(CharacterController* controller, vector<Object*>& objects, bool slope) {
 	// 壁や床オブジェクトの処理 (当たり判定と動き)
 	for (unsigned int i = 0; i < objects.size(); i++) {
+		if (objects[i]->slopeFlag() != slope) { continue; }
 		// 当たり判定をここで行う
 		if (objects[i]->atari(controller)) {
 			const Character* character = controller->getAction()->getCharacter();
@@ -1085,11 +1086,11 @@ bool World::moveGoalCharacter() {
 		controller->init();
 
 		// オブジェクトとの当たり判定
-		atariCharacterAndObject(controller, m_stageObjects);
+		atariCharacterAndObject(controller, m_stageObjects, true);
+		atariCharacterAndObject(controller, m_stageObjects, false); // 1回目で斜面にいるかがわかり、それによって処理が変わるため2回目が必要
 		if (controller->getAction()->getCharacter()->getHp() > 0) {
-			atariCharacterAndObject(controller, m_attackObjects);
+			atariCharacterAndObject(controller, m_attackObjects, false);
 		}
-		atariCharacterAndObject(controller, m_stageObjects); // 2回目呼ぶのは妥協案　1回目で斜面にいるかがわかり、それによって処理が変わるため2回目が必要
 
 		// 目標地点へ移動する操作 originalのハートはフリーズ
 		if (!m_duplicationFlag || m_characterControllers[i]->getAction()->getCharacter()->getId() != m_playerId) {

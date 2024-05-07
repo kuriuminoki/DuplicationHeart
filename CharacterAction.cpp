@@ -346,7 +346,10 @@ void CharacterAction::afterChangeGraph(int beforeWide, int beforeHeight, int aft
 	if(afterWide != beforeWide) {
 		// —¼•û‚ÉL‚°‚é
 		int d = afterWide - beforeWide;
-		if (m_rightLock) {
+		if (m_grandLeftSlope || m_grandRightSlope) { 
+			m_character_p->moveLeft((d) / 2);
+		}
+		else if (m_rightLock) {
 			m_character_p->moveLeft((d - 1) / 2);
 		}
 		else if (m_leftLock) {

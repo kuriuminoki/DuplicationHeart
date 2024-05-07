@@ -294,8 +294,8 @@ private:
 	// Battle：アイテムの動き
 	void controlItem();
 
-	// Battle：キャラクターとオブジェクトの当たり判定
-	void atariCharacterAndObject(CharacterController* controller, std::vector<Object*>& objects);
+	// Battle：キャラクターとオブジェクトの当たり判定 slope=trueならslopeが対象falseならそれ以外
+	void atariCharacterAndObject(CharacterController* controller, std::vector<Object*>& objects, bool slope);
 
 	// Battle：キャラクターと扉の当たり判定
 	void atariCharacterAndDoor(CharacterController* controller, std::vector<Object*>& objects);
