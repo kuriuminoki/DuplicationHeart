@@ -159,16 +159,7 @@ bool BoxObject::atari(CharacterController* characterController) {
 		if (characterX2 <= m_x1 && characterX2 + characterVx >= m_x1) {
 			// 段差とみなして乗り越える
 			if (slope && characterY2 - STAIR_HEIGHT <= m_y1) {
-				// 適切な座標へ
-				int wide = characterX2 - characterController->getAction()->getCharacter()->getX();
-				characterController->setCharacterX(m_x1 - wide + characterVx);
-				int height = characterY2 - characterController->getAction()->getCharacter()->getY();
-				characterController->setCharacterY(m_y1 - height);
-				// 着地
-				characterController->setCharacterGrand(true);
-				characterController->setActionBoost();
-				// キャラは下へ移動できない
-				characterController->setActionDownLock(true);
+
 			}
 			else {
 				// キャラは右へ移動できない
@@ -181,16 +172,7 @@ bool BoxObject::atari(CharacterController* characterController) {
 		// 左に移動中のキャラが右から当たっているか判定
 		else if (characterX1 >= m_x2 && characterX1 + characterVx <= m_x2) {
 			if (slope && characterY2 - STAIR_HEIGHT <= m_y1) {
-				// 適切な座標へ
-				int leftD = characterX1 - characterController->getAction()->getCharacter()->getX();
-				characterController->setCharacterX(m_x2 - leftD - characterVx - 1);
-				int height = characterY2 - characterController->getAction()->getCharacter()->getY();
-				characterController->setCharacterY(m_y1 - height);
-				// 着地
-				characterController->setCharacterGrand(true);
-				characterController->setActionBoost();
-				// キャラは下へ移動できない
-				characterController->setActionDownLock(true);
+
 			}
 			else {
 				// キャラは左へ移動できない
@@ -365,11 +347,13 @@ bool TriangleObject::atari(CharacterController* characterController) {
 		if (characterY2 - 1 <= getY(characterX1_5 - characterVx) && characterY2 + 1 >= getY(characterX1_5 - characterVx)) {
 			// 前のフレームでは着地していたので、引き続き着地
 			characterController->setCharacterGrand(true);
-			if (m_leftDown) {
-				characterController->setCharacterGrandRightSlope(true);
-			}
-			else {
-				characterController->setCharacterGrandLeftSlope(true);
+			if (characterX1_5 > m_x1 && characterX1_5 < m_x2) {
+				if (m_leftDown) {
+					characterController->setCharacterGrandRightSlope(true);
+				}
+				else {
+					characterController->setCharacterGrandLeftSlope(true);
+				}
 			}
 			// キャラは下へ移動できない
 			characterController->setActionDownLock(true);
@@ -381,11 +365,13 @@ bool TriangleObject::atari(CharacterController* characterController) {
 		else if (characterY2 <= getY(characterX1_5) && characterY2 + characterVy >= getY(characterX1_5)) {
 			// 着地
 			characterController->setCharacterGrand(true);
-			if (m_leftDown) {
-				characterController->setCharacterGrandRightSlope(true);
-			}
-			else {
-				characterController->setCharacterGrandLeftSlope(true);
+			if (characterX1_5 > m_x1 && characterX1_5 < m_x2) {
+				if (m_leftDown) {
+					characterController->setCharacterGrandRightSlope(true);
+				}
+				else {
+					characterController->setCharacterGrandLeftSlope(true);
+				}
 			}
 			// キャラは下へ移動できない
 			characterController->setActionDownLock(true);
@@ -407,11 +393,13 @@ bool TriangleObject::atari(CharacterController* characterController) {
 	if (characterX2 > m_x1 && characterX1 < m_x2 && characterY2 <= m_y2 && characterY2 >= getY(characterX1_5)) {
 		// 着地
 		characterController->setCharacterGrand(true);
-		if (m_leftDown) {
-			characterController->setCharacterGrandRightSlope(true);
-		}
-		else {
-			characterController->setCharacterGrandLeftSlope(true);
+		if (characterX1_5 > m_x1 && characterX1_5 <= m_x2) {
+			if (m_leftDown) {
+				characterController->setCharacterGrandRightSlope(true);
+			}
+			else {
+				characterController->setCharacterGrandLeftSlope(true);
+			}
 		}
 		// キャラは下へ移動できない
 		characterController->setActionDownLock(true);

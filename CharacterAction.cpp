@@ -327,38 +327,52 @@ void CharacterAction::stopMoveDown() {
 }
 
 // 画像のサイズ変更による位置調整 (座標は画像の左上であることに注意)
-void CharacterAction::afterChangeGraph(int beforeWide, int beforeHeight, int afterWide, int afterHeight) {
-	if(afterHeight != beforeHeight) {
-		// 両方に広げる
-		int d = afterHeight - beforeHeight;
-		if (m_downLock) {
-			m_character_p->moveUp((d - 1) / 2);
-		}
-		else if (m_upLock) {
-			m_character_p->moveUp((d + 1) / 2);
+void CharacterAction::afterChangeGraph(int beforeX1, int afterX1, int beforeY1, int afterY1, int beforeX2, int afterX2, int beforeY2, int afterY2) {
+	int dy = 0;
+	if (m_downLock) {
+		if (afterY2 > beforeY2) {
+			dy -= afterY2 - beforeY2;
 		}
 		else {
-			m_character_p->moveUp((d) / 2);
+			dy += beforeY2 - afterY2;
 		}
+	}
+	else if (m_upLock) {
+		if (afterY1 < beforeY1) {
+			dy += beforeY1 - afterY1;
+		}
+		else {
+			dy -= afterY1 - beforeY1;
+		}
+	}
+	else {
+		dy = ((afterY2 - beforeY2) + (afterY1 - beforeY1)) / -2;
 	}
 
-	// 左右どっちにでも行ける、もしくはいけない
-	if(afterWide != beforeWide) {
-		// 両方に広げる
-		int d = afterWide - beforeWide;
-		if (m_grandLeftSlope || m_grandRightSlope) { 
-			m_character_p->moveLeft((d) / 2);
-		}
-		else if (m_rightLock) {
-			m_character_p->moveLeft((d - 1) / 2);
-		}
-		else if (m_leftLock) {
-			m_character_p->moveLeft((d + 1) / 2);
+	m_character_p->moveDown(dy + 1);
+
+	int dx = 0;
+	if (m_rightLock) {
+		if (afterX2 > beforeX2) {
+			dx -= afterX2 - beforeX2;
 		}
 		else {
-			m_character_p->moveLeft((d) / 2);
+			dx += beforeX2 - afterX2;
 		}
 	}
+	else if (m_leftLock) {
+		if (afterX1 < beforeX1) {
+			dx += beforeX1 - afterX1;
+		}
+		else {
+			dx -= afterX1 - beforeX1;
+		}
+	}
+	else {
+		dx = ((afterX2 - beforeX2) + (afterX1 - beforeX1)) / -2;
+	}
+
+	m_character_p->moveRight(dx);
 }
 
 
@@ -455,8 +469,8 @@ void StickAction::switchHandle() {
 	// セット前の画像のサイズ
 	int x1 = 0, y1 = 0, x2 = 0, y2 = 0;
 	m_character_p->getAtariArea(&x1, &y1, &x2, &y2);
-	int wide = x2 - x1, height = y2 - y1;
-	m_character_p->getHandleSize(wide, height);
+	//int wide = x2 - x1, height = y2 - y1;
+	//m_character_p->getHandleSize(wide, height);
 	// やられ画像
 	if (m_grand && m_character_p->getHp() == 0 && m_character_p->haveDeadGraph() && getState() != CHARACTER_STATE::DAMAGE) {
 		m_character_p->switchDead();
@@ -558,12 +572,13 @@ void StickAction::switchHandle() {
 		}
 	}
 	// セット後の画像のサイズ
-	m_character_p->getAtariArea(&x1, &y1, &x2, &y2);
-	int afterWide = x2 - x1, afterHeight = y2 - y1;
-	m_character_p->getHandleSize(afterWide, afterHeight);
+	int afterX1 = 0, afterY1 = 0, afterX2 = 0, afterY2 = 0;
+	m_character_p->getAtariArea(&afterX1, &afterY1, &afterX2, &afterY2);
+	//int afterWide = x2 - x1, afterHeight = y2 - y1;
+	//m_character_p->getHandleSize(afterWide, afterHeight);
 
 	// サイズ変更による位置調整
-	afterChangeGraph(wide, height, afterWide, afterHeight);
+	afterChangeGraph(x1, afterX1, y1, afterY1, x2, afterX2, y2, afterY2);
 
 	m_character_p->setLeftDirection(m_character_p->getLeftDirection());
 }
@@ -828,8 +843,8 @@ CharacterAction* FlightAction::createCopy(std::vector<Character*> characters) {
 // キャラの画像を状態(state)に応じて変更
 void FlightAction::switchHandle() {
 	// セット前の画像のサイズ
-	int wide, height;
-	m_character_p->getHandleSize(wide, height);
+	int x1 = 0, y1 = 0, x2 = 0, y2 = 0;
+	m_character_p->getAtariArea(&x1, &y1, &x2, &y2);
 	if (m_grand) { // 地面にいるとき
 		switch (getState()) {
 		case CHARACTER_STATE::STAND: //立ち状態
@@ -878,11 +893,11 @@ void FlightAction::switchHandle() {
 		}
 	}
 	// セット後の画像のサイズ
-	int afterWide, afterHeight;
-	m_character_p->getHandleSize(afterWide, afterHeight);
+	int afterX1 = 0, afterY1 = 0, afterX2 = 0, afterY2 = 0;
+	m_character_p->getAtariArea(&afterX1, &afterY1, &afterX2, &afterY2);
 
 	// サイズ変更による位置調整
-	afterChangeGraph(wide, height, afterWide, afterHeight);
+	afterChangeGraph(x1, afterX1, y1, afterY1, x2, afterX2, y2, afterY2);
 
 	m_character_p->setLeftDirection(m_character_p->getLeftDirection());
 }
