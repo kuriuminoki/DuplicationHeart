@@ -84,6 +84,9 @@ public:
 	void setSoundHandle(int soundHandle_p) { m_soundHandle_p = soundHandle_p; }
 	virtual inline void setTextDisp(const bool textDisp) {}
 
+	// slopeかどうか
+	virtual bool slopeFlag() const { return false; }
+
 	// 座標XにおけるY1座標（傾きから算出する）
 	virtual int getY(int x) const { return m_y1; }
 
@@ -209,6 +212,9 @@ public:
 	Object* createCopy();
 
 	void debug(int x, int y, int color) const;
+
+	// slopeかどうか
+	bool slopeFlag() const { return true; }
 
 	// 座標XにおけるY1座標（傾きから算出する）
 	int getY(int x) const;

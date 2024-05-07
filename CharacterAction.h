@@ -244,7 +244,7 @@ public:
 
 protected:
 	// 画像のサイズ変更による位置調整
-	void afterChangeGraph(int beforeWide, int beforeHeight, int afterWide, int afterHeight);
+	void afterChangeGraph(int beforeX1, int afterX1, int beforeY1, int afterY1, int beforeX2, int afterX2, int beforeY2, int afterY2);
 };
 
 
