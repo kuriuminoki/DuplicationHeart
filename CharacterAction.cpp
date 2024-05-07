@@ -349,7 +349,7 @@ void CharacterAction::afterChangeGraph(int beforeX1, int afterX1, int beforeY1, 
 		dy = ((beforeY2 - afterY2) + (beforeY1 - afterY1)) / 2;
 	}
 
-	m_character_p->moveDown(dy + 1);
+	m_character_p->moveDown(dy);
 
 	int dx = 0;
 	if (m_rightLock) {
