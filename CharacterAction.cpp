@@ -346,7 +346,7 @@ void CharacterAction::afterChangeGraph(int beforeX1, int afterX1, int beforeY1, 
 		}
 	}
 	else {
-		dy = ((afterY2 - beforeY2) + (afterY1 - beforeY1)) / -2;
+		dy = ((beforeY2 - afterY2) + (beforeY1 - afterY1)) / 2;
 	}
 
 	m_character_p->moveDown(dy + 1);
@@ -369,7 +369,7 @@ void CharacterAction::afterChangeGraph(int beforeX1, int afterX1, int beforeY1, 
 		}
 	}
 	else {
-		dx = ((afterX2 - beforeX2) + (afterX1 - beforeX1)) / -2;
+		dx = ((beforeX2 - afterX2) + (beforeX1 - afterX1)) / 2;
 	}
 
 	m_character_p->moveRight(dx);
@@ -469,8 +469,6 @@ void StickAction::switchHandle() {
 	// セット前の画像のサイズ
 	int x1 = 0, y1 = 0, x2 = 0, y2 = 0;
 	m_character_p->getAtariArea(&x1, &y1, &x2, &y2);
-	//int wide = x2 - x1, height = y2 - y1;
-	//m_character_p->getHandleSize(wide, height);
 	// やられ画像
 	if (m_grand && m_character_p->getHp() == 0 && m_character_p->haveDeadGraph() && getState() != CHARACTER_STATE::DAMAGE) {
 		m_character_p->switchDead();
@@ -574,8 +572,6 @@ void StickAction::switchHandle() {
 	// セット後の画像のサイズ
 	int afterX1 = 0, afterY1 = 0, afterX2 = 0, afterY2 = 0;
 	m_character_p->getAtariArea(&afterX1, &afterY1, &afterX2, &afterY2);
-	//int afterWide = x2 - x1, afterHeight = y2 - y1;
-	//m_character_p->getHandleSize(afterWide, afterHeight);
 
 	// サイズ変更による位置調整
 	afterChangeGraph(x1, afterX1, y1, afterY1, x2, afterX2, y2, afterY2);
