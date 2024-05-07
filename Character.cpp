@@ -270,19 +270,6 @@ void Character::getHandleSize(int& wide, int& height) const {
 
 // “–‚½‚è”»’è‚Ì”ÍˆÍ‚ðŽæ“¾
 void Character::getAtariArea(int* x1, int* y1, int* x2, int* y2) const {
-	//const int wide = 100;
-	//const int height = 150;
-	//const int minusWide = (wide - m_graphHandle->getWide()) / 2;
-	//const int minusHeight = (height - m_graphHandle->getHeight()) / 2;
-	//*x2 = m_x + m_graphHandle->getWide() + minusWide;
-	//*y2 = m_y + m_graphHandle->getHeight() + minusHeight;
-	//*x1 = *x2 - wide;
-	//*y1 = *y2 - height;
-	//*x1 = m_x + 50;
-	//*y1 = m_y + 50;
-	//*x2 = m_x + 150;
-	//*y2 = m_y + 200;
-
 	m_graphHandle->getAtari(x1, y1, x2, y2);
 	*x1 = *x1 + m_x;
 	*y1 = *y1 + m_y;
