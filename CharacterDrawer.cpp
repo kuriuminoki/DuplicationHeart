@@ -108,11 +108,13 @@ void CharacterDrawer::drawCharacter(const Camera* const camera, int enemyNoticeH
 	}
 
 	// デバッグ用
-	int x2 = 0, y2 = 0;
-	character->getAtariArea(&x1, &y1, &x2, &y2);
-	camera->setCamera(&x1, &y1, &ex);
-	camera->setCamera(&x2, &y2, &ex);
-	DrawExtendGraph(x1, y1, x2, y2, m_guideHandle, TRUE);
+	if (ATARI_DEBUG) {
+		int x2 = 0, y2 = 0;
+		character->getAtariArea(&x1, &y1, &x2, &y2);
+		camera->setCamera(&x1, &y1, &ex);
+		camera->setCamera(&x2, &y2, &ex);
+		DrawExtendGraph(x1, y1, x2, y2, m_guideHandle, TRUE);
+	}
 
 }
 

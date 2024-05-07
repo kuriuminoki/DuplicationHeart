@@ -13,6 +13,7 @@ class CharacterDrawer {
 private:
 
 	// デバッグ用
+	const bool ATARI_DEBUG = false;
 	int m_guideHandle;
 
 	// キャラの動きの情報 const関数しか呼ばない
