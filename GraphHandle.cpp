@@ -147,6 +147,76 @@ void GraphHandles::draw(int x, int y, int index) {
 
 
 /*
+* 当たり判定の情報付きのGraphHandles
+*/
+GraphHandlesWithAtari::GraphHandlesWithAtari(GraphHandles* graphHandles, const char* graphName, CsvReader* csvReader) {
+	m_graphHandles = graphHandles;
+	map<string, string> data = csvReader->findOne("name", graphName);
+
+	// 横
+	m_defaultWide = true;
+	m_wide = -1;
+	m_x1 = 0, m_x2 = 0;
+	if (!(bool)stoi(data["defaultWide"])) {
+		m_defaultWide = false;
+		m_wide = stoi(data["wide"]);
+		if (m_wide == -1) {
+			m_x1 = stoi(data["x1"]);
+			m_x2 = stoi(data["x2"]);
+		}
+	}
+
+	// 縦
+	m_defaultHeight = true;
+	m_height = -1;
+	m_y1 = 0, m_y2 = 0;
+	if (!(bool)stoi(data["defaultHeight"])) {
+		m_defaultHeight = false;
+		m_height = stoi(data["height"]);
+		if (m_height == -1) {
+			m_y1 = stoi(data["y1"]);
+			m_y2 = stoi(data["y2"]);
+		}
+	}
+}
+
+GraphHandlesWithAtari::~GraphHandlesWithAtari() {
+	delete m_graphHandles;
+}
+
+void GraphHandlesWithAtari::getAtari(int* x1, int* y1, int* x2, int* y2, int index) const {
+	int wide, height;
+	GetGraphSize(m_graphHandles->getHandle(index), &wide, &height);
+	// 横
+	if (m_defaultWide) {
+		*x1 = 0;
+		*x2 = wide;
+	}
+	else if (m_wide != -1) {
+		*x2 = wide / 2 + m_wide / 2;
+		*x1 = wide / 2 - m_wide / 2;
+	}
+	else {
+		*x1 = m_x1;
+		*x2 = m_x2;
+	}
+	// 縦
+	if (m_defaultHeight) {
+		*y1 = 0;
+		*y2 = height;
+	}
+	else if (m_height != -1) {
+		*y2 = height / 2 + m_height / 2;
+		*y1 = height / 2 - m_height / 2;
+	}
+	else {
+		*y1 = m_y1;
+		*y2 = m_y2;
+	}
+}
+
+
+/*
 * キャラクターの目の瞬きの処理をするクラス
 */
 CharacterEyeClose::CharacterEyeClose() {
@@ -179,6 +249,18 @@ void CharacterEyeClose::count() {
 * キャラの画像
 */
 // 画像ロード用
+void loadCharacterGraph(const char* dir, const char* characterName, GraphHandlesWithAtari*& handles, string stateName, map<string, string>& data, double ex, CsvReader* atariReader) {
+	int n = stoi(data[stateName]);
+	if (n > 0) {
+		ostringstream oss;
+		oss << dir << characterName << "/" << stateName;
+		GraphHandles* graphHandles = new GraphHandles(oss.str().c_str(), n, ex, 0.0, true);
+		handles = new GraphHandlesWithAtari(graphHandles, stateName.c_str(), atariReader);
+	}
+	else {
+		handles = nullptr;
+	}
+}
 void loadCharacterGraph(const char* dir, const char* characterName, GraphHandles*& handles, string stateName, map<string, string>& data, double ex) {
 	int n = stoi(data[stateName]);
 	if (n > 0) {
@@ -190,6 +272,7 @@ void loadCharacterGraph(const char* dir, const char* characterName, GraphHandles
 		handles = nullptr;
 	}
 }
+
 // デフォルト値で初期化
 CharacterGraphHandle::CharacterGraphHandle() :
 	CharacterGraphHandle("test", 1.0)
@@ -201,6 +284,10 @@ CharacterGraphHandle::CharacterGraphHandle(const char* characterName, double dra
 	m_ex = drawEx;
 
 	CsvReader reader("data/characterGraph.csv");
+	string path = "data/atari/";
+	path += characterName;
+	path += ".csv";
+	CsvReader atariReader(path.c_str());
 
 	// キャラ名でデータを検索
 	map<string, string> data = reader.findOne("name", characterName);
@@ -208,24 +295,26 @@ CharacterGraphHandle::CharacterGraphHandle(const char* characterName, double dra
 
 	// ロード
 	const char* dir = "picture/stick/";
-	loadCharacterGraph(dir, characterName, m_standHandles, "stand", data, m_ex);
-	loadCharacterGraph(dir, characterName, m_slashHandles, "slash", data, m_ex);
-	loadCharacterGraph(dir, characterName, m_bulletHandles, "bullet", data, m_ex);
-	loadCharacterGraph(dir, characterName, m_squatHandles, "squat", data, m_ex);
-	loadCharacterGraph(dir, characterName, m_squatBulletHandles, "squatBullet", data, m_ex);
-	loadCharacterGraph(dir, characterName, m_standBulletHandles, "standBullet", data, m_ex);
-	loadCharacterGraph(dir, characterName, m_standSlashHandles, "standSlash", data, m_ex);
-	loadCharacterGraph(dir, characterName, m_runHandles, "run", data, m_ex);
-	loadCharacterGraph(dir, characterName, m_runBulletHandles, "runBullet", data, m_ex);
-	loadCharacterGraph(dir, characterName, m_landHandles, "land", data, m_ex);
-	loadCharacterGraph(dir, characterName, m_jumpHandles, "jump", data, m_ex);
-	loadCharacterGraph(dir, characterName, m_downHandles, "down", data, m_ex);
-	loadCharacterGraph(dir, characterName, m_preJumpHandles, "preJump", data, m_ex);
-	loadCharacterGraph(dir, characterName, m_damageHandles, "damage", data, m_ex);
-	loadCharacterGraph(dir, characterName, m_boostHandles, "boost", data, m_ex);
-	loadCharacterGraph(dir, characterName, m_airBulletHandles, "airBullet", data, m_ex);
-	loadCharacterGraph(dir, characterName, m_airSlashHandles, "airSlash", data, m_ex);
-	loadCharacterGraph(dir, characterName, m_closeHandles, "close", data, m_ex);
+	loadCharacterGraph(dir, characterName, m_standHandles, "stand", data, m_ex, &atariReader);
+	loadCharacterGraph(dir, characterName, m_slashHandles, "slash", data, m_ex, &atariReader);
+	loadCharacterGraph(dir, characterName, m_airSlashEffectHandles, "airSlashEffect", data, m_ex, &atariReader);
+	loadCharacterGraph(dir, characterName, m_bulletHandles, "bullet", data, m_ex, &atariReader);
+	loadCharacterGraph(dir, characterName, m_squatHandles, "squat", data, m_ex, &atariReader);
+	loadCharacterGraph(dir, characterName, m_squatBulletHandles, "squatBullet", data, m_ex, &atariReader);
+	loadCharacterGraph(dir, characterName, m_standBulletHandles, "standBullet", data, m_ex, &atariReader);
+	loadCharacterGraph(dir, characterName, m_standSlashHandles, "standSlash", data, m_ex, &atariReader);
+	loadCharacterGraph(dir, characterName, m_runHandles, "run", data, m_ex, &atariReader);
+	loadCharacterGraph(dir, characterName, m_runBulletHandles, "runBullet", data, m_ex, &atariReader);
+	loadCharacterGraph(dir, characterName, m_landHandles, "land", data, m_ex, &atariReader);
+	loadCharacterGraph(dir, characterName, m_jumpHandles, "jump", data, m_ex, &atariReader);
+	loadCharacterGraph(dir, characterName, m_downHandles, "down", data, m_ex, &atariReader);
+	loadCharacterGraph(dir, characterName, m_preJumpHandles, "preJump", data, m_ex, &atariReader);
+	loadCharacterGraph(dir, characterName, m_damageHandles, "damage", data, m_ex, &atariReader);
+	loadCharacterGraph(dir, characterName, m_boostHandles, "boost", data, m_ex, &atariReader);
+	loadCharacterGraph(dir, characterName, m_airBulletHandles, "airBullet", data, m_ex, &atariReader);
+	loadCharacterGraph(dir, characterName, m_airSlashHandles, "airSlash", data, m_ex, &atariReader);
+	loadCharacterGraph(dir, characterName, m_closeHandles, "close", data, m_ex, &atariReader);
+	loadCharacterGraph(dir, characterName, m_deadHandles, "dead", data, m_ex, &atariReader);
 
 	switchStand();
 }
@@ -233,6 +322,7 @@ CharacterGraphHandle::CharacterGraphHandle(const char* characterName, double dra
 CharacterGraphHandle::~CharacterGraphHandle() {
 	if (m_standHandles != nullptr) { delete m_standHandles; }
 	if (m_slashHandles != nullptr) { delete m_slashHandles; }
+	if (m_airSlashEffectHandles != nullptr) { delete m_airSlashEffectHandles; }
 	if (m_bulletHandles != nullptr) { delete m_bulletHandles; }
 	if (m_squatHandles != nullptr) { delete m_squatHandles; }
 	if (m_squatBulletHandles != nullptr) { delete m_squatBulletHandles; }
@@ -249,26 +339,37 @@ CharacterGraphHandle::~CharacterGraphHandle() {
 	if (m_airBulletHandles != nullptr) { delete m_airBulletHandles; }
 	if (m_airSlashHandles != nullptr) { delete m_airSlashHandles; }
 	if (m_closeHandles != nullptr) { delete m_closeHandles; }
+	if (m_deadHandles != nullptr) { delete m_deadHandles; }
+}
+
+void CharacterGraphHandle::getAtari(int* x1, int* y1, int* x2, int* y2) const {
+	m_dispGraphHandle_p->getAtari(x1, y1, x2, y2, m_dispGraphIndex);
+	*x1 = *x1 * m_ex;
+	*y1 = *y1 * m_ex;
+	*x2 = *x2 * m_ex;
+	*y2 = *y2 * m_ex;
 }
 
 // 画像のサイズをセット
 void CharacterGraphHandle::setGraphSize() {
-	GetGraphSize(m_graphHandle_p->getHandle(), &m_wide, &m_height);
+	GetGraphSize(m_dispGraphHandle_p->getGraphHandles()->getGraphHandle(m_dispGraphIndex)->getHandle(), &m_wide, &m_height);
 	// 画像の拡大率も考慮してサイズを決定
 	m_wide = (int)(m_wide * m_ex);
 	m_height = (int)(m_height * m_ex);
 }
 
-// 画像をセットする 存在しないならそのまま
-void CharacterGraphHandle::setGraph(const GraphHandles* graphHandles, int index) {
-	if (graphHandles == nullptr) { return; }
-	if (index >= graphHandles->getSize() || index < 0) { return; }
-	m_graphHandle_p = graphHandles->getGraphHandle(index);
-	setGraphSize();
+void CharacterGraphHandle::setAtari() {
+	m_dispGraphHandle_p->getAtari(&m_atariX1, &m_atariY1, &m_atariX2, &m_atariY2, m_dispGraphIndex);
 }
-void CharacterGraphHandle::setGraph(GraphHandle* graphHandle) {
-	m_graphHandle_p = graphHandle;
+
+// 画像をセットする 存在しないならそのまま
+void CharacterGraphHandle::setGraph(GraphHandlesWithAtari* graphHandles, int index) {
+	if (graphHandles == nullptr) { return; }
+	if (index >= graphHandles->getGraphHandles()->getSize() || index < 0) { return; }
+	m_dispGraphHandle_p = graphHandles;
+	m_dispGraphIndex = index;
 	setGraphSize();
+	setAtari();
 }
 
 // 立ち画像をセット
@@ -344,6 +445,10 @@ void CharacterGraphHandle::switchAirSlash(int index){
 // 瞬き画像をセット
 void CharacterGraphHandle::switchClose(int index) {
 	setGraph(m_closeHandles, index);
+}
+// やられ画像をセット
+void CharacterGraphHandle::switchDead(int index) {
+	setGraph(m_deadHandles, index);
 }
 
 

@@ -57,6 +57,7 @@ WorldDrawer::WorldDrawer(const World* world) {
 	m_noonHaikei = LoadGraph("picture/stageMaterial/noon.jpg");
 	m_eveningHaikei = LoadGraph("picture/stageMaterial/evening.jpg");
 	m_nightHaikei = LoadGraph("picture/stageMaterial/night.jpg");
+	m_enemyNotice = LoadGraph("picture/battleMaterial/enemyNotice.png");
 }
 
 WorldDrawer::~WorldDrawer() {
@@ -68,7 +69,9 @@ WorldDrawer::~WorldDrawer() {
 	DeleteGraph(m_noonHaikei);
 	DeleteGraph(m_eveningHaikei);
 	DeleteGraph(m_nightHaikei);
+	DeleteGraph(m_enemyNotice);
 }
+
 
 // 描画する
 void WorldDrawer::draw() {
@@ -76,6 +79,48 @@ void WorldDrawer::draw() {
 	int bright = m_world->getBrightValue();
 	SetDrawBright(bright, bright, bright);
 
+	// カメラを取得
+	const Camera* camera = m_world->getCamera();
+
+	// 戦場
+	if (!m_world->getBlindFlag()) {
+		drawBattleField(camera, bright);
+	}
+
+	// ムービー
+	Movie* movie = m_world->getMovie();
+	if (movie != nullptr) {
+		DrawBox(0, 0, GAME_WIDE, GAME_HEIGHT, BLACK, TRUE);
+		movie->draw();
+	}
+
+	// テキストイベント
+	const Conversation* conversation = m_world->getConversation();
+	if (conversation != nullptr) {
+		m_conversationDrawer->setConversation(conversation);
+		m_conversationDrawer->draw();
+	}
+	else {
+		// StageObjectを調べた際のテキストイベント
+		conversation = m_world->getObjectConversation();
+		if (conversation != nullptr) {
+			m_conversationDrawer->setConversation(conversation);
+			m_conversationDrawer->draw();
+		}
+	}
+
+	if (!m_world->getBlindFlag() && movie == nullptr && conversation == nullptr) {
+		// ターゲット
+		m_targetDrawer.setEx(camera->getEx());
+		m_targetDrawer.draw();
+	}
+
+	SetDrawBright(255, 255, 255);
+}
+
+
+// 戦場の描画
+void WorldDrawer::drawBattleField(const Camera* camera, int bright) {
 	// 背景
 	int groundGraph = m_world->getBackGroundGraph();
 	if (groundGraph != -1) {
@@ -107,9 +152,6 @@ void WorldDrawer::draw() {
 		}
 	}
 
-	// カメラを取得
-	const Camera* camera = m_world->getCamera();
-
 	// 各Objectを描画
 	vector<const Object*> objects = m_world->getBackObjects();
 	size_t size = objects.size();
@@ -123,14 +165,29 @@ void WorldDrawer::draw() {
 
 	// 各Actionを描画
 	vector<const CharacterAction*> actions = m_world->getActions();
+	int player = 0;
 	size = actions.size();
 	for (unsigned int i = 0; i < size; i++) {
-		// キャラをDrawerにセット
-		m_characterDrawer->setCharacterAction(actions[i]);
-
-		// カメラを使ってキャラを描画
-		m_characterDrawer->drawCharacter(camera, bright);
+		if (actions[i]->getCharacter()->getId() == m_world->getPlayerId()) {
+			player = i;
+		}
 	}
+	for (unsigned int i = 0; i < size; i++) {
+		if (i != player) {
+			// キャラをDrawerにセット
+			m_characterDrawer->setCharacterAction(actions[i]);
+			int enemyNotice = -1, groupId = actions[i]->getCharacter()->getGroupId();
+			// 中立と味方なら通知しない
+			if (groupId != -1 && groupId != actions[player]->getCharacter()->getGroupId()) {
+				enemyNotice = m_enemyNotice;
+			}
+			// カメラを使ってキャラを描画
+			m_characterDrawer->drawCharacter(camera, enemyNotice, bright);
+		}
+	}
+	// プレイヤーは手前に描画
+	m_characterDrawer->setCharacterAction(actions[player]);
+	m_characterDrawer->drawCharacter(camera, -1, bright);
 
 	// 各Objectを描画
 	objects = m_world->getFrontObjects();
@@ -161,34 +218,4 @@ void WorldDrawer::draw() {
 			m_characterDrawer->drawPlayerHpBar(m_world->getCharacters()[i], m_hpBarGraph);
 		}
 	}
-
-	// ムービー
-	Movie* movie = m_world->getMovie();
-	if (movie != nullptr) {
-		DrawBox(0, 0, GAME_WIDE, GAME_HEIGHT, BLACK, TRUE);
-		movie->draw();
-	}
-
-	// テキストイベント
-	const Conversation* conversation = m_world->getConversation();
-	if (conversation != nullptr) {
-		m_conversationDrawer->setConversation(conversation);
-		m_conversationDrawer->draw();
-	}
-	else {
-		// StageObjectを調べた際のテキストイベント
-		conversation = m_world->getObjectConversation();
-		if (conversation != nullptr) {
-			m_conversationDrawer->setConversation(conversation);
-			m_conversationDrawer->draw();
-		}
-	}
-
-	if (movie == nullptr && conversation == nullptr) {
-		// ターゲット
-		m_targetDrawer.setEx(camera->getEx());
-		m_targetDrawer.draw();
-	}
-
-	SetDrawBright(255, 255, 255);
 }

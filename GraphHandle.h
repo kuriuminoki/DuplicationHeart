@@ -5,6 +5,7 @@
 #include <string>
 
 class Camera;
+class CsvReader;
 
 /*
 * 画像データ(ハンドル、画像固有の拡大率、向き)をまとめて扱うためのクラス
@@ -85,6 +86,31 @@ public:
 
 
 /*
+* 当たり判定の情報付きのGraphHandles
+*/
+class GraphHandlesWithAtari {
+private:
+
+	GraphHandles* m_graphHandles;
+
+	// 当たり判定
+	bool m_defaultWide, m_defaultHeight;
+	int m_wide, m_height;
+	int m_x1, m_y1, m_x2, m_y2;
+
+public:
+
+	GraphHandlesWithAtari(GraphHandles* graphHandles, const char* graphName, CsvReader* csvReader);
+	~GraphHandlesWithAtari();
+
+	GraphHandles* getGraphHandles() const { return m_graphHandles; }
+
+	void getAtari(int* x1, int* y1, int* x2, int* y2, int index) const;
+
+};
+
+
+/*
 * キャラの眼の瞬きを処理するクラス
 */
 class CharacterEyeClose {
@@ -121,70 +147,80 @@ private:
 class CharacterGraphHandle {
 private:
 	// 表示される画像
-	GraphHandle* m_graphHandle_p;
+	GraphHandlesWithAtari* m_dispGraphHandle_p;
+	int m_dispGraphIndex;
 
 	double m_ex;
 
 	int m_wide, m_height;
+
+	// 当たり判定
+	int m_atariX1, m_atariY1, m_atariX2, m_atariY2;
 
 	// 瞬き
 	CharacterEyeClose m_characterEyeClose;
 
 	// キャラのパーツの画像
 	// 斬撃攻撃画像
-	GraphHandles* m_slashHandles;
+	GraphHandlesWithAtari* m_slashHandles;
+
+	// 空中斬撃攻撃画像
+	GraphHandlesWithAtari* m_airSlashEffectHandles;
 
 	// 射撃攻撃画像
-	GraphHandles* m_bulletHandles;
+	GraphHandlesWithAtari* m_bulletHandles;
 
 	// キャラ本体の画像
 	// 立ち画像
-	GraphHandles* m_standHandles;
+	GraphHandlesWithAtari* m_standHandles;
 
 	// しゃがみ画像
-	GraphHandles* m_squatHandles;
+	GraphHandlesWithAtari* m_squatHandles;
 
 	// しゃがみ射撃画像
-	GraphHandles* m_squatBulletHandles;
+	GraphHandlesWithAtari* m_squatBulletHandles;
 
 	// 立ち射撃画像
-	GraphHandles* m_standBulletHandles;
+	GraphHandlesWithAtari* m_standBulletHandles;
 
 	// 立ち斬撃画像
-	GraphHandles* m_standSlashHandles;
+	GraphHandlesWithAtari* m_standSlashHandles;
 
 	// 走り画像
-	GraphHandles* m_runHandles;
+	GraphHandlesWithAtari* m_runHandles;
 
 	// 走り射撃画像
-	GraphHandles* m_runBulletHandles;
+	GraphHandlesWithAtari* m_runBulletHandles;
 
 	// 着地画像
-	GraphHandles* m_landHandles;
+	GraphHandlesWithAtari* m_landHandles;
 
 	// 上昇画像
-	GraphHandles* m_jumpHandles;
+	GraphHandlesWithAtari* m_jumpHandles;
 
 	// 下降画像
-	GraphHandles* m_downHandles;
+	GraphHandlesWithAtari* m_downHandles;
 
 	// ジャンプ前画像
-	GraphHandles* m_preJumpHandles;
+	GraphHandlesWithAtari* m_preJumpHandles;
 
 	// ダメージ画像
-	GraphHandles* m_damageHandles;
+	GraphHandlesWithAtari* m_damageHandles;
 
 	// ブースト画像
-	GraphHandles* m_boostHandles;
+	GraphHandlesWithAtari* m_boostHandles;
 
 	// 空中射撃画像
-	GraphHandles* m_airBulletHandles;
+	GraphHandlesWithAtari* m_airBulletHandles;
 
 	// 空中斬撃画像
-	GraphHandles* m_airSlashHandles;
+	GraphHandlesWithAtari* m_airSlashHandles;
 
 	// 瞬き画像
-	GraphHandles* m_closeHandles;
+	GraphHandlesWithAtari* m_closeHandles;
+
+	// やられ画像
+	GraphHandlesWithAtari* m_deadHandles;
 
 public:
 	// デフォルト値で初期化
@@ -195,36 +231,43 @@ public:
 	~CharacterGraphHandle();
 
 	// 表示する画像を返す
-	inline GraphHandle* getHandle() { return m_graphHandle_p; }
+	inline GraphHandlesWithAtari* getDispGraphHandle() { return m_dispGraphHandle_p; }
+	inline GraphHandle* getHandle() { return m_dispGraphHandle_p->getGraphHandles()->getGraphHandle(m_dispGraphIndex); }
+	inline int getDispGraphIndex() const { return m_dispGraphIndex; }
 	inline int getWide() const { return m_wide; }
 	inline int getHeight() const { return m_height; }
+	void getAtari(int* x1, int* y1, int* x2, int* y2) const;
 
 	// 画像のゲッタ
-	inline GraphHandles* getSlashHandle() { return m_slashHandles; }
-	inline GraphHandles* getBulletHandle() { return m_bulletHandles; }
-	inline GraphHandles* getStandHandle() { return m_standHandles; }
-	inline GraphHandles* getStandBulletHandle() { return m_standBulletHandles; }
-	inline GraphHandles* getStandSlashHandle() { return m_standSlashHandles; }
-	inline GraphHandles* getSquatHandle() { return m_squatHandles; }
-	inline GraphHandles* getSquatBulletHandle() { return m_squatBulletHandles; }
-	inline GraphHandles* getRunHandle() { return m_runHandles; }
-	inline GraphHandles* getRunBulletHandle() { return m_runBulletHandles; }
-	inline GraphHandles* getLandHandle() { return m_landHandles; }
-	inline GraphHandles* getJumpHandle() { return m_jumpHandles; }
-	inline GraphHandles* getDownHandle() { return m_downHandles; }
-	inline GraphHandles* getPreJumpHandle() { return m_preJumpHandles; }
-	inline GraphHandles* getDamageHandle() { return m_damageHandles; }
-	inline GraphHandles* getBoostHandle() { return m_boostHandles; }
-	inline GraphHandles* getAirBulletHandle() { return m_airBulletHandles; }
-	inline GraphHandles* getAirSlashHandle() { return m_airSlashHandles; }
-	inline GraphHandles* getCloseHandle() { return m_closeHandles; }
+	inline GraphHandlesWithAtari* getSlashHandle() { return m_slashHandles; }
+	inline GraphHandlesWithAtari* getAirSlashEffectHandle() { return m_airSlashEffectHandles; }
+	inline GraphHandlesWithAtari* getBulletHandle() { return m_bulletHandles; }
+	inline GraphHandlesWithAtari* getStandHandle() { return m_standHandles; }
+	inline GraphHandlesWithAtari* getStandBulletHandle() { return m_standBulletHandles; }
+	inline GraphHandlesWithAtari* getStandSlashHandle() { return m_standSlashHandles; }
+	inline GraphHandlesWithAtari* getSquatHandle() { return m_squatHandles; }
+	inline GraphHandlesWithAtari* getSquatBulletHandle() { return m_squatBulletHandles; }
+	inline GraphHandlesWithAtari* getRunHandle() { return m_runHandles; }
+	inline GraphHandlesWithAtari* getRunBulletHandle() { return m_runBulletHandles; }
+	inline GraphHandlesWithAtari* getLandHandle() { return m_landHandles; }
+	inline GraphHandlesWithAtari* getJumpHandle() { return m_jumpHandles; }
+	inline GraphHandlesWithAtari* getDownHandle() { return m_downHandles; }
+	inline GraphHandlesWithAtari* getPreJumpHandle() { return m_preJumpHandles; }
+	inline GraphHandlesWithAtari* getDamageHandle() { return m_damageHandles; }
+	inline GraphHandlesWithAtari* getBoostHandle() { return m_boostHandles; }
+	inline GraphHandlesWithAtari* getAirBulletHandle() { return m_airBulletHandles; }
+	inline GraphHandlesWithAtari* getAirSlashHandle() { return m_airSlashHandles; }
+	inline GraphHandlesWithAtari* getCloseHandle() { return m_closeHandles; }
+	inline GraphHandlesWithAtari* getDeadHandle() { return m_deadHandles; }
 
 	// 画像サイズをセット
 	void setGraphSize();
 
+	// 当たり判定をセット
+	void setAtari();
+
 	// 画像をセット、存在しない画像ならそのまま　サイズも決定
-	void setGraph(const GraphHandles* graphHandles, int index);
-	void setGraph(GraphHandle* graphHandle);
+	void setGraph(GraphHandlesWithAtari* graphHandles, int index);
 
 	// 立ち画像をセット
 	void switchStand(int index = 0);
@@ -258,6 +301,8 @@ public:
 	void switchAirSlash(int index = 0);
 	// 瞬き画像をセット
 	void switchClose(int index = 0);
+	// やられ画像をセット
+	void switchDead(int index = 0);
 };
 
 

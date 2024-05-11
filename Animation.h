@@ -12,7 +12,7 @@ class AnimationDrawer;
 
 class Animation {
 private:
-	// 画像ハンドル
+	// 画像ハンドル deleteはこのクラスでしない
 	GraphHandles* m_handles_p;
 
 	// 座標
@@ -63,6 +63,9 @@ public:
 
 	// 描画用
 	GraphHandle* getHandle() const;
+
+	// 今何枚目か
+	int getAnimeNum() const { return m_cnt / m_flameCnt; }
 };
 
 
@@ -72,11 +75,21 @@ protected:
 
 	// 解像度の変更に対応
 	double m_ex;
+	// テキストやフォントのサイズの倍率
+	double m_exX;
+	double m_exY;
+
+	// フォント（テキスト）
+	int m_textHandle;
+	const int TEXT_SIZE = 50;
 
 	int m_flameWide, m_flameHeight;
 
 	// 終了したらtrue
 	bool m_finishFlag;
+
+	// Zキーの長押し時間
+	int m_skipCnt;
 
 	// 開始からの経過時間
 	int m_cnt;
@@ -85,9 +98,6 @@ protected:
 	int m_centerX, m_centerY;
 	Animation* m_animation;
 	AnimationDrawer* m_animationDrawer;
-
-	// サブ画像 cntが0になったものはpopしていく
-	std::queue<Animation*> m_subAnimation;
 
 	// サウンドプレイヤー
 	SoundPlayer* m_soundPlayer_p;
@@ -103,9 +113,9 @@ public:
 	virtual ~Movie();
 
 	// ゲッタ
-	bool getFinishFlag() const { return m_finishFlag; }
-	Animation* getAnimation() const { return m_animation; }
-	std::queue<Animation*> getSubAnimation() const { return m_subAnimation; }
+	inline bool getFinishFlag() const { return m_finishFlag; }
+	inline bool getSkipCnt() const { return m_skipCnt; }
+	inline Animation* getAnimation() const { return m_animation; }
 	inline int getCnt() const { return m_cnt; }
 
 	// 再生
@@ -254,5 +264,23 @@ private:
 	void pushPartOneCharacter(int index, bool front, GraphHandle* character);
 };
 
+// オープニング (mp4)
+class OpMovieMp4 :
+	public Movie
+{
+private:
+
+	int m_mp4;
+
+public:
+	OpMovieMp4(SoundPlayer* soundPlayer_p);
+	~OpMovieMp4();
+
+	// 再生
+	void play();
+
+	// 描画
+	void draw();
+};
 
 #endif

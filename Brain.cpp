@@ -349,13 +349,14 @@ int NormalAI::jumpOrder() {
 	// ダメージを食らったらリセット
 	if (m_characterAction_p->getState() == CHARACTER_STATE::DAMAGE) {
 		m_jumpCnt = 0;
+		// 受け身
 		if (GetRand(120) == 0) { return 1; }
 	}
 
 	int maxJump = m_characterAction_p->getPreJumpMax();
 	int minJump = maxJump / 3;
 
-	if (m_jumpCnt == 0) {
+	if (m_characterAction_p->getPreJumpCnt() == -1) {
 		// ランダムでジャンプ
 		if (m_squatCnt == 0 && GetRand(99) == 0) { m_jumpCnt = GetRand(maxJump - minJump) + minJump; }
 
@@ -428,7 +429,7 @@ int NormalAI::bulletOrder() {
 	// ランダムで射撃
 	int rapid = m_characterAction_p->getCharacter()->getAttackInfo()->bulletRapid();
 	if (GetRand(rapid) == 0) {
-		return 1;
+		return m_characterAction_p->getBulletCnt() + 1;
 	}
 	return 0;
 }
@@ -928,6 +929,9 @@ Brain* HierarchyAI::createCopy(std::vector<Character*> characters, const Camera*
 	copyTarget(characters, getTargetId(), res);
 	setParam(res);
 	return res;
+}
+int HierarchyAI::bulletOrder() {
+	return m_characterAction_p->getBulletCnt() + 1;
 }
 void HierarchyAI::bulletTargetPoint(int& x, int& y) {
 	x = GetRand(600) - 300 + m_characterAction_p->getCharacter()->getCenterX();

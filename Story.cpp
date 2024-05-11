@@ -20,6 +20,11 @@ Story::Story(int storyNum, World* world, SoundPlayer* soundPlayer, EventData* ev
 	m_characterLoader = new CharacterLoader;
 	m_objectLoader = new ObjectLoader;
 
+	m_date = 0;
+	m_version = 0;
+	m_resetWorld = false;
+	m_initDark = false;
+
 	// story○○.csvをロード
 	ostringstream oss;
 	oss << "data/story/story" << storyNum << ".csv";
@@ -67,7 +72,7 @@ void Story::loadCsvData(const char* fileName, World* world, SoundPlayer* soundPl
 			}
 		}
 		if (eventNum != -1) {
-			Event* eventOne = new Event(eventNum, world, soundPlayer);
+			Event* eventOne = new Event(eventNum, world, soundPlayer, m_version);
 			if (mustFlag) { m_mustEvent.push_back(eventOne); }
 			else { m_subEvent.push_back(eventOne); }
 		}
@@ -90,6 +95,9 @@ void Story::loadCsvData(const char* fileName, World* world, SoundPlayer* soundPl
 	if (dateData.size() > 0) {
 		m_date = stoi(dateData[0]["num"]);
 	}
+	if (m_date == 0) {
+		m_world_p->setDate(m_date);
+	}
 
 	// 世界のバージョンを取得しロードする 変化ない(updateが0)ならロードしない
 	vector<map<string, string> > versionData = csvReader2.getDomainData("VERSION:");
@@ -101,9 +109,17 @@ void Story::loadCsvData(const char* fileName, World* world, SoundPlayer* soundPl
 			loadCsvData(oss.str().c_str(), world, soundPlayer);
 		}
 	}
+
+	// Storyの初期状態
+	vector<map<string, string> > initData = csvReader2.getDomainData("INIT:");
+	if (initData.size() > 0) {
+		m_initDark = (bool)stoi(initData[0]["dark"]);
+		m_resetWorld = (bool)stoi(initData[0]["resetWorld"]);
+	}
 }
 
 bool Story::play() {
+	m_initDark = false;
 	if (m_nowEvent == nullptr) {
 		// 普通に世界を動かす
 		m_world_p->battle();
@@ -180,9 +196,9 @@ void Story::setWorld(World* world) {
 	}
 }
 
-// 前のセーブポイントへ戻る必要があるか
-bool Story::getBackPrevSaveFlag() const {
-	return m_nowEvent != nullptr ? m_nowEvent->getBackPrevSaveFlag() : false;
+// 前のセーブポイントへ戻る必要があるか 戻るならいくつ分戻るか返す(>0)
+int Story::getBackPrevSave() const {
+	return m_nowEvent != nullptr ? m_nowEvent->getBackPrevSave() : false;
 }
 
 // 前のセーブポイントへ戻ったことを教えてもらう

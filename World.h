@@ -57,9 +57,15 @@ private:
 	// プレイヤー（ハート）のID
 	int m_playerId;
 
-	// いま世界のどのエリアにいるか（メモリ節約のためプレイヤーの付近のみを読み込む）
+	// いま世界のどのエリアにいるか
 	int m_areaNum;
 	int m_nextAreaNum;
+
+	// エリア移動時にBGMをいったん止めるならtrue
+	bool m_resetBgmFlag;
+
+	// 描画するかどうか(動画とテキストは除く)
+	bool m_blindFlag;
 
 	// 時間帯 0は昼、1は夕方、2は夜
 	int m_date;
@@ -101,11 +107,21 @@ private:
 	// キャラがやられた時のエフェクト画像
 	GraphHandles* m_characterDeadGraph;
 
+	// 爆発の画像
+	GraphHandles* m_bombGraph;
+
+	// 爆発の効果音
+	int m_bombSound;
+
 	// キャラがやられた時の効果音
 	int m_characterDeadSound;
 
 	// ドアに入った時の効果音
 	int m_doorSound;
+
+	// カメラのズームイン・アウトの効果音
+	int m_cameraInSound;
+	int m_cameraOutSound;
 
 	// 背景
 	int m_backGroundGraph;
@@ -127,6 +143,8 @@ public:
 	inline int getAreaNum() const { return m_areaNum; }
 	inline int getNextAreaNum() const { return m_nextAreaNum; }
 	inline int getDate() const { return m_date; }
+	inline bool getResetBgmFlag() const { return m_resetBgmFlag; }
+	inline bool getBlindFlag() const { return m_blindFlag; }
 	inline const Camera* getCamera() const { return m_camera; }
 	std::vector<CharacterController*> getCharacterControllers() const { return m_characterControllers; }
 	std::vector<Character*> getCharacters() const { return m_characters; }
@@ -144,8 +162,11 @@ public:
 	inline double getCameraMaxEx() const { return m_cameraMaxEx; }
 	inline double getCameraMinEx() const { return m_cameraMinEx; }
 	inline GraphHandles* getCharacterDeadGraph() const { return m_characterDeadGraph; }
+	inline GraphHandles* getBombGraph() const { return m_bombGraph; }
 	inline int getCharacterDeadSound() const { return m_characterDeadSound; }
+	inline int getBombSound() const { return m_bombSound; }
 	inline int getDoorSound() const { return m_doorSound; }
+	inline bool getSkillFlag() const { return m_skillFlag; }
 
 	// Drawer用のゲッタ
 	std::vector<const CharacterAction*> getActions() const;
@@ -168,6 +189,10 @@ public:
 	inline void setMovie(Movie* movie) { m_movie_p = movie; }
 	inline void setAreaLock(bool lock) { m_areaLock = lock; }
 	inline void setDate(int date) { m_date = date; }
+	inline void setBlindFlag(bool blindFlag) { m_blindFlag = blindFlag; }
+
+	// 強制的にエリア移動
+	inline void moveArea(int nextArea) { m_brightValue--; m_nextAreaNum = nextArea; m_resetBgmFlag = true; }
 
 	// ID指定でBrain変更
 	void setBrainWithId(int id, Brain* brain);
@@ -220,6 +245,9 @@ public:
 	// データ管理：プレイヤーをドアの前まで移動
 	void setPlayerOnDoor(int from);
 
+	// データ管理：カメラの位置をリセット
+	void cameraPointInit();
+
 	// プレイヤーを特定の座標へ移動
 	void setPlayerPoint(CharacterData* characterData);
 
@@ -232,6 +260,9 @@ public:
 	// 各キャラが目標地点へ移動するだけ
 	bool moveGoalCharacter();
 
+	// 画面が暗転するだけ キャラが動けない期間ならtrue
+	bool dealBrightValue();
+
 	// キャラに会話させる
 	void talk();
 
@@ -239,9 +270,6 @@ public:
 	void moviePlay();
 
 private:
-
-	// データ管理：カメラの位置をリセット
-	void cameraPointInit();
 
 	// データ管理：キャラのセーブデータを自身に反映させる
 	void asignedCharacter(Character* character, CharacterData* data, bool changePosition);
@@ -267,8 +295,8 @@ private:
 	// Battle：アイテムの動き
 	void controlItem();
 
-	// Battle：キャラクターとオブジェクトの当たり判定
-	void atariCharacterAndObject(CharacterController* controller, std::vector<Object*>& objects);
+	// Battle：キャラクターとオブジェクトの当たり判定 slope=trueならslopeが対象falseならそれ以外
+	void atariCharacterAndObject(CharacterController* controller, std::vector<Object*>& objects, bool slope);
 
 	// Battle：キャラクターと扉の当たり判定
 	void atariCharacterAndDoor(CharacterController* controller, std::vector<Object*>& objects);
@@ -278,6 +306,9 @@ private:
 
 	// Battle：攻撃<->攻撃の当たり判定
 	void atariAttackAndAttack();
+
+	// Battle: 爆発を起こす
+	void createBomb(int x, int y, Object* attackObject);
 
 };
 

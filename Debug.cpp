@@ -49,7 +49,7 @@ void World::debug(int x, int y, int color) const {
 		DrawFormatString(x, y + DRAW_FORMAT_STRING_SIZE * 3, color, "itemY=%d", m_itemVector[0]->getY());
 	}
 	//debugObjects(x, y + DRAW_FORMAT_STRING_SIZE * 2, color, m_attackObjects);
-	//m_characterControllers[0]->debug(x + DRAW_FORMAT_STRING_SIZE, y + DRAW_FORMAT_STRING_SIZE * 3, color);
+	m_characterControllers[0]->debug(x + DRAW_FORMAT_STRING_SIZE, y + DRAW_FORMAT_STRING_SIZE * 3, color);
 	//if (m_movie_p != nullptr) {
 	//	DrawFormatString(x, y + DRAW_FORMAT_STRING_SIZE * 3, color, "Movie: cnt=%d", m_movie_p->getCnt());
 	//}
@@ -122,6 +122,12 @@ void ValkiriaAction::debug(int x, int y, int color) const {
 // FlightActionのデバッグ
 void FlightAction::debug(int x, int y, int color) const {
 	DrawFormatString(x, y, color, "**FlightAction**");
+	debugAction(x + DRAW_FORMAT_STRING_SIZE, y + DRAW_FORMAT_STRING_SIZE, color);
+}
+
+// FlightActionのデバッグ
+void KoharuAction::debug(int x, int y, int color) const {
+	DrawFormatString(x, y, color, "**KoharuAction**");
 	debugAction(x + DRAW_FORMAT_STRING_SIZE, y + DRAW_FORMAT_STRING_SIZE, color);
 }
 
@@ -208,6 +214,16 @@ void SlashObject::debug(int x, int y, int color) const {
 	DrawFormatString(x, y, color, "**SlashObject**");
 	DrawFormatString(x, y + DRAW_FORMAT_STRING_SIZE, color, "cnt=%d", m_cnt);
 	debugObject(x + DRAW_FORMAT_STRING_SIZE, y + DRAW_FORMAT_STRING_SIZE * 2, color);
+	// DrawBox(m_x1, m_y1, m_x2, m_y2, color, FALSE);
+}
+
+
+/*
+* 爆発のデバッグ
+*/
+void BombObject::debug(int x, int y, int color) const {
+	DrawFormatString(x, y, color, "**BombObject**");
+	//DrawFormatString(x, y + DRAW_FORMAT_STRING_SIZE, color, "cnt=%d", m_cnt);
 	// DrawBox(m_x1, m_y1, m_x2, m_y2, color, FALSE);
 }
 

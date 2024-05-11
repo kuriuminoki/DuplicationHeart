@@ -44,9 +44,7 @@ void Wait() {
 int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 	SetWindowSizeChangeEnableFlag(TRUE);//windowサイズ変更可能
 	SetUseDirectInputFlag(TRUE);
-	GameData* gameData = new GameData();
 	SetGraphMode(GAME_WIDE, GAME_HEIGHT, GAME_COLOR_BIT_NUM);
-	delete gameData;
 
 	ChangeWindowMode(WINDOW), DxLib_Init(), SetDrawScreen(DX_SCREEN_BACK);
 	
@@ -60,8 +58,8 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 	//SetMousePoint(320, 240);//マウスカーソルの初期位置
 	
 	// 画像の拡大処理方式
-	//SetDrawMode(DX_DRAWMODE_BILINEAR);
-	SetDrawMode(DX_DRAWMODE_NEAREST);
+	SetDrawMode(DX_DRAWMODE_BILINEAR);
+	//SetDrawMode(DX_DRAWMODE_NEAREST);
 	SetFullScreenScalingMode(DX_DRAWMODE_NEAREST);
 
 	// ゲーム本体
@@ -96,7 +94,9 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 				SetMouseDispFlag(MOUSE_DISP);//マウス表示
 				title = new Title();
 			}
-			else{ gameDrawer->draw(); }
+			else if(game->ableDraw()){ 
+				gameDrawer->draw();
+			}
 		}
 		else {
 			Title::TITLE_RESULT result = title->play();
@@ -110,11 +110,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 			else if (result == Title::REBOOT) {
 				// ゲームを再起動
 				delete title;
-				InitGraph();
-				InitSoundMem();
-				InitFontToHandle();
-				ChangeWindowMode(WINDOW), DxLib_Init(), SetDrawScreen(DX_SCREEN_BACK);
-				SetMouseDispFlag(MOUSE_DISP);//マウス表示
+				ChangeGameResolution();
 				title = new Title();
 			}
 		}

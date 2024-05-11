@@ -6,6 +6,8 @@
 #include "Define.h"
 #include "DxLib.h"
 
+#include <cmath>
+
 
 // 体力バーを表示
 void drawHpBar(int x1, int y1, int x2, int y2, int hp, int prevHp, int maxHp, int damageColor, int prevHpColor, int hpColor) {
@@ -17,18 +19,42 @@ void drawHpBar(int x1, int y1, int x2, int y2, int hp, int prevHp, int maxHp, in
 	DrawBox(x1 + prev, y1, x2, y2, damageColor, TRUE);
 }
 
+
+// 敵がいる方向の通知
+void drawEnemyNotice(int x, int y, double ex, int handle) {
+	int wide = 0, height = 0;
+	GetGraphSize(handle, &wide, &height);
+	wide = (int)(wide * ex);
+	height = (int)(height * ex);
+	int drawX = max(0 + wide, min(GAME_WIDE - wide, x));
+	int drawY = max(0 + wide, min(GAME_HEIGHT - wide, y));
+	double r = atan2(y - GAME_HEIGHT / 2, x - GAME_WIDE / 2);
+	DrawRotaGraph(drawX, drawY, ex, r, handle, TRUE);
+}
+
+
 int CharacterDrawer::HP_COLOR = GetColor(0, 255, 0);
 int CharacterDrawer::PREV_HP_COLOR = GetColor(255, 0, 0);
 int CharacterDrawer::DAMAGE_COLOR = GetColor(0, 0, 0);
 
 CharacterDrawer::CharacterDrawer(const CharacterAction* const characterAction) {
-	m_characterAction = characterAction;
+	
 	m_cnt = 0;
 	getGameEx(m_exX, m_exY);
+
+	// デバッグ用
+	m_guideHandle = LoadGraph("picture/stick/atariGuide.png");
+	m_characterAction = characterAction;
+
+}
+
+CharacterDrawer::~CharacterDrawer() {
+	// デバッグ用
+	DeleteGraph(m_guideHandle);
 }
 
 // キャラを描画する
-void CharacterDrawer::drawCharacter(const Camera* const camera, int bright) {
+void CharacterDrawer::drawCharacter(const Camera* const camera, int enemyNoticeHandle, int bright) {
 	// 描画するキャラクター
 	const Character* character = m_characterAction->getCharacter();
 
@@ -36,16 +62,25 @@ void CharacterDrawer::drawCharacter(const Camera* const camera, int bright) {
 	const GraphHandle* graphHandle = character->getGraphHandle();
 
 	// 座標と拡大率取得
-	int x, y;
+	int x1 = character->getX(), y1 = character->getY();
+	int wide = character->getWide(), height = character->getHeight();
 	double ex;
 	// 画像の中心を座標とする
-	x = character->getX() + (character->getWide() / 2);
-	y = character->getY() + (character->getHeight() / 2);
+	int x = x1 + wide / 2;
+	int y = y1 + height / 2;
 	// 画像固有の拡大率取得
 	ex = graphHandle->getEx();
 
 	// カメラで調整
 	camera->setCamera(&x, &y, &ex);
+
+	// 画面外
+	wide = (int)(wide * camera->getEx());
+	height = (int)(height * camera->getEx());
+	if (x - wide / 2 > GAME_WIDE || y - height / 2 > GAME_HEIGHT || x + wide / 2 < 0 || y + height / 2 < 0) {
+		drawEnemyNotice(x, y, 0.5, enemyNoticeHandle);
+		return;
+	}
 
 	// 描画 ダメージ状態なら点滅
 	if (m_characterAction->getState() == CHARACTER_STATE::DAMAGE && ++m_cnt / 2 % 2 == 1) {
@@ -71,6 +106,16 @@ void CharacterDrawer::drawCharacter(const Camera* const camera, int bright) {
 		// 体力の描画
 		drawHpBar(x - wide, y - height, x + wide, y, character->getHp(), character->getPrevHp(), character->getMaxHp(), DAMAGE_COLOR, PREV_HP_COLOR, HP_COLOR);
 	}
+
+	// デバッグ用
+	if (ATARI_DEBUG) {
+		int x2 = 0, y2 = 0;
+		character->getAtariArea(&x1, &y1, &x2, &y2);
+		camera->setCamera(&x1, &y1, &ex);
+		camera->setCamera(&x2, &y2, &ex);
+		DrawExtendGraph(x1, y1, x2, y2, m_guideHandle, TRUE);
+	}
+
 }
 
 void CharacterDrawer::drawPlayerHpBar(const Character* player, int hpBarGraph) {

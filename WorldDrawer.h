@@ -2,6 +2,7 @@
 #define WORLD_DRAWER_H_INCLUDED
 
 class World;
+class Camera;
 class CharacterDrawer;
 class ObjectDrawer;
 class AnimationDrawer;
@@ -62,6 +63,8 @@ private:
 	// 会話イベント
 	ConversationDrawer* m_conversationDrawer;
 
+	int m_enemyNotice;
+
 public:
 	WorldDrawer(const World* world);
 
@@ -72,6 +75,10 @@ public:
 
 	// 描画する
 	void draw();
+
+private:
+
+	void drawBattleField(const Camera* camera, int bright);
 };
 
 #endif

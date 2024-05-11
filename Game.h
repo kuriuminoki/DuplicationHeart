@@ -211,9 +211,10 @@ public:
 	const int NOTICE_SAVE_DONE_TIME = 300;
 
 	// セーブとロード
-	bool save();
+	bool save(bool force = false);
 	bool load();
 	bool saveChapter();
+	bool loadChapter(int storyNum);
 	// 全セーブデータ共通
 	bool saveCommon(int soundVolume, int gameWide, int gameHeight);
 	bool loadCommon(int* soundVolume, int* gameWide, int* gameHeight);
@@ -249,6 +250,9 @@ public:
 
 	// ストーリーが進んだ時にセーブデータを更新する
 	void updateStory(Story* story);
+
+	// 世界のやり直し
+	void resetWorld();
 
 };
 
@@ -360,7 +364,15 @@ public:
 	bool play();
 
 	// セーブデータをロード（前のセーブポイントへ戻る）
-	void backPrevSave();
+	void backPrevSave(int prevStoryNum);
+
+	// 描画していいならtrue
+	bool ableDraw();
+
+private:
+
+	bool skillUsable();
+
 };
 
 #endif

@@ -1,7 +1,9 @@
 #include "Animation.h"
 #include "AnimationDrawer.h"
+#include "Control.h"
 #include "GraphHandle.h"
 #include "Sound.h"
+#include "DrawTool.h"
 #include "Define.h"
 #include "DxLib.h"
 
@@ -71,9 +73,8 @@ GraphHandle* Animation::getHandle() const {
 * 動画の基底クラス
 */
 Movie::Movie(SoundPlayer* soundPlayer_p) {
-	double exX, exY;
-	getGameEx(exX, exY);
-	m_ex = min(exX, exY);
+	getGameEx(m_exX, m_exY);
+	m_ex = min(m_exX, m_exY);
 	m_finishFlag = false;
 	m_cnt = 0;
 	m_animation = nullptr;
@@ -84,6 +85,9 @@ Movie::Movie(SoundPlayer* soundPlayer_p) {
 
 	m_flameWide = (GAME_WIDE - (int)(GAME_WIDE_DEFAULT * m_ex)) / 2;
 	m_flameHeight = (GAME_HEIGHT - (int)(GAME_HEIGHT_DEFAULT * m_ex)) / 2;
+
+	// フォントデータ
+	m_textHandle = CreateFontToHandle(nullptr, (int)(TEXT_SIZE * m_exX), 3);
 }
 
 Movie::~Movie() {
@@ -91,31 +95,35 @@ Movie::~Movie() {
 		delete m_animation;
 	}
 	m_soundPlayer_p->setBGM(m_originalBgmPath);
+	// フォントデータ削除
+	DeleteFontToHandle(m_textHandle);
 }
 
 void Movie::play() {
 
 	if (m_cnt == 0) {
 		// 音楽開始
-		m_soundPlayer_p->setBGM(m_bgmPath.c_str());
+		if (m_bgmPath != "") {
+			m_soundPlayer_p->setBGM(m_bgmPath.c_str());
+			m_soundPlayer_p->playBGM();
+		}
 		m_soundPlayer_p->clearSoundQueue();
 	}
 
 	m_cnt++;
 
 	// メイン画像
-	m_animation->count();
+	if (m_animation != nullptr) {
+		m_animation->count();
+	}
 
-	// サブ画像
-	unsigned int size = (unsigned int)m_subAnimation.size();
-	for (unsigned int i = 0; i < size; i++) {
-		Animation* subAnimation = m_subAnimation.front();
-		m_subAnimation.pop();
-		subAnimation->count();
-		if (!subAnimation->getFinishFlag()) {
-			m_subAnimation.push(subAnimation);
+	// Zキー長押しで終了
+	if (controlZ() > 0) {
+		if (m_skipCnt++ == 60) {
+			m_finishFlag = true;
 		}
 	}
+	else { m_skipCnt = 0; }
 }
 
 void Movie::draw() {
@@ -699,7 +707,6 @@ void OpMovie::draw() {
 		int alpha = min(255, m_cnt - 4350);
 		SetDrawBlendMode(DX_BLENDMODE_ALPHA, alpha);
 	}
-	SetDrawMode(DX_DRAWMODE_BILINEAR);
 	if (m_cnt < 3750 && m_cnt >= 3050) {
 		m_animationDrawer->setAnimation(m_orangeAnime);
 		m_animationDrawer->drawAnimation();
@@ -720,5 +727,43 @@ void OpMovie::draw() {
 		DrawBox(0, 0, GAME_WIDE, GAME_HEIGHT, BLACK, TRUE);
 	}
 	drawFlame();
-	SetDrawMode(DX_DRAWMODE_NEAREST);
+
+	// Zキー長押しでスキップの表示
+	drawSkip(m_skipCnt, m_exX, m_exY, m_textHandle);
+}
+
+
+OpMovieMp4::OpMovieMp4(SoundPlayer* soundPlayer_p) :
+	Movie(soundPlayer_p)
+{
+	m_mp4 = LoadGraph("picture/movie/DuplicationHeartOp.mp4");
+	int volume = (int)(1000 * m_soundPlayer_p->getVolume() / 100.0);
+	SetMovieVolumeToGraph(9000, m_mp4);
+	PlayMovieToGraph(m_mp4);
+}
+OpMovieMp4::~OpMovieMp4() {
+	DeleteGraph(m_mp4);
+}
+
+// 再生
+void OpMovieMp4::play() {
+	Movie::play();
+	// 終了
+	if (GetMovieStateToGraph(m_mp4) != 1) {
+		m_finishFlag = true;
+	}
+}
+
+// 描画
+void OpMovieMp4::draw() {
+
+	DrawRotaGraph(GAME_WIDE / 2, GAME_HEIGHT / 2, m_ex, 0, m_mp4, TRUE);
+
+	drawFlame();
+
+	// Zキー長押しでスキップの表示
+	drawSkip(m_skipCnt, m_exX, m_exY, m_textHandle);
+
+	// 画面のちらつき防止
+	WaitTimer(15);
 }

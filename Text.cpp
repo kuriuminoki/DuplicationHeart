@@ -159,6 +159,7 @@ Conversation::~Conversation() {
 	if (m_eventAnime != nullptr) { delete m_eventAnime; }
 	// BGMを戻す
 	m_soundPlayer_p->setBGM(m_originalBgmPath);
+	m_soundPlayer_p->playBGM();
 	// クリックエフェクト削除
 	delete m_clickGraph;
 	for (unsigned i = 0; i < m_animations.size(); i++) {
@@ -373,6 +374,7 @@ void Conversation::loadNextBlock() {
 		string path = "sound/";
 		path += buff;
 		m_soundPlayer_p->setBGM(path);
+		m_soundPlayer_p->playBGM();
 		loadNextBlock();
 	}
 	else if (str == "@stopBGM") {
@@ -383,6 +385,7 @@ void Conversation::loadNextBlock() {
 	else if (str == "@resetBGM") {
 		// BGMを戻す
 		m_soundPlayer_p->setBGM(m_originalBgmPath);
+		m_soundPlayer_p->playBGM();
 		loadNextBlock();
 	}
 	else if (str == "@setWorldBGM") {

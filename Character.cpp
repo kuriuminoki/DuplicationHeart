@@ -34,6 +34,9 @@ Character* createCharacter(const char* characterName, int hp, int x, int y, int 
 	else if (name == "トロイ") {
 		character = new Troy(name.c_str(), hp, x, y, groupId);
 	}
+	else if (name == "コハル") {
+		character = new Koharu(name.c_str(), hp, x, y, groupId);
+	}
 	else if (name == "棒人間" || name == "クロ人間") {
 		character = new SlashOnly(name.c_str(), hp, x, y, groupId);
 	}
@@ -130,8 +133,8 @@ AttackInfo::AttackInfo(const char* characterName, double drawEx) {
 
 	// 攻撃のエフェクト
 	string path = "picture/effect/";
-	m_bulletEffectHandles = new GraphHandles((path + data["bulletEffect"]).c_str(), 4, drawEx, 0.0, true);
-	m_slashEffectHandles = new GraphHandles((path + data["slashEffect"]).c_str(), 4, drawEx, 0.0, true);
+	m_bulletEffectHandles = new GraphHandles((path + data["bulletEffect"]).c_str(), stoi(data["bulletEffectSum"]), drawEx, 0.0, true);
+	m_slashEffectHandles = new GraphHandles((path + data["slashEffect"]).c_str(), stoi(data["slashEffectSum"]), drawEx, 0.0, true);
 	// サウンド
 	path = "sound/stick/";
 	m_bulletSoundHandle = LoadSoundMem((path + data["bulletSound"]).c_str());
@@ -177,6 +180,7 @@ void AttackInfo::setParam(map<string, string>& data) {
 	m_bulletDistance = stoi(data["bulletDistance"]);
 	m_bulletImpactX = stoi(data["bulletImpactX"]);
 	m_bulletImpactY = stoi(data["bulletImpactY"]);
+	m_bulletBomb = (bool)stoi(data["bulletBomb"]);
 	m_slashHp = stoi(data["slashHp"]);
 	m_slashDamage = stoi(data["slashDamage"]);
 	m_slashLenX = stoi(data["slashLenX"]);
@@ -251,7 +255,7 @@ void Character::setParam(Character* character) {
 	character->setHp(m_hp);
 	character->setPrevHp(m_prevHp);
 	character->setInvincible(m_invincible);
-	character->getCharacterGraphHandle()->setGraph(getGraphHandle());
+	character->getCharacterGraphHandle()->setGraph(m_graphHandle->getDispGraphHandle(), m_graphHandle->getDispGraphIndex());
 }
 
 GraphHandle* Character::getGraphHandle() const {
@@ -262,6 +266,15 @@ void Character::getHandleSize(int& wide, int& height) const {
 	// 今セットしている画像の縦幅と横幅を取得する。
 	wide = getWide();
 	height = getHeight();
+}
+
+// 当たり判定の範囲を取得
+void Character::getAtariArea(int* x1, int* y1, int* x2, int* y2) const {
+	m_graphHandle->getAtari(x1, y1, x2, y2);
+	*x1 = *x1 + m_x;
+	*y1 = *y1 + m_y;
+	*x2 = *x2 + m_x;
+	*y2 = *y2 + m_y;
 }
 
 // Infoのバージョンを変更する
@@ -314,6 +327,10 @@ void Character::moveDown(int d) {
 	m_y += d;
 }
 
+bool Character::haveDeadGraph() const {
+	return !(m_graphHandle->getDeadHandle() == nullptr);
+}
+
 // 立ち画像をセット
 void Character::switchStand(int cnt) { m_graphHandle->switchStand(); }
 // 立ち射撃画像をセット
@@ -344,6 +361,8 @@ void Character::switchBoost(int cnt) { m_graphHandle->switchBoost(); }
 void Character::switchAirBullet(int cnt) { m_graphHandle->switchAirBullet(); }
 // 空中斬撃画像をセット
 void Character::switchAirSlash(int cnt) { m_graphHandle->switchAirSlash(); }
+// やられ画像をセット
+void Character::switchDead(int cnt) { m_graphHandle->switchDead(); }
 
 
 /*
@@ -388,9 +407,6 @@ Heart::Heart(const char* name, int hp, int x, int y, int groupId, AttackInfo* at
 
 	m_bulletColor = WHITE;
 
-	// とりあえず立ち画像でスタート
-	//switchStand();
-	//m_y -= getHeight();
 }
 
 // デストラクタ
@@ -407,7 +423,7 @@ Character* Heart::createCopy() {
 // 走り画像をセット
 void Heart::switchRun(int cnt) { 
 	if (m_graphHandle->getRunHandle() == nullptr) { return; }
-	int index = (cnt / RUN_ANIME_SPEED) % (m_graphHandle->getRunHandle()->getSize());
+	int index = (cnt / RUN_ANIME_SPEED) % (m_graphHandle->getRunHandle()->getGraphHandles()->getSize());
 	m_graphHandle->switchRun(index);
 }
 
@@ -417,24 +433,24 @@ void Heart::switchRunBullet(int cnt) {
 		switchRun(cnt);
 		return;
 	}
-	int index = (cnt / RUN_ANIME_SPEED) % (m_graphHandle->getRunBulletHandle()->getSize());
+	int index = (cnt / RUN_ANIME_SPEED) % (m_graphHandle->getRunBulletHandle()->getGraphHandles()->getSize());
 	m_graphHandle->switchRunBullet(index);
 }
 
 // ジャンプ前画像をセット
 void Heart::switchPreJump(int cnt) { 
 	if (m_graphHandle->getPreJumpHandle() == nullptr) { return; }
-	int index = (cnt / RUN_PREJUMP_SPEED) % (m_graphHandle->getPreJumpHandle()->getSize());
+	int index = (cnt / RUN_PREJUMP_SPEED) % (m_graphHandle->getPreJumpHandle()->getGraphHandles()->getSize());
 	m_graphHandle->switchPreJump(index);
 }
 
-// 射撃攻撃をする(キャラごとに違う)
+// 射撃攻撃をする
 Object* Heart::bulletAttack(int gx, int gy, SoundPlayer* soundPlayer) {
 
 	// 弾の作成
 	BulletObject* attackObject;
 	if (m_graphHandle->getBulletHandle() != nullptr) {
-		attackObject = new BulletObject(getCenterX(), getCenterY(), m_graphHandle->getBulletHandle()->getGraphHandle(), gx, gy, m_attackInfo);
+		attackObject = new BulletObject(getCenterX(), getCenterY(), m_graphHandle->getBulletHandle()->getGraphHandles()->getGraphHandle(), gx, gy, m_attackInfo);
 	}
 	else {
 		attackObject = new BulletObject(getCenterX(), getCenterY(), m_bulletColor, gx, gy, m_attackInfo);
@@ -452,8 +468,8 @@ Object* Heart::bulletAttack(int gx, int gy, SoundPlayer* soundPlayer) {
 	return attackObject;
 }
 
-// 斬撃攻撃をする(キャラごとに違う)
-Object* Heart::slashAttack(bool leftDirection, int cnt, SoundPlayer* soundPlayer) {
+// 斬撃攻撃をする
+Object* Heart::slashAttack(bool leftDirection, int cnt, bool grand, SoundPlayer* soundPlayer) {
 	// 攻撃範囲を決定
 	int centerX = getCenterX();
 	int height = m_attackInfo->slashLenY() / 2;
@@ -471,14 +487,18 @@ Object* Heart::slashAttack(bool leftDirection, int cnt, SoundPlayer* soundPlayer
 	int index = 0;
 	int slashCountSum = m_attackInfo->slashCountSum() / 3 + 1;
 	SlashObject* attackObject = nullptr;
-	GraphHandles* slashHandles = m_graphHandle->getSlashHandle();
+	GraphHandlesWithAtari* slashHandles = m_graphHandle->getAirSlashEffectHandle();
+	if (grand || slashHandles == nullptr) {
+		// 地上にいる、もしくは空中斬撃画像がないなら地上用の画像を使う
+		slashHandles = m_graphHandle->getSlashHandle();
+	}
 	// 攻撃の方向
-	slashHandles->setReverseX(m_leftDirection);
+	slashHandles->getGraphHandles()->setReverseX(m_leftDirection);
 	// cntが攻撃のタイミングならオブジェクト生成
 	if (cnt == m_attackInfo->slashCountSum()) {
 		index = 0;
 		attackObject = new SlashObject(centerX, centerY - height, x2, centerY + height,
-			slashHandles->getGraphHandle(index), slashCountSum, m_attackInfo);
+			slashHandles->getGraphHandles()->getGraphHandle(index), slashCountSum, m_attackInfo);
 		// 効果音
 		if (soundPlayer != nullptr) {
 			soundPlayer->pushSoundQueue(m_attackInfo->slashStartSoundHandle(),
@@ -489,12 +509,12 @@ Object* Heart::slashAttack(bool leftDirection, int cnt, SoundPlayer* soundPlayer
 	else if (cnt == m_attackInfo->slashCountSum() * 2 / 3) {
 		index = 1;
 		attackObject = new SlashObject(centerX, centerY - height, x2, centerY + height,
-			slashHandles->getGraphHandle(index), slashCountSum, m_attackInfo);
+			slashHandles->getGraphHandles()->getGraphHandle(index), slashCountSum, m_attackInfo);
 	}
 	else if (cnt == m_attackInfo->slashCountSum() / 3) {
 		index = 2;
 		attackObject = new SlashObject(centerX, centerY - height, x2, centerY + height,
-			slashHandles->getGraphHandle(index), slashCountSum, m_attackInfo);
+			slashHandles->getGraphHandles()->getGraphHandle(index), slashCountSum, m_attackInfo);
 	}
 	if (attackObject != nullptr) {
 		// 自滅防止
@@ -526,9 +546,9 @@ Character* Siesta::createCopy() {
 	return res;
 }
 
-// 射撃攻撃をする(キャラごとに違う)
+// 射撃攻撃をする
 Object* Siesta::bulletAttack(int gx, int gy, SoundPlayer* soundPlayer) {
-	ParabolaBullet *attackObject = new ParabolaBullet(getCenterX(), getCenterY(), m_graphHandle->getBulletHandle()->getGraphHandle(), gx, gy, m_attackInfo);
+	ParabolaBullet *attackObject = new ParabolaBullet(getCenterX(), getCenterY(), m_graphHandle->getBulletHandle()->getGraphHandles()->getGraphHandle(), gx, gy, m_attackInfo);
 	// 自滅防止
 	attackObject->setCharacterId(m_id);
 	// チームキル防止
@@ -542,8 +562,8 @@ Object* Siesta::bulletAttack(int gx, int gy, SoundPlayer* soundPlayer) {
 	return attackObject;
 }
 
-// 斬撃攻撃をする(キャラごとに違う)
-Object* Siesta::slashAttack(bool leftDirection, int cnt, SoundPlayer* soundPlayer) {
+// 斬撃攻撃をする
+Object* Siesta::slashAttack(bool leftDirection, int cnt, bool grand, SoundPlayer* soundPlayer) {
 	// 攻撃範囲を決定
 	int centerX = getCenterX();
 	int height = getHeight();
@@ -563,7 +583,7 @@ Object* Siesta::slashAttack(bool leftDirection, int cnt, SoundPlayer* soundPlaye
 	int index = 0;
 	int slashCountSum = m_attackInfo->slashCountSum() / 3 + 1;
 	SlashObject* attackObject = nullptr;
-	GraphHandles* slashHandles = m_graphHandle->getSlashHandle();
+	GraphHandles* slashHandles = m_graphHandle->getSlashHandle()->getGraphHandles();
 	// 攻撃の方向
 	slashHandles->setReverseX(m_leftDirection);
 	// cntが攻撃のタイミングならオブジェクト生成
@@ -618,9 +638,9 @@ Character* Hierarchy::createCopy() {
 	return res;
 }
 
-// 射撃攻撃をする(キャラごとに違う)
+// 射撃攻撃をする
 Object* Hierarchy::bulletAttack(int gx, int gy, SoundPlayer* soundPlayer) {
-	BulletObject* attackObject = new BulletObject(getCenterX(), getCenterY(), m_graphHandle->getBulletHandle()->getGraphHandle(), gx, gy, m_attackInfo);
+	BulletObject* attackObject = new BulletObject(getCenterX(), getCenterY(), m_graphHandle->getBulletHandle()->getGraphHandles()->getGraphHandle(), gx, gy, m_attackInfo);
 	// 自滅防止
 	attackObject->setCharacterId(m_id);
 	// チームキル防止
@@ -634,8 +654,8 @@ Object* Hierarchy::bulletAttack(int gx, int gy, SoundPlayer* soundPlayer) {
 	return attackObject;
 }
 
-// 斬撃攻撃をする(キャラごとに違う)
-Object* Hierarchy::slashAttack(bool leftDirection, int cnt, SoundPlayer* soundPlayer) {
+// 斬撃攻撃をする
+Object* Hierarchy::slashAttack(bool leftDirection, int cnt, bool grand, SoundPlayer* soundPlayer) {
 	return nullptr;
 }
 
@@ -670,13 +690,13 @@ void Valkyria::switchPreJump(int cnt) {
 	m_graphHandle->switchPreJump(index);
 }
 
-// 斬撃攻撃をする(キャラごとに違う)
-Object* Valkyria::slashAttack(bool leftDirection, int cnt, SoundPlayer* soundPlayer) {
+// 斬撃攻撃をする
+Object* Valkyria::slashAttack(bool leftDirection, int cnt, bool grand, SoundPlayer* soundPlayer) {
 	// 攻撃範囲を決定
 	int attackWide, attackHeight;
-	GetGraphSize(m_graphHandle->getStandSlashHandle()->getHandle(0), &attackWide, &attackHeight);
-	attackWide = (int)(attackWide * m_graphHandle->getStandSlashHandle()->getGraphHandle()->getEx());
-	attackHeight = (int)(attackHeight * m_graphHandle->getStandSlashHandle()->getGraphHandle()->getEx());
+	GetGraphSize(m_graphHandle->getStandSlashHandle()->getGraphHandles()->getHandle(0), &attackWide, &attackHeight);
+	attackWide = (int)(attackWide * m_graphHandle->getStandSlashHandle()->getGraphHandles()->getGraphHandle()->getEx());
+	attackHeight = (int)(attackHeight * m_graphHandle->getStandSlashHandle()->getGraphHandles()->getGraphHandle()->getEx());
 	int x1 = m_x;
 	int x2 = m_x + attackWide;
 
@@ -685,7 +705,7 @@ Object* Valkyria::slashAttack(bool leftDirection, int cnt, SoundPlayer* soundPla
 	int index = 0;
 	int slashCountSum = m_attackInfo->slashCountSum() / 3 + 1;
 	SlashObject* attackObject = nullptr;
-	GraphHandles* slashHandles = m_graphHandle->getSlashHandle();
+	GraphHandles* slashHandles = m_graphHandle->getSlashHandle()->getGraphHandles();
 	// 攻撃の方向
 	slashHandles->setReverseX(m_leftDirection);
 	// キャラの身長
@@ -742,9 +762,48 @@ Character* Troy::createCopy() {
 	return res;
 }
 
-// 斬撃攻撃をする(キャラごとに違う)
-Object* Troy::slashAttack(bool leftDirection, int cnt, SoundPlayer* soundPlayer) {
+// 斬撃攻撃をする
+Object* Troy::slashAttack(bool leftDirection, int cnt, bool grand, SoundPlayer* soundPlayer) {
 	return nullptr;
+}
+
+
+/*
+* コハル
+*/
+Koharu::Koharu(const char* name, int hp, int x, int y, int groupId) :
+	Heart(name, hp, x, y, groupId)
+{
+
+}
+Koharu::Koharu(const char* name, int hp, int x, int y, int groupId, AttackInfo* attackInfo) :
+	Heart(name, hp, x, y, groupId, attackInfo)
+{
+
+}
+
+Character* Koharu::createCopy() {
+	Character* res = new Koharu(m_characterInfo->name().c_str(), m_hp, m_x, m_y, m_groupId, m_attackInfo);
+	setParam(res);
+	return res;
+}
+
+// 射撃攻撃をする
+Object* Koharu::bulletAttack(int gx, int gy, SoundPlayer* soundPlayer) {
+	// バズーカの銃口から出るように見せる
+	gy = getY() + getHeight() - 160;
+	BulletObject* attackObject = new BulletObject(getCenterX(), gy, m_graphHandle->getBulletHandle()->getGraphHandles()->getGraphHandle(), gx, gy, m_attackInfo);
+	// 自滅防止
+	attackObject->setCharacterId(m_id);
+	// チームキル防止
+	attackObject->setGroupId(m_groupId);
+	// 効果音
+	if (soundPlayer != nullptr) {
+		soundPlayer->pushSoundQueue(m_attackInfo->bulletStartSoundeHandle(),
+			adjustPanSound(getCenterX(),
+				soundPlayer->getCameraX()));
+	}
+	return attackObject;
 }
 
 
@@ -809,7 +868,7 @@ Character* ParabolaOnly::createCopy() {
 	return res;
 }
 
-// 射撃攻撃をする(キャラごとに違う)
+// 射撃攻撃をする
 Object* ParabolaOnly::bulletAttack(int gx, int gy, SoundPlayer* soundPlayer) {
 	ParabolaBullet* attackObject = new ParabolaBullet(getCenterX(), getCenterY(), m_bulletColor, gx, gy, m_attackInfo);
 	// 自滅防止
