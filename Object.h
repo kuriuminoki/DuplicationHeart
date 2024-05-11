@@ -81,6 +81,7 @@ public:
 	void setHp(int hp) { m_hp = hp; }
 	void setDamageCnt(int damageCnt) { m_damageCnt = damageCnt; }
 	void setEffectHandles(GraphHandles* effectHandles_p) { m_effectHandles_p = effectHandles_p; }
+	inline void setGraphHandle(GraphHandle* handle) { m_handle = handle; }
 	void setSoundHandle(int soundHandle_p) { m_soundHandle_p = soundHandle_p; }
 	virtual inline void setTextDisp(const bool textDisp) {}
 
