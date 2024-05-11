@@ -21,11 +21,11 @@ using namespace std;
 
 
 // どこまで
-const int FINISH_STORY = 12;
+const int FINISH_STORY = 15;
 // エリア0でデバッグするときはtrueにする
 const bool TEST_MODE = true;
 // スキルが発動可能になるストーリー番号
-const int SKILL_USEABLE_STORY = 13;
+const int SKILL_USEABLE_STORY = 14;
 
 
 /*
@@ -658,8 +658,9 @@ bool Game::play() {
 	if (TEST_MODE) { return false; }
 
 	// 前のセーブポイントへ戻ることが要求された
-	if (m_story->getBackPrevSaveFlag()) {
-		backPrevSave();
+	int prevStoryNum = m_story->getBackPrevSave();
+	if (prevStoryNum > 0) {
+		backPrevSave(prevStoryNum - 1);
 		m_story->doneBackPrevSave();
 		return true;
 	}
@@ -669,9 +670,8 @@ bool Game::play() {
 		// やられるのがイベントの成功条件なら前のif文(m_story->getBackPrevSaveFlag())にひっかかるはず
 		m_gameoverCnt++;
 	}
-
 	// エリア移動
-	if (m_world->getBrightValue() == 0 && CheckSoundMem(m_world->getDoorSound()) == 0) {
+	else if (m_world->getBrightValue() == 0 && CheckSoundMem(m_world->getDoorSound()) == 0) {
 		int fromAreaNum = m_world->getAreaNum();
 		int toAreaNum = m_world->getNextAreaNum();
 		m_gameData->asignedWorld(m_world, false);
@@ -692,12 +692,12 @@ bool Game::play() {
 }
 
 // セーブデータをロード（前のセーブポイントへ戻る）
-void Game::backPrevSave() {
+void Game::backPrevSave(int prevStoryNum) {
 	m_gameData->asignedWorld(m_world, true);
 	// これまでのWorldを削除
 	delete m_world;
 	// 前のセーブデータをロード
-	GameData prevData(m_gameData->getSaveFilePath(), m_gameData->getStoryNum());
+	GameData prevData(m_gameData->getSaveFilePath(), m_gameData->getStoryNum() - prevStoryNum);
 	// 以前のAreaNumでロード
 	m_world = new World(-1, prevData.getAreaNum(), m_soundPlayer);
 	m_gameData->asignWorld(m_world, true);

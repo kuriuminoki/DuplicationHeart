@@ -102,10 +102,11 @@ void Item::action() {
 bool Item::atariCharacter(Character* player) {
 
 	// キャラの座標
-	int cx1 = player->getX();
-	int cy1 = player->getY();
-	int cx2 = cx1 + player->getWide();
-	int cy2 = cy1 + player->getHeight();
+	int cx1 = 0;
+	int cy1 = 0;
+	int cx2 = 0;
+	int cy2 = 0;
+	player->getAtariArea(&cx1, &cy1, &cx2, &cy2);
 	
 	// このアイテムの座標
 	int x1 = 0, y1 = 0, x2 = 0, y2 = 0;

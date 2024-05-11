@@ -146,6 +146,10 @@ private:
 	// ドアに入った時の効果音
 	int m_doorSound;
 
+	// カメラのズームイン・アウトの効果音
+	int m_cameraInSound;
+	int m_cameraOutSound;
+
 	// 背景
 	int m_backGroundGraph;
 	int m_backGroundColor;
@@ -189,6 +193,7 @@ public:
 	inline int getCharacterDeadSound() const { return m_characterDeadSound; }
 	inline int getBombSound() const { return m_bombSound; }
 	inline int getDoorSound() const { return m_doorSound; }
+	inline bool getSkillFlag() const { return m_skillFlag; }
 
 	// Drawer用のゲッタ
 	std::vector<const CharacterAction*> getActions() const;
@@ -323,8 +328,8 @@ private:
 	// Battle：アイテムの動き
 	void controlItem();
 
-	// Battle：キャラクターとオブジェクトの当たり判定
-	void atariCharacterAndObject(CharacterController* controller, std::vector<Object*>& objects);
+	// Battle：キャラクターとオブジェクトの当たり判定 slope=trueならslopeが対象falseならそれ以外
+	void atariCharacterAndObject(CharacterController* controller, std::vector<Object*>& objects, bool slope);
 
 	// Battle：キャラクターと扉の当たり判定
 	void atariCharacterAndDoor(CharacterController* controller, std::vector<Object*>& objects);

@@ -99,9 +99,6 @@ protected:
 	Animation* m_animation;
 	AnimationDrawer* m_animationDrawer;
 
-	// サブ画像 cntが0になったものはpopしていく
-	std::queue<Animation*> m_subAnimation;
-
 	// サウンドプレイヤー
 	SoundPlayer* m_soundPlayer_p;
 
@@ -119,7 +116,6 @@ public:
 	inline bool getFinishFlag() const { return m_finishFlag; }
 	inline bool getSkipCnt() const { return m_skipCnt; }
 	inline Animation* getAnimation() const { return m_animation; }
-	inline std::queue<Animation*> getSubAnimation() const { return m_subAnimation; }
 	inline int getCnt() const { return m_cnt; }
 
 	// 再生
@@ -268,5 +264,23 @@ private:
 	void pushPartOneCharacter(int index, bool front, GraphHandle* character);
 };
 
+// オープニング (mp4)
+class OpMovieMp4 :
+	public Movie
+{
+private:
+
+	int m_mp4;
+
+public:
+	OpMovieMp4(SoundPlayer* soundPlayer_p);
+	~OpMovieMp4();
+
+	// 再生
+	void play();
+
+	// 描画
+	void draw();
+};
 
 #endif

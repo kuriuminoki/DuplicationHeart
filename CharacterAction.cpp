@@ -232,6 +232,13 @@ bool CharacterAction::ableWalk() const {
 	return !m_moveRight && !m_moveLeft && !m_squat;
 }
 
+bool CharacterAction::ableChangeDirection() const {
+	if (m_bulletCnt > 0 || m_slashCnt > 0 || m_moveLeft || m_moveRight || m_moveUp || m_moveDown || m_damageCnt > 0) {
+		return false;
+	}
+	return true;
+}
+
 // 着地
 void CharacterAction::setGrand(bool grand) {
 	if (m_vy > 0) { // 着地モーションになる
@@ -320,58 +327,52 @@ void CharacterAction::stopMoveDown() {
 }
 
 // 画像のサイズ変更による位置調整 (座標は画像の左上であることに注意)
-void CharacterAction::afterChangeGraph(int beforeWide, int beforeHeight, int afterWide, int afterHeight) {
-	// 下へ行けないなら
+void CharacterAction::afterChangeGraph(int beforeX1, int afterX1, int beforeY1, int afterY1, int beforeX2, int afterX2, int beforeY2, int afterY2) {
+	int dy = 0;
 	if (m_downLock) {
-		// 上へ動かす
-		m_character_p->moveUp((afterHeight - beforeHeight));
-	}
-	// 上へ行けないなら
-	else if (m_upLock) {
-		// 下へ動かす必要はない（画像が下方向に拡大されるから）
-	}
-	// 上下どっちにでも行ける
-	else {
-		// 両方に広げる
-		int d = afterHeight - beforeHeight;
-		if (d % 2 == 1) {
-			if (d < 0) {
-				m_character_p->moveUp((d - 1) / 2);
-			}
-			else {
-				m_character_p->moveUp((d + 1) / 2);
-			}
+		if (afterY2 > beforeY2) {
+			dy -= afterY2 - beforeY2;
 		}
 		else {
-			m_character_p->moveUp(d / 2);
+			dy += beforeY2 - afterY2;
 		}
+	}
+	else if (m_upLock) {
+		if (afterY1 < beforeY1) {
+			dy += beforeY1 - afterY1;
+		}
+		else {
+			dy -= afterY1 - beforeY1;
+		}
+	}
+	else {
+		dy = ((beforeY2 - afterY2) + (beforeY1 - afterY1)) / 2;
 	}
 
-	// 右へ行けないなら
-	if (m_rightLock && !m_leftLock) {
-		// 左へ動かす
-		m_character_p->moveLeft((afterWide - beforeWide));
-	}
-	// 左へ行けないなら
-	else if (m_leftLock && !m_rightLock) {
-		// 右へ動かす必要はない（画像が右方向に拡大されるから）
-	}
-	// 左右どっちにでも行ける、もしくはいけない
-	else {
-		// 両方に広げる
-		int d = afterWide - beforeWide;
-		if (d % 2 == 1) {
-			if (d < 0) {
-				m_character_p->moveLeft((d - 1) / 2);
-			}
-			else {
-				m_character_p->moveLeft((d + 1) / 2);
-			}
+	m_character_p->moveDown(dy);
+
+	int dx = 0;
+	if (m_rightLock) {
+		if (afterX2 > beforeX2) {
+			dx -= afterX2 - beforeX2;
 		}
 		else {
-			m_character_p->moveLeft(d / 2);
+			dx += beforeX2 - afterX2;
 		}
 	}
+	else if (m_leftLock) {
+		if (afterX1 < beforeX1) {
+			dx += beforeX1 - afterX1;
+		}
+		else {
+			dx -= afterX1 - beforeX1;
+		}
+	}
+	else {
+		dx = ((beforeX2 - afterX2) + (beforeX1 - afterX1)) / 2;
+	}
+
+	m_character_p->moveRight(dx);
 }
 
 
@@ -466,8 +467,8 @@ void StickAction::action() {
 // 状態に応じて画像セット
 void StickAction::switchHandle() {
 	// セット前の画像のサイズ
-	int wide, height;
-	m_character_p->getHandleSize(wide, height);
+	int x1 = 0, y1 = 0, x2 = 0, y2 = 0;
+	m_character_p->getAtariArea(&x1, &y1, &x2, &y2);
 	// やられ画像
 	if (m_grand && m_character_p->getHp() == 0 && m_character_p->haveDeadGraph() && getState() != CHARACTER_STATE::DAMAGE) {
 		m_character_p->switchDead();
@@ -569,11 +570,11 @@ void StickAction::switchHandle() {
 		}
 	}
 	// セット後の画像のサイズ
-	int afterWide, afterHeight;
-	m_character_p->getHandleSize(afterWide, afterHeight);
+	int afterX1 = 0, afterY1 = 0, afterX2 = 0, afterY2 = 0;
+	m_character_p->getAtariArea(&afterX1, &afterY1, &afterX2, &afterY2);
 
 	// サイズ変更による位置調整
-	afterChangeGraph(wide, height, afterWide, afterHeight);
+	afterChangeGraph(x1, afterX1, y1, afterY1, x2, afterX2, y2, afterY2);
 
 	m_character_p->setLeftDirection(m_character_p->getLeftDirection());
 }
@@ -838,8 +839,8 @@ CharacterAction* FlightAction::createCopy(std::vector<Character*> characters) {
 // キャラの画像を状態(state)に応じて変更
 void FlightAction::switchHandle() {
 	// セット前の画像のサイズ
-	int wide, height;
-	m_character_p->getHandleSize(wide, height);
+	int x1 = 0, y1 = 0, x2 = 0, y2 = 0;
+	m_character_p->getAtariArea(&x1, &y1, &x2, &y2);
 	if (m_grand) { // 地面にいるとき
 		switch (getState()) {
 		case CHARACTER_STATE::STAND: //立ち状態
@@ -888,11 +889,11 @@ void FlightAction::switchHandle() {
 		}
 	}
 	// セット後の画像のサイズ
-	int afterWide, afterHeight;
-	m_character_p->getHandleSize(afterWide, afterHeight);
+	int afterX1 = 0, afterY1 = 0, afterX2 = 0, afterY2 = 0;
+	m_character_p->getAtariArea(&afterX1, &afterY1, &afterX2, &afterY2);
 
 	// サイズ変更による位置調整
-	afterChangeGraph(wide, height, afterWide, afterHeight);
+	afterChangeGraph(x1, afterX1, y1, afterY1, x2, afterX2, y2, afterY2);
 
 	m_character_p->setLeftDirection(m_character_p->getLeftDirection());
 }

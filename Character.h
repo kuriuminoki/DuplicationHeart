@@ -296,6 +296,9 @@ public:
 	inline int getSlashCountSum() const { return m_attackInfo->slashCountSum(); }
 	inline int getSlashInterval() const { return m_attackInfo->slashInterval(); }
 
+	// 当たり判定の範囲を取得
+	void getAtariArea(int* x1, int* y1, int* x2, int* y2) const;
+
 	// Infoのバージョンを変更する
 	void changeInfoVersion(int version);
 

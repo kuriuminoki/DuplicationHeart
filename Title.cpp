@@ -28,6 +28,7 @@ SelectSaveData::SelectSaveData() {
 		oss << "savedata/" << i + 1 << "/";
 		m_gameData[i] = new GameData(oss.str().c_str());
 	}
+	ChangeGameResolution();
 
 	// ボタン
 	double exX, exY;
@@ -170,6 +171,9 @@ void SelectSaveData::saveCommon(int soundVolume) {
 */
 Title::Title() {
 
+	// セーブデータ選択画面
+	m_selectSaveData = new SelectSaveData();
+
 	m_state = TITLE;
 
 	m_handX = 0; m_handY = 0;
@@ -178,16 +182,13 @@ Title::Title() {
 
 	m_titleGraph = LoadGraph("picture/movie/op/title/titleBlue.png");
 
-	// セーブデータ選択画面
-	m_selectSaveData = new SelectSaveData();
-
 	// セーブデータがあるなら音量セット
 	if (m_selectSaveData->saveDataExist()) { 
 		m_soundPlayer->setVolume(m_selectSaveData->getSoundVolume());
 		int s = m_selectSaveData->getLatestStoryNum();
 		if (s >= 9) {
 			// 初めてOPを見るのは9章なので、それ以降のセーブデータがあるならOP用意
-			m_movie = new OpMovie(m_soundPlayer);
+			m_movie = new OpMovieMp4(m_soundPlayer);
 		}
 	}
 	else {
@@ -264,11 +265,12 @@ Title::TITLE_RESULT Title::play() {
 		m_option->play();
 		// 戻るボタン
 		if (m_cancelButton->overlap(m_handX, m_handY) && leftClick() == 1) {
-			// 解像度を更新して再起動
+			// 解像度を更新
 			GAME_WIDE = m_option->getNewGameWide();
 			GAME_HEIGHT = m_option->getNewGameHeight();
+			// 解像度と音量をセーブ
 			m_selectSaveData->saveCommon(m_option->getNewSoundVolume());
-			SetGraphMode(GAME_WIDE, GAME_HEIGHT, GAME_COLOR_BIT_NUM);
+			// 再起動（解像度の適用）
 			return REBOOT;
 		}
 		break;

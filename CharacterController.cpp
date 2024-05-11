@@ -212,6 +212,7 @@ void CharacterController::action() {
 // Brain‚ªFreeze‚È‚çƒvƒŒƒCƒ„[‚Ì•ûŒü‚ğŒü‚©‚¹‚é
 void CharacterController::setPlayerDirection(Character* player_p, bool all) {
 	if (m_brain->getBrainName() != "Freeze" && !all) { return; }
+	if (!m_characterAction->ableChangeDirection()) { return; }
 	m_characterAction->setCharacterLeftDirection(player_p->getCenterX() < m_characterAction->getCharacter()->getCenterX());
 }
 

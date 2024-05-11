@@ -58,8 +58,8 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 	//SetMousePoint(320, 240);//マウスカーソルの初期位置
 	
 	// 画像の拡大処理方式
-	//SetDrawMode(DX_DRAWMODE_BILINEAR);
-	SetDrawMode(DX_DRAWMODE_NEAREST);
+	SetDrawMode(DX_DRAWMODE_BILINEAR);
+	//SetDrawMode(DX_DRAWMODE_NEAREST);
 	SetFullScreenScalingMode(DX_DRAWMODE_NEAREST);
 
 	// ゲーム本体
@@ -110,11 +110,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 			else if (result == Title::REBOOT) {
 				// ゲームを再起動
 				delete title;
-				InitGraph();
-				InitSoundMem();
-				InitFontToHandle();
-				ChangeWindowMode(WINDOW), DxLib_Init(), SetDrawScreen(DX_SCREEN_BACK);
-				SetMouseDispFlag(MOUSE_DISP);//マウス表示
+				ChangeGameResolution();
 				title = new Title();
 			}
 		}

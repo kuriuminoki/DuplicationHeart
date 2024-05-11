@@ -5,7 +5,7 @@
 class SoundPlayer;
 class Button;
 class TitleOption;
-class OpMovie;
+class Movie;
 class AnimationDrawer;
 class GameData;
 class ControlBar;
@@ -97,7 +97,7 @@ private:
 	TitleOption* m_option;
 
 	// OPムービー
-	OpMovie* m_movie;
+	Movie* m_movie;
 
 	// セーブデータ選択画面
 	SelectSaveData* m_selectSaveData;

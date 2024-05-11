@@ -63,7 +63,7 @@ public:
 	virtual bool skillAble() { return true; }
 
 	// クリア時に前のセーブポイントへ戻る必要があるか
-	virtual bool needBackPrevSave() { return false; }
+	virtual int needBackPrevSave() { return 0; }
 
 	// セッタ
 	virtual void setWorld(World* world) { m_world_p = world; }
@@ -96,11 +96,14 @@ private:
 	// イベントの進捗(EventElementのインデックス)
 	int m_nowElement;
 
-	// 前のセーブポイントへ戻る要求
-	bool m_backPrevSaveFlag;
+	// 前のセーブポイントへ戻る要求 戻るならいくつ戻るか返す(>0)
+	int m_backPrevSave;
+
+	// 世界のバージョン
+	int m_version;
 
 public:
-	Event(int eventNum, World* world, SoundPlayer* soundPlayer);
+	Event(int eventNum, World* world, SoundPlayer* soundPlayer, int version);
 	~Event();
 
 	// ゲッタ
@@ -118,10 +121,10 @@ public:
 	// Worldを設定しなおす
 	void setWorld(World* world);
 
-	bool getBackPrevSaveFlag() const { return m_backPrevSaveFlag; }
+	int getBackPrevSave() const { return m_backPrevSave; }
 
 	// 前のセーブポイントへ戻ったことを教えてもらう
-	void doneBackPrevSave() { m_backPrevSaveFlag = false; }
+	void doneBackPrevSave() { m_backPrevSave = 0; }
 
 private:
 	void createFire(std::vector<std::string> param, World* world, SoundPlayer* soundPlayer);
@@ -242,7 +245,7 @@ public:
 
 };
 // キャラを無敵にする
-class InvincinbleEvent :
+class InvincibleEvent :
 	public EventElement
 {
 private:
@@ -257,7 +260,7 @@ private:
 	Character* m_character_p;
 
 public:
-	InvincinbleEvent(World* world, std::vector<std::string> param);
+	InvincibleEvent(World* world, std::vector<std::string> param);
 
 	// プレイ
 	EVENT_RESULT play();
@@ -547,6 +550,8 @@ private:
 	
 	int m_areaNum;
 
+	int m_backPrevSave;
+
 public:
 	PlayerDeadEvent(World* world, std::vector<std::string> param);
 
@@ -554,7 +559,7 @@ public:
 	EVENT_RESULT play();
 
 	// クリア時に前のセーブポイントへ戻る必要があるか
-	bool needBackPrevSave() { return true; }
+	int needBackPrevSave() { return m_backPrevSave; }
 };
 
 // 特定のエリアへ強制的に移動する
@@ -570,6 +575,9 @@ public:
 
 	// プレイ
 	EVENT_RESULT play();
+
+	// ハートのスキル発動が可能かどうか
+	bool skillAble() { return false; }
 };
 
 // 世界の描画をする・しない
@@ -582,6 +590,66 @@ private:
 
 public:
 	BlindWorldEvent(World* world, std::vector<std::string> param);
+
+	// プレイ
+	EVENT_RESULT play();
+
+	// ハートのスキル発動が可能かどうか
+	bool skillAble() { return false; }
+};
+
+// キャラの追加
+class PushCharacterEvent :
+	public EventElement
+{
+private:
+
+	// 追加するキャラの情報
+	std::string m_name;
+	int m_x, m_y;
+	bool m_sound;
+	int m_groupId;
+	std::string m_action;
+	std::string m_brain;
+	std::string m_controller;
+	int m_version;
+
+public:
+	PushCharacterEvent(World* world, std::vector<std::string> param, int version);
+
+	// プレイ
+	EVENT_RESULT play();
+
+	// ハートのスキル発動が可能かどうか
+	bool skillAble() { return false; }
+};
+
+// 待機
+class WaitEvent :
+	public EventElement
+{
+	int m_cnt;
+	int m_time;
+public:
+	WaitEvent(World* world, std::vector<std::string> param);
+
+	// プレイ
+	EVENT_RESULT play();
+
+	// ハートのスキル発動が可能かどうか
+	bool skillAble() { return false; }
+};
+
+// スキル発動まで戦闘を続けるイベント
+class WaitSkillEvent :
+	public EventElement
+{
+private:
+
+	bool m_skillFlag;
+
+public:
+	WaitSkillEvent(World* world, std::vector<std::string> param);
 
 	// プレイ
 	EVENT_RESULT play();

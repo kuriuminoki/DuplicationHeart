@@ -364,7 +364,7 @@ public:
 	bool play();
 
 	// セーブデータをロード（前のセーブポイントへ戻る）
-	void backPrevSave();
+	void backPrevSave(int prevStoryNum);
 
 	// 描画していいならtrue
 	bool ableDraw();

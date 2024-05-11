@@ -72,7 +72,7 @@ void Story::loadCsvData(const char* fileName, World* world, SoundPlayer* soundPl
 			}
 		}
 		if (eventNum != -1) {
-			Event* eventOne = new Event(eventNum, world, soundPlayer);
+			Event* eventOne = new Event(eventNum, world, soundPlayer, m_version);
 			if (mustFlag) { m_mustEvent.push_back(eventOne); }
 			else { m_subEvent.push_back(eventOne); }
 		}
@@ -94,6 +94,9 @@ void Story::loadCsvData(const char* fileName, World* world, SoundPlayer* soundPl
 	vector<map<string, string> > dateData = csvReader2.getDomainData("DATE:");
 	if (dateData.size() > 0) {
 		m_date = stoi(dateData[0]["num"]);
+	}
+	if (m_date == 0) {
+		m_world_p->setDate(m_date);
 	}
 
 	// 世界のバージョンを取得しロードする 変化ない(updateが0)ならロードしない
@@ -193,9 +196,9 @@ void Story::setWorld(World* world) {
 	}
 }
 
-// 前のセーブポイントへ戻る必要があるか
-bool Story::getBackPrevSaveFlag() const {
-	return m_nowEvent != nullptr ? m_nowEvent->getBackPrevSaveFlag() : false;
+// 前のセーブポイントへ戻る必要があるか 戻るならいくつ分戻るか返す(>0)
+int Story::getBackPrevSave() const {
+	return m_nowEvent != nullptr ? m_nowEvent->getBackPrevSave() : false;
 }
 
 // 前のセーブポイントへ戻ったことを教えてもらう

@@ -12,6 +12,10 @@ void drawHpBar(int x1, int y1, int x2, int y2, int hp, int prevHp, int maxHp, in
 class CharacterDrawer {
 private:
 
+	// デバッグ用
+	const bool ATARI_DEBUG = false;
+	int m_guideHandle;
+
 	// キャラの動きの情報 const関数しか呼ばない
 	const CharacterAction* m_characterAction;
 
@@ -33,10 +37,12 @@ public:
 
 	CharacterDrawer(const CharacterAction* const characterAction);
 
+	~CharacterDrawer();
+
 	// セッタ
 	void setCharacterAction(const CharacterAction* action) { m_characterAction = action; }
 
-	void drawCharacter(const Camera* const camera, int bright = 255);
+	void drawCharacter(const Camera* const camera, int enemyNoticeHandle, int bright = 255);
 
 	void drawPlayerHpBar(const Character* player, int hpBarGraph);
 

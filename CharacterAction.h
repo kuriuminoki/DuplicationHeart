@@ -141,6 +141,7 @@ public:
 	bool getUpLock() const { return m_upLock; }
 	bool getDownLock() const { return m_downLock; }
 	const SoundPlayer* getSoundPlayer() const { return m_soundPlayer_p; }
+	inline int getPreJumpCnt() const { return m_preJumpCnt; }
 	virtual int getPreJumpMax() const { return PRE_JUMP_MAX; }
 
 	// セッタ
@@ -227,6 +228,9 @@ public:
 	// 今歩ける状態
 	virtual bool ableWalk() const;
 
+	// 方向転換可能
+	virtual bool ableChangeDirection() const;
+
 	// 歩き始める
 	void startMoveLeft();
 	void startMoveRight();
@@ -241,7 +245,7 @@ public:
 
 protected:
 	// 画像のサイズ変更による位置調整
-	void afterChangeGraph(int beforeWide, int beforeHeight, int afterWide, int afterHeight);
+	void afterChangeGraph(int beforeX1, int afterX1, int beforeY1, int afterY1, int beforeX2, int afterX2, int beforeY2, int afterY2);
 };
 
 

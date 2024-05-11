@@ -35,7 +35,7 @@ vector<string> mapParam2vector(map<string, string> paramMap) {
 /*
 * イベント
 */
-Event::Event(int eventNum, World* world, SoundPlayer* soundPlayer) {
+Event::Event(int eventNum, World* world, SoundPlayer* soundPlayer, int version) {
 
 	m_eventNum = eventNum;
 	m_nowElement = 0;
@@ -43,6 +43,7 @@ Event::Event(int eventNum, World* world, SoundPlayer* soundPlayer) {
 
 	m_world_p = world;
 	m_soundPlayer_p = soundPlayer;
+	m_version = version;
 
 	ostringstream oss;
 	oss << "data/event/event" << m_eventNum << ".csv";
@@ -110,8 +111,8 @@ void Event::createElement(vector<string> param, World* world, SoundPlayer* sound
 	if (param0 == "LockArea") {
 		element = new LockAreaEvent(world, param);
 	}
-	else if (param0 == "Invincinble") {
-		element = new InvincinbleEvent(world, param);
+	else if (param0 == "Invincible") {
+		element = new InvincibleEvent(world, param);
 	}
 	else if (param0 == "SetGoalPoint") {
 		element = new SetGoalPointEvent(world, param);
@@ -155,6 +156,15 @@ void Event::createElement(vector<string> param, World* world, SoundPlayer* sound
 	else if (param0 == "BlindWorld") {
 		element = new BlindWorldEvent(world, param);
 	}
+	else if (param0 == "PushCharacter") {
+		element = new PushCharacterEvent(world, param, m_version);
+	}
+	else if (param0 == "Wait") {
+		element = new WaitEvent(world, param);
+	}
+	else if (param0 == "WaitSkill") {
+		element = new WaitSkillEvent(world, param);
+	}
 	else if (param0 == "BattleForever") {
 		element = new BattleForever(world, param);
 	}
@@ -187,9 +197,7 @@ EVENT_RESULT Event::play() {
 	if (elementResult == EVENT_RESULT::SUCCESS) {
 
 		// Storyに前のセーブポイントへ戻るよう要求
-		if (m_eventElement->needBackPrevSave()) {
-			m_backPrevSaveFlag = true;
-		}
+		m_backPrevSave = m_eventElement->needBackPrevSave();
 
 		if (m_nowElement == m_elementsData.size()) { 
 			// EventElementが残っていないのでイベントおわり
@@ -290,6 +298,7 @@ EventElement::~EventElement() {
 
 }
 
+
 // エリア移動を禁止する
 LockAreaEvent::LockAreaEvent(World* world, std::vector<std::string> param):
 	EventElement(world)
@@ -301,25 +310,27 @@ EVENT_RESULT LockAreaEvent::play() {
 	return EVENT_RESULT::SUCCESS;
 }
 
+
 // キャラを無敵にする
-InvincinbleEvent::InvincinbleEvent(World* world, vector<string> param) :
+InvincibleEvent::InvincibleEvent(World* world, vector<string> param) :
 	EventElement(world)
 {
 	m_invincible = param[1] == "1" ? true : false;
 	m_character_p = m_world_p->getCharacterWithName(param[2]);
 	m_param = param;
 }
-EVENT_RESULT InvincinbleEvent::play() {
+EVENT_RESULT InvincibleEvent::play() {
 
 	// 対象のキャラを無敵にする
 	m_character_p->setInvincible(m_invincible);
 
 	return EVENT_RESULT::SUCCESS;
 }
-void InvincinbleEvent::setWorld(World* world) {
+void InvincibleEvent::setWorld(World* world) {
 	EventElement::setWorld(world);
 	m_character_p = m_world_p->getCharacterWithName(m_param[2]);
 }
+
 
 // キャラのBrainを変更する
 ChangeBrainEvent::ChangeBrainEvent(World* world, vector<string> param) :
@@ -351,6 +362,7 @@ void ChangeBrainEvent::setWorld(World* world) {
 	m_controller_p = m_world_p->getControllerWithName(m_param[2]);
 }
 
+
 // キャラの目標地点を設定を変える
 SetGoalPointEvent::SetGoalPointEvent(World* world, vector<string> param) :
 	EventElement(world)
@@ -372,6 +384,7 @@ void SetGoalPointEvent::setWorld(World* world) {
 	m_controller_p = m_world_p->getControllerWithName(m_param[3]);
 }
 
+
 // 全キャラが目標地点へ移動するまで待機
 MoveGoalEvent::MoveGoalEvent(World* world, std::vector<std::string> param) :
 	EventElement(world)
@@ -384,6 +397,7 @@ EVENT_RESULT MoveGoalEvent::play() {
 	}
 	return EVENT_RESULT::NOW;
 }
+
 
 // キャラのGroupIDを変更する
 ChangeGroupEvent::ChangeGroupEvent(World* world, std::vector<string> param) :
@@ -403,6 +417,7 @@ void ChangeGroupEvent::setWorld(World* world) {
 	m_character_p = m_world_p->getCharacterWithName(m_param[2]);
 }
 
+
 // キャラのversionを変更する
 ChangeInfoVersionEvent::ChangeInfoVersionEvent(World* world, std::vector<string> param) :
 	EventElement(world)
@@ -420,6 +435,7 @@ void ChangeInfoVersionEvent::setWorld(World* world) {
 	EventElement::setWorld(world);
 	m_character_p = m_world_p->getCharacterWithName(m_param[2]);
 }
+
 
 // キャラの座標を変える
 ChangeCharacterPointEvent::ChangeCharacterPointEvent(World* world, std::vector<string> param) :
@@ -440,6 +456,7 @@ void ChangeCharacterPointEvent::setWorld(World* world) {
 	EventElement::setWorld(world);
 	m_character_p = m_world_p->getCharacterWithName(m_param[2]);
 }
+
 
 // キャラの向きを変える
 ChangeCharacterDirectionEvent::ChangeCharacterDirectionEvent(World* world, std::vector<string> param) :
@@ -481,10 +498,12 @@ void ChangeCharacterDirectionEvent::setWorld(World* world) {
 	m_character_p = m_world_p->getCharacterWithName(m_param[2]);
 }
 
+
 // 特定のキャラのHPが0になるまで戦う
 DeadCharacterEvent::DeadCharacterEvent(World* world, std::vector<std::string> param) :
 	EventElement(world)
 {
+	m_param = param;
 	m_character_p = m_world_p->getCharacterWithName(param[1]);
 }
 EVENT_RESULT DeadCharacterEvent::play() {
@@ -502,6 +521,7 @@ void DeadCharacterEvent::setWorld(World* world) {
 	EventElement::setWorld(world);
 	m_character_p = m_world_p->getCharacterWithName(m_param[1]);
 }
+
 
 // 特定のグループが全滅するまで戦う
 DeadGroupEvent::DeadGroupEvent(World* world, std::vector<std::string> param) :
@@ -525,6 +545,7 @@ EVENT_RESULT DeadGroupEvent::play() {
 }
 
 
+// 会話イベント
 TalkEvent::TalkEvent(World* world, SoundPlayer* soundPlayer, std::vector<std::string> param):
 	EventElement(world)
 {
@@ -551,11 +572,12 @@ void TalkEvent::setWorld(World* world) {
 }
 
 
+// ムービーイベント
 MovieEvent::MovieEvent(World* world, SoundPlayer* soundPlayer, std::vector<std::string> param) :
 	EventElement(world)
 {
 	if (param[1] == "op") {
-		m_movie = new OpMovie(soundPlayer);
+		m_movie = new OpMovieMp4(soundPlayer);
 	}
 }
 
@@ -581,6 +603,7 @@ PlayerDeadEvent::PlayerDeadEvent(World* world, std::vector<std::string> param) :
 	EventElement(world)
 {
 	m_areaNum = stoi(param[1]);
+	m_backPrevSave = stoi(param[2]);
 }
 EVENT_RESULT PlayerDeadEvent::play() {
 	m_world_p->battle();
@@ -619,6 +642,71 @@ BlindWorldEvent::BlindWorldEvent(World* world, std::vector<std::string> param) :
 EVENT_RESULT BlindWorldEvent::play() {
 	m_world_p->setBlindFlag(m_flag);
 	return EVENT_RESULT::SUCCESS;
+}
+
+
+// キャラの追加
+PushCharacterEvent::PushCharacterEvent(World* world, std::vector<std::string> param, int version) :
+	EventElement(world)
+{
+	m_name = param[1];
+	m_x = stoi(param[2]);
+	m_y = stoi(param[3]);
+	m_sound = (bool)stoi(param[4]);
+	m_groupId = stoi(param[5]);
+	m_action = param[6];
+	m_brain = param[7];
+	m_controller = param[8];
+	m_version = version;
+}
+EVENT_RESULT PushCharacterEvent::play() {
+	Character* character = createCharacter(m_name.c_str());
+	character->changeInfoVersion(m_version);
+	character->setGroupId(m_groupId);
+	character->setX(m_x);
+	character->setY(m_y - character->getHeight());
+	CharacterAction* action = createAction(m_action, character, m_sound ? m_world_p->getSoundPlayer() : nullptr);
+	Brain* brain = createBrain(m_brain, m_world_p->getCamera());
+	CharacterController* controller = createController(m_controller, brain, action);
+	m_world_p->pushCharacter(character, controller);
+	return EVENT_RESULT::SUCCESS;
+}
+
+
+// 待機イベント
+WaitEvent::WaitEvent(World* world, std::vector<std::string> param) :
+	EventElement(world)
+{
+	m_cnt = 0;
+	m_time = stoi(param[1]);
+}
+
+// プレイ
+EVENT_RESULT WaitEvent::play() {
+	m_world_p->moveGoalCharacter();
+	if (m_cnt++ == m_time) {
+		return EVENT_RESULT::SUCCESS;
+	}
+	return EVENT_RESULT::NOW;
+}
+
+
+// スキル発動まで待つイベント
+WaitSkillEvent::WaitSkillEvent(World* world, std::vector<std::string> param) :
+	EventElement(world)
+{
+	m_skillFlag = false;
+}
+EVENT_RESULT WaitSkillEvent::play() {
+	m_world_p->battle();
+	if (m_world_p->getSkillFlag()) {
+		m_skillFlag = true;
+	}
+	// 発動し、今は発動中でないなら終了（発動が終わったとみなせるため）
+	if (m_skillFlag && !m_world_p->getSkillFlag()) {
+		return EVENT_RESULT::SUCCESS;
+	}
+	return EVENT_RESULT::NOW;
 }
 
 

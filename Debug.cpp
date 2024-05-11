@@ -49,7 +49,7 @@ void World::debug(int x, int y, int color) const {
 		DrawFormatString(x, y + DRAW_FORMAT_STRING_SIZE * 3, color, "itemY=%d", m_itemVector[0]->getY());
 	}
 	//debugObjects(x, y + DRAW_FORMAT_STRING_SIZE * 2, color, m_attackObjects);
-	//m_characterControllers[0]->debug(x + DRAW_FORMAT_STRING_SIZE, y + DRAW_FORMAT_STRING_SIZE * 3, color);
+	m_characterControllers[0]->debug(x + DRAW_FORMAT_STRING_SIZE, y + DRAW_FORMAT_STRING_SIZE * 3, color);
 	//if (m_movie_p != nullptr) {
 	//	DrawFormatString(x, y + DRAW_FORMAT_STRING_SIZE * 3, color, "Movie: cnt=%d", m_movie_p->getCnt());
 	//}

@@ -25,7 +25,7 @@ using namespace std;
 
 
 /*
-* 髫ｰ�ｫ陜｣�ｺ�ｽ�ｽ隲帷ｿｫ�･驛｢譎｢�ｽ�｣驛｢譎｢�ｽ�ｩ髯樊ｺｽ蛻､陝ｲ�ｩ髯ｷ�ｽ�ｽ�ｦ鬨ｾ
+* 鬮ｫ�ｰ�ｽ�ｫ髯懶ｽ｣�ｽ�ｺ�ｽ�ｽ�ｽ�ｽ髫ｲ蟶ｷ�ｿ�ｫ�ｽ�･鬩幢ｽ｢隴趣ｽ｢�ｽ�ｽ�ｽ�｣鬩幢ｽ｢隴趣ｽ｢�ｽ�ｽ�ｽ�ｩ鬮ｯ讓奇ｽｺ�ｽ陋ｻ�､髯晢ｽｲ�ｽ�ｩ鬮ｯ�ｷ�ｽ�ｽ�ｽ�ｽ�ｽ�ｦ鬯ｨ�ｾ
 */
 PlayerChanger::PlayerChanger(std::vector<CharacterController*> controllers_p, const Character* player_p) {
 	for (unsigned int i = 0; i < controllers_p.size(); i++) {
@@ -40,12 +40,12 @@ PlayerChanger::PlayerChanger(std::vector<CharacterController*> controllers_p, co
 }
 
 /*
-* controllers_p驍ｵ�ｺ闕ｵ譎｢�ｽ闍ｱlayer_p驍ｵ�ｺ�ｽ�ｮ髣比ｼ夲ｽｽ�ｲ鬯ｮ�｢髦ｮ蜻ｻ�ｽ螳夲ｽｿ螟ｲ�ｽ�ｹ髯橸ｽｳ陞｢�ｹ�ｽ驍ｵ�ｲ遶擾ｽｵ�ｽ�ｬ�ｽ�｡驍ｵ�ｺ�ｽ�ｮ髫ｰ�ｫ陜｣�ｺ�ｽ�ｽ隲帷ｿｫ�･驛｢譎｢�ｽ�｣驛｢譎｢�ｽ�ｩ驛｢�ｧ陞ｳ螟ｲ�ｽ�ｿ隴∫ｵｶ�ｽ驍ｵ�ｲ
-* 髯樊ｺｽ蛻､陝ｲ�ｩ髯ｷ莠･迴ｾ�ｽ�ｽ驛｢�ｧ�ｽ�ｭ驛｢譎｢�ｽ�｣驛｢譎｢�ｽ�ｩ驍ｵ�ｺ�ｽ�ｯID驍ｵ�ｺ�ｽ�ｧ髮手ｶ｣�ｽ�ｺ驍ｵ�ｺ�ｽ�ｾ驛｢�ｧ闕ｵ
-* 驛｢�ｧ�ｽ�ｫ驛｢譎｢�ｽ�｡驛｢譎｢�ｽ�ｩ驍ｵ�ｺ�ｽ�ｮ驛｢�ｧ�ｽ�ｻ驛｢譎｢�ｿ�ｽ郢晢ｽｨ驛｢譎｢�ｽ�ｻplayer驍ｵ�ｺ�ｽ�ｮBrain髯樊ｺｽ蛻､陝ｲ�ｩ驍ｵ�ｲ遯ｶ�ｦontrollers_p驍ｵ�ｺ�ｽ�ｮBrain髯樊ｺｽ蛻､陝ｲ�ｩ驍ｵ�ｺ�ｽ�ｧ髯橸ｽｳ陟包ｽ｡�ｽ�ｺ
+* controllers_p鬩搾ｽｵ�ｽ�ｺ髣包ｽｵ隴趣ｽ｢�ｽ�ｽ髣搾ｽｱlayer_p鬩搾ｽｵ�ｽ�ｺ�ｽ�ｽ�ｽ�ｮ鬮｣豈費ｽｼ螟ｲ�ｽ�ｽ�ｽ�ｲ鬯ｯ�ｮ�ｽ�｢鬮ｦ�ｮ陷ｻ�ｻ�ｽ�ｽ陞ｳ螟ｲ�ｽ�ｿ陞滂ｽｲ�ｽ�ｽ�ｽ�ｹ鬮ｯ讖ｸ�ｽ�ｳ髯橸ｽ｢�ｽ�ｹ�ｽ�ｽ鬩搾ｽｵ�ｽ�ｲ驕ｶ謫ｾ�ｽ�ｵ�ｽ�ｽ�ｽ�ｬ�ｽ�ｽ�ｽ�｡鬩搾ｽｵ�ｽ�ｺ�ｽ�ｽ�ｽ�ｮ鬮ｫ�ｰ�ｽ�ｫ髯懶ｽ｣�ｽ�ｺ�ｽ�ｽ�ｽ�ｽ髫ｲ蟶ｷ�ｿ�ｫ�ｽ�･鬩幢ｽ｢隴趣ｽ｢�ｽ�ｽ�ｽ�｣鬩幢ｽ｢隴趣ｽ｢�ｽ�ｽ�ｽ�ｩ鬩幢ｽ｢�ｽ�ｧ髯橸ｽｳ陞滂ｽｲ�ｽ�ｽ�ｽ�ｿ髫ｴ竏ｫ�ｵ�ｶ�ｽ�ｽ鬩搾ｽｵ�ｽ�ｲ
+* 鬮ｯ讓奇ｽｺ�ｽ陋ｻ�､髯晢ｽｲ�ｽ�ｩ鬮ｯ�ｷ闔�･霑ｴ�ｾ�ｽ�ｽ�ｽ�ｽ鬩幢ｽ｢�ｽ�ｧ�ｽ�ｽ�ｽ�ｭ鬩幢ｽ｢隴趣ｽ｢�ｽ�ｽ�ｽ�｣鬩幢ｽ｢隴趣ｽ｢�ｽ�ｽ�ｽ�ｩ鬩搾ｽｵ�ｽ�ｺ�ｽ�ｽ�ｽ�ｯID鬩搾ｽｵ�ｽ�ｺ�ｽ�ｽ�ｽ�ｧ鬮ｮ謇具ｽｶ�｣�ｽ�ｽ�ｽ�ｺ鬩搾ｽｵ�ｽ�ｺ�ｽ�ｽ�ｽ�ｾ鬩幢ｽ｢�ｽ�ｧ髣包ｽｵ
+* 鬩幢ｽ｢�ｽ�ｧ�ｽ�ｽ�ｽ�ｫ鬩幢ｽ｢隴趣ｽ｢�ｽ�ｽ�ｽ�｡鬩幢ｽ｢隴趣ｽ｢�ｽ�ｽ�ｽ�ｩ鬩搾ｽｵ�ｽ�ｺ�ｽ�ｽ�ｽ�ｮ鬩幢ｽ｢�ｽ�ｧ�ｽ�ｽ�ｽ�ｻ鬩幢ｽ｢隴趣ｽ｢�ｽ�ｿ�ｽ�ｽ驛｢譎｢�ｽ�ｨ鬩幢ｽ｢隴趣ｽ｢�ｽ�ｽ�ｽ�ｻplayer鬩搾ｽｵ�ｽ�ｺ�ｽ�ｽ�ｽ�ｮBrain鬮ｯ讓奇ｽｺ�ｽ陋ｻ�､髯晢ｽｲ�ｽ�ｩ鬩搾ｽｵ�ｽ�ｲ驕ｯ�ｶ�ｽ�ｦontrollers_p鬩搾ｽｵ�ｽ�ｺ�ｽ�ｽ�ｽ�ｮBrain鬮ｯ讓奇ｽｺ�ｽ陋ｻ�､髯晢ｽｲ�ｽ�ｩ鬩搾ｽｵ�ｽ�ｺ�ｽ�ｽ�ｽ�ｧ鬮ｯ讖ｸ�ｽ�ｳ髯溷桁�ｽ�｡�ｽ�ｽ�ｽ�ｺ
 */
 const Character* PlayerChanger::play(SoundPlayer* soundPlayer_p, std::vector<CharacterController*> controllers_p, const Character* player_p) {
-	// E驛｢�ｧ�ｽ�ｭ驛｢譎｢�ｽ�ｼ驍ｵ�ｺ隴ｴ�ｧ隹ｺ�ｾ驍ｵ�ｺ髴郁ｲｻ�ｽ讙趣ｽｸ�ｺ�ｽ�ｦ驍ｵ�ｺ�ｽ�ｽ遶企��ｸ�ｺ�ｽ�ｽ遶企��ｹ�ｧ隰梧汚�ｽ�ｽ髴郁ｲｻ�ｽ繧会ｽｸ�ｺ陷会ｽｱ遶企��ｸ�ｺ
+	// E鬩幢ｽ｢�ｽ�ｧ�ｽ�ｽ�ｽ�ｭ鬩幢ｽ｢隴趣ｽ｢�ｽ�ｽ�ｽ�ｼ鬩搾ｽｵ�ｽ�ｺ髫ｴ�ｴ�ｽ�ｧ髫ｹ�ｺ�ｽ�ｾ鬩搾ｽｵ�ｽ�ｺ鬮ｴ驛�ｽｲ�ｻ�ｽ�ｽ隶呵ｶ｣�ｽ�ｸ�ｽ�ｺ�ｽ�ｽ�ｽ�ｦ鬩搾ｽｵ�ｽ�ｺ�ｽ�ｽ�ｽ�ｽ驕ｶ莨�ｿｽ�ｽ�ｸ�ｽ�ｺ�ｽ�ｽ�ｽ�ｽ驕ｶ莨�ｿｽ�ｽ�ｹ�ｽ�ｧ髫ｰ譴ｧ豎夲ｿｽ�ｽ�ｽ�ｽ鬮ｴ驛�ｽｲ�ｻ�ｽ�ｽ郢ｧ莨夲ｽｽ�ｸ�ｽ�ｺ髯ｷ莨夲ｽｽ�ｱ驕ｶ莨�ｿｽ�ｽ�ｸ�ｽ�ｺ
 	if (controlE() != 1) {
 		return nullptr;
 	}
@@ -54,18 +54,18 @@ const Character* PlayerChanger::play(SoundPlayer* soundPlayer_p, std::vector<Cha
 	const Character* nextPlayer = nullptr;
 	for (unsigned int i = 0; i < controllers_p.size(); i++) {
 		const Character* target = controllers_p[i]->getAction()->getCharacter();
-		// 髯橸ｽｻ隶抵ｽｭ隨假ｿｽ�ｹ�ｧ闕ｵ譏ｴ�｡驛｢譎｢�ｽ�ｫ驛｢譎｢�ｽ�ｼ驛｢
+		// 鬮ｯ讖ｸ�ｽ�ｻ髫ｶ謚ｵ�ｽ�ｭ髫ｨ蛛�ｽｿ�ｽ�ｽ�ｹ�ｽ�ｧ髣包ｽｵ隴擾ｽｴ�ｽ�｡鬩幢ｽ｢隴趣ｽ｢�ｽ�ｽ�ｽ�ｫ鬩幢ｽ｢隴趣ｽ｢�ｽ�ｽ�ｽ�ｼ鬩幢ｽ｢
 		int groupId = target->getGroupId();
 		// ID
 		int id = target->getId();
 		if (id == player_p->getId()) { continue; }
-		// 驛｢譎丞ｹｲ�取ｨ抵ｽｹ�ｧ�ｽ�､驛｢譎｢�ｽ�､驛｢譎｢�ｽ�ｼ驍ｵ�ｺ�ｽ�ｮ髣比ｼ夲ｽｽ�ｲ鬯ｮ�｢髦ｮ蜻ｻ�ｿ�ｽ驍ｵ�ｺ�ｽ�ｿ髯晢ｿｽ�ｽ�ｾ鬮ｮ雜｣�ｽ�｡
+		// 鬩幢ｽ｢隴惹ｸ橸ｽｹ�ｲ�ｽ蜿厄ｽｨ謚ｵ�ｽ�ｹ�ｽ�ｧ�ｽ�ｽ�ｽ�､鬩幢ｽ｢隴趣ｽ｢�ｽ�ｽ�ｽ�､鬩幢ｽ｢隴趣ｽ｢�ｽ�ｽ�ｽ�ｼ鬩搾ｽｵ�ｽ�ｺ�ｽ�ｽ�ｽ�ｮ鬮｣豈費ｽｼ螟ｲ�ｽ�ｽ�ｽ�ｲ鬯ｯ�ｮ�ｽ�｢鬮ｦ�ｮ陷ｻ�ｻ�ｽ�ｿ�ｽ�ｽ鬩搾ｽｵ�ｽ�ｺ�ｽ�ｽ�ｽ�ｿ鬮ｯ譎｢�ｿ�ｽ�ｽ�ｽ�ｽ�ｾ鬯ｮ�ｮ髮懶ｽ｣�ｽ�ｽ�ｽ�｡
 		if (groupId == player_p->getGroupId()) {
-			// ID驍ｵ�ｺ隴ｴ�ｧ隲､蜻ｵ豌｣闕ｳ螂�ｽｿ�ｽ驛｢�ｧ�ｽ�ｭ驛｢譎｢�ｽ�｣驛｢譎｢�ｽ�ｩ
+			// ID鬩搾ｽｵ�ｽ�ｺ髫ｴ�ｴ�ｽ�ｧ髫ｲ�､陷ｻ�ｵ雎鯉ｽ｣髣包ｽｳ陞ゑｿｽ�ｽ�ｿ�ｽ�ｽ鬩幢ｽ｢�ｽ�ｧ�ｽ�ｽ�ｽ�ｭ鬩幢ｽ｢隴趣ｽ｢�ｽ�ｽ�ｽ�｣鬩幢ｽ｢隴趣ｽ｢�ｽ�ｽ�ｽ�ｩ
 			if (minCharacter == nullptr || id < minCharacter->getId()) {
 				minCharacter = target;
 			}
-			// ID驍ｵ�ｺ陟暮ｯ会ｽｿ�ｽ驛｢譎｢�ｽ�ｬ驛｢�ｧ�ｽ�､驛｢譎｢�ｽ�､驛｢譎｢�ｽ�ｼ驍ｵ�ｺ�ｽ�ｮ髫ｹ�ｺ�ｽ�｡驍ｵ�ｺ�ｽ�ｫ髯晢ｿｽ�ｸ螂�ｽｼ�ｽ�ｸ�ｺ�ｽ�ｽ邵ｺ蜀暦ｽｹ譎｢�ｽ�｣驛｢譎｢�ｽ�ｩ
+			// ID鬩搾ｽｵ�ｽ�ｺ髯滓坩�ｯ莨夲ｽｽ�ｿ�ｽ�ｽ鬩幢ｽ｢隴趣ｽ｢�ｽ�ｽ�ｽ�ｬ鬩幢ｽ｢�ｽ�ｧ�ｽ�ｽ�ｽ�､鬩幢ｽ｢隴趣ｽ｢�ｽ�ｽ�ｽ�､鬩幢ｽ｢隴趣ｽ｢�ｽ�ｽ�ｽ�ｼ鬩搾ｽｵ�ｽ�ｺ�ｽ�ｽ�ｽ�ｮ鬮ｫ�ｹ�ｽ�ｺ�ｽ�ｽ�ｽ�｡鬩搾ｽｵ�ｽ�ｺ�ｽ�ｽ�ｽ�ｫ鬮ｯ譎｢�ｿ�ｽ�ｽ�ｸ陞ゑｿｽ�ｽ�ｼ�ｽ�ｽ�ｽ�ｸ�ｽ�ｺ�ｽ�ｽ�ｽ�ｽ驍ｵ�ｺ陷證ｦ�ｽ�ｹ隴趣ｽ｢�ｽ�ｽ�ｽ�｣鬩幢ｽ｢隴趣ｽ｢�ｽ�ｽ�ｽ�ｩ
 			if (id > player_p->getId()) {
 				if (nextPlayer == nullptr || id < nextPlayer->getId()) {
 					nextPlayer = target;
@@ -73,7 +73,7 @@ const Character* PlayerChanger::play(SoundPlayer* soundPlayer_p, std::vector<Cha
 			}
 		}
 	}
-	// 驛｢譎丞ｹｲ�取ｨ抵ｽｹ�ｧ�ｽ�､驛｢譎｢�ｽ�､驛｢譎｢�ｽ�ｼ驍ｵ�ｺ隴ｴ�ｧ隲､蜥擾ｽｹ�ｧ�ｽ�ｽD驍ｵ�ｺ�ｽ�ｮ髯樊ｻゑｽｽ�ｧ驍ｵ�ｺ鬮ｦ�ｪ�ｽ讓抵ｽｹ�ｧ�ｽ�ｭ驛｢譎｢�ｽ�｣驛｢譎｢�ｽ�ｩ驍ｵ�ｺ驍ｵ�ｺ�ｽ�｣驍ｵ�ｺ雋�ｽｷ�ｽ�ｴ髯ｷ�ｷ�ｽ�ｽullptr驍ｵ�ｺ�ｽ�ｪ驍ｵ�ｺ�ｽ�ｮ驍ｵ�ｺ�ｽ�ｧID驍ｵ�ｺ隴ｴ�ｧ隲､蜥擾ｽｹ�ｧ郢ｧ�ｽ�ｽ�ｰ闕ｳ螂�ｽｼ�ｽ�ｸ�ｺ�ｽ�ｽ邵ｺ蜀暦ｽｹ譎｢�ｽ�｣驛｢譎｢�ｽ�ｩ驛｢�ｧ陝ｶ譏ｶ�ｽ驍ｵ�ｺ�ｽ�ｶ
+	// 鬩幢ｽ｢隴惹ｸ橸ｽｹ�ｲ�ｽ蜿厄ｽｨ謚ｵ�ｽ�ｹ�ｽ�ｧ�ｽ�ｽ�ｽ�､鬩幢ｽ｢隴趣ｽ｢�ｽ�ｽ�ｽ�､鬩幢ｽ｢隴趣ｽ｢�ｽ�ｽ�ｽ�ｼ鬩搾ｽｵ�ｽ�ｺ髫ｴ�ｴ�ｽ�ｧ髫ｲ�､陷･謫ｾ�ｽ�ｹ�ｽ�ｧ�ｽ�ｽ�ｽ�ｽD鬩搾ｽｵ�ｽ�ｺ�ｽ�ｽ�ｽ�ｮ鬮ｯ讓奇ｽｻ繧托ｽｽ�ｽ�ｽ�ｧ鬩搾ｽｵ�ｽ�ｺ鬯ｮ�ｦ�ｽ�ｪ�ｽ�ｽ隶捺慣�ｽ�ｹ�ｽ�ｧ�ｽ�ｽ�ｽ�ｭ鬩幢ｽ｢隴趣ｽ｢�ｽ�ｽ�ｽ�｣鬩幢ｽ｢隴趣ｽ｢�ｽ�ｽ�ｽ�ｩ鬩搾ｽｵ�ｽ�ｺ鬩搾ｽｵ�ｽ�ｺ�ｽ�ｽ�ｽ�｣鬩搾ｽｵ�ｽ�ｺ髮具ｿｽ�ｽ�ｷ�ｽ�ｽ�ｽ�ｴ鬮ｯ�ｷ�ｽ�ｷ�ｽ�ｽ�ｽ�ｽullptr鬩搾ｽｵ�ｽ�ｺ�ｽ�ｽ�ｽ�ｪ鬩搾ｽｵ�ｽ�ｺ�ｽ�ｽ�ｽ�ｮ鬩搾ｽｵ�ｽ�ｺ�ｽ�ｽ�ｽ�ｧID鬩搾ｽｵ�ｽ�ｺ髫ｴ�ｴ�ｽ�ｧ髫ｲ�､陷･謫ｾ�ｽ�ｹ�ｽ�ｧ驛｢�ｧ�ｽ�ｽ�ｽ�ｽ�ｽ�ｰ髣包ｽｳ陞ゑｿｽ�ｽ�ｼ�ｽ�ｽ�ｽ�ｸ�ｽ�ｺ�ｽ�ｽ�ｽ�ｽ驍ｵ�ｺ陷證ｦ�ｽ�ｹ隴趣ｽ｢�ｽ�ｽ�ｽ�｣鬩幢ｽ｢隴趣ｽ｢�ｽ�ｽ�ｽ�ｩ鬩幢ｽ｢�ｽ�ｧ髯晢ｽｶ隴擾ｽｶ�ｽ�ｽ鬩搾ｽｵ�ｽ�ｺ�ｽ�ｽ�ｽ�ｶ
 	if (nextPlayer == nullptr) {
 		nextPlayer = minCharacter;
 	}
@@ -81,7 +81,7 @@ const Character* PlayerChanger::play(SoundPlayer* soundPlayer_p, std::vector<Cha
 }
 
 
-// vector驍ｵ�ｺ�ｽ�ｫ髯ｷ闌ｨ�ｽ�･驍ｵ�ｺ�ｽ�｣驍ｵ�ｺ雋�ｽｷ�ｽ�ｽ驛｢�ｧ�ｽ�ｪ驛｢譎�§邵ｺ螟ゑｽｹ�ｧ�ｽ�ｧ驛｢�ｧ�ｽ�ｯ驛｢譎冗樟�ｽ螳壽≧闔ｨ竏晄ｱるし�ｺ陷ｷ�ｶ�ｽ
+// vector鬩搾ｽｵ�ｽ�ｺ�ｽ�ｽ�ｽ�ｫ鬮ｯ�ｷ髣鯉ｽｨ�ｽ�ｽ�ｽ�･鬩搾ｽｵ�ｽ�ｺ�ｽ�ｽ�ｽ�｣鬩搾ｽｵ�ｽ�ｺ髮具ｿｽ�ｽ�ｷ�ｽ�ｽ�ｽ�ｽ鬩幢ｽ｢�ｽ�ｧ�ｽ�ｽ�ｽ�ｪ鬩幢ｽ｢隴趣ｿｽﾂｧ驍ｵ�ｺ陞溘ｑ�ｽ�ｹ�ｽ�ｧ�ｽ�ｽ�ｽ�ｧ鬩幢ｽ｢�ｽ�ｧ�ｽ�ｽ�ｽ�ｯ鬩幢ｽ｢隴主�讓滂ｿｽ�ｽ陞ｳ螢ｽ竕ｧ髣費ｽｨ遶乗刋�ｱ繧九＠�ｽ�ｺ髯ｷ�ｷ�ｽ�ｶ�ｽ�ｽ
 void deleteAllObject(vector<Object*>& objects) {
 	for (int i = (int)objects.size() - 1; i >= 0; i--) {
 		delete objects[i];
@@ -89,13 +89,13 @@ void deleteAllObject(vector<Object*>& objects) {
 	}
 }
 
-// vector驍ｵ�ｺ�ｽ�ｫ髯ｷ闌ｨ�ｽ�･驍ｵ�ｺ�ｽ�｣驍ｵ�ｺ雎�ｽｸeleteFlag驍ｵ�ｺ髣戊寰rue驍ｵ�ｺ�ｽ�ｮ驛｢�ｧ�ｽ�ｪ驛｢譎�§邵ｺ螟ゑｽｹ�ｧ�ｽ�ｧ驛｢�ｧ�ｽ�ｯ驛｢譎冗樟�ｽ螳壽≧闔ｨ竏晄ｱるし�ｺ陷ｷ�ｶ�ｽ
+// vector鬩搾ｽｵ�ｽ�ｺ�ｽ�ｽ�ｽ�ｫ鬮ｯ�ｷ髣鯉ｽｨ�ｽ�ｽ�ｽ�･鬩搾ｽｵ�ｽ�ｺ�ｽ�ｽ�ｽ�｣鬩搾ｽｵ�ｽ�ｺ髮趣ｿｽ�ｽ�ｸeleteFlag鬩搾ｽｵ�ｽ�ｺ鬮｣謌雁ｯｰrue鬩搾ｽｵ�ｽ�ｺ�ｽ�ｽ�ｽ�ｮ鬩幢ｽ｢�ｽ�ｧ�ｽ�ｽ�ｽ�ｪ鬩幢ｽ｢隴趣ｿｽﾂｧ驍ｵ�ｺ陞溘ｑ�ｽ�ｹ�ｽ�ｧ�ｽ�ｽ�ｽ�ｧ鬩幢ｽ｢�ｽ�ｧ�ｽ�ｽ�ｽ�ｯ鬩幢ｽ｢隴主�讓滂ｿｽ�ｽ陞ｳ螢ｽ竕ｧ髣費ｽｨ遶乗刋�ｱ繧九＠�ｽ�ｺ髯ｷ�ｷ�ｽ�ｶ�ｽ�ｽ
 void deleteObject(vector<Object*>& objects) {
 	for (unsigned int i = 0; i < objects.size(); i++) {
-		// deleteFlag驍ｵ�ｺ髣戊ｼブe驍ｵ�ｺ�ｽ�ｪ驛｢�ｧ霑壼衷�朱ｬｮ�ｯ�ｽ�､驍ｵ�ｺ陷ｷ�ｶ�ｽ
+		// deleteFlag鬩搾ｽｵ�ｽ�ｺ鬮｣謌奇ｽｼ繝貌鬩搾ｽｵ�ｽ�ｺ�ｽ�ｽ�ｽ�ｪ鬩幢ｽ｢�ｽ�ｧ髴大｣ｼ陦ｷ�ｽ譛ｱ�ｬ�ｮ�ｽ�ｯ�ｽ�ｽ�ｽ�､鬩搾ｽｵ�ｽ�ｺ髯ｷ�ｷ�ｽ�ｶ�ｽ�ｽ
 		if (objects[i]->getDeleteFlag()) {
 			delete objects[i];
-			// 髫ｴ蟷｢�ｽ�ｫ髯晢ｿｽ�ｽ�ｾ驛｢�ｧ髮区ｨ抵ｽ朱ｬｮ�ｯ�ｽ�､驍ｵ�ｺ陷ｷ�ｶ�ｽ邇厄ｽｭ�ｽ�ｽ�ｹ驍ｵ�ｺ驕雋�∞�ｼ
+			// 鬮ｫ�ｴ陝ｷ�｢�ｽ�ｽ�ｽ�ｫ鬮ｯ譎｢�ｿ�ｽ�ｽ�ｽ�ｽ�ｾ鬩幢ｽ｢�ｽ�ｧ鬮ｮ蛹ｺ�ｨ謚ｵ�ｽ譛ｱ�ｬ�ｮ�ｽ�ｯ�ｽ�ｽ�ｽ�､鬩搾ｽｵ�ｽ�ｺ髯ｷ�ｷ�ｽ�ｶ�ｽ�ｽ驍�私�ｽ�ｭ�ｽ�ｽ�ｽ�ｽ�ｽ�ｹ鬩搾ｽｵ�ｽ�ｺ鬩髮具ｿｽ竏橸ｿｽ�ｼ
 			objects[i] = objects.back();
 			objects.pop_back();
 			i--;
@@ -103,16 +103,16 @@ void deleteObject(vector<Object*>& objects) {
 	}
 }
 
-// vector驍ｵ�ｺ�ｽ�ｫ髯ｷ闌ｨ�ｽ�･驍ｵ�ｺ�ｽ�｣驍ｵ�ｺ雋�ｽｷ�ｽ�ｽ驛｢�ｧ�ｽ�ｪ驛｢譎�§邵ｺ螟ゑｽｹ�ｧ�ｽ�ｧ驛｢�ｧ�ｽ�ｯ驛｢譎冗樟�ｽ螳壽↑髴域攸�ｰ驍ｵ�ｺ
+// vector鬩搾ｽｵ�ｽ�ｺ�ｽ�ｽ�ｽ�ｫ鬮ｯ�ｷ髣鯉ｽｨ�ｽ�ｽ�ｽ�･鬩搾ｽｵ�ｽ�ｺ�ｽ�ｽ�ｽ�｣鬩搾ｽｵ�ｽ�ｺ髮具ｿｽ�ｽ�ｷ�ｽ�ｽ�ｽ�ｽ鬩幢ｽ｢�ｽ�ｧ�ｽ�ｽ�ｽ�ｪ鬩幢ｽ｢隴趣ｿｽﾂｧ驍ｵ�ｺ陞溘ｑ�ｽ�ｹ�ｽ�ｧ�ｽ�ｽ�ｽ�ｧ鬩幢ｽ｢�ｽ�ｧ�ｽ�ｽ�ｽ�ｯ鬩幢ｽ｢隴主�讓滂ｿｽ�ｽ陞ｳ螢ｽ竊鷹ｫｴ蝓滓蛤�ｽ�ｰ鬩搾ｽｵ�ｽ�ｺ
 void actionObject(vector<Object*>& objects) {
-	// 髯橸ｽ｢遶丞､ｲ�ｽ�ｽ螳茨ｽｿ�ｫ邵ｺ讙趣ｽｹ譎�§邵ｺ螟ゑｽｹ�ｧ�ｽ�ｧ驛｢�ｧ�ｽ�ｯ驛｢譎冗樟�ｽ�ｽ髯ｷ�ｽ�ｽ�ｦ鬨ｾ (髯溷�萓ｭ隨ｳ�ｽ�ｹ�ｧ鬮ｮ竏ｵ�ｽ髯橸ｽｳ陞｢�ｹ遶雁ｮ壽↑髴域喚�ｳ)
+	// 鬮ｯ讖ｸ�ｽ�｢驕ｶ荳橸ｽ､�ｲ�ｽ�ｽ�ｽ�ｽ陞ｳ闌ｨ�ｽ�ｿ�ｽ�ｫ驍ｵ�ｺ隶呵ｶ｣�ｽ�ｹ隴趣ｿｽﾂｧ驍ｵ�ｺ陞溘ｑ�ｽ�ｹ�ｽ�ｧ�ｽ�ｽ�ｽ�ｧ鬩幢ｽ｢�ｽ�ｧ�ｽ�ｽ�ｽ�ｯ鬩幢ｽ｢隴主�讓滂ｿｽ�ｽ�ｽ�ｽ鬮ｯ�ｷ�ｽ�ｽ�ｽ�ｽ�ｽ�ｦ鬯ｨ�ｾ (鬮ｯ貅ｷ�ｽ關難ｽｭ髫ｨ�ｳ�ｽ�ｽ�ｽ�ｹ�ｽ�ｧ鬯ｮ�ｮ遶擾ｽｵ�ｽ�ｽ鬮ｯ讖ｸ�ｽ�ｳ髯橸ｽ｢�ｽ�ｹ驕ｶ髮�ｽｮ螢ｽ竊鷹ｫｴ蝓溷繭�ｽ�ｳ)
 	for (unsigned int i = 0; i < objects.size(); i++) {
-		// 驛｢�ｧ�ｽ�ｪ驛｢譎�§邵ｺ螟ゑｽｹ�ｧ�ｽ�ｧ驛｢�ｧ�ｽ�ｯ驛｢譎冗樟�ｽ�ｽ髯ｷ蟠趣ｽｼ謚ｫ�ｳ
+		// 鬩幢ｽ｢�ｽ�ｧ�ｽ�ｽ�ｽ�ｪ鬩幢ｽ｢隴趣ｿｽﾂｧ驍ｵ�ｺ陞溘ｑ�ｽ�ｹ�ｽ�ｧ�ｽ�ｽ�ｽ�ｧ鬩幢ｽ｢�ｽ�ｧ�ｽ�ｽ�ｽ�ｯ鬩幢ｽ｢隴主�讓滂ｿｽ�ｽ�ｽ�ｽ鬮ｯ�ｷ陝雜｣�ｽ�ｼ隰夲ｽｫ�ｽ�ｳ
 		objects[i]->action();
-		// deleteFlag驍ｵ�ｺ髣戊ｼブe驍ｵ�ｺ�ｽ�ｪ驛｢�ｧ霑壼衷�朱ｬｮ�ｯ�ｽ�､驍ｵ�ｺ陷ｷ�ｶ�ｽ
+		// deleteFlag鬩搾ｽｵ�ｽ�ｺ鬮｣謌奇ｽｼ繝貌鬩搾ｽｵ�ｽ�ｺ�ｽ�ｽ�ｽ�ｪ鬩幢ｽ｢�ｽ�ｧ髴大｣ｼ陦ｷ�ｽ譛ｱ�ｬ�ｮ�ｽ�ｯ�ｽ�ｽ�ｽ�､鬩搾ｽｵ�ｽ�ｺ髯ｷ�ｷ�ｽ�ｶ�ｽ�ｽ
 		if (objects[i]->getDeleteFlag()) {
 			delete objects[i];
-			// 髫ｴ蟷｢�ｽ�ｫ髯晢ｿｽ�ｽ�ｾ驛｢�ｧ髮区ｨ抵ｽ朱ｬｮ�ｯ�ｽ�､驍ｵ�ｺ陷ｷ�ｶ�ｽ邇厄ｽｭ�ｽ�ｽ�ｹ驍ｵ�ｺ驕雋�∞�ｼ
+			// 鬮ｫ�ｴ陝ｷ�｢�ｽ�ｽ�ｽ�ｫ鬮ｯ譎｢�ｿ�ｽ�ｽ�ｽ�ｽ�ｾ鬩幢ｽ｢�ｽ�ｧ鬮ｮ蛹ｺ�ｨ謚ｵ�ｽ譛ｱ�ｬ�ｮ�ｽ�ｯ�ｽ�ｽ�ｽ�､鬩搾ｽｵ�ｽ�ｺ髯ｷ�ｷ�ｽ�ｶ�ｽ�ｽ驍�私�ｽ�ｭ�ｽ�ｽ�ｽ�ｽ�ｽ�ｹ鬩搾ｽｵ�ｽ�ｺ鬩髮具ｿｽ竏橸ｿｽ�ｼ
 			objects[i] = objects.back();
 			objects.pop_back();
 			i--;
@@ -120,18 +120,18 @@ void actionObject(vector<Object*>& objects) {
 	}
 }
 
-// 驛｢�ｧ�ｽ�ｭ驛｢譎｢�ｽ�｣驛｢譎｢�ｽ�ｩ驛｢�ｧ�ｽ�ｯ驛｢�ｧ�ｽ�ｿ驛｢譎｢�ｽ�ｼ驍ｵ�ｺ�ｽ�ｨ驛｢�ｧ�ｽ�ｪ驛｢譎�§邵ｺ螟ゑｽｹ�ｧ�ｽ�ｧ驛｢�ｧ�ｽ�ｯ驛｢譎冗樟�ｽ�ｽ鬮ｮ蜈ｷ�ｽ�ｫ鬯ｨ�ｾ陞｢�ｽ陷�ｽｾ髯具ｽｻ�ｽ�､髯橸ｽｳ
+// 鬩幢ｽ｢�ｽ�ｧ�ｽ�ｽ�ｽ�ｭ鬩幢ｽ｢隴趣ｽ｢�ｽ�ｽ�ｽ�｣鬩幢ｽ｢隴趣ｽ｢�ｽ�ｽ�ｽ�ｩ鬩幢ｽ｢�ｽ�ｧ�ｽ�ｽ�ｽ�ｯ鬩幢ｽ｢�ｽ�ｧ�ｽ�ｽ�ｽ�ｿ鬩幢ｽ｢隴趣ｽ｢�ｽ�ｽ�ｽ�ｼ鬩搾ｽｵ�ｽ�ｺ�ｽ�ｽ�ｽ�ｨ鬩幢ｽ｢�ｽ�ｧ�ｽ�ｽ�ｽ�ｪ鬩幢ｽ｢隴趣ｿｽﾂｧ驍ｵ�ｺ陞溘ｑ�ｽ�ｹ�ｽ�ｧ�ｽ�ｽ�ｽ�ｧ鬩幢ｽ｢�ｽ�ｧ�ｽ�ｽ�ｽ�ｯ鬩幢ｽ｢隴主�讓滂ｿｽ�ｽ�ｽ�ｽ鬯ｮ�ｮ陷茨ｽｷ�ｽ�ｽ�ｽ�ｫ鬯ｯ�ｨ�ｽ�ｾ髯橸ｽ｢�ｽ�ｽ髯ｷ�ｽ�ｽ�ｾ鬮ｯ蜈ｷ�ｽ�ｻ�ｽ�ｽ�ｽ�､鬮ｯ讖ｸ�ｽ�ｳ
 void penetrationCharacterAndObject(CharacterController* controller, vector<Object*> objects) {
-	// 髯橸ｽ｢遶丞､ｲ�ｽ�ｽ螳茨ｽｿ�ｫ邵ｺ讙趣ｽｹ譎�§邵ｺ螟ゑｽｹ�ｧ�ｽ�ｧ驛｢�ｧ�ｽ�ｯ驛｢譎冗樟�ｽ�ｽ髯ｷ�ｽ�ｽ�ｦ鬨ｾ (髯溷�萓ｭ隨ｳ�ｽ�ｹ�ｧ鬮ｮ竏ｵ�ｽ髯橸ｽｳ陞｢�ｹ遶雁ｮ壽↑髴域喚�ｳ)
+	// 鬮ｯ讖ｸ�ｽ�｢驕ｶ荳橸ｽ､�ｲ�ｽ�ｽ�ｽ�ｽ陞ｳ闌ｨ�ｽ�ｿ�ｽ�ｫ驍ｵ�ｺ隶呵ｶ｣�ｽ�ｹ隴趣ｿｽﾂｧ驍ｵ�ｺ陞溘ｑ�ｽ�ｹ�ｽ�ｧ�ｽ�ｽ�ｽ�ｧ鬩幢ｽ｢�ｽ�ｧ�ｽ�ｽ�ｽ�ｯ鬩幢ｽ｢隴主�讓滂ｿｽ�ｽ�ｽ�ｽ鬮ｯ�ｷ�ｽ�ｽ�ｽ�ｽ�ｽ�ｦ鬯ｨ�ｾ (鬮ｯ貅ｷ�ｽ關難ｽｭ髫ｨ�ｳ�ｽ�ｽ�ｽ�ｹ�ｽ�ｧ鬯ｮ�ｮ遶擾ｽｵ�ｽ�ｽ鬮ｯ讖ｸ�ｽ�ｳ髯橸ｽ｢�ｽ�ｹ驕ｶ髮�ｽｮ螢ｽ竊鷹ｫｴ蝓溷繭�ｽ�ｳ)
 	for (unsigned int i = 0; i < objects.size(); i++) {
-		// 髯溷�萓ｭ隨ｳ�ｽ�ｹ�ｧ鬮ｮ竏ｵ�ｽ髯橸ｽｳ陞｢�ｹ�ｽ蝣､�ｸ�ｺ髦ｮ蜻ｻ�ｼ�ｽ�ｸ�ｺ�ｽ�ｧ鬮ｯ�ｦ陟募ｨｯ魘ｬ
+		// 鬮ｯ貅ｷ�ｽ關難ｽｭ髫ｨ�ｳ�ｽ�ｽ�ｽ�ｹ�ｽ�ｧ鬯ｮ�ｮ遶擾ｽｵ�ｽ�ｽ鬮ｯ讖ｸ�ｽ�ｳ髯橸ｽ｢�ｽ�ｹ�ｽ�ｽ陜｣�､�ｽ�ｸ�ｽ�ｺ鬮ｦ�ｮ陷ｻ�ｻ�ｽ�ｼ�ｽ�ｽ�ｽ�ｸ�ｽ�ｺ�ｽ�ｽ�ｽ�ｧ鬯ｮ�ｯ�ｽ�ｦ髯溷供�ｨ�ｯ鬲假ｽｬ
 		objects[i]->penetration(controller);
 	}
 }
 
 
 /*
-* 驛｢�ｧ�ｽ�ｳ驛｢譎｢�ｽ�ｳ驛｢�ｧ�ｽ�ｹ驛｢譎冗樟�主ｸｷ�ｹ�ｧ�ｽ�ｯ驛｢�ｧ�ｽ�ｿ
+* 鬩幢ｽ｢�ｽ�ｧ�ｽ�ｽ�ｽ�ｳ鬩幢ｽ｢隴趣ｽ｢�ｽ�ｽ�ｽ�ｳ鬩幢ｽ｢�ｽ�ｧ�ｽ�ｽ�ｽ�ｹ鬩幢ｽ｢隴主�讓滂ｿｽ荳ｻ�ｸ�ｷ�ｽ�ｹ�ｽ�ｧ�ｽ�ｽ�ｽ�ｯ鬩幢ｽ｢�ｽ�ｧ�ｽ�ｽ�ｽ�ｿ
 */
 World::World() {
 	m_duplicationFlag = false;
@@ -142,17 +142,17 @@ World::World() {
 
 	m_blindFlag = false;
 
-	// 莨夊ｩｱ繧､繝吶Φ繝
+	// 闔ｨ螟奇ｽｩ�ｱ郢ｧ�､郢晏生ﾎｦ郢
 	m_conversation_p = nullptr;
 	m_objectConversation = nullptr;
 
-	// 驛｢驛｢譎｢�ｽ�ｼ驛｢譎∽ｾｭ�ｽ�ｽ
+	// 鬩幢ｽ｢鬩幢ｽ｢隴趣ｽ｢�ｽ�ｽ�ｽ�ｼ鬩幢ｽ｢隴寂或�ｾ�ｭ�ｽ�ｽ�ｽ�ｽ
 	m_movie_p = nullptr;
 
-	// 驛｢�ｧ�ｽ�ｹ驛｢�ｧ�ｽ�ｭ驛｢譎｢�ｽ�ｫ鬨ｾ蜈ｷ�ｽ�ｺ髯ｷ蜥ｲ�ｩ繧托ｽｽ�ｸ�ｽ�ｭ
+	// 鬩幢ｽ｢�ｽ�ｧ�ｽ�ｽ�ｽ�ｹ鬩幢ｽ｢�ｽ�ｧ�ｽ�ｽ�ｽ�ｭ鬩幢ｽ｢隴趣ｽ｢�ｽ�ｽ�ｽ�ｫ鬯ｨ�ｾ陷茨ｽｷ�ｽ�ｽ�ｽ�ｺ鬮ｯ�ｷ陷･�ｲ�ｽ�ｩ郢ｧ謇假ｽｽ�ｽ�ｽ�ｸ�ｽ�ｽ�ｽ�ｭ
 	m_skillFlag = false;
 
-	// 驛｢�ｧ�ｽ�ｫ驛｢譎｢�ｽ�｡驛｢譎｢�ｽ�ｩ驍ｵ�ｺ�ｽ�ｮ髯区ｺｷ隱ｿ驍擾ｽｫ驍ｵ�ｺ�ｽ�ｮ髫ｴ髯樊ｻゑｽｽ�ｧ驛｢譎｢�ｽ�ｻ髫ｴ髯晢ｿｽ�ｸ�ｽ�､驛｢�ｧ陞ｳ螟ｲ�ｽ�ｧ�ｽ�｣髯ｷ蜑�ｽｸ讖ｸ�ｽ�ｺ�ｽ�ｦ驍ｵ�ｺ闕ｵ譎｢�ｽ闃ｽ�ｱ雜｣�ｽ�ｺ髯橸ｽｳ
+	// 鬩幢ｽ｢�ｽ�ｧ�ｽ�ｽ�ｽ�ｫ鬩幢ｽ｢隴趣ｽ｢�ｽ�ｽ�ｽ�｡鬩幢ｽ｢隴趣ｽ｢�ｽ�ｽ�ｽ�ｩ鬩搾ｽｵ�ｽ�ｺ�ｽ�ｽ�ｽ�ｮ鬮ｯ蛹ｺ�ｺ�ｷ髫ｱ�ｿ鬩肴得�ｽ�ｫ鬩搾ｽｵ�ｽ�ｺ�ｽ�ｽ�ｽ�ｮ鬮ｫ�ｴ鬮ｯ讓奇ｽｻ繧托ｽｽ�ｽ�ｽ�ｧ鬩幢ｽ｢隴趣ｽ｢�ｽ�ｽ�ｽ�ｻ鬮ｫ�ｴ鬮ｯ譎｢�ｿ�ｽ�ｽ�ｸ�ｽ�ｽ�ｽ�､鬩幢ｽ｢�ｽ�ｧ髯橸ｽｳ陞滂ｽｲ�ｽ�ｽ�ｽ�ｧ�ｽ�ｽ�ｽ�｣鬮ｯ�ｷ陷托ｿｽ�ｽ�ｸ隶厄ｽｸ�ｽ�ｽ�ｽ�ｺ�ｽ�ｽ�ｽ�ｦ鬩搾ｽｵ�ｽ�ｺ髣包ｽｵ隴趣ｽ｢�ｽ�ｽ髣�ｽｽ�ｽ�ｱ髮懶ｽ｣�ｽ�ｽ�ｽ�ｺ鬮ｯ讖ｸ�ｽ�ｳ
 	getGameEx(m_exX, m_exY);
 	m_cameraMaxEx *= m_exX;
 	m_cameraMinEx *= m_exX;
@@ -164,20 +164,20 @@ World::World() {
 }
 
 /*
-* 驛｢�ｧ�ｽ�ｪ驛｢譎�§邵ｺ螟ゑｽｹ�ｧ�ｽ�ｧ驛｢�ｧ�ｽ�ｯ驛｢譎冗樟�ｽ�ｽ驛｢譎｢�ｽ�ｭ驛｢譎｢�ｽ�ｼ驛｢譎擾ｽｳ�ｨ遶企��ｸ�ｺ�ｽ�ｩ
+* 鬩幢ｽ｢�ｽ�ｧ�ｽ�ｽ�ｽ�ｪ鬩幢ｽ｢隴趣ｿｽﾂｧ驍ｵ�ｺ陞溘ｑ�ｽ�ｹ�ｽ�ｧ�ｽ�ｽ�ｽ�ｧ鬩幢ｽ｢�ｽ�ｧ�ｽ�ｽ�ｽ�ｯ鬩幢ｽ｢隴主�讓滂ｿｽ�ｽ�ｽ�ｽ鬩幢ｽ｢隴趣ｽ｢�ｽ�ｽ�ｽ�ｭ鬩幢ｽ｢隴趣ｽ｢�ｽ�ｽ�ｽ�ｼ鬩幢ｽ｢隴取得�ｽ�ｳ�ｽ�ｨ驕ｶ莨�ｿｽ�ｽ�ｸ�ｽ�ｺ�ｽ�ｽ�ｽ�ｩ
 */
 World::World(int fromAreaNum, int toAreaNum, SoundPlayer* soundPlayer) :
 	World()
 {
 
-	// 驛｢�ｧ�ｽ�ｵ驛｢�ｧ�ｽ�ｦ驛｢譎｢�ｽ�ｳ驛｢譎擾ｽｳ�ｨ�ｽ�ｽ驛｢譎｢�ｽ�ｬ驛｢�ｧ�ｽ�､驛｢譎｢�ｽ�､驛｢譎｢�ｽ�ｼ
+	// 鬩幢ｽ｢�ｽ�ｧ�ｽ�ｽ�ｽ�ｵ鬩幢ｽ｢�ｽ�ｧ�ｽ�ｽ�ｽ�ｦ鬩幢ｽ｢隴趣ｽ｢�ｽ�ｽ�ｽ�ｳ鬩幢ｽ｢隴取得�ｽ�ｳ�ｽ�ｨ�ｽ�ｽ�ｽ�ｽ鬩幢ｽ｢隴趣ｽ｢�ｽ�ｽ�ｽ�ｬ鬩幢ｽ｢�ｽ�ｧ�ｽ�ｽ�ｽ�､鬩幢ｽ｢隴趣ｽ｢�ｽ�ｽ�ｽ�､鬩幢ｽ｢隴趣ｽ｢�ｽ�ｽ�ｽ�ｼ
 	m_soundPlayer_p = soundPlayer;
 
-	// 髣包ｽｳ�ｽ�ｻ髣�ｽ�ｺ髯ｷ闌ｨ�ｽ�ｬ驍ｵ�ｺ�ｽ�ｮ驛｢�ｧ�ｽ�ｹ驛｢�ｧ�ｽ�ｿ驛｢譎｢�ｽ�ｼ驛｢譏懶ｽｺ�･隲ｷ蟠趣ｽｽ�､�ｽ�ｹ
+	// 鬮｣蛹�ｽｽ�ｳ�ｽ�ｽ�ｽ�ｻ鬮｣�ｽ�ｽ�ｽ�ｺ鬮ｯ�ｷ髣鯉ｽｨ�ｽ�ｽ�ｽ�ｬ鬩搾ｽｵ�ｽ�ｺ�ｽ�ｽ�ｽ�ｮ鬩幢ｽ｢�ｽ�ｧ�ｽ�ｽ�ｽ�ｹ鬩幢ｽ｢�ｽ�ｧ�ｽ�ｽ�ｽ�ｿ鬩幢ｽ｢隴趣ｽ｢�ｽ�ｽ�ｽ�ｼ鬩幢ｽ｢隴乗��ｽ�ｺ�ｽ�･髫ｲ�ｷ陝雜｣�ｽ�ｽ�ｽ�､�ｽ�ｽ�ｽ�ｹ
 	m_areaNum = toAreaNum;
 	m_nextAreaNum = m_areaNum;
 
-	// 驛｢�ｧ�ｽ�ｨ驛｢譎｢�ｽ�ｪ驛｢�ｧ�ｽ�｢驛｢�ｧ陋幢ｽｵ�取ｺｽ�ｹ譎｢�ｽ�ｼ驛｢
+	// 鬩幢ｽ｢�ｽ�ｧ�ｽ�ｽ�ｽ�ｨ鬩幢ｽ｢隴趣ｽ｢�ｽ�ｽ�ｽ�ｪ鬩幢ｽ｢�ｽ�ｧ�ｽ�ｽ�ｽ�｢鬩幢ｽ｢�ｽ�ｧ髯句ｹ｢�ｽ�ｵ�ｽ蜿厄ｽｺ�ｽ�ｽ�ｹ隴趣ｽ｢�ｽ�ｽ�ｽ�ｼ鬩幢ｽ｢
 	const AreaReader data(fromAreaNum, toAreaNum, m_soundPlayer_p);
 	m_camera = data.getCamera();
 	m_focusId = data.getFocusId();
@@ -189,7 +189,7 @@ World::World(int fromAreaNum, int toAreaNum, SoundPlayer* soundPlayer) :
 	m_doorObjects = data.getDoorObjects();
 	data.getBackGround(m_backGroundGraph, m_backGroundColor);
 
-	// 驛｢譎丞ｹｲ�取ｨ抵ｽｹ�ｧ�ｽ�､驛｢譎｢�ｽ�､驛｢譎｢�ｽ�ｼ驛｢�ｧ陋幢ｽｵ邵ｺ譎会ｽｹ譎｢�ｿ�ｽ郢晢ｽｨ
+	// 鬩幢ｽ｢隴惹ｸ橸ｽｹ�ｲ�ｽ蜿厄ｽｨ謚ｵ�ｽ�ｹ�ｽ�ｧ�ｽ�ｽ�ｽ�､鬩幢ｽ｢隴趣ｽ｢�ｽ�ｽ�ｽ�､鬩幢ｽ｢隴趣ｽ｢�ｽ�ｽ�ｽ�ｼ鬩幢ｽ｢�ｽ�ｧ髯句ｹ｢�ｽ�ｵ驍ｵ�ｺ隴惹ｼ夲ｽｽ�ｹ隴趣ｽ｢�ｽ�ｿ�ｽ�ｽ驛｢譎｢�ｽ�ｨ
 	for (unsigned int i = 0; i < m_characters.size(); i++) {
 		if (m_playerId == m_characters[i]->getId()) {
 			m_player_p = m_characters[i];
@@ -199,7 +199,7 @@ World::World(int fromAreaNum, int toAreaNum, SoundPlayer* soundPlayer) :
 
 	m_playerChanger = new PlayerChanger(m_characterControllers, m_player_p);
 
-	// 驛｢譎丞ｹｲ�取ｨ抵ｽｹ�ｧ�ｽ�､驛｢譎｢�ｽ�､驛｢譎｢�ｽ�ｼ驍ｵ�ｺ�ｽ�ｮ髫ｴ�ｽ�ｽ�ｹ髯ｷ�ｷ闔会ｽ｣遶城メ諠ｺ闔会ｽ｣�ゑｽｰ驍ｵ�ｺ陝ｶ蜻ｻ�ｽ
+	// 鬩幢ｽ｢隴惹ｸ橸ｽｹ�ｲ�ｽ蜿厄ｽｨ謚ｵ�ｽ�ｹ�ｽ�ｧ�ｽ�ｽ�ｽ�､鬩幢ｽ｢隴趣ｽ｢�ｽ�ｽ�ｽ�､鬩幢ｽ｢隴趣ｽ｢�ｽ�ｽ�ｽ�ｼ鬩搾ｽｵ�ｽ�ｺ�ｽ�ｽ�ｽ�ｮ鬮ｫ�ｴ�ｽ�ｽ�ｽ�ｽ�ｽ�ｹ鬮ｯ�ｷ�ｽ�ｷ髣比ｼ夲ｽｽ�｣驕ｶ蝓弱Γ隲�ｺ髣比ｼ夲ｽｽ�｣�ｽ繧托ｽｽ�ｰ鬩搾ｽｵ�ｽ�ｺ髯晢ｽｶ陷ｻ�ｻ�ｽ�ｽ
 	for (unsigned int i = 0; i < m_characterControllers.size(); i++) {
 		m_characterControllers[i]->setPlayerDirection(m_player_p, true);
 	}
@@ -211,6 +211,8 @@ World::World(int fromAreaNum, int toAreaNum, SoundPlayer* soundPlayer) :
 	m_characterDeadSound = LoadSoundMem("sound/battle/dead.wav");
 	m_bombSound = LoadSoundMem("sound/battle/bomb.wav");
 	m_doorSound = LoadSoundMem("sound/battle/door.wav");
+	m_cameraInSound = LoadSoundMem("sound/battle/cameraIn.mp3");
+	m_cameraOutSound = LoadSoundMem("sound/battle/cameraOut.mp3");
 
 }
 
@@ -219,13 +221,13 @@ World::World(const World* original) :
 {
 	m_duplicationFlag = true;
 
-	// エリアをコピー (プリミティブ型)
+	// 繧ｨ繝ｪ繧｢繧偵さ繝斐� (繝励Μ繝溘ユ繧｣繝門梛)
 	m_areaNum = original->getAreaNum();
 	m_focusId = original->getFocusId();
 	m_playerId = original->getPlayerId();
 	m_date = original->getDate();
 
-	// エリアをコピー (コピー元と共有するもの)
+	// 繧ｨ繝ｪ繧｢繧偵さ繝斐� (繧ｳ繝斐�蜈�→蜈ｱ譛峨☆繧九ｂ縺ｮ)
 	m_soundPlayer_p = original->getSoundPlayer();
 	m_characterDeadGraph = original->getCharacterDeadGraph();
 	m_bombGraph = original->getBombGraph();
@@ -235,7 +237,7 @@ World::World(const World* original) :
 	m_backGroundGraph = original->getBackGroundGraph();
 	m_backGroundColor = original->getBackGroundColor();
 
-	// 新規作成するもの (ポインタが変わる)
+	// 譁ｰ隕丈ｽ懈�縺吶ｋ繧ゅ� (繝昴う繝ｳ繧ｿ縺悟､峨ｏ繧)
 	m_camera = new Camera(original->getCamera());
 	for (unsigned int i = 0; i < original->getCharacters().size(); i++) {
 		Character* copy;
@@ -246,7 +248,7 @@ World::World(const World* original) :
 	m_playerChanger = new PlayerChanger(m_characterControllers, m_player_p);
 	for (unsigned int i = 0; i < original->getCharacterControllers().size(); i++) {
 		CharacterController* copy;
-		// Brain驍ｵ�ｺ�ｽ�ｨAction驛｢�ｧ�ｽ�ｳ驛｢譎�ｱ抵ｿｽ�ｽ鬨ｾ蛹�ｽｽ�ｨ驍ｵ�ｺ�ｽ�ｫCharacter驍ｵ�ｺ�ｽ�ｨ驛｢�ｧ�ｽ�ｫ驛｢譎｢�ｽ�｡驛｢譎｢�ｽ�ｩ驛｢�ｧ陷ｻ闌ｨ�ｽ�ｸ�ｽ�｡驍ｵ�ｺ
+		// Brain鬩搾ｽｵ�ｽ�ｺ�ｽ�ｽ�ｽ�ｨAction鬩幢ｽ｢�ｽ�ｧ�ｽ�ｽ�ｽ�ｳ鬩幢ｽ｢隴趣ｿｽ�ｱ謚ｵ�ｿ�ｽ�ｽ�ｽ鬯ｨ�ｾ陋ｹ�ｽ�ｽ�ｽ�ｽ�ｨ鬩搾ｽｵ�ｽ�ｺ�ｽ�ｽ�ｽ�ｫCharacter鬩搾ｽｵ�ｽ�ｺ�ｽ�ｽ�ｽ�ｨ鬩幢ｽ｢�ｽ�ｧ�ｽ�ｽ�ｽ�ｫ鬩幢ｽ｢隴趣ｽ｢�ｽ�ｽ�ｽ�｡鬩幢ｽ｢隴趣ｽ｢�ｽ�ｽ�ｽ�ｩ鬩幢ｽ｢�ｽ�ｧ髯ｷ�ｻ髣鯉ｽｨ�ｽ�ｽ�ｽ�ｸ�ｽ�ｽ�ｽ�｡鬩搾ｽｵ�ｽ�ｺ
 		copy = original->getCharacterControllers()[i]->createCopy(m_characters, m_camera);
 		m_characterControllers.push_back(copy);
 	}
@@ -276,43 +278,43 @@ World::World(const World* original) :
 		m_itemVector.push_back(copy);
 	}
 
-	// 初期設定
+	// 蛻晄悄險ｭ螳
 	m_camera->setEx(m_cameraMaxEx);
 
 }
 
 World::~World() {
-	// 驛｢�ｧ�ｽ�ｫ驛｢譎｢�ｽ�｡驛｢譎｢�ｽ�ｩ驛｢�ｧ髮区ｨ抵ｽ朱ｬｮ�ｯ�ｽ�､驍ｵ�ｺ陷ｷ�ｶ�ｽ
+	// 鬩幢ｽ｢�ｽ�ｧ�ｽ�ｽ�ｽ�ｫ鬩幢ｽ｢隴趣ｽ｢�ｽ�ｽ�ｽ�｡鬩幢ｽ｢隴趣ｽ｢�ｽ�ｽ�ｽ�ｩ鬩幢ｽ｢�ｽ�ｧ鬮ｮ蛹ｺ�ｨ謚ｵ�ｽ譛ｱ�ｬ�ｮ�ｽ�ｯ�ｽ�ｽ�ｽ�､鬩搾ｽｵ�ｽ�ｺ髯ｷ�ｷ�ｽ�ｶ�ｽ�ｽ
 	delete m_camera;
 
-	// 髯ｷ闌ｨ�ｽ�ｨ驛｢�ｧ�ｽ�ｪ驛｢譎�§邵ｺ螟ゑｽｹ�ｧ�ｽ�ｧ驛｢�ｧ�ｽ�ｯ驛｢譎冗樟�ｽ螳壽≧闔ｨ竏晄ｱるし�ｺ陷ｷ�ｶ�ｽ迢暦ｽｸ�ｲ
+	// 鬮ｯ�ｷ髣鯉ｽｨ�ｽ�ｽ�ｽ�ｨ鬩幢ｽ｢�ｽ�ｧ�ｽ�ｽ�ｽ�ｪ鬩幢ｽ｢隴趣ｿｽﾂｧ驍ｵ�ｺ陞溘ｑ�ｽ�ｹ�ｽ�ｧ�ｽ�ｽ�ｽ�ｧ鬩幢ｽ｢�ｽ�ｧ�ｽ�ｽ�ｽ�ｯ鬩幢ｽ｢隴主�讓滂ｿｽ�ｽ陞ｳ螢ｽ竕ｧ髣費ｽｨ遶乗刋�ｱ繧九＠�ｽ�ｺ髯ｷ�ｷ�ｽ�ｶ�ｽ�ｽ霑｢證ｦ�ｽ�ｸ�ｽ�ｲ
 	deleteAllObject(m_stageObjects);
 	deleteAllObject(m_attackObjects);
 	deleteAllObject(m_doorObjects);
 
-	// 髫ｰ�ｾ�ｽ�ｻ髫ｰ�ｦ�ｽ�ｽ邵ｺ鬘費ｽｹ譎�ｽｼ譁絶凾驛｢�ｧ�ｽ�ｯ驛｢譏懶ｽｺ�･霓､譛ｱ�ｫ�ｯ�ｽ�､
+	// 鬮ｫ�ｰ�ｽ�ｾ�ｽ�ｽ�ｽ�ｻ鬮ｫ�ｰ�ｽ�ｦ�ｽ�ｽ�ｽ�ｽ驍ｵ�ｺ鬯倩ｲｻ�ｽ�ｹ隴趣ｿｽ�ｽ�ｼ隴∫ｵｶ蜃ｾ鬩幢ｽ｢�ｽ�ｧ�ｽ�ｽ�ｽ�ｯ鬩幢ｽ｢隴乗��ｽ�ｺ�ｽ�･髴難ｽ､隴幢ｽｱ�ｽ�ｫ�ｽ�ｯ�ｽ�ｽ�ｽ�､
 	for (unsigned i = 0; i < m_animations.size(); i++) {
 		delete m_animations[i];
 	}
 
-	// 驛｢�ｧ�ｽ�｢驛｢�ｧ�ｽ�､驛｢譎｢�ｿ�ｽ�主ｮ壽≧闔ｨ竏晄ｱ
+	// 鬩幢ｽ｢�ｽ�ｧ�ｽ�ｽ�ｽ�｢鬩幢ｽ｢�ｽ�ｧ�ｽ�ｽ�ｽ�､鬩幢ｽ｢隴趣ｽ｢�ｽ�ｿ�ｽ�ｽ�ｽ荳ｻ�ｮ螢ｽ竕ｧ髣費ｽｨ遶乗刋�ｱ
 	for (unsigned i = 0; i < m_itemVector.size(); i++) {
 		delete m_itemVector[i];
 	}
 
-	// 髯ｷ闌ｨ�ｽ�ｨ驛｢�ｧ�ｽ�ｳ驛｢譎｢�ｽ�ｳ驛｢譎冗樟�取ｺｽ�ｹ譎｢�ｽ�ｼ驛｢譎｢�ｽ�ｩ驛｢�ｧ髮区ｨ抵ｽ朱ｬｮ�ｯ�ｽ�､驍ｵ�ｺ陷ｷ�ｶ�ｽ迢暦ｽｸ�ｲ
+	// 鬮ｯ�ｷ髣鯉ｽｨ�ｽ�ｽ�ｽ�ｨ鬩幢ｽ｢�ｽ�ｧ�ｽ�ｽ�ｽ�ｳ鬩幢ｽ｢隴趣ｽ｢�ｽ�ｽ�ｽ�ｳ鬩幢ｽ｢隴主�讓滂ｿｽ蜿厄ｽｺ�ｽ�ｽ�ｹ隴趣ｽ｢�ｽ�ｽ�ｽ�ｼ鬩幢ｽ｢隴趣ｽ｢�ｽ�ｽ�ｽ�ｩ鬩幢ｽ｢�ｽ�ｧ鬮ｮ蛹ｺ�ｨ謚ｵ�ｽ譛ｱ�ｬ�ｮ�ｽ�ｯ�ｽ�ｽ�ｽ�､鬩搾ｽｵ�ｽ�ｺ髯ｷ�ｷ�ｽ�ｶ�ｽ�ｽ霑｢證ｦ�ｽ�ｸ�ｽ�ｲ
 	for (unsigned int i = 0; i < m_characterControllers.size(); i++) {
 		delete m_characterControllers[i];
 	}
 
-	// 髯ｷ闌ｨ�ｽ�ｨ驛｢�ｧ�ｽ�ｭ驛｢譎｢�ｽ�｣驛｢譎｢�ｽ�ｩ驛｢�ｧ�ｽ�ｯ驛｢�ｧ�ｽ�ｿ驛｢譎｢�ｽ�ｼ驛｢�ｧ髮区ｨ抵ｽ朱ｬｮ�ｯ�ｽ�､驍ｵ�ｺ陷ｷ�ｶ�ｽ迢暦ｽｸ�ｲ
+	// 鬮ｯ�ｷ髣鯉ｽｨ�ｽ�ｽ�ｽ�ｨ鬩幢ｽ｢�ｽ�ｧ�ｽ�ｽ�ｽ�ｭ鬩幢ｽ｢隴趣ｽ｢�ｽ�ｽ�ｽ�｣鬩幢ｽ｢隴趣ｽ｢�ｽ�ｽ�ｽ�ｩ鬩幢ｽ｢�ｽ�ｧ�ｽ�ｽ�ｽ�ｯ鬩幢ｽ｢�ｽ�ｧ�ｽ�ｽ�ｽ�ｿ鬩幢ｽ｢隴趣ｽ｢�ｽ�ｽ�ｽ�ｼ鬩幢ｽ｢�ｽ�ｧ鬮ｮ蛹ｺ�ｨ謚ｵ�ｽ譛ｱ�ｬ�ｮ�ｽ�ｯ�ｽ�ｽ�ｽ�､鬩搾ｽｵ�ｽ�ｺ髯ｷ�ｷ�ｽ�ｶ�ｽ�ｽ霑｢證ｦ�ｽ�ｸ�ｽ�ｲ
 	for (unsigned int i = 0; i < m_characters.size(); i++) {
 		delete m_characters[i];
 	}
 
 	delete m_playerChanger;
 
-	// 鬮｢�ｭ隴ｴ�ｧ陷搾ｽｹ
+	// 鬯ｮ�｢�ｽ�ｭ髫ｴ�ｴ�ｽ�ｧ髯ｷ謳ｾ�ｽ�ｹ
 	if (!m_duplicationFlag) {
 		DeleteGraph(m_backGroundGraph);
 		delete m_characterDeadGraph;
@@ -320,6 +322,8 @@ World::~World() {
 		DeleteSoundMem(m_characterDeadSound);
 		DeleteSoundMem(m_bombSound);
 		DeleteSoundMem(m_doorSound);
+		DeleteSoundMem(m_cameraInSound);
+		DeleteSoundMem(m_cameraOutSound);
 	}
 
 	if (m_objectConversation != nullptr) {
@@ -327,7 +331,7 @@ World::~World() {
 	}
 }
 
-// Drawer鬨ｾ蛹�ｽｽ�ｨ�ｽ�ｽ陷･�ｾharacterAction驍ｵ�ｺ�ｽ�ｮvector驛｢�ｧ陞ｳ螟ｲ�ｽ�ｿ隴∫ｵｶ�ｽ
+// Drawer鬯ｨ�ｾ陋ｹ�ｽ�ｽ�ｽ�ｽ�ｨ�ｽ�ｽ�ｽ�ｽ髯ｷ�･�ｽ�ｾharacterAction鬩搾ｽｵ�ｽ�ｺ�ｽ�ｽ�ｽ�ｮvector鬩幢ｽ｢�ｽ�ｧ髯橸ｽｳ陞滂ｽｲ�ｽ�ｽ�ｽ�ｿ髫ｴ竏ｫ�ｵ�ｶ�ｽ�ｽ
 vector<const CharacterAction*> World::getActions() const {
 	vector<const CharacterAction*> actions;
 	size_t size = m_characterControllers.size();
@@ -339,7 +343,7 @@ vector<const CharacterAction*> World::getActions() const {
 	return actions;
 }
 
-// Drawer鬨ｾ蛹�ｽｽ�ｨ�ｽ�ｽ陷夲ｽｹbject驍ｵ�ｺ�ｽ�ｮvector驛｢�ｧ陞ｳ螟ｲ�ｽ�ｿ隴∫ｵｶ�ｽ
+// Drawer鬯ｨ�ｾ陋ｹ�ｽ�ｽ�ｽ�ｽ�ｨ�ｽ�ｽ�ｽ�ｽ髯ｷ螟ｲ�ｽ�ｹbject鬩搾ｽｵ�ｽ�ｺ�ｽ�ｽ�ｽ�ｮvector鬩幢ｽ｢�ｽ�ｧ髯橸ｽｳ陞滂ｽｲ�ｽ�ｽ�ｽ�ｿ髫ｴ竏ｫ�ｵ�ｶ�ｽ�ｽ
 vector<const Object*> World::getFrontObjects() const {
 
 	vector<const Object*> allObjects;
@@ -348,7 +352,7 @@ vector<const Object*> World::getFrontObjects() const {
 	return allObjects;
 }
 
-// Drawer鬨ｾ蛹�ｽｽ�ｨ�ｽ�ｽ陞｢�ｹ邵ｺ蜀暦ｽｹ譎｢�ｽ�｣驛｢譎｢�ｽ�ｩ驛｢�ｧ陋ｹ�ｻ�ｽ鬘蜍滂ｽｾ魃会ｽｽ蜥ｲ�ｸ�ｺ�ｽ�ｫ髫ｰ陷諤懈�驍ｵ�ｺ陷ｷ�ｶ�ｽ霆恵ject驍ｵ�ｺ�ｽ�ｮvector驛｢�ｧ陞ｳ螟ｲ�ｽ�ｿ隴∫ｵｶ�ｽ
+// Drawer鬯ｨ�ｾ陋ｹ�ｽ�ｽ�ｽ�ｽ�ｨ�ｽ�ｽ�ｽ�ｽ髯橸ｽ｢�ｽ�ｹ驍ｵ�ｺ陷證ｦ�ｽ�ｹ隴趣ｽ｢�ｽ�ｽ�ｽ�｣鬩幢ｽ｢隴趣ｽ｢�ｽ�ｽ�ｽ�ｩ鬩幢ｽ｢�ｽ�ｧ髯具ｽｹ�ｽ�ｻ�ｽ�ｽ鬯陷肴ｻゑｽｽ�ｾ鬲�ｼ夲ｽｽ�ｽ陷･�ｲ�ｽ�ｸ�ｽ�ｺ�ｽ�ｽ�ｽ�ｫ鬮ｫ�ｰ髯ｷ隲､諛茨ｿｽ鬩搾ｽｵ�ｽ�ｺ髯ｷ�ｷ�ｽ�ｶ�ｽ�ｽ髴��ject鬩搾ｽｵ�ｽ�ｺ�ｽ�ｽ�ｽ�ｮvector鬩幢ｽ｢�ｽ�ｧ髯橸ｽｳ陞滂ｽｲ�ｽ�ｽ�ｽ�ｿ髫ｴ竏ｫ�ｵ�ｶ�ｽ�ｽ
 vector<const Object*> World::getBackObjects() const {
 
 	vector<const Object*> allObjects;
@@ -358,15 +362,15 @@ vector<const Object*> World::getBackObjects() const {
 	return allObjects;
 }
 
-// Drawer鬨ｾ蛹�ｽｽ�ｨ�ｽ�ｽ陷ｩ�ｯimation驍ｵ�ｺ�ｽ�ｮvector驛｢�ｧ陞ｳ螟ｲ�ｽ�ｿ隴∫ｵｶ�ｽ
+// Drawer鬯ｨ�ｾ陋ｹ�ｽ�ｽ�ｽ�ｽ�ｨ�ｽ�ｽ�ｽ�ｽ髯ｷ�ｩ�ｽ�ｯimation鬩搾ｽｵ�ｽ�ｺ�ｽ�ｽ�ｽ�ｮvector鬩幢ｽ｢�ｽ�ｧ髯橸ｽｳ陞滂ｽｲ�ｽ�ｽ�ｽ�ｿ髫ｴ竏ｫ�ｵ�ｶ�ｽ�ｽ
 vector<const Animation*> World::getConstAnimations() const {
 
 	vector<const Animation*> allAnimations;
 
-	// 驛｢�ｧ�ｽ�ｨ驛｢譎�ｽｼ譁絶凾驛｢�ｧ�ｽ�ｯ驛｢
+	// 鬩幢ｽ｢�ｽ�ｧ�ｽ�ｽ�ｽ�ｨ鬩幢ｽ｢隴趣ｿｽ�ｽ�ｼ隴∫ｵｶ蜃ｾ鬩幢ｽ｢�ｽ�ｧ�ｽ�ｽ�ｽ�ｯ鬩幢ｽ｢
 	allAnimations.insert(allAnimations.end(), m_animations.begin(), m_animations.end());
 
-	// 驛｢�ｧ�ｽ�｢驛｢�ｧ�ｽ�､驛｢譎｢�ｿ�ｽ�
+	// 鬩幢ｽ｢�ｽ�ｧ�ｽ�ｽ�ｽ�｢鬩幢ｽ｢�ｽ�ｧ�ｽ�ｽ�ｽ�､鬩幢ｽ｢隴趣ｽ｢�ｽ�ｿ�ｽ�ｽ�ｽ
 	for (unsigned int i = 0; i < m_itemVector.size(); i++) {
 		if (!m_itemVector[i]->getDeleteFlag()) {
 			allAnimations.push_back(m_itemVector[i]->getAnimation());
@@ -376,7 +380,7 @@ vector<const Animation*> World::getConstAnimations() const {
 	return allAnimations;
 }
 
-// 髯ｷ�ｷ隶朱｡披�驍ｵ�ｺ�ｽ�ｧ驛｢�ｧ�ｽ�ｭ驛｢譎｢�ｽ�｣驛｢譎｢�ｽ�ｩ髫ｶ隲幢ｿｽ�ｽ�ｴ�ｽ�｢
+// 鬮ｯ�ｷ�ｽ�ｷ髫ｶ譛ｱ�｡謚ｫ�ｽ鬩搾ｽｵ�ｽ�ｺ�ｽ�ｽ�ｽ�ｧ鬩幢ｽ｢�ｽ�ｧ�ｽ�ｽ�ｽ�ｭ鬩幢ｽ｢隴趣ｽ｢�ｽ�ｽ�ｽ�｣鬩幢ｽ｢隴趣ｽ｢�ｽ�ｽ�ｽ�ｩ鬮ｫ�ｶ髫ｲ蟷｢�ｿ�ｽ�ｽ�ｽ�ｽ�ｴ�ｽ�ｽ�ｽ�｢
 Character* World::getCharacterWithName(string characterName) const {
 	for (unsigned int i = 0; i < m_characters.size(); i++) {
 		if (m_characters[i]->getName() == characterName) {
@@ -386,7 +390,7 @@ Character* World::getCharacterWithName(string characterName) const {
 	return nullptr;
 }
 
-// 髯ｷ�ｷ隶朱｡披�驍ｵ�ｺ�ｽ�ｧ驛｢�ｧ�ｽ�ｳ驛｢譎｢�ｽ�ｳ驛｢譎冗樟�取ｺｽ�ｹ譎｢�ｽ�ｼ驛｢譎｢�ｽ�ｩ髫ｶ隲幢ｿｽ�ｽ�ｴ�ｽ�｢
+// 鬮ｯ�ｷ�ｽ�ｷ髫ｶ譛ｱ�｡謚ｫ�ｽ鬩搾ｽｵ�ｽ�ｺ�ｽ�ｽ�ｽ�ｧ鬩幢ｽ｢�ｽ�ｧ�ｽ�ｽ�ｽ�ｳ鬩幢ｽ｢隴趣ｽ｢�ｽ�ｽ�ｽ�ｳ鬩幢ｽ｢隴主�讓滂ｿｽ蜿厄ｽｺ�ｽ�ｽ�ｹ隴趣ｽ｢�ｽ�ｽ�ｽ�ｼ鬩幢ｽ｢隴趣ｽ｢�ｽ�ｽ�ｽ�ｩ鬮ｫ�ｶ髫ｲ蟷｢�ｿ�ｽ�ｽ�ｽ�ｽ�ｴ�ｽ�ｽ�ｽ�｢
 CharacterController* World::getControllerWithName(string characterName) const {
 	for (unsigned int i = 0; i < m_characters.size(); i++) {
 		if (m_characterControllers[i]->getAction()->getCharacter()->getName() == characterName) {
@@ -396,7 +400,7 @@ CharacterController* World::getControllerWithName(string characterName) const {
 	return nullptr;
 }
 
-// ID驍ｵ�ｺ�ｽ�ｧ驛｢�ｧ�ｽ�ｭ驛｢譎｢�ｽ�｣驛｢譎｢�ｽ�ｩ髫ｶ隲幢ｿｽ�ｽ�ｴ�ｽ�｢
+// ID鬩搾ｽｵ�ｽ�ｺ�ｽ�ｽ�ｽ�ｧ鬩幢ｽ｢�ｽ�ｧ�ｽ�ｽ�ｽ�ｭ鬩幢ｽ｢隴趣ｽ｢�ｽ�ｽ�ｽ�｣鬩幢ｽ｢隴趣ｽ｢�ｽ�ｽ�ｽ�ｩ鬮ｫ�ｶ髫ｲ蟷｢�ｿ�ｽ�ｽ�ｽ�ｽ�ｴ�ｽ�ｽ�ｽ�｢
 Character* World::getCharacterWithId(int id) const {
 	for (unsigned int i = 0; i < m_characters.size(); i++) {
 		if (m_characters[i]->getId() == id) {
@@ -406,7 +410,7 @@ Character* World::getCharacterWithId(int id) const {
 	return nullptr;
 }
 
-// ID髫ｰ蜴�ｽｿ�ｽ�ｽ�ｮ陞｢�ｹ邵ｲ驕排ain髯樊ｺｽ蛻､陝ｲ�ｩ
+// ID鬮ｫ�ｰ陷ｴ�ｽ�ｽ�ｿ�ｽ�ｽ�ｽ�ｽ�ｽ�ｮ髯橸ｽ｢�ｽ�ｹ驍ｵ�ｲ鬩墓賜ain鬮ｯ讓奇ｽｺ�ｽ陋ｻ�､髯晢ｽｲ�ｽ�ｩ
 void World::setBrainWithId(int id, Brain* brain) {
 	for (unsigned int i = 0; i < m_characterControllers.size(); i++) {
 		if (m_characterControllers[i]->getAction()->getCharacter()->getId() == id) {
@@ -415,16 +419,16 @@ void World::setBrainWithId(int id, Brain* brain) {
 	}
 }
 
-// 驛｢�ｧ�ｽ�ｹ驛｢譎冗樟�ｽ�ｽ驛｢譎｢�ｽ�ｪ驛｢譎｢�ｽ�ｼ驍ｵ�ｺ�ｽ�ｫ驛｢�ｧ陋ｹ�ｻ�ｽ遏ｩ諱�ｿｽ�ｽ髯ｷ驛｢�ｧ�ｽ�ｭ驛｢譎｢�ｽ�｣驛｢譎｢�ｽ�ｩ驛｢�ｧ�ｽ�ｯ驛｢�ｧ�ｽ�ｿ驛｢譎｢�ｽ�ｼ
+// 鬩幢ｽ｢�ｽ�ｧ�ｽ�ｽ�ｽ�ｹ鬩幢ｽ｢隴主�讓滂ｿｽ�ｽ�ｽ�ｽ鬩幢ｽ｢隴趣ｽ｢�ｽ�ｽ�ｽ�ｪ鬩幢ｽ｢隴趣ｽ｢�ｽ�ｽ�ｽ�ｼ鬩搾ｽｵ�ｽ�ｺ�ｽ�ｽ�ｽ�ｫ鬩幢ｽ｢�ｽ�ｧ髯具ｽｹ�ｽ�ｻ�ｽ�ｽ驕擾ｽｩ隲ｱ�ｽ�ｿ�ｽ�ｽ�ｽ鬮ｯ�ｷ鬩幢ｽ｢�ｽ�ｧ�ｽ�ｽ�ｽ�ｭ鬩幢ｽ｢隴趣ｽ｢�ｽ�ｽ�ｽ�｣鬩幢ｽ｢隴趣ｽ｢�ｽ�ｽ�ｽ�ｩ鬩幢ｽ｢�ｽ�ｧ�ｽ�ｽ�ｽ�ｯ鬩幢ｽ｢�ｽ�ｧ�ｽ�ｽ�ｽ�ｿ鬩幢ｽ｢隴趣ｽ｢�ｽ�ｽ�ｽ�ｼ
 void World::addCharacter(CharacterLoader* characterLoader) {
 	pair<vector<Character*>, vector<CharacterController*> > p = characterLoader->getCharacters(m_camera, m_soundPlayer_p, m_areaNum);
-	// 驛｢�ｧ�ｽ�ｭ驛｢譎｢�ｽ�｣驛｢譎｢�ｽ�ｩ驛｢�ｧ�ｽ�ｯ驛｢�ｧ�ｽ�ｿ驛｢譎｢�ｽ�ｼ
+	// 鬩幢ｽ｢�ｽ�ｧ�ｽ�ｽ�ｽ�ｭ鬩幢ｽ｢隴趣ｽ｢�ｽ�ｽ�ｽ�｣鬩幢ｽ｢隴趣ｽ｢�ｽ�ｽ�ｽ�ｩ鬩幢ｽ｢�ｽ�ｧ�ｽ�ｽ�ｽ�ｯ鬩幢ｽ｢�ｽ�ｧ�ｽ�ｽ�ｽ�ｿ鬩幢ｽ｢隴趣ｽ｢�ｽ�ｽ�ｽ�ｼ
 	m_characters.insert(m_characters.end(), p.first.begin(), p.first.end());
-	// 驛｢�ｧ�ｽ�ｳ驛｢譎｢�ｽ�ｳ驛｢譎冗樟�取ｺｽ�ｹ譎｢�ｽ�ｼ驛｢譎｢�ｽ�ｩ
+	// 鬩幢ｽ｢�ｽ�ｧ�ｽ�ｽ�ｽ�ｳ鬩幢ｽ｢隴趣ｽ｢�ｽ�ｽ�ｽ�ｳ鬩幢ｽ｢隴主�讓滂ｿｽ蜿厄ｽｺ�ｽ�ｽ�ｹ隴趣ｽ｢�ｽ�ｽ�ｽ�ｼ鬩幢ｽ｢隴趣ｽ｢�ｽ�ｽ�ｽ�ｩ
 	m_characterControllers.insert(m_characterControllers.end(), p.second.begin(), p.second.end());
 }
 
-// 郢ｧ�ｹ郢晏現�ｽ郢晢ｽｪ郢晢ｽｼ邵ｺ�ｫ郢ｧ蛹ｻ�狗ｹｧ�ｭ郢晢ｽ｣郢晢ｽｩ邵ｺ�ｮ隲､�ｧ髢ｭ�ｽ陞溽甥蝟ｧ
+// 驛｢�ｧ�ｽ�ｹ驛｢譎冗樟�ｽ�ｽ驛｢譎｢�ｽ�ｪ驛｢譎｢�ｽ�ｼ驍ｵ�ｺ�ｽ�ｫ驛｢�ｧ陋ｹ�ｻ�ｽ迢暦ｽｹ�ｧ�ｽ�ｭ驛｢譎｢�ｽ�｣驛｢譎｢�ｽ�ｩ驍ｵ�ｺ�ｽ�ｮ髫ｲ�､�ｽ�ｧ鬮｢�ｭ�ｽ�ｽ髯樊ｺｽ逕･陜滂ｽｧ
 void World::changeCharacterVersion(int version) {
 	for (unsigned int i = 0; i < m_characters.size(); i++) {
 		m_characters[i]->changeInfoVersion(version);
@@ -433,43 +437,43 @@ void World::changeCharacterVersion(int version) {
 
 void World::addObject(ObjectLoader* objectLoader) {
 	pair<vector<Object*>, vector<Object*> > p = objectLoader->getObjects(m_areaNum);
-	// 髯橸ｽ｢遶丞､ｲ�ｽ�ｽ
+	// 鬮ｯ讖ｸ�ｽ�｢驕ｶ荳橸ｽ､�ｲ�ｽ�ｽ�ｽ�ｽ
 	m_stageObjects.insert(m_stageObjects.end(), p.first.begin(), p.first.end());
-	// 驛｢譎擾ｽｳ�ｨ邵ｺ
+	// 鬩幢ｽ｢隴取得�ｽ�ｳ�ｽ�ｨ驍ｵ�ｺ
 	m_doorObjects.insert(m_doorObjects.end(), p.second.begin(), p.second.end());
 }
 
-// 驛｢譎丞ｹｲ�取ｨ抵ｽｹ�ｧ�ｽ�､驛｢譎｢�ｽ�､驛｢譎｢�ｽ�ｼ驍ｵ�ｺ�ｽ�ｮHP驍ｵ�ｺ0驍ｵ�ｺ�ｽ�ｪ驛｢�ｧ雎ｸ�ｲrue
+// 鬩幢ｽ｢隴惹ｸ橸ｽｹ�ｲ�ｽ蜿厄ｽｨ謚ｵ�ｽ�ｹ�ｽ�ｧ�ｽ�ｽ�ｽ�､鬩幢ｽ｢隴趣ｽ｢�ｽ�ｽ�ｽ�､鬩幢ｽ｢隴趣ｽ｢�ｽ�ｽ�ｽ�ｼ鬩搾ｽｵ�ｽ�ｺ�ｽ�ｽ�ｽ�ｮHP鬩搾ｽｵ�ｽ�ｺ0鬩搾ｽｵ�ｽ�ｺ�ｽ�ｽ�ｽ�ｪ鬩幢ｽ｢�ｽ�ｧ髮趣ｽｸ�ｽ�ｲrue
 bool World::playerDead() {
 	return m_player_p->getHp() <= 0;
 }
 
-// 驛｢譎丞ｹｲ�取ｨ抵ｽｹ�ｧ�ｽ�､驛｢譎｢�ｽ�､驛｢譎｢�ｽ�ｼ驍ｵ�ｺ�ｽ�ｮHP驛｢�ｧ隶難ｽｽAX驍ｵ�ｺ�ｽ�ｫ驍ｵ�ｺ陷ｷ�ｶ�ｽ
+// 鬩幢ｽ｢隴惹ｸ橸ｽｹ�ｲ�ｽ蜿厄ｽｨ謚ｵ�ｽ�ｹ�ｽ�ｧ�ｽ�ｽ�ｽ�､鬩幢ｽ｢隴趣ｽ｢�ｽ�ｽ�ｽ�､鬩幢ｽ｢隴趣ｽ｢�ｽ�ｽ�ｽ�ｼ鬩搾ｽｵ�ｽ�ｺ�ｽ�ｽ�ｽ�ｮHP鬩幢ｽ｢�ｽ�ｧ髫ｶ髮｣�ｽ�ｽAX鬩搾ｽｵ�ｽ�ｺ�ｽ�ｽ�ｽ�ｫ鬩搾ｽｵ�ｽ�ｺ髯ｷ�ｷ�ｽ�ｶ�ｽ�ｽ
 void World::playerHpReset() {
 	m_player_p->setHp(m_player_p->getMaxHp());
 }
 
 
-// 驛｢�ｧ�ｽ�ｹ驛｢�ｧ�ｽ�ｭ驛｢譎｢�ｽ�ｫ鬨ｾ蜈ｷ�ｽ�ｺ髯ｷ讎頑｡�ｿｽ�ｼ陞｢�ｹ郢晢ｽｯ驛｢譎｢�ｽ�ｼ驛｢譎冗樟�ｽ蟾ｽreeze驍ｵ�ｺ�ｽ�ｫ驍ｵ�ｺ陷ｷ�ｶ�ｽ
+// 鬩幢ｽ｢�ｽ�ｧ�ｽ�ｽ�ｽ�ｹ鬩幢ｽ｢�ｽ�ｧ�ｽ�ｽ�ｽ�ｭ鬩幢ｽ｢隴趣ｽ｢�ｽ�ｽ�ｽ�ｫ鬯ｨ�ｾ陷茨ｽｷ�ｽ�ｽ�ｽ�ｺ鬮ｯ�ｷ隶朱托ｽ｡�ｽ�ｿ�ｽ�ｽ�ｼ髯橸ｽ｢�ｽ�ｹ驛｢譎｢�ｽ�ｯ鬩幢ｽ｢隴趣ｽ｢�ｽ�ｽ�ｽ�ｼ鬩幢ｽ｢隴主�讓滂ｿｽ�ｽ陝ｾ�ｽreeze鬩搾ｽｵ�ｽ�ｺ�ｽ�ｽ�ｽ�ｫ鬩搾ｽｵ�ｽ�ｺ髯ｷ�ｷ�ｽ�ｶ�ｽ�ｽ
 void World::setSkillFlag(bool skillFlag) { 
 	m_skillFlag = skillFlag;
 	for (unsigned int i = 0; i < m_characterControllers.size(); i++) {
-		if (m_characterControllers[i]->getAction()->getCharacter()->getName() == "驛｢譏懶ｽｸ螂�ｽｿ�ｽ驛｢") {
+		if (m_characterControllers[i]->getAction()->getCharacter()->getName() == "鬩幢ｽ｢隴乗��ｽ�ｸ陞ゑｿｽ�ｽ�ｿ�ｽ�ｽ鬩幢ｽ｢") {
 			m_characterControllers[i]->setCharacterFreeze(skillFlag);
 		}
 	}
 }
 
-// 驛｢�ｧ�ｽ�ｹ驛｢�ｧ�ｽ�ｭ驛｢譎｢�ｽ�ｫ鬨ｾ蜈ｷ�ｽ�ｺ髯ｷ讎頑｡�ｿｽ�ｼ陞溷･�ｽｽ�､�ｽ�ｽ�ｽ�｣�ｽ�ｽ驍ｵ�ｺ�ｽ�ｮ驛｢譏懶ｽｸ螂�ｽｿ�ｽ驛｢譎槭Γ�ｽ�ｿ�ｽ�ｽ髯ｷ鬨ｾ蛹�ｽｽ�ｨ
+// 鬩幢ｽ｢�ｽ�ｧ�ｽ�ｽ�ｽ�ｹ鬩幢ｽ｢�ｽ�ｧ�ｽ�ｽ�ｽ�ｭ鬩幢ｽ｢隴趣ｽ｢�ｽ�ｽ�ｽ�ｫ鬯ｨ�ｾ陷茨ｽｷ�ｽ�ｽ�ｽ�ｺ鬮ｯ�ｷ隶朱托ｽ｡�ｽ�ｿ�ｽ�ｽ�ｼ髯樊ｺｷ�･�ｽ�ｽ�ｽ�ｽ�､�ｽ�ｽ�ｽ�ｽ�ｽ�ｽ�ｽ�｣�ｽ�ｽ�ｽ�ｽ鬩搾ｽｵ�ｽ�ｺ�ｽ�ｽ�ｽ�ｮ鬩幢ｽ｢隴乗��ｽ�ｸ陞ゑｿｽ�ｽ�ｿ�ｽ�ｽ鬩幢ｽ｢隴取ｧｭﾎ難ｿｽ�ｽ�ｽ�ｿ�ｽ�ｽ�ｽ�ｽ鬮ｯ�ｷ鬯ｨ�ｾ陋ｹ�ｽ�ｽ�ｽ�ｽ�ｨ
 void World::pushCharacter(Character* character, CharacterController* controller) {
 	m_characters.push_back(character);
 	m_characterControllers.push_back(controller);
 }
 
-// 驛｢�ｧ�ｽ�ｹ驛｢�ｧ�ｽ�ｭ驛｢譎｢�ｽ�ｫ鬨ｾ蜈ｷ�ｽ�ｺ髯ｷ讎頑｡�ｿｽ�ｼ陞溷･�ｽｽ�､�ｽ�ｽ�ｽ�｣�ｽ�ｽ驍ｵ�ｺ�ｽ�ｮ驛｢譏懶ｽｸ螂�ｽｿ�ｽ驛｢譏懶ｽｺ�･霓､譛ｱ�ｫ�ｯ�ｽ�､鬨ｾ蛹�ｽｽ�ｨ
+// 鬩幢ｽ｢�ｽ�ｧ�ｽ�ｽ�ｽ�ｹ鬩幢ｽ｢�ｽ�ｧ�ｽ�ｽ�ｽ�ｭ鬩幢ｽ｢隴趣ｽ｢�ｽ�ｽ�ｽ�ｫ鬯ｨ�ｾ陷茨ｽｷ�ｽ�ｽ�ｽ�ｺ鬮ｯ�ｷ隶朱托ｽ｡�ｽ�ｿ�ｽ�ｽ�ｼ髯樊ｺｷ�･�ｽ�ｽ�ｽ�ｽ�､�ｽ�ｽ�ｽ�ｽ�ｽ�ｽ�ｽ�｣�ｽ�ｽ�ｽ�ｽ鬩搾ｽｵ�ｽ�ｺ�ｽ�ｽ�ｽ�ｮ鬩幢ｽ｢隴乗��ｽ�ｸ陞ゑｿｽ�ｽ�ｿ�ｽ�ｽ鬩幢ｽ｢隴乗��ｽ�ｺ�ｽ�･髴難ｽ､隴幢ｽｱ�ｽ�ｫ�ｽ�ｯ�ｽ�ｽ�ｽ�､鬯ｨ�ｾ陋ｹ�ｽ�ｽ�ｽ�ｽ�ｨ
 void World::popCharacterController(int id) {
 	for (unsigned int i = 0; i < m_characterControllers.size(); i++) {
-		if (m_characterControllers[i]->getAction()->getCharacter()->getName() == "驛｢譏懶ｽｸ螂�ｽｿ�ｽ驛｢") {
+		if (m_characterControllers[i]->getAction()->getCharacter()->getName() == "鬩幢ｽ｢隴乗��ｽ�ｸ陞ゑｿｽ�ｽ�ｿ�ｽ�ｽ鬩幢ｽ｢") {
 			continue;
 		}
 		if (m_characterControllers[i]->getAction()->getCharacter()->getId() == id) {
@@ -479,9 +483,9 @@ void World::popCharacterController(int id) {
 			i--;
 		}
 	}
-	// Target驍ｵ�ｺ�ｽ�ｫ驍ｵ�ｺ陷会ｽｱ遯ｶ�ｻ驍ｵ�ｺ�ｽ�ｽ�ｽ蟶ｰI驍ｵ�ｺ�ｽ�ｯ髯樊ｻ薙§�ｽ驍ｵ�ｺ�ｽ�ｦ驛｢�ｧ郢ｧ�ｽ�ｽ閾･�ｸ�ｺ�ｽ�ｽ隨ｳ�ｽ�ｸ�ｺ�ｽ�ｽ�ｽ�ｽ驍ｵ�ｺ�ｽ�ｧHP=0驍ｵ�ｺ�ｽ�ｫ驍ｵ�ｺ陷ｷ�ｶ�ｽ迢暦ｽｸ�ｲ
+	// Target鬩搾ｽｵ�ｽ�ｺ�ｽ�ｽ�ｽ�ｫ鬩搾ｽｵ�ｽ�ｺ髯ｷ莨夲ｽｽ�ｱ驕ｯ�ｶ�ｽ�ｻ鬩搾ｽｵ�ｽ�ｺ�ｽ�ｽ�ｽ�ｽ�ｽ�ｽ陝ｶ�ｰI鬩搾ｽｵ�ｽ�ｺ�ｽ�ｽ�ｽ�ｯ鬮ｯ讓奇ｽｻ阮卍ｧ�ｽ�ｽ鬩搾ｽｵ�ｽ�ｺ�ｽ�ｽ�ｽ�ｦ鬩幢ｽ｢�ｽ�ｧ驛｢�ｧ�ｽ�ｽ�ｽ�ｽ髢ｾ�･�ｽ�ｸ�ｽ�ｺ�ｽ�ｽ�ｽ�ｽ髫ｨ�ｳ�ｽ�ｽ�ｽ�ｸ�ｽ�ｺ�ｽ�ｽ�ｽ�ｽ�ｽ�ｽ�ｽ�ｽ鬩搾ｽｵ�ｽ�ｺ�ｽ�ｽ�ｽ�ｧHP=0鬩搾ｽｵ�ｽ�ｺ�ｽ�ｽ�ｽ�ｫ鬩搾ｽｵ�ｽ�ｺ髯ｷ�ｷ�ｽ�ｶ�ｽ�ｽ霑｢證ｦ�ｽ�ｸ�ｽ�ｲ
 	for (unsigned int i = 0; i < m_characters.size(); i++) {
-		if (m_characters[i]->getName() == "驛｢譏懶ｽｸ螂�ｽｿ�ｽ驛｢") {
+		if (m_characters[i]->getName() == "鬩幢ｽ｢隴乗��ｽ�ｸ陞ゑｿｽ�ｽ�ｿ�ｽ�ｽ鬩幢ｽ｢") {
 			continue;
 		}
 		if (m_characters[i]->getId() == id) {
@@ -490,10 +494,10 @@ void World::popCharacterController(int id) {
 	}
 }
 
-// 驛｢�ｧ�ｽ�ｹ驛｢�ｧ�ｽ�ｭ驛｢譎｢�ｽ�ｫ鬨ｾ蜈ｷ�ｽ�ｺ髯ｷ讎頑｡�ｿｽ�ｼ陞｢�ｹ�取ｨ抵ｽｹ�ｧ�ｽ�ｳ驛｢譎｢�ｽ�ｼ驛｢驛｢�ｧ陷托ｿｽ�ｽ�ｽ隲幄肩�ｿ�ｽ驍ｵ�ｺ陟搾ｽｺ�ｽ�ｽ�ｽ�ｿ鬨ｾ蛹�ｽｽ�ｨ驛｢�ｧ陝ｶ譎擾ｽｹ謌頑ｲ
+// 鬩幢ｽ｢�ｽ�ｧ�ｽ�ｽ�ｽ�ｹ鬩幢ｽ｢�ｽ�ｧ�ｽ�ｽ�ｽ�ｭ鬩幢ｽ｢隴趣ｽ｢�ｽ�ｽ�ｽ�ｫ鬯ｨ�ｾ陷茨ｽｷ�ｽ�ｽ�ｽ�ｺ鬮ｯ�ｷ隶朱托ｽ｡�ｽ�ｿ�ｽ�ｽ�ｼ髯橸ｽ｢�ｽ�ｹ�ｽ蜿厄ｽｨ謚ｵ�ｽ�ｹ�ｽ�ｧ�ｽ�ｽ�ｽ�ｳ鬩幢ｽ｢隴趣ｽ｢�ｽ�ｽ�ｽ�ｼ鬩幢ｽ｢鬩幢ｽ｢�ｽ�ｧ髯ｷ謇假ｽｿ�ｽ�ｽ�ｽ�ｽ�ｽ髫ｲ蟷�か�ｽ�ｿ�ｽ�ｽ鬩搾ｽｵ�ｽ�ｺ髯滓誓�ｽ�ｺ�ｽ�ｽ�ｽ�ｽ�ｽ�ｽ�ｽ�ｿ鬯ｨ�ｾ陋ｹ�ｽ�ｽ�ｽ�ｽ�ｨ鬩幢ｽ｢�ｽ�ｧ髯晢ｽｶ隴取得�ｽ�ｹ隰碁托ｽｲ
 void World::createRecorder() {
 	for (unsigned int i = 0; i < m_characterControllers.size(); i++) {
-		if (m_characterControllers[i]->getAction()->getCharacter()->getName() == "驛｢譏懶ｽｸ螂�ｽｿ�ｽ驛｢") { continue; }
+		if (m_characterControllers[i]->getAction()->getCharacter()->getName() == "鬩幢ｽ｢隴乗��ｽ�ｸ陞ゑｿｽ�ｽ�ｿ�ｽ�ｽ鬩幢ｽ｢") { continue; }
 		m_characterControllers[i]->setStickRecorder(new ControllerRecorder(0));
 		m_characterControllers[i]->setJumpRecorder(new ControllerRecorder(0));
 		m_characterControllers[i]->setSquatRecorder(new ControllerRecorder(0));
@@ -503,27 +507,27 @@ void World::createRecorder() {
 	}
 }
 
-// 驛｢�ｧ�ｽ�ｹ驛｢�ｧ�ｽ�ｭ驛｢譎｢�ｽ�ｫ鬨ｾ蜈ｷ�ｽ�ｺ髯ｷ讎頑｡�ｿｽ�ｼ陞｢�ｹ�取ｨ抵ｽｹ�ｧ�ｽ�ｳ驛｢譎｢�ｽ�ｼ驛｢驍ｵ�ｺ�ｽ�ｮ髫ｴ蠑ｱ�玖将�｣驛｢�ｧ陷ｻ蝓蜻ｵ蟠戊ｭ擾ｽｴ遶頑･｢�ｬ魃会ｽｽ�ｻ驍ｵ�ｺ
+// 鬩幢ｽ｢�ｽ�ｧ�ｽ�ｽ�ｽ�ｹ鬩幢ｽ｢�ｽ�ｧ�ｽ�ｽ�ｽ�ｭ鬩幢ｽ｢隴趣ｽ｢�ｽ�ｽ�ｽ�ｫ鬯ｨ�ｾ陷茨ｽｷ�ｽ�ｽ�ｽ�ｺ鬮ｯ�ｷ隶朱托ｽ｡�ｽ�ｿ�ｽ�ｽ�ｼ髯橸ｽ｢�ｽ�ｹ�ｽ蜿厄ｽｨ謚ｵ�ｽ�ｹ�ｽ�ｧ�ｽ�ｽ�ｽ�ｳ鬩幢ｽ｢隴趣ｽ｢�ｽ�ｽ�ｽ�ｼ鬩幢ｽ｢鬩搾ｽｵ�ｽ�ｺ�ｽ�ｽ�ｽ�ｮ鬮ｫ�ｴ陟托ｽｱ�ｽ邇門ｰ�ｿｽ�｣鬩幢ｽ｢�ｽ�ｧ髯ｷ�ｻ陜陷ｻ�ｵ陝謌奇ｽｭ謫ｾ�ｽ�ｴ驕ｶ鬆托ｽ･�｢�ｽ�ｬ鬲�ｼ夲ｽｽ�ｽ�ｽ�ｻ鬩搾ｽｵ�ｽ�ｺ
 void World::initRecorder() {
 	for (unsigned int i = 0; i < m_characterControllers.size(); i++) {
-		if (m_characterControllers[i]->getAction()->getCharacter()->getName() == "驛｢譏懶ｽｸ螂�ｽｿ�ｽ驛｢") { continue; }
+		if (m_characterControllers[i]->getAction()->getCharacter()->getName() == "鬩幢ｽ｢隴乗��ｽ�ｸ陞ゑｿｽ�ｽ�ｿ�ｽ�ｽ鬩幢ｽ｢") { continue; }
 		m_characterControllers[i]->initRecorder();
 	}
 }
 
-// 驛｢�ｧ�ｽ�ｹ驛｢�ｧ�ｽ�ｭ驛｢譎｢�ｽ�ｫ鬨ｾ蜈ｷ�ｽ�ｺ髯ｷ讎頑｡�ｿｽ�ｼ陞｢�ｹ�取ｨ抵ｽｹ�ｧ�ｽ�ｳ驛｢譎｢�ｽ�ｼ驛｢驍ｵ�ｺ�ｽ�ｮ髣厄ｽｴ�ｽ�ｿ鬨ｾ蛹�ｽｽ�ｨ驛｢�ｧ陋幢ｽｵ�ｽ�ｽ�ｹ�ｧ遶丞｣ｺ�ｻ髯ｷ蜿ｰ�ｼ竏晄ｱるし�ｺ陷ｷ�ｶ�ｽ
+// 鬩幢ｽ｢�ｽ�ｧ�ｽ�ｽ�ｽ�ｹ鬩幢ｽ｢�ｽ�ｧ�ｽ�ｽ�ｽ�ｭ鬩幢ｽ｢隴趣ｽ｢�ｽ�ｽ�ｽ�ｫ鬯ｨ�ｾ陷茨ｽｷ�ｽ�ｽ�ｽ�ｺ鬮ｯ�ｷ隶朱托ｽ｡�ｽ�ｿ�ｽ�ｽ�ｼ髯橸ｽ｢�ｽ�ｹ�ｽ蜿厄ｽｨ謚ｵ�ｽ�ｹ�ｽ�ｧ�ｽ�ｽ�ｽ�ｳ鬩幢ｽ｢隴趣ｽ｢�ｽ�ｽ�ｽ�ｼ鬩幢ｽ｢鬩搾ｽｵ�ｽ�ｺ�ｽ�ｽ�ｽ�ｮ鬮｣蜴�ｽｽ�ｴ�ｽ�ｽ�ｽ�ｿ鬯ｨ�ｾ陋ｹ�ｽ�ｽ�ｽ�ｽ�ｨ鬩幢ｽ｢�ｽ�ｧ髯句ｹ｢�ｽ�ｵ�ｽ�ｽ�ｽ�ｽ�ｽ�ｹ�ｽ�ｧ驕ｶ荳橸ｽ｣�ｺ�ｽ�ｻ鬮ｯ�ｷ陷ｿ�ｰ�ｽ�ｼ遶乗刋�ｱ繧九＠�ｽ�ｺ髯ｷ�ｷ�ｽ�ｶ�ｽ�ｽ
 void World::eraseRecorder() {
 	for (unsigned int i = 0; i < m_characterControllers.size(); i++) {
-		if (m_characterControllers[i]->getAction()->getCharacter()->getName() == "驛｢譏懶ｽｸ螂�ｽｿ�ｽ驛｢") { continue; }
+		if (m_characterControllers[i]->getAction()->getCharacter()->getName() == "鬩幢ｽ｢隴乗��ｽ�ｸ陞ゑｿｽ�ｽ�ｿ�ｽ�ｽ鬩幢ｽ｢") { continue; }
 		m_characterControllers[i]->eraseRecorder();
 	}
 }
 
-// 驛｢譎｢�ｿ�ｽ�ｽ�ｽ驛｢�ｧ�ｽ�ｿ鬩阪ｑ�ｽ�｡鬨ｾ�ｽ�ｿ�ｽ�ｽ�ｼ陞｢�ｹ邵ｺ蜀暦ｽｹ譎｢�ｽ�｣驛｢譎｢�ｽ�ｩ驍ｵ�ｺ�ｽ�ｮ髴托ｽ･�ｽ�ｶ髫ｲ�ｷ闕ｵ譎｢�ｽ螳壽｣秘包ｽｻ陝ｲ�ｩ驍ｵ�ｺ陷ｷ�ｶ�ｽ 驍ｵ�ｺ�ｽ�ｽ遶企��ｸ�ｺ�ｽ�ｽ遶企��ｹ�ｧ隰梧汚�ｽ�ｽ隲幄肩�ｿ�ｽ驍ｵ�ｺ陷ｷ�ｶ�ｽ
+// 鬩幢ｽ｢隴趣ｽ｢�ｽ�ｿ�ｽ�ｽ�ｽ�ｽ�ｽ�ｽ鬩幢ｽ｢�ｽ�ｧ�ｽ�ｽ�ｽ�ｿ鬯ｩ髦ｪ�托ｿｽ�ｽ�ｽ�｡鬯ｨ�ｾ�ｽ�ｽ�ｽ�ｿ�ｽ�ｽ�ｽ�ｽ�ｽ�ｼ髯橸ｽ｢�ｽ�ｹ驍ｵ�ｺ陷證ｦ�ｽ�ｹ隴趣ｽ｢�ｽ�ｽ�ｽ�｣鬩幢ｽ｢隴趣ｽ｢�ｽ�ｽ�ｽ�ｩ鬩搾ｽｵ�ｽ�ｺ�ｽ�ｽ�ｽ�ｮ鬮ｴ謇假ｽｽ�･�ｽ�ｽ�ｽ�ｶ鬮ｫ�ｲ�ｽ�ｷ髣包ｽｵ隴趣ｽ｢�ｽ�ｽ陞ｳ螢ｽ�｣遘蛹�ｽｽ�ｻ髯晢ｽｲ�ｽ�ｩ鬩搾ｽｵ�ｽ�ｺ髯ｷ�ｷ�ｽ�ｶ�ｽ�ｽ 鬩搾ｽｵ�ｽ�ｺ�ｽ�ｽ�ｽ�ｽ驕ｶ莨�ｿｽ�ｽ�ｸ�ｽ�ｺ�ｽ�ｽ�ｽ�ｽ驕ｶ莨�ｿｽ�ｽ�ｹ�ｽ�ｧ髫ｰ譴ｧ豎夲ｿｽ�ｽ�ｽ�ｽ髫ｲ蟷�か�ｽ�ｿ�ｽ�ｽ鬩搾ｽｵ�ｽ�ｺ髯ｷ�ｷ�ｽ�ｶ�ｽ�ｽ
 void World::asignedCharacterData(const char* name, CharacterData* data) {
 	if (data->areaNum() == -1) { return; }
 	size_t size = m_characters.size();
-	// 驛｢�ｧ�ｽ�ｭ驛｢譎｢�ｽ�｣驛｢譎｢�ｽ�ｩ驍ｵ�ｺ�ｽ�ｮ鬮ｫ�ｪ�ｽ�ｭ髯橸ｽｳ
+	// 鬩幢ｽ｢�ｽ�ｧ�ｽ�ｽ�ｽ�ｭ鬩幢ｽ｢隴趣ｽ｢�ｽ�ｽ�ｽ�｣鬩幢ｽ｢隴趣ｽ｢�ｽ�ｽ�ｽ�ｩ鬩搾ｽｵ�ｽ�ｺ�ｽ�ｽ�ｽ�ｮ鬯ｮ�ｫ�ｽ�ｪ�ｽ�ｽ�ｽ�ｭ鬮ｯ讖ｸ�ｽ�ｳ
 	bool flag = false;
 	for (unsigned i = 0; i < size; i++) {
 		if (name == m_characters[i]->getName()) {
@@ -531,8 +535,8 @@ void World::asignedCharacterData(const char* name, CharacterData* data) {
 			flag = true;
 		}
 	}
-	// 驛｢�ｧ�ｽ�ｭ驛｢譎｢�ｽ�｣驛｢譎｢�ｽ�ｩ驛｢�ｧ陷ｻ閧ｲ謔幃ｫｫ遨ゑｽｸ闌ｨ�ｽ�ｽ隲幄肩�ｿ�ｽ驍ｵ�ｺ陷ｷ�ｶ�ｽ邇匁捗�ｽ�ｴ髯ｷ�ｷ髣鯉ｽｨ�ｽ�ｼ陋ｹ�ｻ�ｽ�ｽ�ｸ�ｺ�ｽ�ｮ驛｢�ｧ�ｽ�ｨ驛｢譎｢�ｽ�ｪ驛｢�ｧ�ｽ�｢驍ｵ�ｺ�ｽ�ｫ驍ｵ�ｺ�ｽ�ｽ�ｽ迢暦ｽｸ�ｺ�ｽ�ｯ驍ｵ�ｺ陞｢�ｹ�ｽ�ｽ驛｢�ｧ�ｽ�ｭ驛｢譎｢�ｽ�｣驛｢譎｢�ｽ�ｩ驍ｵ�ｺ驍ｵ�ｺ陟募ｨｯ遨宣し�ｺ驍ｵ�ｺ�ｽ�ｽ遶企��ｸ�ｺ�ｽ�ｽ�ｽ�ｼ
-	if (!flag && (data->areaNum() == m_areaNum || data->followName() == "驛｢譏懶ｽｸ螂�ｽｿ�ｽ驛｢")) {
+	// 鬩幢ｽ｢�ｽ�ｧ�ｽ�ｽ�ｽ�ｭ鬩幢ｽ｢隴趣ｽ｢�ｽ�ｽ�ｽ�｣鬩幢ｽ｢隴趣ｽ｢�ｽ�ｽ�ｽ�ｩ鬩幢ｽ｢�ｽ�ｧ髯ｷ�ｻ髢ｧ�ｲ隰泌ｹ�ｽｫ�ｫ驕ｨ繧托ｽｽ�ｸ髣鯉ｽｨ�ｽ�ｽ�ｽ�ｽ髫ｲ蟷�か�ｽ�ｿ�ｽ�ｽ鬩搾ｽｵ�ｽ�ｺ髯ｷ�ｷ�ｽ�ｶ�ｽ�ｽ驍�戟謐暦ｿｽ�ｽ�ｽ�ｴ鬮ｯ�ｷ�ｽ�ｷ鬮｣魃会ｽｽ�ｨ�ｽ�ｽ�ｽ�ｼ髯具ｽｹ�ｽ�ｻ�ｽ�ｽ�ｽ�ｽ�ｽ�ｸ�ｽ�ｺ�ｽ�ｽ�ｽ�ｮ鬩幢ｽ｢�ｽ�ｧ�ｽ�ｽ�ｽ�ｨ鬩幢ｽ｢隴趣ｽ｢�ｽ�ｽ�ｽ�ｪ鬩幢ｽ｢�ｽ�ｧ�ｽ�ｽ�ｽ�｢鬩搾ｽｵ�ｽ�ｺ�ｽ�ｽ�ｽ�ｫ鬩搾ｽｵ�ｽ�ｺ�ｽ�ｽ�ｽ�ｽ�ｽ�ｽ霑｢證ｦ�ｽ�ｸ�ｽ�ｺ�ｽ�ｽ�ｽ�ｯ鬩搾ｽｵ�ｽ�ｺ髯橸ｽ｢�ｽ�ｹ�ｽ�ｽ�ｽ�ｽ鬩幢ｽ｢�ｽ�ｧ�ｽ�ｽ�ｽ�ｭ鬩幢ｽ｢隴趣ｽ｢�ｽ�ｽ�ｽ�｣鬩幢ｽ｢隴趣ｽ｢�ｽ�ｽ�ｽ�ｩ鬩搾ｽｵ�ｽ�ｺ鬩搾ｽｵ�ｽ�ｺ髯溷供�ｨ�ｯ驕ｨ螳｣縺暦ｿｽ�ｺ鬩搾ｽｵ�ｽ�ｺ�ｽ�ｽ�ｽ�ｽ驕ｶ莨�ｿｽ�ｽ�ｸ�ｽ�ｺ�ｽ�ｽ�ｽ�ｽ�ｽ�ｽ�ｽ�ｼ
+	if (!flag && (data->areaNum() == m_areaNum || data->followName() == "鬩幢ｽ｢隴乗��ｽ�ｸ陞ゑｿｽ�ｽ�ｿ�ｽ�ｽ鬩幢ｽ｢")) {
 		Character* character = createCharacter(name);
 		asignedCharacter(character, data, true);
 		m_characters.push_back(character);
@@ -542,7 +546,7 @@ void World::asignedCharacterData(const char* name, CharacterData* data) {
 		return;
 	}
 
-	// 驛｢�ｧ�ｽ�ｳ驛｢譎｢�ｽ�ｳ驛｢譎冗樟�取ｺｽ�ｹ譎｢�ｽ�ｼ驛｢譎｢�ｽ�ｩ驍ｵ�ｲ遶丞｣ｹ�樣Δ�ｧ�ｽ�ｯ驛｢�ｧ�ｽ�ｷ驛｢譎｢�ｽ�ｧ驛｢譎｢�ｽ�ｳ驍ｵ�ｲ邵ｲ�ｳain驍ｵ�ｺ�ｽ�ｮ鬮ｫ�ｪ�ｽ�ｭ髯橸ｽｳ
+	// 鬩幢ｽ｢�ｽ�ｧ�ｽ�ｽ�ｽ�ｳ鬩幢ｽ｢隴趣ｽ｢�ｽ�ｽ�ｽ�ｳ鬩幢ｽ｢隴主�讓滂ｿｽ蜿厄ｽｺ�ｽ�ｽ�ｹ隴趣ｽ｢�ｽ�ｽ�ｽ�ｼ鬩幢ｽ｢隴趣ｽ｢�ｽ�ｽ�ｽ�ｩ鬩搾ｽｵ�ｽ�ｲ驕ｶ荳橸ｽ｣�ｹ�ｽ讓｣ﾎ費ｿｽ�ｧ�ｽ�ｽ�ｽ�ｯ鬩幢ｽ｢�ｽ�ｧ�ｽ�ｽ�ｽ�ｷ鬩幢ｽ｢隴趣ｽ｢�ｽ�ｽ�ｽ�ｧ鬩幢ｽ｢隴趣ｽ｢�ｽ�ｽ�ｽ�ｳ鬩搾ｽｵ�ｽ�ｲ驍ｵ�ｲ�ｽ�ｳain鬩搾ｽｵ�ｽ�ｺ�ｽ�ｽ�ｽ�ｮ鬯ｮ�ｫ�ｽ�ｪ�ｽ�ｽ�ｽ�ｭ鬮ｯ讖ｸ�ｽ�ｳ
 	size_t controllerSize = m_characterControllers.size();
 	for (unsigned int i = 0; i < controllerSize; i++) {
 		const Character* character = m_characterControllers[i]->getAction()->getCharacter();
@@ -555,7 +559,7 @@ void World::asignedCharacterData(const char* name, CharacterData* data) {
 	}
 }
 
-// 驛｢譎｢�ｿ�ｽ�ｽ�ｽ驛｢�ｧ�ｽ�ｿ鬩阪ｑ�ｽ�｡鬨ｾ�ｽ�ｿ�ｽ�ｽ�ｼ陞｢�ｹ邵ｺ蜀暦ｽｹ譎｢�ｽ�｣驛｢譎｢�ｽ�ｩ驍ｵ�ｺ�ｽ�ｮ髴托ｽ･�ｽ�ｶ髫ｲ�ｷ闕ｵ譎｢�ｽ螳夲ｽｬ�ｨ陷ｷ�ｶ遶擾ｽｴ驛｢�ｧ
+// 鬩幢ｽ｢隴趣ｽ｢�ｽ�ｿ�ｽ�ｽ�ｽ�ｽ�ｽ�ｽ鬩幢ｽ｢�ｽ�ｧ�ｽ�ｽ�ｽ�ｿ鬯ｩ髦ｪ�托ｿｽ�ｽ�ｽ�｡鬯ｨ�ｾ�ｽ�ｽ�ｽ�ｿ�ｽ�ｽ�ｽ�ｽ�ｽ�ｼ髯橸ｽ｢�ｽ�ｹ驍ｵ�ｺ陷證ｦ�ｽ�ｹ隴趣ｽ｢�ｽ�ｽ�ｽ�｣鬩幢ｽ｢隴趣ｽ｢�ｽ�ｽ�ｽ�ｩ鬩搾ｽｵ�ｽ�ｺ�ｽ�ｽ�ｽ�ｮ鬮ｴ謇假ｽｽ�･�ｽ�ｽ�ｽ�ｶ鬮ｫ�ｲ�ｽ�ｷ髣包ｽｵ隴趣ｽ｢�ｽ�ｽ陞ｳ螟ｲ�ｽ�ｬ�ｽ�ｨ髯ｷ�ｷ�ｽ�ｶ驕ｶ謫ｾ�ｽ�ｴ鬩幢ｽ｢�ｽ�ｧ
 void World::asignCharacterData(const char* name, CharacterData* data, int fromAreaNum, bool notCharacterPoint) const {
 	size_t size = m_characterControllers.size();
 	for (unsigned i = 0; i < size; i++) {
@@ -569,7 +573,7 @@ void World::asignCharacterData(const char* name, CharacterData* data, int fromAr
 			data->setAreaNum(fromAreaNum);
 			if (!notCharacterPoint) {
 				data->setX(c->getX());
-				data->setY(c->getY() + c->getHeight()); // Y2髯溯ｶ｣�ｽ�ｧ髫ｶ轣倡函�ｽ螳壼ｰ�ｭ取得�ｽ�ｭ 驛｢譎｢�ｽ�ｭ驛｢譎｢�ｽ�ｼ驛｢譎牙愛陷�ｽｾ驍ｵ�ｺ�ｽ�ｯ鬮ｴ�ｽ�ｽ�ｫ鬯ｮ貊ゑｽｽ�ｷ驍ｵ�ｺ�ｽ�ｧ鬮ｯ�ｬ隲幄肩�ｽ�ｭ�ｽ�｣
+				data->setY(c->getY() + c->getHeight()); // Y2鬮ｯ貅ｯ�ｶ�｣�ｽ�ｽ�ｽ�ｧ鬮ｫ�ｶ霓｣蛟｡蜃ｽ�ｽ�ｽ陞ｳ螢ｼ�ｰ�ｽ�ｭ蜿門ｾ暦ｿｽ�ｽ�ｽ�ｭ 鬩幢ｽ｢隴趣ｽ｢�ｽ�ｽ�ｽ�ｭ鬩幢ｽ｢隴趣ｽ｢�ｽ�ｽ�ｽ�ｼ鬩幢ｽ｢隴守甥諢幃匚�ｽ�ｽ�ｾ鬩搾ｽｵ�ｽ�ｺ�ｽ�ｽ�ｽ�ｯ鬯ｮ�ｴ�ｽ�ｽ�ｽ�ｽ�ｽ�ｫ鬯ｯ�ｮ雋翫ｑ�ｽ�ｽ�ｽ�ｷ鬩搾ｽｵ�ｽ�ｺ�ｽ�ｽ�ｽ�ｧ鬯ｮ�ｯ�ｽ�ｬ髫ｲ蟷�か�ｽ�ｽ�ｽ�ｭ�ｽ�ｽ�ｽ�｣
 			}
 			data->setBrainName(m_characterControllers[i]->getBrain()->getBrainName());
 			data->setTargetName(m_characterControllers[i]->getBrain()->getTargetName());
@@ -584,7 +588,7 @@ void World::asignCharacterData(const char* name, CharacterData* data, int fromAr
 	}
 }
 
-// 驛｢譎｢�ｿ�ｽ�ｽ�ｽ驛｢�ｧ�ｽ�ｿ鬩阪ｑ�ｽ�｡鬨ｾ�ｽ�ｿ�ｽ�ｽ�ｼ陷･�ｼoor驍ｵ�ｺ�ｽ�ｮ髴托ｽ･�ｽ�ｶ髫ｲ�ｷ闕ｵ譎｢�ｽ螳壽｣秘包ｽｻ陝ｲ�ｩ驍ｵ�ｺ陷ｷ�ｶ�ｽ 驍ｵ�ｺ�ｽ�ｽ遶企��ｸ�ｺ�ｽ�ｽ遶企��ｹ�ｧ隰梧汚�ｽ�ｽ隲幄肩�ｿ�ｽ驍ｵ�ｺ陷ｷ�ｶ�ｽ
+// 鬩幢ｽ｢隴趣ｽ｢�ｽ�ｿ�ｽ�ｽ�ｽ�ｽ�ｽ�ｽ鬩幢ｽ｢�ｽ�ｧ�ｽ�ｽ�ｽ�ｿ鬯ｩ髦ｪ�托ｿｽ�ｽ�ｽ�｡鬯ｨ�ｾ�ｽ�ｽ�ｽ�ｿ�ｽ�ｽ�ｽ�ｽ�ｽ�ｼ髯ｷ�･�ｽ�ｼoor鬩搾ｽｵ�ｽ�ｺ�ｽ�ｽ�ｽ�ｮ鬮ｴ謇假ｽｽ�･�ｽ�ｽ�ｽ�ｶ鬮ｫ�ｲ�ｽ�ｷ髣包ｽｵ隴趣ｽ｢�ｽ�ｽ陞ｳ螢ｽ�｣遘蛹�ｽｽ�ｻ髯晢ｽｲ�ｽ�ｩ鬩搾ｽｵ�ｽ�ｺ髯ｷ�ｷ�ｽ�ｶ�ｽ�ｽ 鬩搾ｽｵ�ｽ�ｺ�ｽ�ｽ�ｽ�ｽ驕ｶ莨�ｿｽ�ｽ�ｸ�ｽ�ｺ�ｽ�ｽ�ｽ�ｽ驕ｶ莨�ｿｽ�ｽ�ｹ�ｽ�ｧ髫ｰ譴ｧ豎夲ｿｽ�ｽ�ｽ�ｽ髫ｲ蟷�か�ｽ�ｿ�ｽ�ｽ鬩搾ｽｵ�ｽ�ｺ髯ｷ�ｷ�ｽ�ｶ�ｽ�ｽ
 void World::asignedDoorData(DoorData* data) {
 	if (data->from() != m_areaNum) { return; }
 	bool flag = false;
@@ -603,13 +607,13 @@ void World::asignedDoorData(DoorData* data) {
 	}
 }
 
-// 驛｢譎｢�ｿ�ｽ�ｽ�ｽ驛｢�ｧ�ｽ�ｿ鬩阪ｑ�ｽ�｡鬨ｾ�ｽ�ｿ�ｽ�ｽ�ｼ陷･�ｼoor驍ｵ�ｺ�ｽ�ｮ髴托ｽ･�ｽ�ｶ髫ｲ�ｷ闕ｵ譎｢�ｽ螳夲ｽｬ�ｨ陷ｷ�ｶ遶擾ｽｴ驛｢�ｧ
+// 鬩幢ｽ｢隴趣ｽ｢�ｽ�ｿ�ｽ�ｽ�ｽ�ｽ�ｽ�ｽ鬩幢ｽ｢�ｽ�ｧ�ｽ�ｽ�ｽ�ｿ鬯ｩ髦ｪ�托ｿｽ�ｽ�ｽ�｡鬯ｨ�ｾ�ｽ�ｽ�ｽ�ｿ�ｽ�ｽ�ｽ�ｽ�ｽ�ｼ髯ｷ�･�ｽ�ｼoor鬩搾ｽｵ�ｽ�ｺ�ｽ�ｽ�ｽ�ｮ鬮ｴ謇假ｽｽ�･�ｽ�ｽ�ｽ�ｶ鬮ｫ�ｲ�ｽ�ｷ髣包ｽｵ隴趣ｽ｢�ｽ�ｽ陞ｳ螟ｲ�ｽ�ｬ�ｽ�ｨ髯ｷ�ｷ�ｽ�ｶ驕ｶ謫ｾ�ｽ�ｴ鬩幢ｽ｢�ｽ�ｧ
 void World::asignDoorData(vector<DoorData*>& data, int fromAreaNum) const {
 	size_t size = data.size();
 	for (unsigned i = 0; i < m_doorObjects.size(); i++) {
-		// 驛｢譎擾ｽｳ�ｨ邵ｺ�ｽ�ｸ�ｺ陋滂ｽ･�ｽ�ｽ�ｸ�ｺ�ｽ�ｪ驍ｵ�ｺ
+		// 鬩幢ｽ｢隴取得�ｽ�ｳ�ｽ�ｨ驍ｵ�ｺ�ｽ�ｽ�ｽ�ｸ�ｽ�ｺ髯区ｻゑｽｽ�･�ｽ�ｽ�ｽ�ｽ�ｽ�ｸ�ｽ�ｺ�ｽ�ｽ�ｽ�ｪ鬩搾ｽｵ�ｽ�ｺ
 		if (m_doorObjects[i]->getAreaNum() == -1) { continue; }
-		// 驛｢�ｧ�ｽ�ｻ驛｢譎｢�ｽ�ｼ驛｢譎�§郢晢ｽｧ驛｢譎｢�ｽ�ｼ驛｢�ｧ�ｽ�ｿ驍ｵ�ｺ�ｽ�ｫ驛｢譎擾ｽｳ�ｨ邵ｺ�ｽ�ｸ�ｺ隰疲ｻゑｽｽ�ｭ闔ｨ諛夷帝し�ｺ陷ｷ�ｶ�ｽ迢暦ｽｸ�ｺ
+		// 鬩幢ｽ｢�ｽ�ｧ�ｽ�ｽ�ｽ�ｻ鬩幢ｽ｢隴趣ｽ｢�ｽ�ｽ�ｽ�ｼ鬩幢ｽ｢隴趣ｿｽﾂｧ驛｢譎｢�ｽ�ｧ鬩幢ｽ｢隴趣ｽ｢�ｽ�ｽ�ｽ�ｼ鬩幢ｽ｢�ｽ�ｧ�ｽ�ｽ�ｽ�ｿ鬩搾ｽｵ�ｽ�ｺ�ｽ�ｽ�ｽ�ｫ鬩幢ｽ｢隴取得�ｽ�ｳ�ｽ�ｨ驍ｵ�ｺ�ｽ�ｽ�ｽ�ｸ�ｽ�ｺ髫ｰ逍ｲ�ｻ繧托ｽｽ�ｽ�ｽ�ｭ髣費ｽｨ隲帛､ｷ蟶昴＠�ｽ�ｺ髯ｷ�ｷ�ｽ�ｶ�ｽ�ｽ霑｢證ｦ�ｽ�ｸ�ｽ�ｺ
 		bool flag = false;
 		for (unsigned j = 0; j < size; j++) {
 			if (data[j]->to() == m_doorObjects[i]->getAreaNum() && data[j]->from() == fromAreaNum) {
@@ -624,7 +628,7 @@ void World::asignDoorData(vector<DoorData*>& data, int fromAreaNum) const {
 				break;
 			}
 		}
-		if (!flag) { // 髫ｴ�ｽ�ｽ�ｰ驍ｵ�ｺ雋�ｪ�ｽ驛｢譎擾ｽｳ�ｨ邵ｺ�ｽ�ｸ�ｺ�ｽ�ｪ驛｢�ｧ陝ｲ�ｨ邵ｺ譎会ｽｹ譎｢�ｽ�ｼ驛｢譎�§郢晢ｽｧ驛｢譎｢�ｽ�ｼ驛｢�ｧ�ｽ�ｿ驍ｵ�ｺ�ｽ�ｫ鬮ｴ謇假ｽｽ�ｽ髯ｷ
+		if (!flag) { // 鬮ｫ�ｴ�ｽ�ｽ�ｽ�ｽ�ｽ�ｰ鬩搾ｽｵ�ｽ�ｺ髮具ｿｽ�ｪ�ｽ�ｽ鬩幢ｽ｢隴取得�ｽ�ｳ�ｽ�ｨ驍ｵ�ｺ�ｽ�ｽ�ｽ�ｸ�ｽ�ｺ�ｽ�ｽ�ｽ�ｪ鬩幢ｽ｢�ｽ�ｧ髯晢ｽｲ�ｽ�ｨ驍ｵ�ｺ隴惹ｼ夲ｽｽ�ｹ隴趣ｽ｢�ｽ�ｽ�ｽ�ｼ鬩幢ｽ｢隴趣ｿｽﾂｧ驛｢譎｢�ｽ�ｧ鬩幢ｽ｢隴趣ｽ｢�ｽ�ｽ�ｽ�ｼ鬩幢ｽ｢�ｽ�ｧ�ｽ�ｽ�ｽ�ｿ鬩搾ｽｵ�ｽ�ｺ�ｽ�ｽ�ｽ�ｫ鬯ｮ�ｴ隰�∞�ｽ�ｽ�ｽ�ｽ鬮ｯ�ｷ
 			data.push_back(new DoorData(m_doorObjects[i]->getX1(), m_doorObjects[i]->getY1(),
 				m_doorObjects[i]->getX2(), m_doorObjects[i]->getY2(),
 				fromAreaNum, m_doorObjects[i]->getAreaNum(), m_doorObjects[i]->getFileName()));
@@ -632,7 +636,7 @@ void World::asignDoorData(vector<DoorData*>& data, int fromAreaNum) const {
 	}
 }
 
-// 驛｢譎｢�ｿ�ｽ�ｽ�ｽ驛｢�ｧ�ｽ�ｿ鬩阪ｑ�ｽ�｡鬨ｾ�ｽ�ｿ�ｽ�ｽ�ｼ陞｢�ｹ�ｽ�ｽ驛｢譎｢�ｽ�ｬ驛｢�ｧ�ｽ�､驛｢譎｢�ｽ�､驛｢譎｢�ｽ�ｼ驍ｵ�ｺ�ｽ�ｨ驍ｵ�ｺ隴擾ｽｴ�ｽ�ｽ髣比ｼ夲ｽｽ�ｲ鬯ｮ�｢髦ｮ蜻ｻ�ｽ蝣､�ｹ譎擾ｽｳ�ｨ邵ｺ�ｽ�ｸ�ｺ�ｽ�ｮ髯ｷ鮃ｹ莠らｫ企ｦｴﾂｧ�ｽ�ｻ髯ｷ
+// 鬩幢ｽ｢隴趣ｽ｢�ｽ�ｿ�ｽ�ｽ�ｽ�ｽ�ｽ�ｽ鬩幢ｽ｢�ｽ�ｧ�ｽ�ｽ�ｽ�ｿ鬯ｩ髦ｪ�托ｿｽ�ｽ�ｽ�｡鬯ｨ�ｾ�ｽ�ｽ�ｽ�ｿ�ｽ�ｽ�ｽ�ｽ�ｽ�ｼ髯橸ｽ｢�ｽ�ｹ�ｽ�ｽ�ｽ�ｽ鬩幢ｽ｢隴趣ｽ｢�ｽ�ｽ�ｽ�ｬ鬩幢ｽ｢�ｽ�ｧ�ｽ�ｽ�ｽ�､鬩幢ｽ｢隴趣ｽ｢�ｽ�ｽ�ｽ�､鬩幢ｽ｢隴趣ｽ｢�ｽ�ｽ�ｽ�ｼ鬩搾ｽｵ�ｽ�ｺ�ｽ�ｽ�ｽ�ｨ鬩搾ｽｵ�ｽ�ｺ髫ｴ謫ｾ�ｽ�ｴ�ｽ�ｽ�ｽ�ｽ鬮｣豈費ｽｼ螟ｲ�ｽ�ｽ�ｽ�ｲ鬯ｯ�ｮ�ｽ�｢鬮ｦ�ｮ陷ｻ�ｻ�ｽ�ｽ陜｣�､�ｽ�ｹ隴取得�ｽ�ｳ�ｽ�ｨ驍ｵ�ｺ�ｽ�ｽ�ｽ�ｸ�ｽ�ｺ�ｽ�ｽ�ｽ�ｮ鬮ｯ�ｷ魄�ｽｹ闔繧会ｽｫ莨�ｽｦ�ｴ�ゑｽｧ�ｽ�ｽ�ｽ�ｻ鬮ｯ�ｷ
 void World::setPlayerOnDoor(int from) {
 	int doorX1 = m_player_p->getX(), doorY2 = m_player_p->getY() + m_player_p->getHeight();
 	for (unsigned int i = 0; i < m_doorObjects.size(); i++) {
@@ -641,33 +645,33 @@ void World::setPlayerOnDoor(int from) {
 			doorY2 = m_doorObjects[i]->getY2();
 		}
 	}
-	// 驛｢譎丞ｹｲ�取ｨ抵ｽｹ�ｧ�ｽ�､驛｢譎｢�ｽ�､驛｢譎｢�ｽ�ｼ
+	// 鬩幢ｽ｢隴惹ｸ橸ｽｹ�ｲ�ｽ蜿厄ｽｨ謚ｵ�ｽ�ｹ�ｽ�ｧ�ｽ�ｽ�ｽ�､鬩幢ｽ｢隴趣ｽ｢�ｽ�ｽ�ｽ�､鬩幢ｽ｢隴趣ｽ｢�ｽ�ｽ�ｽ�ｼ
 	m_player_p->setX(doorX1);
 	m_player_p->setY(doorY2 - m_player_p->getHeight());
 
-	// 髣比ｼ夲ｽｽ�ｲ鬯ｮ�｢髦ｮ蜻ｻ�ｽ繧仰ｧ�ｽ�ｻ髯ｷ
+	// 鬮｣豈費ｽｼ螟ｲ�ｽ�ｽ�ｽ�ｲ鬯ｯ�ｮ�ｽ�｢鬮ｦ�ｮ陷ｻ�ｻ�ｽ�ｽ郢ｧ莉ｰ�ｧ�ｽ�ｽ�ｽ�ｻ鬮ｯ�ｷ
 	setPlayerFollowerPoint();
 
-	// 驛｢�ｧ�ｽ�ｫ驛｢譎｢�ｽ�｡驛｢譎｢�ｽ�ｩ驛｢譎｢�ｽ�ｪ驛｢�ｧ�ｽ�ｻ驛｢譎｢�ｿ�ｽ郢晢ｽｨ
+	// 鬩幢ｽ｢�ｽ�ｧ�ｽ�ｽ�ｽ�ｫ鬩幢ｽ｢隴趣ｽ｢�ｽ�ｽ�ｽ�｡鬩幢ｽ｢隴趣ｽ｢�ｽ�ｽ�ｽ�ｩ鬩幢ｽ｢隴趣ｽ｢�ｽ�ｽ�ｽ�ｪ鬩幢ｽ｢�ｽ�ｧ�ｽ�ｽ�ｽ�ｻ鬩幢ｽ｢隴趣ｽ｢�ｽ�ｿ�ｽ�ｽ驛｢譎｢�ｽ�ｨ
 	cameraPointInit();
 }
 
-// 驛｢譎丞ｹｲ�取ｨ抵ｽｹ�ｧ�ｽ�､驛｢譎｢�ｽ�､驛｢譎｢�ｽ�ｼ驛｢�ｧ陜｣�､鬮ｻ�ｳ髯橸ｽｳ陞｢�ｹ�ｽ�ｽ髯溯ｶ｣�ｽ�ｧ髫ｶ轣倡函遶冗｣ｯﾂｧ�ｽ�ｻ髯ｷ
+// 鬩幢ｽ｢隴惹ｸ橸ｽｹ�ｲ�ｽ蜿厄ｽｨ謚ｵ�ｽ�ｹ�ｽ�ｧ�ｽ�ｽ�ｽ�､鬩幢ｽ｢隴趣ｽ｢�ｽ�ｽ�ｽ�､鬩幢ｽ｢隴趣ｽ｢�ｽ�ｽ�ｽ�ｼ鬩幢ｽ｢�ｽ�ｧ髯懶ｽ｣�ｽ�､鬯ｮ�ｻ�ｽ�ｳ鬮ｯ讖ｸ�ｽ�ｳ髯橸ｽ｢�ｽ�ｹ�ｽ�ｽ�ｽ�ｽ鬮ｯ貅ｯ�ｶ�｣�ｽ�ｽ�ｽ�ｧ鬮ｫ�ｶ霓｣蛟｡蜃ｽ驕ｶ蜀暦ｽ｣�ｯ�ゑｽｧ�ｽ�ｽ�ｽ�ｻ鬮ｯ�ｷ
 void World::setPlayerPoint(CharacterData* characterData) {
 	m_player_p->setX(characterData->x());
 	m_player_p->setY(characterData->y() - m_player_p->getHeight());
-	// 驛｢�ｧ�ｽ�ｫ驛｢譎｢�ｽ�｡驛｢譎｢�ｽ�ｩ驛｢譎｢�ｽ�ｪ驛｢�ｧ�ｽ�ｻ驛｢譎｢�ｿ�ｽ郢晢ｽｨ
+	// 鬩幢ｽ｢�ｽ�ｧ�ｽ�ｽ�ｽ�ｫ鬩幢ｽ｢隴趣ｽ｢�ｽ�ｽ�ｽ�｡鬩幢ｽ｢隴趣ｽ｢�ｽ�ｽ�ｽ�ｩ鬩幢ｽ｢隴趣ｽ｢�ｽ�ｽ�ｽ�ｪ鬩幢ｽ｢�ｽ�ｧ�ｽ�ｽ�ｽ�ｻ鬩幢ｽ｢隴趣ｽ｢�ｽ�ｿ�ｽ�ｽ驛｢譎｢�ｽ�ｨ
 	cameraPointInit();
 }
 
-// 髣比ｼ夲ｽｽ�ｲ鬯ｮ�｢髦ｮ蜻ｻ�ｽ蝣､�ｹ譎丞ｹｲ�取ｨ抵ｽｹ�ｧ�ｽ�､驛｢譎｢�ｽ�､驛｢譎｢�ｽ�ｼ驍ｵ�ｺ�ｽ�ｮ髣厄ｽｴ陷･�ｲ�ｽ�ｽ�ｽ�ｮ驍ｵ�ｺ�ｽ�ｸ鬩募∞�ｽ�ｻ髯ｷ
+// 鬮｣豈費ｽｼ螟ｲ�ｽ�ｽ�ｽ�ｲ鬯ｯ�ｮ�ｽ�｢鬮ｦ�ｮ陷ｻ�ｻ�ｽ�ｽ陜｣�､�ｽ�ｹ隴惹ｸ橸ｽｹ�ｲ�ｽ蜿厄ｽｨ謚ｵ�ｽ�ｹ�ｽ�ｧ�ｽ�ｽ�ｽ�､鬩幢ｽ｢隴趣ｽ｢�ｽ�ｽ�ｽ�､鬩幢ｽ｢隴趣ｽ｢�ｽ�ｽ�ｽ�ｼ鬩搾ｽｵ�ｽ�ｺ�ｽ�ｽ�ｽ�ｮ鬮｣蜴�ｽｽ�ｴ髯ｷ�･�ｽ�ｲ�ｽ�ｽ�ｽ�ｽ�ｽ�ｽ�ｽ�ｮ鬩搾ｽｵ�ｽ�ｺ�ｽ�ｽ�ｽ�ｸ鬯ｩ蜍溪��ｽ�ｽ�ｽ�ｻ鬮ｯ�ｷ
 void World::setPlayerFollowerPoint() {
-	// 驛｢譎丞ｹｲ�取ｨ抵ｽｹ�ｧ�ｽ�､驛｢譎｢�ｽ�､驛｢譎｢�ｽ�ｼ驍ｵ�ｺ�ｽ�ｮ髣比ｼ夲ｽｽ�ｲ鬯ｮ�｢
+	// 鬩幢ｽ｢隴惹ｸ橸ｽｹ�ｲ�ｽ蜿厄ｽｨ謚ｵ�ｽ�ｹ�ｽ�ｧ�ｽ�ｽ�ｽ�､鬩幢ｽ｢隴趣ｽ｢�ｽ�ｽ�ｽ�､鬩幢ｽ｢隴趣ｽ｢�ｽ�ｽ�ｽ�ｼ鬩搾ｽｵ�ｽ�ｺ�ｽ�ｽ�ｽ�ｮ鬮｣豈費ｽｼ螟ｲ�ｽ�ｽ�ｽ�ｲ鬯ｯ�ｮ�ｽ�｢
 	for (unsigned int i = 0; i < m_characterControllers.size(); i++) {
 		const Character* follow = m_characterControllers[i]->getBrain()->getFollow();
-		// 鬮ｴ謇假ｽｽ�ｽ鬮ｴ謳ｾ�ｽ�｡髯晢ｿｽ�ｽ�ｾ鬮ｮ雜｣�ｽ�｡驍ｵ�ｺ陟暮ｯ会ｽｿ�ｽ驛｢譎｢�ｽ�ｬ驛｢�ｧ�ｽ�､驛｢譎｢�ｽ�､驛｢譎｢�ｽ�ｼ驍ｵ�ｺ�ｽ�ｪ驛｢�ｧ
+		// 鬯ｮ�ｴ隰�∞�ｽ�ｽ�ｽ�ｽ鬯ｮ�ｴ隰ｳ�ｾ�ｽ�ｽ�ｽ�｡鬮ｯ譎｢�ｿ�ｽ�ｽ�ｽ�ｽ�ｾ鬯ｮ�ｮ髮懶ｽ｣�ｽ�ｽ�ｽ�｡鬩搾ｽｵ�ｽ�ｺ髯滓坩�ｯ莨夲ｽｽ�ｿ�ｽ�ｽ鬩幢ｽ｢隴趣ｽ｢�ｽ�ｽ�ｽ�ｬ鬩幢ｽ｢�ｽ�ｧ�ｽ�ｽ�ｽ�､鬩幢ｽ｢隴趣ｽ｢�ｽ�ｽ�ｽ�､鬩幢ｽ｢隴趣ｽ｢�ｽ�ｽ�ｽ�ｼ鬩搾ｽｵ�ｽ�ｺ�ｽ�ｽ�ｽ�ｪ鬩幢ｽ｢�ｽ�ｧ
 		if (follow != nullptr && m_playerId == follow->getId()) {
-			// Controller驍ｵ�ｺ�ｽ�ｫ髯晢ｿｽ�ｽ�ｾ髯滂ｽ｢隲帛ｲｩ�ｽ驛｢�ｧ雎梧昭aracter驍ｵ�ｺ�ｽ�ｫ髯樊ｺｽ蛻､陝ｲ�ｩ驛｢�ｧ髮区ｧｫ�ｽ驍ｵ�ｺ陋ｹ�ｻ�ｽ
+			// Controller鬩搾ｽｵ�ｽ�ｺ�ｽ�ｽ�ｽ�ｫ鬮ｯ譎｢�ｿ�ｽ�ｽ�ｽ�ｽ�ｾ鬮ｯ貊ゑｽｽ�｢髫ｲ蟶幢ｽｲ�ｩ�ｽ�ｽ鬩幢ｽ｢�ｽ�ｧ髮取｢ｧ譏ｭaracter鬩搾ｽｵ�ｽ�ｺ�ｽ�ｽ�ｽ�ｫ鬮ｯ讓奇ｽｺ�ｽ陋ｻ�､髯晢ｽｲ�ｽ�ｩ鬩幢ｽ｢�ｽ�ｧ鬮ｮ蛹ｺ�ｧ�ｫ�ｽ�ｽ鬩搾ｽｵ�ｽ�ｺ髯具ｽｹ�ｽ�ｻ�ｽ�ｽ
 			for (unsigned int j = 0; j < m_characters.size(); j++) {
 				if (m_characterControllers[i]->getAction()->getCharacter()->getId() == m_characters[j]->getId()) {
 					m_characters[j]->setX(m_player_p->getX());
@@ -679,7 +683,7 @@ void World::setPlayerFollowerPoint() {
 	}
 }
 
-// 驛｢譎｢�ｿ�ｽ�ｽ�ｽ驛｢�ｧ�ｽ�ｿ鬩阪ｑ�ｽ�｡鬨ｾ�ｽ�ｿ�ｽ�ｽ�ｼ陞｢�ｹ邵ｺ蜥ｲ�ｹ譎｢�ｽ�｡驛｢譎｢�ｽ�ｩ驍ｵ�ｺ�ｽ�ｮ髣厄ｽｴ陷･�ｲ�ｽ�ｽ�ｽ�ｮ驛｢�ｧ陋幢ｽｵ�取㏍�ｹ�ｧ�ｽ�ｻ驛｢譎｢�ｿ�ｽ郢晢ｽｨ
+// 鬩幢ｽ｢隴趣ｽ｢�ｽ�ｿ�ｽ�ｽ�ｽ�ｽ�ｽ�ｽ鬩幢ｽ｢�ｽ�ｧ�ｽ�ｽ�ｽ�ｿ鬯ｩ髦ｪ�托ｿｽ�ｽ�ｽ�｡鬯ｨ�ｾ�ｽ�ｽ�ｽ�ｿ�ｽ�ｽ�ｽ�ｽ�ｽ�ｼ髯橸ｽ｢�ｽ�ｹ驍ｵ�ｺ陷･�ｲ�ｽ�ｹ隴趣ｽ｢�ｽ�ｽ�ｽ�｡鬩幢ｽ｢隴趣ｽ｢�ｽ�ｽ�ｽ�ｩ鬩搾ｽｵ�ｽ�ｺ�ｽ�ｽ�ｽ�ｮ鬮｣蜴�ｽｽ�ｴ髯ｷ�･�ｽ�ｲ�ｽ�ｽ�ｽ�ｽ�ｽ�ｽ�ｽ�ｮ鬩幢ｽ｢�ｽ�ｧ髯句ｹ｢�ｽ�ｵ�ｽ蜿悶渚�ｽ�ｹ�ｽ�ｧ�ｽ�ｽ�ｽ�ｻ鬩幢ｽ｢隴趣ｽ｢�ｽ�ｿ�ｽ�ｽ驛｢譎｢�ｽ�ｨ
 void World::cameraPointInit() {
 	for (unsigned int i = 0; i < m_characters.size(); i++) {
 		if (m_characters[i]->getId() == m_focusId) {
@@ -689,26 +693,26 @@ void World::cameraPointInit() {
 	}
 }
 
-// 驛｢譎｢�ｿ�ｽ�ｽ�ｽ驛｢�ｧ�ｽ�ｿ鬩阪ｑ�ｽ�｡鬨ｾ�ｽ�ｿ�ｽ�ｽ�ｼ陞｢�ｹ邵ｺ蜀暦ｽｹ譎｢�ｽ�｣驛｢譎｢�ｽ�ｩ1髣厄ｽｴ髦ｮ蜻ｻ�ｿ�ｽ髫ｲ�ｽ�ｽ�ｽ�ｱ驛｢�ｧ陷托ｿｽ�ｽ�ｸ闕ｵ貊�ｿｽ驍ｵ�ｺ�ｽ�ｫ髯ｷ�ｿ髢ｧ�ｴ闕ｳ
+// 鬩幢ｽ｢隴趣ｽ｢�ｽ�ｿ�ｽ�ｽ�ｽ�ｽ�ｽ�ｽ鬩幢ｽ｢�ｽ�ｧ�ｽ�ｽ�ｽ�ｿ鬯ｩ髦ｪ�托ｿｽ�ｽ�ｽ�｡鬯ｨ�ｾ�ｽ�ｽ�ｽ�ｿ�ｽ�ｽ�ｽ�ｽ�ｽ�ｼ髯橸ｽ｢�ｽ�ｹ驍ｵ�ｺ陷證ｦ�ｽ�ｹ隴趣ｽ｢�ｽ�ｽ�ｽ�｣鬩幢ｽ｢隴趣ｽ｢�ｽ�ｽ�ｽ�ｩ1鬮｣蜴�ｽｽ�ｴ鬮ｦ�ｮ陷ｻ�ｻ�ｽ�ｿ�ｽ�ｽ鬮ｫ�ｲ�ｽ�ｽ�ｽ�ｽ�ｽ�ｽ�ｽ�ｱ鬩幢ｽ｢�ｽ�ｧ髯ｷ謇假ｽｿ�ｽ�ｽ�ｽ�ｽ�ｸ髣包ｽｵ雋奇ｿｽ�ｿ�ｽ鬩搾ｽｵ�ｽ�ｺ�ｽ�ｽ�ｽ�ｫ鬮ｯ�ｷ�ｽ�ｿ鬮｢�ｧ�ｽ�ｴ髣包ｽｳ
 void World::asignedCharacter(Character* character, CharacterData* data, bool changePosition) {
 	character->changeInfoVersion(data->version());
 	if (data->id() != -1) {
-		// 驍ｵ�ｺ髦ｮ蜻ｻ�ｿ�ｽ驛｢�ｧ�ｽ�ｲ驛｢譎｢�ｽ�ｼ驛｢驍ｵ�ｺ�ｽ�ｧ髯具ｽｻ隴守甥蜈�劈�｣�ｽ�ｴ驍ｵ�ｺ陋滂ｽ･�ｽ�ｽ�ｸ�ｺ�ｽ�ｪ驍ｵ�ｺ
+		// 鬩搾ｽｵ�ｽ�ｺ鬮ｦ�ｮ陷ｻ�ｻ�ｽ�ｿ�ｽ�ｽ鬩幢ｽ｢�ｽ�ｧ�ｽ�ｽ�ｽ�ｲ鬩幢ｽ｢隴趣ｽ｢�ｽ�ｽ�ｽ�ｼ鬩幢ｽ｢鬩搾ｽｵ�ｽ�ｺ�ｽ�ｽ�ｽ�ｧ鬮ｯ蜈ｷ�ｽ�ｻ髫ｴ螳育櫨陷茨ｿｽ蜉茨ｿｽ�｣�ｽ�ｽ�ｽ�ｴ鬩搾ｽｵ�ｽ�ｺ髯区ｻゑｽｽ�･�ｽ�ｽ�ｽ�ｽ�ｽ�ｸ�ｽ�ｺ�ｽ�ｽ�ｽ�ｪ鬩搾ｽｵ�ｽ�ｺ
 		character->setHp(data->hp());
 	}
 	character->setInvincible(data->invincible());
 	character->setGroupId(data->groupId());
 	if (changePosition) {
 		character->setX(data->x());
-		// Y髯溯ｶ｣�ｽ�ｧ髫ｶ轣倡函�ｽ�ｽ鬮ｴ�ｽ�ｽ�ｫ鬯ｮ貊ゑｽｽ�ｷ驍ｵ�ｺ�ｽ�ｫ髯ｷ�ｷ陋ｹ�ｻ�ｽ蜀暦ｽｸ�ｺ陝ｶ蜷ｮ�ｻ鬮ｫ�ｱ�ｽ�ｿ髫ｰ�ｨ�ｽ�ｴ
+		// Y鬮ｯ貅ｯ�ｶ�｣�ｽ�ｽ�ｽ�ｧ鬮ｫ�ｶ霓｣蛟｡蜃ｽ�ｽ�ｽ�ｽ�ｽ鬯ｮ�ｴ�ｽ�ｽ�ｽ�ｽ�ｽ�ｫ鬯ｯ�ｮ雋翫ｑ�ｽ�ｽ�ｽ�ｷ鬩搾ｽｵ�ｽ�ｺ�ｽ�ｽ�ｽ�ｫ鬮ｯ�ｷ�ｽ�ｷ髯具ｽｹ�ｽ�ｻ�ｽ�ｽ陷證ｦ�ｽ�ｸ�ｽ�ｺ髯晢ｽｶ陷ｷ�ｮ�ｽ�ｻ鬯ｮ�ｫ�ｽ�ｱ�ｽ�ｽ�ｽ�ｿ鬮ｫ�ｰ�ｽ�ｨ�ｽ�ｽ�ｽ�ｴ
 		character->setY(data->y() - character->getHeight());
 	}
 }
 
-// 驛｢譎｢�ｿ�ｽ�ｽ�ｽ驛｢�ｧ�ｽ�ｿ鬩阪ｑ�ｽ�｡鬨ｾ�ｽ�ｿ�ｽ�ｽ�ｼ陞｢�ｹ邵ｺ諷包ｽｹ譎｢�ｽ�ｳ驛｢譎冗樟�取ｺｽ�ｹ譎｢�ｽ�ｼ驛｢譎｢�ｽ�ｩ1髯区ｻ会ｽｹ譎｢�ｿ�ｽ髫ｲ�ｽ�ｽ�ｽ�ｱ驛｢�ｧ陷托ｿｽ�ｽ�ｸ闕ｵ貊�ｿｽ驍ｵ�ｺ�ｽ�ｫ髯ｷ�ｿ髢ｧ�ｴ闕ｳ
+// 鬩幢ｽ｢隴趣ｽ｢�ｽ�ｿ�ｽ�ｽ�ｽ�ｽ�ｽ�ｽ鬩幢ｽ｢�ｽ�ｧ�ｽ�ｽ�ｽ�ｿ鬯ｩ髦ｪ�托ｿｽ�ｽ�ｽ�｡鬯ｨ�ｾ�ｽ�ｽ�ｽ�ｿ�ｽ�ｽ�ｽ�ｽ�ｽ�ｼ髯橸ｽ｢�ｽ�ｹ驍ｵ�ｺ隲ｷ蛹�ｽｽ�ｹ隴趣ｽ｢�ｽ�ｽ�ｽ�ｳ鬩幢ｽ｢隴主�讓滂ｿｽ蜿厄ｽｺ�ｽ�ｽ�ｹ隴趣ｽ｢�ｽ�ｽ�ｽ�ｼ鬩幢ｽ｢隴趣ｽ｢�ｽ�ｽ�ｽ�ｩ1鬮ｯ蛹ｺ�ｻ莨夲ｽｽ�ｹ隴趣ｽ｢�ｽ�ｿ�ｽ�ｽ鬮ｫ�ｲ�ｽ�ｽ�ｽ�ｽ�ｽ�ｽ�ｽ�ｱ鬩幢ｽ｢�ｽ�ｧ髯ｷ謇假ｽｿ�ｽ�ｽ�ｽ�ｽ�ｸ髣包ｽｵ雋奇ｿｽ�ｿ�ｽ鬩搾ｽｵ�ｽ�ｺ�ｽ�ｽ�ｽ�ｫ鬮ｯ�ｷ�ｽ�ｿ鬮｢�ｧ�ｽ�ｴ髣包ｽｳ
 CharacterController* World::createControllerWithData(const Character* character, CharacterData* data) {
 	size_t size = m_characters.size();
-	// Action驛｢�ｧ陷托ｿｽ�ｽ�ｽ隲幄肩�ｿ�ｽ
+	// Action鬩幢ｽ｢�ｽ�ｧ髯ｷ謇假ｽｿ�ｽ�ｽ�ｽ�ｽ�ｽ髫ｲ蟷�か�ｽ�ｿ�ｽ�ｽ
 	CharacterAction* action = nullptr;
 	for (unsigned int j = 0; j < size; j++) {
 		if (m_characters[j]->getName() == character->getName()) {
@@ -716,7 +720,7 @@ CharacterController* World::createControllerWithData(const Character* character,
 			break;
 		}
 	}
-	// Brain驛｢�ｧ陷托ｿｽ�ｽ�ｽ隲幄肩�ｿ�ｽ
+	// Brain鬩幢ｽ｢�ｽ�ｧ髯ｷ謇假ｽｿ�ｽ�ｽ�ｽ�ｽ�ｽ髫ｲ蟷�か�ｽ�ｿ�ｽ�ｽ
 	Brain* brain = createBrain(data->brainName(), m_camera);
 	brain->setCharacterAction(action);
 	string follow = data->followName();
@@ -726,25 +730,25 @@ CharacterController* World::createControllerWithData(const Character* character,
 			break;
 		}
 	}
-	// Controller驛｢�ｧ陷托ｿｽ�ｽ�ｽ隲幄肩�ｿ�ｽ
+	// Controller鬩幢ｽ｢�ｽ�ｧ髯ｷ謇假ｽｿ�ｽ�ｽ�ｽ�ｽ�ｽ髫ｲ蟷�か�ｽ�ｿ�ｽ�ｽ
 	return createController(data->controllerName(), brain, action);
 }
 
 /*
-*  髫ｰ魃会ｽｽ�ｦ驛｢�ｧ闕ｳ蟯ｩ髮ｷ驛｢�ｧ
+*  鬮ｫ�ｰ鬲�ｼ夲ｽｽ�ｽ�ｽ�ｦ鬩幢ｽ｢�ｽ�ｧ髣包ｽｳ陝ｯ�ｩ鬮ｮ�ｷ鬩幢ｽ｢�ｽ�ｧ
 */
 void World::battle() {
 	if (!m_soundPlayer_p->checkBGMplay()) {
 		m_soundPlayer_p->playBGM();
 	}
 	
-	// 逕ｻ髱｢證苓ｻ｢蜃ｦ逅
+	// 騾包ｽｻ鬮ｱ�｢隴芽挙�ｻ�｢陷�ｽｦ騾
 	if (dealBrightValue()) { return; }
 
-	// 驛｢�ｧ�ｽ�ｪ驛｢譎�§邵ｺ螟ゑｽｹ�ｧ�ｽ�ｧ驛｢�ｧ�ｽ�ｯ驛｢譎冗樟�ｽ蟶晏擅�ｽ�ｿ驍ｵ�ｺ�ｽ�ｹ驍ｵ�ｺ雋顔§�ｽ驍ｵ�ｺ�ｽ�ｮ驛｢譎｢�ｿ�ｽ邵ｺ蜀暦ｽｹ�ｧ�ｽ�ｹ驛｢
+	// 鬩幢ｽ｢�ｽ�ｧ�ｽ�ｽ�ｽ�ｪ鬩幢ｽ｢隴趣ｿｽﾂｧ驍ｵ�ｺ陞溘ｑ�ｽ�ｹ�ｽ�ｧ�ｽ�ｽ�ｽ�ｧ鬩幢ｽ｢�ｽ�ｧ�ｽ�ｽ�ｽ�ｯ鬩幢ｽ｢隴主�讓滂ｿｽ�ｽ陝ｶ譎乗套�ｽ�ｽ�ｽ�ｿ鬩搾ｽｵ�ｽ�ｺ�ｽ�ｽ�ｽ�ｹ鬩搾ｽｵ�ｽ�ｺ髮矩｡板ｧ�ｽ�ｽ鬩搾ｽｵ�ｽ�ｺ�ｽ�ｽ�ｽ�ｮ鬩幢ｽ｢隴趣ｽ｢�ｽ�ｿ�ｽ�ｽ驍ｵ�ｺ陷證ｦ�ｽ�ｹ�ｽ�ｧ�ｽ�ｽ�ｽ�ｹ鬩幢ｽ｢
 	if (m_objectConversation != nullptr) {
 		m_objectConversation->play();
-		// 髣費ｽｨ陞溷･�ｽｽ�ｩ�ｽ�ｱ鬩搾ｽｨ郢ｧ�ｽ�ｽ�ｺ
+		// 鬮｣雋ｻ�ｽ�ｨ髯樊ｺｷ�･�ｽ�ｽ�ｽ�ｽ�ｩ�ｽ�ｽ�ｽ�ｱ鬯ｩ謳ｾ�ｽ�ｨ驛｢�ｧ�ｽ�ｽ�ｽ�ｽ�ｽ�ｺ
 		if (m_objectConversation->getFinishFlag()) {
 			delete m_objectConversation;
 			m_objectConversation = nullptr;
@@ -752,40 +756,40 @@ void World::battle() {
 		return;
 	}
 
-	// deleteFlag驍ｵ�ｺ髣戊ｼブe驍ｵ�ｺ�ｽ�ｮ驛｢�ｧ�ｽ�ｪ驛｢譎�§邵ｺ螟ゑｽｹ�ｧ�ｽ�ｧ驛｢�ｧ�ｽ�ｯ驛｢譎冗樟�ｽ螳壽≧闔ｨ竏晄ｱるし�ｺ陷ｷ�ｶ�ｽ迢暦ｽｸ�ｲ
+	// deleteFlag鬩搾ｽｵ�ｽ�ｺ鬮｣謌奇ｽｼ繝貌鬩搾ｽｵ�ｽ�ｺ�ｽ�ｽ�ｽ�ｮ鬩幢ｽ｢�ｽ�ｧ�ｽ�ｽ�ｽ�ｪ鬩幢ｽ｢隴趣ｿｽﾂｧ驍ｵ�ｺ陞溘ｑ�ｽ�ｹ�ｽ�ｧ�ｽ�ｽ�ｽ�ｧ鬩幢ｽ｢�ｽ�ｧ�ｽ�ｽ�ｽ�ｯ鬩幢ｽ｢隴主�讓滂ｿｽ�ｽ陞ｳ螢ｽ竕ｧ髣費ｽｨ遶乗刋�ｱ繧九＠�ｽ�ｺ髯ｷ�ｷ�ｽ�ｶ�ｽ�ｽ霑｢證ｦ�ｽ�ｸ�ｽ�ｲ
 	deleteObject(m_stageObjects);
 	deleteObject(m_attackObjects);
 
-	// 驛｢�ｧ�ｽ�ｭ驛｢譎｢�ｽ�｣驛｢譎｢�ｽ�ｩ驍ｵ�ｺ�ｽ�ｮ髫ｴ蜴�ｽｽ�ｴ髫ｴ�ｽ�ｽ�ｰ�ｽ�ｽ陜捺ｺｷ諢幃垈�ｦ�ｽ�ｽ�ｽ�ｯ�ｽ�ｾ鬮ｮ雜｣�ｽ�｡驍ｵ�ｺ�ｽ�ｮ髯樊ｺｽ蛻､陝ｲ�ｩ�ｽ�ｽ
-	// 髣包ｽｳ驗呻ｽｫ邵ｲ蝣､�ｹ�ｧ�ｽ�ｭ驛｢譎｢�ｽ�｣驛｢譎｢�ｽ�ｩ驛｢�ｧ髮区ｨ抵ｽ朱ｬｮ�ｯ�ｽ�､驍ｵ�ｺ陷会ｽｱ隨ｳ�ｽ�ｸ�ｺ闕ｵ譎｢�ｽ闃ｽ�ｭ蜴�ｽｽ�ｴ髫ｴ�ｽ�ｽ�ｰ驍ｵ�ｺ陷会ｽｱ隨ｳ�ｽ�ｸ�ｺ闕ｵ譎｢�ｽ闃ｽ�｢�ｽ�ｽ�ｽ�ｦ
+	// 鬩幢ｽ｢�ｽ�ｧ�ｽ�ｽ�ｽ�ｭ鬩幢ｽ｢隴趣ｽ｢�ｽ�ｽ�ｽ�｣鬩幢ｽ｢隴趣ｽ｢�ｽ�ｽ�ｽ�ｩ鬩搾ｽｵ�ｽ�ｺ�ｽ�ｽ�ｽ�ｮ鬮ｫ�ｴ陷ｴ�ｽ�ｽ�ｽ�ｽ�ｴ鬮ｫ�ｴ�ｽ�ｽ�ｽ�ｽ�ｽ�ｰ�ｽ�ｽ�ｽ�ｽ髯懈瑳�ｺ�ｷ隲｢蟷�梭�ｽ�ｦ�ｽ�ｽ�ｽ�ｽ�ｽ�ｽ�ｽ�ｯ�ｽ�ｽ�ｽ�ｾ鬯ｮ�ｮ髮懶ｽ｣�ｽ�ｽ�ｽ�｡鬩搾ｽｵ�ｽ�ｺ�ｽ�ｽ�ｽ�ｮ鬮ｯ讓奇ｽｺ�ｽ陋ｻ�､髯晢ｽｲ�ｽ�ｩ�ｽ�ｽ�ｽ�ｽ
+	// 鬮｣蛹�ｽｽ�ｳ鬩怜遜�ｽ�ｫ驍ｵ�ｲ陜｣�､�ｽ�ｹ�ｽ�ｧ�ｽ�ｽ�ｽ�ｭ鬩幢ｽ｢隴趣ｽ｢�ｽ�ｽ�ｽ�｣鬩幢ｽ｢隴趣ｽ｢�ｽ�ｽ�ｽ�ｩ鬩幢ｽ｢�ｽ�ｧ鬮ｮ蛹ｺ�ｨ謚ｵ�ｽ譛ｱ�ｬ�ｮ�ｽ�ｯ�ｽ�ｽ�ｽ�､鬩搾ｽｵ�ｽ�ｺ髯ｷ莨夲ｽｽ�ｱ髫ｨ�ｳ�ｽ�ｽ�ｽ�ｸ�ｽ�ｺ髣包ｽｵ隴趣ｽ｢�ｽ�ｽ髣�ｽｽ�ｽ�ｭ陷ｴ�ｽ�ｽ�ｽ�ｽ�ｴ鬮ｫ�ｴ�ｽ�ｽ�ｽ�ｽ�ｽ�ｰ鬩搾ｽｵ�ｽ�ｺ髯ｷ莨夲ｽｽ�ｱ髫ｨ�ｳ�ｽ�ｽ�ｽ�ｸ�ｽ�ｺ髣包ｽｵ隴趣ｽ｢�ｽ�ｽ髣�ｽｽ�ｽ�｢�ｽ�ｽ�ｽ�ｽ�ｽ�ｽ�ｽ�ｦ
 	updateCharacter();
 
-	// 驛｢�ｧ�ｽ�ｭ驛｢譎｢�ｽ�｣驛｢譎｢�ｽ�ｩ驛｢�ｧ�ｽ�ｯ驛｢�ｧ�ｽ�ｿ驛｢譎｢�ｽ�ｼ驍ｵ�ｺ�ｽ�ｮ髯ｷ蟠趣ｽｼ謚ｫ�ｳ
+	// 鬩幢ｽ｢�ｽ�ｧ�ｽ�ｽ�ｽ�ｭ鬩幢ｽ｢隴趣ｽ｢�ｽ�ｽ�ｽ�｣鬩幢ｽ｢隴趣ｽ｢�ｽ�ｽ�ｽ�ｩ鬩幢ｽ｢�ｽ�ｧ�ｽ�ｽ�ｽ�ｯ鬩幢ｽ｢�ｽ�ｧ�ｽ�ｽ�ｽ�ｿ鬩幢ｽ｢隴趣ｽ｢�ｽ�ｽ�ｽ�ｼ鬩搾ｽｵ�ｽ�ｺ�ｽ�ｽ�ｽ�ｮ鬮ｯ�ｷ陝雜｣�ｽ�ｼ隰夲ｽｫ�ｽ�ｳ
 	controlCharacter();
 
-	// 驛｢�ｧ�ｽ�ｪ驛｢譎�§邵ｺ螟ゑｽｹ�ｧ�ｽ�ｧ驛｢�ｧ�ｽ�ｯ驛｢譎冗樟�ｽ�ｽ髯ｷ蟠趣ｽｼ謚ｫ�ｳ
+	// 鬩幢ｽ｢�ｽ�ｧ�ｽ�ｽ�ｽ�ｪ鬩幢ｽ｢隴趣ｿｽﾂｧ驍ｵ�ｺ陞溘ｑ�ｽ�ｹ�ｽ�ｧ�ｽ�ｽ�ｽ�ｧ鬩幢ｽ｢�ｽ�ｧ�ｽ�ｽ�ｽ�ｯ鬩幢ｽ｢隴主�讓滂ｿｽ�ｽ�ｽ�ｽ鬮ｯ�ｷ陝雜｣�ｽ�ｼ隰夲ｽｫ�ｽ�ｳ
 	controlObject();
 
-	// 驛｢�ｧ�ｽ�｢驛｢�ｧ�ｽ�､驛｢譎｢�ｿ�ｽ�主､�ｸ�ｺ�ｽ�ｮ髯ｷ蟠趣ｽｼ謚ｫ�ｳ
+	// 鬩幢ｽ｢�ｽ�ｧ�ｽ�ｽ�ｽ�｢鬩幢ｽ｢�ｽ�ｧ�ｽ�ｽ�ｽ�､鬩幢ｽ｢隴趣ｽ｢�ｽ�ｿ�ｽ�ｽ�ｽ荳ｻ�､�ｽ�ｸ�ｽ�ｺ�ｽ�ｽ�ｽ�ｮ鬮ｯ�ｷ陝雜｣�ｽ�ｼ隰夲ｽｫ�ｽ�ｳ
 	controlItem();
 
-	// 驛｢�ｧ�ｽ�ｫ驛｢譎｢�ｽ�｡驛｢譎｢�ｽ�ｩ驍ｵ�ｺ�ｽ�ｮ髫ｴ蜴�ｽｽ�ｴ髫ｴ�ｽ�ｽ�ｰ
+	// 鬩幢ｽ｢�ｽ�ｧ�ｽ�ｽ�ｽ�ｫ鬩幢ｽ｢隴趣ｽ｢�ｽ�ｽ�ｽ�｡鬩幢ｽ｢隴趣ｽ｢�ｽ�ｽ�ｽ�ｩ鬩搾ｽｵ�ｽ�ｺ�ｽ�ｽ�ｽ�ｮ鬮ｫ�ｴ陷ｴ�ｽ�ｽ�ｽ�ｽ�ｴ鬮ｫ�ｴ�ｽ�ｽ�ｽ�ｽ�ｽ�ｰ
 	adjustBattleCamera();
 
-	// 驛｢�ｧ�ｽ�ｵ驛｢�ｧ�ｽ�ｦ驛｢譎｢�ｽ�ｳ驛｢譎擾ｽｳ�ｨ�ｽ�ｽ驛｢譎｢�ｽ�ｬ驛｢�ｧ�ｽ�､驛｢譎｢�ｽ�､驛｢譎｢�ｽ�ｼ驍ｵ�ｺ�ｽ�ｮ驛｢譏懶ｽｻ�｣�趣ｽｦ鬮ｫ�ｪ�ｽ�ｭ髯橸ｽｳ陞溘ｉ闊
+	// 鬩幢ｽ｢�ｽ�ｧ�ｽ�ｽ�ｽ�ｵ鬩幢ｽ｢�ｽ�ｧ�ｽ�ｽ�ｽ�ｦ鬩幢ｽ｢隴趣ｽ｢�ｽ�ｽ�ｽ�ｳ鬩幢ｽ｢隴取得�ｽ�ｳ�ｽ�ｨ�ｽ�ｽ�ｽ�ｽ鬩幢ｽ｢隴趣ｽ｢�ｽ�ｽ�ｽ�ｬ鬩幢ｽ｢�ｽ�ｧ�ｽ�ｽ�ｽ�､鬩幢ｽ｢隴趣ｽ｢�ｽ�ｽ�ｽ�､鬩幢ｽ｢隴趣ｽ｢�ｽ�ｽ�ｽ�ｼ鬩搾ｽｵ�ｽ�ｺ�ｽ�ｽ�ｽ�ｮ鬩幢ｽ｢隴乗��ｽ�ｻ�ｽ�｣�ｽ雜｣�ｽ�ｦ鬯ｮ�ｫ�ｽ�ｪ�ｽ�ｽ�ｽ�ｭ鬮ｯ讖ｸ�ｽ�ｳ髯樊ｺ假ｽ蛾頼
 	m_soundPlayer_p->setCameraX(m_camera->getX());
 
-	// 驛｢�ｧ�ｽ�｢驛｢譏懶ｽｹ譁滄豪�ｹ譎｢�ｽ�ｼ驛｢�ｧ�ｽ�ｷ驛｢譎｢�ｽ�ｧ驛｢譎｢�ｽ�ｳ驍ｵ�ｺ�ｽ�ｮ髫ｴ蜴�ｽｽ�ｴ髫ｴ�ｽ�ｽ�ｰ
+	// 鬩幢ｽ｢�ｽ�ｧ�ｽ�ｽ�ｽ�｢鬩幢ｽ｢隴乗��ｽ�ｹ隴∵ｻ�ｱｪ�ｽ�ｹ隴趣ｽ｢�ｽ�ｽ�ｽ�ｼ鬩幢ｽ｢�ｽ�ｧ�ｽ�ｽ�ｽ�ｷ鬩幢ｽ｢隴趣ｽ｢�ｽ�ｽ�ｽ�ｧ鬩幢ｽ｢隴趣ｽ｢�ｽ�ｽ�ｽ�ｳ鬩搾ｽｵ�ｽ�ｺ�ｽ�ｽ�ｽ�ｮ鬮ｫ�ｴ陷ｴ�ｽ�ｽ�ｽ�ｽ�ｴ鬮ｫ�ｴ�ｽ�ｽ�ｽ�ｽ�ｽ�ｰ
 	updateAnimation();
 
-	// 髫ｰ�ｫ陜｣�ｺ�ｽ�ｽ隲帷ｿｫ�･驛｢譎｢�ｽ�｣驛｢譎｢�ｽ�ｩ髯樊ｺｽ蛻､陝ｲ�ｩ
+	// 鬮ｫ�ｰ�ｽ�ｫ髯懶ｽ｣�ｽ�ｺ�ｽ�ｽ�ｽ�ｽ髫ｲ蟶ｷ�ｿ�ｫ�ｽ�･鬩幢ｽ｢隴趣ｽ｢�ｽ�ｽ�ｽ�｣鬩幢ｽ｢隴趣ｽ｢�ｽ�ｽ�ｽ�ｩ鬮ｯ讓奇ｽｺ�ｽ陋ｻ�､髯晢ｽｲ�ｽ�ｩ
 	changePlayer(m_playerChanger->play(m_soundPlayer_p, m_characterControllers, m_player_p));
 
 }
 
 void World::changePlayer(const Character* nextPlayer) {
 	if (nextPlayer == nullptr) { return; }
-	// 髣碑崟隨ｬ�｡�ｽ謚�ｫ帛･�ｽｼ驍ｵ�ｺ�ｽ�ｦ驍ｵ�ｺ�ｽ�ｽ�ｽ迢暦ｽｹ�ｧ�ｽ�ｭ驛｢譎｢�ｽ�｣驛｢譎｢�ｽ�ｩ驛｢�ｧ髫ｱ�ｰPC驍ｵ�ｺ�ｽ�ｮBrain驍ｵ�ｺ�ｽ�ｫ驍ｵ�ｺ陷ｷ�ｶ�ｽ
+	// 鬮｣遒大ｴ髫ｨ�ｬ�ｽ�｡�ｽ�ｽ隰夲ｿｽ�ｫ蟶幢ｽ･�ｽ�ｽ�ｼ鬩搾ｽｵ�ｽ�ｺ�ｽ�ｽ�ｽ�ｦ鬩搾ｽｵ�ｽ�ｺ�ｽ�ｽ�ｽ�ｽ�ｽ�ｽ霑｢證ｦ�ｽ�ｹ�ｽ�ｧ�ｽ�ｽ�ｽ�ｭ鬩幢ｽ｢隴趣ｽ｢�ｽ�ｽ�ｽ�｣鬩幢ｽ｢隴趣ｽ｢�ｽ�ｽ�ｽ�ｩ鬩幢ｽ｢�ｽ�ｧ鬮ｫ�ｱ�ｽ�ｰPC鬩搾ｽｵ�ｽ�ｺ�ｽ�ｽ�ｽ�ｮBrain鬩搾ｽｵ�ｽ�ｺ�ｽ�ｽ�ｽ�ｫ鬩搾ｽｵ�ｽ�ｺ髯ｷ�ｷ�ｽ�ｶ�ｽ�ｽ
 	for (unsigned int i = 0; i < m_characterControllers.size(); i++) {
 		if (m_characterControllers[i]->getAction()->getCharacter()->getId() == m_player_p->getId()) {
 			m_characterControllers[i]->setBrain(createBrain(m_playerChanger->getPrevBrainName(), m_camera));
@@ -793,7 +797,7 @@ void World::changePlayer(const Character* nextPlayer) {
 			break;
 		}
 	}
-	// 髫ｹ�ｺ�ｽ�｡髫ｰ�ｫ陜｣�ｺ�ｽ�ｽ隲帛ｲｩ�ｽ驛｢�ｧ闕ｵ譏ｴ�･驛｢譎｢�ｽ�｣驛｢譎｢�ｽ�ｩ驛｢�ｧ霑｢�ｸeyboardBrain驍ｵ�ｺ�ｽ�ｫ驍ｵ�ｺ陷ｷ�ｶ�ｽ
+	// 鬮ｫ�ｹ�ｽ�ｺ�ｽ�ｽ�ｽ�｡鬮ｫ�ｰ�ｽ�ｫ髯懶ｽ｣�ｽ�ｺ�ｽ�ｽ�ｽ�ｽ髫ｲ蟶幢ｽｲ�ｩ�ｽ�ｽ鬩幢ｽ｢�ｽ�ｧ髣包ｽｵ隴擾ｽｴ�ｽ�･鬩幢ｽ｢隴趣ｽ｢�ｽ�ｽ�ｽ�｣鬩幢ｽ｢隴趣ｽ｢�ｽ�ｽ�ｽ�ｩ鬩幢ｽ｢�ｽ�ｧ髴托ｽ｢�ｽ�ｸeyboardBrain鬩搾ｽｵ�ｽ�ｺ�ｽ�ｽ�ｽ�ｫ鬩搾ｽｵ�ｽ�ｺ髯ｷ�ｷ�ｽ�ｶ�ｽ�ｽ
 	for (unsigned int i = 0; i < m_characterControllers.size(); i++) {
 		if (nextPlayer->getId() == m_characterControllers[i]->getAction()->getCharacter()->getId()) {
 			string brainName = m_characterControllers[i]->getBrain()->getBrainName();
@@ -803,7 +807,7 @@ void World::changePlayer(const Character* nextPlayer) {
 			break;
 		}
 	}
-	// 髫ｹ�ｺ�ｽ�｡髫ｰ�ｫ陜｣�ｺ�ｽ�ｽ隲帛ｲｩ�ｽ驛｢�ｧ闕ｵ譏ｴ�･驛｢譎｢�ｽ�｣驛｢譎｢�ｽ�ｩ驛｢�ｧ陷願ｩｫayer驍ｵ�ｺ�ｽ�ｨ驍ｵ�ｺ陷会ｽｱ遯ｶ�ｻ驛｢�ｧ�ｽ�ｻ驛｢譎｢�ｿ�ｽ郢晢ｽｨ
+	// 鬮ｫ�ｹ�ｽ�ｺ�ｽ�ｽ�ｽ�｡鬮ｫ�ｰ�ｽ�ｫ髯懶ｽ｣�ｽ�ｺ�ｽ�ｽ�ｽ�ｽ髫ｲ蟶幢ｽｲ�ｩ�ｽ�ｽ鬩幢ｽ｢�ｽ�ｧ髣包ｽｵ隴擾ｽｴ�ｽ�･鬩幢ｽ｢隴趣ｽ｢�ｽ�ｽ�ｽ�｣鬩幢ｽ｢隴趣ｽ｢�ｽ�ｽ�ｽ�ｩ鬩幢ｽ｢�ｽ�ｧ髯ｷ鬘假ｽｩ�ｫayer鬩搾ｽｵ�ｽ�ｺ�ｽ�ｽ�ｽ�ｨ鬩搾ｽｵ�ｽ�ｺ髯ｷ莨夲ｽｽ�ｱ驕ｯ�ｶ�ｽ�ｻ鬩幢ｽ｢�ｽ�ｧ�ｽ�ｽ�ｽ�ｻ鬩幢ｽ｢隴趣ｽ｢�ｽ�ｿ�ｽ�ｽ驛｢譎｢�ｽ�ｨ
 	for (unsigned int i = 0; i < m_characters.size(); i++) {
 		if (nextPlayer->getId() == m_characters[i]->getId()) {
 			m_player_p = m_characters[i];
@@ -819,39 +823,39 @@ void World::changePlayer(const Character* nextPlayer) {
 	m_focusId = m_player_p->getId();
 }
 
-//  Battle�ｽ�ｽ陞｢�ｹ邵ｺ蜥ｲ�ｹ譎｢�ｽ�｡驛｢譎｢�ｽ�ｩ驍ｵ�ｺ�ｽ�ｮ髫ｴ蜴�ｽｽ�ｴ髫ｴ�ｽ�ｽ�ｰ
+//  Battle�ｽ�ｽ�ｽ�ｽ髯橸ｽ｢�ｽ�ｹ驍ｵ�ｺ陷･�ｲ�ｽ�ｹ隴趣ｽ｢�ｽ�ｽ�ｽ�｡鬩幢ｽ｢隴趣ｽ｢�ｽ�ｽ�ｽ�ｩ鬩搾ｽｵ�ｽ�ｺ�ｽ�ｽ�ｽ�ｮ鬮ｫ�ｴ陷ｴ�ｽ�ｽ�ｽ�ｽ�ｴ鬮ｫ�ｴ�ｽ�ｽ�ｽ�ｽ�ｽ�ｰ
 void World::updateCamera(int gx, int gy, double gex) {
 
-	// 驛｢�ｧ�ｽ�ｫ驛｢譎｢�ｽ�｡驛｢譎｢�ｽ�ｩ驛｢�ｧ陷ｻ蝓滉ｺ企Δ�ｧ陝ｲ�ｨ隨
+	// 鬩幢ｽ｢�ｽ�ｧ�ｽ�ｽ�ｽ�ｫ鬩幢ｽ｢隴趣ｽ｢�ｽ�ｽ�ｽ�｡鬩幢ｽ｢隴趣ｽ｢�ｽ�ｽ�ｽ�ｩ鬩幢ｽ｢�ｽ�ｧ髯ｷ�ｻ陜捺ｻ会ｽｺ莨∃費ｿｽ�ｧ髯晢ｽｲ�ｽ�ｨ髫ｨ
 	m_camera->shaking();
 
-	// 髫ｲ�｡�ｽ�｡髯樊ｻゑｽｽ�ｧ鬩搾ｿｽ�ｿ�ｽ邵ｺ譎会ｽｹ譎｢�ｿ�ｽ郢晢ｽｨ
+	// 鬮ｫ�ｲ�ｽ�｡�ｽ�ｽ�ｽ�｡鬮ｯ讓奇ｽｻ繧托ｽｽ�ｽ�ｽ�ｧ鬯ｩ謳ｾ�ｿ�ｽ�ｽ�ｿ�ｽ�ｽ驍ｵ�ｺ隴惹ｼ夲ｽｽ�ｹ隴趣ｽ｢�ｽ�ｿ�ｽ�ｽ驛｢譎｢�ｽ�ｨ
 	m_camera->setEx(gex);
 
-	// 鬨ｾ�ｶ�ｽ�ｮ髫ｶ轣伜ｧ難ｿｽ�ｽ陷･�ｲ�ｽ�ｽ�ｽ�ｮ驛｢�ｧ�ｽ�ｻ驛｢譎｢�ｿ�ｽ郢晢ｽｨ
+	// 鬯ｨ�ｾ�ｽ�ｶ�ｽ�ｽ�ｽ�ｮ鬮ｫ�ｶ霓｣莨懶ｽｧ髮｣�ｿ�ｽ�ｽ�ｽ髯ｷ�･�ｽ�ｲ�ｽ�ｽ�ｽ�ｽ�ｽ�ｽ�ｽ�ｮ鬩幢ｽ｢�ｽ�ｧ�ｽ�ｽ�ｽ�ｻ鬩幢ｽ｢隴趣ｽ｢�ｽ�ｿ�ｽ�ｽ驛｢譎｢�ｽ�ｨ
 	m_camera->setGPoint(gx, gy);
 	
-	// 驛｢�ｧ�ｽ�ｫ驛｢譎｢�ｽ�｡驛｢譎｢�ｽ�ｩ驛｢�ｧ陜｣�､陝ｯ�ｼ髫ｶ轣伜ｧ難ｿｽ�ｽ陷･�ｲ�ｽ�ｽ�ｽ�ｮ驍ｵ�ｺ�ｽ�ｸ鬮ｴ蜿ｰ�ｻ�｣隨�ｽｼ驍ｵ�ｺ闔会ｽ｣�ｽ
+	// 鬩幢ｽ｢�ｽ�ｧ�ｽ�ｽ�ｽ�ｫ鬩幢ｽ｢隴趣ｽ｢�ｽ�ｽ�ｽ�｡鬩幢ｽ｢隴趣ｽ｢�ｽ�ｽ�ｽ�ｩ鬩幢ｽ｢�ｽ�ｧ髯懶ｽ｣�ｽ�､髯晢ｽｯ�ｽ�ｼ鬮ｫ�ｶ霓｣莨懶ｽｧ髮｣�ｿ�ｽ�ｽ�ｽ髯ｷ�･�ｽ�ｲ�ｽ�ｽ�ｽ�ｽ�ｽ�ｽ�ｽ�ｮ鬩搾ｽｵ�ｽ�ｺ�ｽ�ｽ�ｽ�ｸ鬯ｮ�ｴ陷ｿ�ｰ�ｽ�ｻ�ｽ�｣髫ｨ�ｽ�ｽ�ｼ鬩搾ｽｵ�ｽ�ｺ髣比ｼ夲ｽｽ�｣�ｽ�ｽ
 	m_camera->move();
 }
 
-// Battle�ｽ�ｽ陞｢�ｽ陝具ｽｶ鬯ｮ�｣陋滂ｿｽ�ｽ�ｸ�ｽ�ｭ驍ｵ�ｺ�ｽ�ｮ驛｢�ｧ�ｽ�ｫ驛｢譎｢�ｽ�｡驛｢譎｢�ｽ�ｩ髫ｰ�ｫ陜｣�ｺ�ｽ�ｽ
+// Battle�ｽ�ｽ�ｽ�ｽ髯橸ｽ｢�ｽ�ｽ髯晏��ｽ�ｶ鬯ｯ�ｮ�ｽ�｣髯区ｻゑｽｿ�ｽ�ｽ�ｽ�ｽ�ｸ�ｽ�ｽ�ｽ�ｭ鬩搾ｽｵ�ｽ�ｺ�ｽ�ｽ�ｽ�ｮ鬩幢ｽ｢�ｽ�ｧ�ｽ�ｽ�ｽ�ｫ鬩幢ｽ｢隴趣ｽ｢�ｽ�ｽ�ｽ�｡鬩幢ｽ｢隴趣ｽ｢�ｽ�ｽ�ｽ�ｩ鬮ｫ�ｰ�ｽ�ｫ髯懶ｽ｣�ｽ�ｺ�ｽ�ｽ�ｽ�ｽ
 void World::adjustBattleCamera() {
 
-	// 鬨ｾ�ｶ�ｽ�ｮ髫ｶ轣倬它�ｽ�ｺ�ｽ�ｧ髫ｶ
+	// 鬯ｨ�ｾ�ｽ�ｶ�ｽ�ｽ�ｽ�ｮ鬮ｫ�ｶ霓｣蛟ｬ螳�ｿｽ�ｽ�ｽ�ｺ�ｽ�ｽ�ｽ�ｧ鬮ｫ�ｶ
 	int gx = 0, gy = 0;
-	// 驛｢�ｧ�ｽ�ｭ驛｢譎｢�ｽ�｣驛｢譎｢�ｽ�ｩ驍ｵ�ｺ�ｽ�ｨ驛｢�ｧ�ｽ�ｫ驛｢譎｢�ｽ�｡驛｢譎｢�ｽ�ｩ驍ｵ�ｺ�ｽ�ｮ鬮ｴ閧ｴ霎ｨ陞ｻ�ｬ驍ｵ�ｺ�ｽ�ｮ髫ｴ髯樊ｻゑｽｽ�ｧ髯区ｻゑｽｽ�､驛｢�ｧ陞ｳ螟ｲ�ｽ�ｪ�ｽ�ｿ驍ｵ�ｺ�ｽ�ｹ驛｢�ｧ
+	// 鬩幢ｽ｢�ｽ�ｧ�ｽ�ｽ�ｽ�ｭ鬩幢ｽ｢隴趣ｽ｢�ｽ�ｽ�ｽ�｣鬩幢ｽ｢隴趣ｽ｢�ｽ�ｽ�ｽ�ｩ鬩搾ｽｵ�ｽ�ｺ�ｽ�ｽ�ｽ�ｨ鬩幢ｽ｢�ｽ�ｧ�ｽ�ｽ�ｽ�ｫ鬩幢ｽ｢隴趣ｽ｢�ｽ�ｽ�ｽ�｡鬩幢ｽ｢隴趣ｽ｢�ｽ�ｽ�ｽ�ｩ鬩搾ｽｵ�ｽ�ｺ�ｽ�ｽ�ｽ�ｮ鬯ｮ�ｴ髢ｧ�ｴ髴趣ｽｨ髯橸ｽｻ�ｽ�ｬ鬩搾ｽｵ�ｽ�ｺ�ｽ�ｽ�ｽ�ｮ鬮ｫ�ｴ鬮ｯ讓奇ｽｻ繧托ｽｽ�ｽ�ｽ�ｧ鬮ｯ蛹ｺ�ｻ繧托ｽｽ�ｽ�ｽ�､鬩幢ｽ｢�ｽ�ｧ髯橸ｽｳ陞滂ｽｲ�ｽ�ｽ�ｽ�ｪ�ｽ�ｽ�ｽ�ｿ鬩搾ｽｵ�ｽ�ｺ�ｽ�ｽ�ｽ�ｹ鬩幢ｽ｢�ｽ�ｧ
 	int max_dx = 0, max_dy = 0;
-	// 騾包ｽｻ鬮ｱ�｢陷�ｽ竊楢怦�･郢ｧ蠕鯉ｽ育ｸｺ�ｽ竊堤ｸｺ蜷ｶ�矩恪譎槫ｱｬ邵ｺ�ｮ隴陞滂ｽｧ邵ｲ邵ｺ阮呻ｽ檎ｹｧ蛹ｻ�企ｫｮ�｢郢ｧ蠕娯螺郢ｧ�ｭ郢晢ｽ｣郢晢ｽｩ邵ｺ�ｯ霎滂ｽ｡髫
+	// 鬨ｾ蛹�ｽｽ�ｻ鬯ｮ�ｱ�ｽ�｢髯ｷ�ｽ�ｽ遶頑･｢諤ｦ�ｽ�･驛｢�ｧ陟暮ｯ会ｽｽ閧ｲ�ｸ�ｺ�ｽ�ｽ遶雁､�ｸ�ｺ陷ｷ�ｶ�ｽ遏ｩ諱ｪ隴取ｧｫ�ｱ�ｬ驍ｵ�ｺ�ｽ�ｮ髫ｴ髯樊ｻゑｽｽ�ｧ驍ｵ�ｲ驍ｵ�ｺ髦ｮ蜻ｻ�ｽ讙趣ｽｹ�ｧ陋ｹ�ｻ�ｽ莨�ｽｫ�ｮ�ｽ�｢驛｢�ｧ陟募ｨｯ陞ｺ驛｢�ｧ�ｽ�ｭ驛｢譎｢�ｽ�｣驛｢譎｢�ｽ�ｩ驍ｵ�ｺ�ｽ�ｯ髴取ｻゑｽｽ�｡鬮ｫ
 	const int MAX_DISABLE = 2000;
 	size_t size = m_characters.size();
 	for (unsigned int i = 0; i < size; i++) {
-		// 髣碑��ｿ�ｫ郢晢ｽｵ驛｢�ｧ�ｽ�ｩ驛｢譎｢�ｽ�ｼ驛｢�ｧ�ｽ�ｫ驛｢�ｧ�ｽ�ｹ驍ｵ�ｺ陷会ｽｱ遯ｶ�ｻ驍ｵ�ｺ�ｽ�ｽ�ｽ迢暦ｽｹ�ｧ�ｽ�ｭ驛｢譎｢�ｽ�｣驛｢譎｢�ｽ�ｩ驍ｵ�ｺ�ｽ�ｮ髯溯ｶ｣�ｽ�ｧ髫ｶ轣倡函遶頑･｢諠ｺ陋ｹ�ｻ�ｽ蜀暦ｽｸ�ｺ陝ｶ蜻ｻ�ｽ
+		// 鬮｣遒托ｿｽ�ｽ�ｿ�ｽ�ｫ驛｢譎｢�ｽ�ｵ鬩幢ｽ｢�ｽ�ｧ�ｽ�ｽ�ｽ�ｩ鬩幢ｽ｢隴趣ｽ｢�ｽ�ｽ�ｽ�ｼ鬩幢ｽ｢�ｽ�ｧ�ｽ�ｽ�ｽ�ｫ鬩幢ｽ｢�ｽ�ｧ�ｽ�ｽ�ｽ�ｹ鬩搾ｽｵ�ｽ�ｺ髯ｷ莨夲ｽｽ�ｱ驕ｯ�ｶ�ｽ�ｻ鬩搾ｽｵ�ｽ�ｺ�ｽ�ｽ�ｽ�ｽ�ｽ�ｽ霑｢證ｦ�ｽ�ｹ�ｽ�ｧ�ｽ�ｽ�ｽ�ｭ鬩幢ｽ｢隴趣ｽ｢�ｽ�ｽ�ｽ�｣鬩幢ｽ｢隴趣ｽ｢�ｽ�ｽ�ｽ�ｩ鬩搾ｽｵ�ｽ�ｺ�ｽ�ｽ�ｽ�ｮ鬮ｯ貅ｯ�ｶ�｣�ｽ�ｽ�ｽ�ｧ鬮ｫ�ｶ霓｣蛟｡蜃ｽ驕ｶ鬆托ｽ･�｢隲�ｺ髯具ｽｹ�ｽ�ｻ�ｽ�ｽ陷證ｦ�ｽ�ｸ�ｽ�ｺ髯晢ｽｶ陷ｻ�ｻ�ｽ�ｽ
 		if (m_focusId == m_characters[i]->getId()) {
 			gx = m_characters[i]->getCenterX();
 			gy = m_characters[i]->getCenterY();
 		}
-		// 驛｢譎�ｽｼ譁青ｰ驛｢譎｢�ｽ�ｼ驛｢�ｧ�ｽ�ｫ驛｢�ｧ�ｽ�ｹ驍ｵ�ｺ陷会ｽｱ遯ｶ�ｻ驍ｵ�ｺ�ｽ�ｽ�ｽ迢暦ｽｹ�ｧ�ｽ�ｭ驛｢譎｢�ｽ�｣驛｢譎｢�ｽ�ｩ髣比ｼ夲ｽｽ�･髯樊ｻ薙§遶企��ｹ�ｧ髣�ｽｽ�ｽ�ｷ隴取ｧｫ�ｱ�ｬ驛｢�ｧ陞ｳ螟ｲ�ｽ�ｪ�ｽ�ｿ驍ｵ�ｺ�ｽ�ｹ驛｢�ｧ
+		// 鬩幢ｽ｢隴趣ｿｽ�ｽ�ｼ隴�搨�ｰ鬩幢ｽ｢隴趣ｽ｢�ｽ�ｽ�ｽ�ｼ鬩幢ｽ｢�ｽ�ｧ�ｽ�ｽ�ｽ�ｫ鬩幢ｽ｢�ｽ�ｧ�ｽ�ｽ�ｽ�ｹ鬩搾ｽｵ�ｽ�ｺ髯ｷ莨夲ｽｽ�ｱ驕ｯ�ｶ�ｽ�ｻ鬩搾ｽｵ�ｽ�ｺ�ｽ�ｽ�ｽ�ｽ�ｽ�ｽ霑｢證ｦ�ｽ�ｹ�ｽ�ｧ�ｽ�ｽ�ｽ�ｭ鬩幢ｽ｢隴趣ｽ｢�ｽ�ｽ�ｽ�｣鬩幢ｽ｢隴趣ｽ｢�ｽ�ｽ�ｽ�ｩ鬮｣豈費ｽｼ螟ｲ�ｽ�ｽ�ｽ�･鬮ｯ讓奇ｽｻ阮卍ｧ驕ｶ莨�ｿｽ�ｽ�ｹ�ｽ�ｧ鬮｣�ｽ�ｽ�ｽ�ｽ�ｽ�ｽ�ｷ髫ｴ蜿厄ｽｧ�ｫ�ｽ�ｱ�ｽ�ｬ鬩幢ｽ｢�ｽ�ｧ髯橸ｽｳ陞滂ｽｲ�ｽ�ｽ�ｽ�ｪ�ｽ�ｽ�ｽ�ｿ鬩搾ｽｵ�ｽ�ｺ�ｽ�ｽ�ｽ�ｹ鬩幢ｽ｢�ｽ�ｧ
 		else if (m_characters[i]->getHp() > 0) {
 			int x = m_characters[i]->getX();
 			if (m_camera->getX() < x) { x += m_characters[i]->getWide() * 2; }
@@ -867,13 +871,20 @@ void World::adjustBattleCamera() {
 		}
 	}
 
-	// 驛｢�ｧ�ｽ�ｫ驛｢譎｢�ｽ�｡驛｢譎｢�ｽ�ｩ驍ｵ�ｺ�ｽ�ｮ髫ｲ�｡�ｽ�｡髯樊ｻゑｽｽ�ｧ驛｢譎｢�ｽ�ｻ鬩搾ｽｵ�ｽ�ｮ髯
-	// 髯樊ｻゑｽｽ�ｧ驍ｵ�ｺ鬮ｦ�ｪ�ｽ�･髯樊ｺｽ蛻､陝ｲ�ｩ驍ｵ�ｺ陷ｷ�ｶ�ｽ邇�｢�ｽ�ｽ�ｽ�ｦ遶丞｣ｺ�ｲ驍ｵ�ｺ郢ｧ�ｽ�ｽ邇匁捗�ｽ�ｴ髯ｷ�ｷ陋ｹ�ｻ遶難ｿｽ�ｸ�ｺ�ｽ�ｩ驍ｵ�ｲ遶乗劼�ｽ�､�ｽ�ｧ驍ｵ�ｺ鬮ｦ�ｪ�ｽ�･髫ｲ�｡�ｽ�｡髯樊ｻゑｽｽ�ｧ鬩搾ｿｽ�ｿ�ｽ�ｽ螳壽｣秘包ｽｻ陝ｲ�ｩ驍ｵ�ｺ陷ｷ�ｶ�ｽ迢暦ｽｸ�ｲ
+	// 鬩幢ｽ｢�ｽ�ｧ�ｽ�ｽ�ｽ�ｫ鬩幢ｽ｢隴趣ｽ｢�ｽ�ｽ�ｽ�｡鬩幢ｽ｢隴趣ｽ｢�ｽ�ｽ�ｽ�ｩ鬩搾ｽｵ�ｽ�ｺ�ｽ�ｽ�ｽ�ｮ鬮ｫ�ｲ�ｽ�｡�ｽ�ｽ�ｽ�｡鬮ｯ讓奇ｽｻ繧托ｽｽ�ｽ�ｽ�ｧ鬩幢ｽ｢隴趣ｽ｢�ｽ�ｽ�ｽ�ｻ鬯ｩ謳ｾ�ｽ�ｵ�ｽ�ｽ�ｽ�ｮ鬮ｯ
+	// 鬮ｯ讓奇ｽｻ繧托ｽｽ�ｽ�ｽ�ｧ鬩搾ｽｵ�ｽ�ｺ鬯ｮ�ｦ�ｽ�ｪ�ｽ�ｽ�ｽ�･鬮ｯ讓奇ｽｺ�ｽ陋ｻ�､髯晢ｽｲ�ｽ�ｩ鬩搾ｽｵ�ｽ�ｺ髯ｷ�ｷ�ｽ�ｶ�ｽ�ｽ驍�ｽ�｢�ｽ�ｽ�ｽ�ｽ�ｽ�ｽ�ｽ�ｦ驕ｶ荳橸ｽ｣�ｺ�ｽ�ｲ鬩搾ｽｵ�ｽ�ｺ驛｢�ｧ�ｽ�ｽ�ｽ�ｽ驍�戟謐暦ｿｽ�ｽ�ｽ�ｴ鬮ｯ�ｷ�ｽ�ｷ髯具ｽｹ�ｽ�ｻ驕ｶ髮｣�ｿ�ｽ�ｽ�ｸ�ｽ�ｺ�ｽ�ｽ�ｽ�ｩ鬩搾ｽｵ�ｽ�ｲ驕ｶ荵怜款�ｽ�ｽ�ｽ�､�ｽ�ｽ�ｽ�ｧ鬩搾ｽｵ�ｽ�ｺ鬯ｮ�ｦ�ｽ�ｪ�ｽ�ｽ�ｽ�･鬮ｫ�ｲ�ｽ�｡�ｽ�ｽ�ｽ�｡鬮ｯ讓奇ｽｻ繧托ｽｽ�ｽ�ｽ�ｧ鬯ｩ謳ｾ�ｿ�ｽ�ｽ�ｿ�ｽ�ｽ�ｽ�ｽ陞ｳ螢ｽ�｣遘蛹�ｽｽ�ｻ髯晢ｽｲ�ｽ�ｩ鬩搾ｽｵ�ｽ�ｺ髯ｷ�ｷ�ｽ�ｶ�ｽ�ｽ霑｢證ｦ�ｽ�ｸ�ｽ�ｲ
 	double nowEx = m_camera->getEx();
 	double gex = nowEx;
 	int shift = controlLeftShift() + controlRightShift();
 	if (shift == 1) {
-		m_camera->setZoomOutMode(!m_camera->getZoomOutMode());
+		bool zoomOutMode = m_camera->getZoomOutMode();
+		m_camera->setZoomOutMode(!zoomOutMode);
+		if (zoomOutMode) {
+			m_soundPlayer_p->pushSoundQueue(m_cameraInSound);
+		}
+		else {
+			m_soundPlayer_p->pushSoundQueue(m_cameraOutSound);
+		}
 	}
 	if (m_camera->getZoomOutMode()) {
 		if (nowEx > m_cameraMinEx) {
@@ -884,22 +895,22 @@ void World::adjustBattleCamera() {
 		int nowWide = (int)(GAME_WIDE / 2 / nowEx);
 		int nowHeight = (int)(GAME_HEIGHT / 2 / nowEx);
 		if (nowEx > m_cameraMinEx && (max_dx > nowWide || max_dy > nowHeight)) {
-			// 鬩搾ｽｵ�ｽ�ｮ髯
+			// 鬯ｩ謳ｾ�ｽ�ｵ�ｽ�ｽ�ｽ�ｮ鬮ｯ
 			double d = double(max(max_dx - nowWide, max_dy - nowHeight));
 			m_camera->setEx(nowEx - min(0.1, d / 100000) * m_exX);
 		}
 		else if (nowEx < m_cameraMaxEx && (max_dx < nowWide && max_dy < nowHeight)) {
-			// 髫ｲ�｡�ｽ�｡髯樊ｻゑｽｽ�ｧ
+			// 鬮ｫ�ｲ�ｽ�｡�ｽ�ｽ�ｽ�｡鬮ｯ讓奇ｽｻ繧托ｽｽ�ｽ�ｽ�ｧ
 			double d = double(max(nowWide - max_dx, nowHeight - max_dy));
 			m_camera->setEx(nowEx + min(0.005, d / 100000) * m_exX);
 		}
 	}
 
-	// 驛｢�ｧ�ｽ�ｫ驛｢譎｢�ｽ�｡驛｢譎｢�ｽ�ｩ驍ｵ�ｺ�ｽ�ｮ髫ｴ蜴�ｽｽ�ｴ髫ｴ�ｽ�ｽ�ｰ
+	// 鬩幢ｽ｢�ｽ�ｧ�ｽ�ｽ�ｽ�ｫ鬩幢ｽ｢隴趣ｽ｢�ｽ�ｽ�ｽ�｡鬩幢ｽ｢隴趣ｽ｢�ｽ�ｽ�ｽ�ｩ鬩搾ｽｵ�ｽ�ｺ�ｽ�ｽ�ｽ�ｮ鬮ｫ�ｴ陷ｴ�ｽ�ｽ�ｽ�ｽ�ｴ鬮ｫ�ｴ�ｽ�ｽ�ｽ�ｽ�ｽ�ｰ
 	updateCamera(gx, gy, gex);
 }
 
-//  Battle�ｽ�ｽ陞｢�ｹ邵ｺ�ｽ�ｹ譏懶ｽｹ譁滄豪�ｹ譎｢�ｽ�ｼ驛｢�ｧ�ｽ�ｷ驛｢譎｢�ｽ�ｧ驛｢譎｢�ｽ�ｳ驍ｵ�ｺ�ｽ�ｮ髫ｴ蜴�ｽｽ�ｴ髫ｴ�ｽ�ｽ�ｰ
+//  Battle�ｽ�ｽ�ｽ�ｽ髯橸ｽ｢�ｽ�ｹ驍ｵ�ｺ�ｽ�ｽ�ｽ�ｹ隴乗��ｽ�ｹ隴∵ｻ�ｱｪ�ｽ�ｹ隴趣ｽ｢�ｽ�ｽ�ｽ�ｼ鬩幢ｽ｢�ｽ�ｧ�ｽ�ｽ�ｽ�ｷ鬩幢ｽ｢隴趣ｽ｢�ｽ�ｽ�ｽ�ｧ鬩幢ｽ｢隴趣ｽ｢�ｽ�ｽ�ｽ�ｳ鬩搾ｽｵ�ｽ�ｺ�ｽ�ｽ�ｽ�ｮ鬮ｫ�ｴ陷ｴ�ｽ�ｽ�ｽ�ｽ�ｴ鬮ｫ�ｴ�ｽ�ｽ�ｽ�ｽ�ｽ�ｰ
 void World::updateAnimation() {
 	for (unsigned int i = 0; i < m_animations.size(); i++) {
 		m_animations[i]->count();
@@ -912,11 +923,11 @@ void World::updateAnimation() {
 	}
 }
 
-//  Battle�ｽ�ｽ陞｢�ｹ邵ｺ蜀暦ｽｹ譎｢�ｽ�｣驛｢譎｢�ｽ�ｩ驍ｵ�ｺ�ｽ�ｮ髫ｴ蜴�ｽｽ�ｴ髫ｴ�ｽ�ｽ�ｰ�ｽ�ｽ陜捺ｺｷ諢幃垈�ｦ�ｽ�ｽ�ｽ�ｯ�ｽ�ｾ鬮ｮ雜｣�ｽ�｡驍ｵ�ｺ�ｽ�ｮ髯樊ｺｽ蛻､陝ｲ�ｩ�ｽ�ｽ
+//  Battle�ｽ�ｽ�ｽ�ｽ髯橸ｽ｢�ｽ�ｹ驍ｵ�ｺ陷證ｦ�ｽ�ｹ隴趣ｽ｢�ｽ�ｽ�ｽ�｣鬩幢ｽ｢隴趣ｽ｢�ｽ�ｽ�ｽ�ｩ鬩搾ｽｵ�ｽ�ｺ�ｽ�ｽ�ｽ�ｮ鬮ｫ�ｴ陷ｴ�ｽ�ｽ�ｽ�ｽ�ｴ鬮ｫ�ｴ�ｽ�ｽ�ｽ�ｽ�ｽ�ｰ�ｽ�ｽ�ｽ�ｽ髯懈瑳�ｺ�ｷ隲｢蟷�梭�ｽ�ｦ�ｽ�ｽ�ｽ�ｽ�ｽ�ｽ�ｽ�ｯ�ｽ�ｽ�ｽ�ｾ鬯ｮ�ｮ髮懶ｽ｣�ｽ�ｽ�ｽ�｡鬩搾ｽｵ�ｽ�ｺ�ｽ�ｽ�ｽ�ｮ鬮ｯ讓奇ｽｺ�ｽ陋ｻ�､髯晢ｽｲ�ｽ�ｩ�ｽ�ｽ�ｽ�ｽ
 void World::updateCharacter() {
 	size_t size = m_characterControllers.size();
 	for (unsigned int i = 0; i < size; i++) {
-		// Brain驍ｵ�ｺ�ｽ�ｮ鬮ｫ陬懈升�ｽ�ｫ闕ｵ譏ｴ螳夲ｽｬ�ｾ�ｽ�ｻ髫ｰ�ｦ�ｽ�ｽ�ｽ�ｯ�ｽ�ｾ鬮ｮ雜｣�ｽ�｡髯樊ｺｽ蛻､陝ｲ�ｩ
+		// Brain鬩搾ｽｵ�ｽ�ｺ�ｽ�ｽ�ｽ�ｮ鬯ｮ�ｫ髯ｬ諛亥合�ｽ�ｽ�ｽ�ｫ髣包ｽｵ隴擾ｽｴ陞ｳ螟ｲ�ｽ�ｬ�ｽ�ｾ�ｽ�ｽ�ｽ�ｻ鬮ｫ�ｰ�ｽ�ｦ�ｽ�ｽ�ｽ�ｽ�ｽ�ｽ�ｽ�ｯ�ｽ�ｽ�ｽ�ｾ鬯ｮ�ｮ髮懶ｽ｣�ｽ�ｽ�ｽ�｡鬮ｯ讓奇ｽｺ�ｽ陋ｻ�､髯晢ｽｲ�ｽ�ｩ
 		if (m_characterControllers[i]->getBrain()->needSearchTarget()) {
 			Character* target = m_characters[GetRand((int)m_characters.size() - 1)];
 			m_characterControllers[i]->searchTargetCandidate(target);
@@ -924,75 +935,76 @@ void World::updateCharacter() {
 	}
 }
 
-//  Battle�ｽ�ｽ陞｢�ｹ邵ｺ蜀暦ｽｹ譎｢�ｽ�｣驛｢譎｢�ｽ�ｩ驛｢�ｧ�ｽ�ｯ驛｢�ｧ�ｽ�ｿ驛｢譎｢�ｽ�ｼ驍ｵ�ｺ�ｽ�ｮ髯ｷ蟠趣ｽｼ謚ｫ�ｳ
+//  Battle�ｽ�ｽ�ｽ�ｽ髯橸ｽ｢�ｽ�ｹ驍ｵ�ｺ陷證ｦ�ｽ�ｹ隴趣ｽ｢�ｽ�ｽ�ｽ�｣鬩幢ｽ｢隴趣ｽ｢�ｽ�ｽ�ｽ�ｩ鬩幢ｽ｢�ｽ�ｧ�ｽ�ｽ�ｽ�ｯ鬩幢ｽ｢�ｽ�ｧ�ｽ�ｽ�ｽ�ｿ鬩幢ｽ｢隴趣ｽ｢�ｽ�ｽ�ｽ�ｼ鬩搾ｽｵ�ｽ�ｺ�ｽ�ｽ�ｽ�ｮ鬮ｯ�ｷ陝雜｣�ｽ�ｼ隰夲ｽｫ�ｽ�ｳ
 void World::controlCharacter() {
 	size_t size = m_characterControllers.size();
 	for (unsigned int i = 0; i < size; i++) {
 		CharacterController* controller = m_characterControllers[i];
 
-		// HPが0ならスキップ
+		// HP縺0縺ｪ繧峨せ繧ｭ繝��
 		if (controller->getAction()->getCharacter()->getHp() == 0 && !controller->getAction()->getCharacter()->haveDeadGraph()) {
 			continue;
 		}
 
-		// 鬮ｯ�ｦ隰疲ｺｯ蜉帝匚鮃ｹ莠ゑｿｽ�ｽ髯ｷ�ｽ�ｽ�ｦ鬨ｾ
+		// 鬯ｮ�ｯ�ｽ�ｦ髫ｰ逍ｲ�ｺ�ｯ陷牙ｸ晏建魄�ｽｹ闔繧托ｽｿ�ｽ�ｽ�ｽ鬮ｯ�ｷ�ｽ�ｽ�ｽ�ｽ�ｽ�ｦ鬯ｨ�ｾ
 		controller->init();
 
-		// 驛｢�ｧ�ｽ�ｪ驛｢譎�§邵ｺ螟ゑｽｹ�ｧ�ｽ�ｧ驛｢�ｧ�ｽ�ｯ驛｢譎冗樟遶雁､�ｸ�ｺ�ｽ�ｮ髯溷�萓ｭ隨ｳ�ｽ�ｹ�ｧ鬮ｮ竏ｵ�ｽ髯橸ｽｳ
-		atariCharacterAndObject(controller, m_stageObjects);
+		// オブジェクトとの当たり判定
+		atariCharacterAndObject(controller, m_stageObjects, true);
+		atariCharacterAndObject(controller, m_stageObjects, false); // 1回目で斜面にいるかがわかり、それによって処理が変わるため2回目が必要
+
 		if (controller->getAction()->getCharacter()->getHp() > 0) {
-			atariCharacterAndObject(controller, m_attackObjects);
+			atariCharacterAndObject(controller, m_attackObjects, false);
 		}
-		atariCharacterAndObject(controller, m_stageObjects); // 2回目呼ぶのは妥協案　1回目で斜面にいるかがわかり、それによって処理が変わるため2回目が必要
 		if (controller->getAction()->getCharacter()->getId() == m_playerId) {
 			atariCharacterAndDoor(controller, m_doorObjects);
 		}
 
-		// 髫ｰ�ｫ陜｣�ｺ�ｽ�ｽ original驍ｵ�ｺ�ｽ�ｮ驛｢譏懶ｽｸ螂�ｽｿ�ｽ驛｢譎冗樟�ｽ�ｽ驛｢譎�ｽｼ驥�㏍�ｹ譎｢�ｽ�ｼ驛｢�ｧ�ｽ�ｺ
+		// 鬮ｫ�ｰ�ｽ�ｫ髯懶ｽ｣�ｽ�ｺ�ｽ�ｽ�ｽ�ｽ original鬩搾ｽｵ�ｽ�ｺ�ｽ�ｽ�ｽ�ｮ鬩幢ｽ｢隴乗��ｽ�ｸ陞ゑｿｽ�ｽ�ｿ�ｽ�ｽ鬩幢ｽ｢隴主�讓滂ｿｽ�ｽ�ｽ�ｽ鬩幢ｽ｢隴趣ｿｽ�ｽ�ｼ鬩･�ｽ繽搾ｿｽ�ｹ隴趣ｽ｢�ｽ�ｽ�ｽ�ｼ鬩幢ｽ｢�ｽ�ｧ�ｽ�ｽ�ｽ�ｺ
 		if (!m_duplicationFlag || m_characterControllers[i]->getAction()->getCharacter()->getId() != m_playerId) {
 			controller->control();
 			controller->setPlayerDirection(m_player_p);
 		}
 
-		// 髯晢ｿｽ�ｿ�ｽ髣鯉ｽｶ髫ｰ�ｾ�ｽ�ｻ髫ｰ�ｦ
+		// 鬮ｯ譎｢�ｿ�ｽ�ｽ�ｿ�ｽ�ｽ鬮｣魃会ｽｽ�ｶ鬮ｫ�ｰ�ｽ�ｾ�ｽ�ｽ�ｽ�ｻ鬮ｫ�ｰ�ｽ�ｦ
 		Object* bulletAttack = controller->bulletAttack();
 		if (bulletAttack != nullptr) { m_attackObjects.push_back(bulletAttack); }
 
-		// 髫ｴ�ｽ�ｽ�ｬ髫ｰ�ｦ�ｽ�ｽ陋ｻ�､髫ｰ�ｦ
+		// 鬮ｫ�ｴ�ｽ�ｽ�ｽ�ｽ�ｽ�ｬ鬮ｫ�ｰ�ｽ�ｦ�ｽ�ｽ�ｽ�ｽ髯具ｽｻ�ｽ�､鬮ｫ�ｰ�ｽ�ｦ
 		Object* slashAttack = controller->slashAttack();
 		if (slashAttack != nullptr) { m_attackObjects.push_back(slashAttack); }
 
-		// 髯ｷ�ｿ髢ｧ�ｴ闕ｳ original驍ｵ�ｺ�ｽ�ｮ驛｢譏懶ｽｸ螂�ｽｿ�ｽ驛｢譎冗樟�ｽ�ｽ驛｢譎�ｽｼ驥�㏍�ｹ譎｢�ｽ�ｼ驛｢�ｧ�ｽ�ｺ
+		// 鬮ｯ�ｷ�ｽ�ｿ鬮｢�ｧ�ｽ�ｴ髣包ｽｳ original鬩搾ｽｵ�ｽ�ｺ�ｽ�ｽ�ｽ�ｮ鬩幢ｽ｢隴乗��ｽ�ｸ陞ゑｿｽ�ｽ�ｿ�ｽ�ｽ鬩幢ｽ｢隴主�讓滂ｿｽ�ｽ�ｽ�ｽ鬩幢ｽ｢隴趣ｿｽ�ｽ�ｼ鬩･�ｽ繽搾ｿｽ�ｹ隴趣ｽ｢�ｽ�ｽ�ｽ�ｼ鬩幢ｽ｢�ｽ�ｧ�ｽ�ｽ�ｽ�ｺ
 		if (!m_duplicationFlag || m_characterControllers[i]->getAction()->getCharacter()->getId() != m_playerId) {
 			controller->action();
 		}
 
-		// 驛｢�ｧ�ｽ�ｪ驛｢譎�§邵ｺ螟ゑｽｹ�ｧ�ｽ�ｧ驛｢�ｧ�ｽ�ｯ驛｢譎冗樟遶雁､�ｸ�ｺ�ｽ�ｮ鬮ｮ蜈ｷ�ｽ�ｫ鬯ｨ�ｾ陞｢�ｼ隲｢蟷�･
+		// 鬩幢ｽ｢�ｽ�ｧ�ｽ�ｽ�ｽ�ｪ鬩幢ｽ｢隴趣ｿｽﾂｧ驍ｵ�ｺ陞溘ｑ�ｽ�ｹ�ｽ�ｧ�ｽ�ｽ�ｽ�ｧ鬩幢ｽ｢�ｽ�ｧ�ｽ�ｽ�ｽ�ｯ鬩幢ｽ｢隴主�讓滄�髮�､�ｽ�ｸ�ｽ�ｺ�ｽ�ｽ�ｽ�ｮ鬯ｮ�ｮ陷茨ｽｷ�ｽ�ｽ�ｽ�ｫ鬯ｯ�ｨ�ｽ�ｾ髯橸ｽ｢�ｽ�ｼ髫ｲ�｢陝ｷ�ｽ�･
 		penetrationCharacterAndObject(controller, m_stageObjects);
 	}
 }
 
-//  Battle�ｽ�ｽ陞｢�ｹ邵ｺ讙趣ｽｹ譎�§邵ｺ螟ゑｽｹ�ｧ�ｽ�ｧ驛｢�ｧ�ｽ�ｯ驛｢譎冗樟�ｽ�ｽ髯ｷ蟠趣ｽｼ謚ｫ�ｳ
+//  Battle�ｽ�ｽ�ｽ�ｽ髯橸ｽ｢�ｽ�ｹ驍ｵ�ｺ隶呵ｶ｣�ｽ�ｹ隴趣ｿｽﾂｧ驍ｵ�ｺ陞溘ｑ�ｽ�ｹ�ｽ�ｧ�ｽ�ｽ�ｽ�ｧ鬩幢ｽ｢�ｽ�ｧ�ｽ�ｽ�ｽ�ｯ鬩幢ｽ｢隴主�讓滂ｿｽ�ｽ�ｽ�ｽ鬮ｯ�ｷ陝雜｣�ｽ�ｼ隰夲ｽｫ�ｽ�ｳ
 void World::controlObject() {
-	// 髯橸ｽ｢遶丞､ｲ�ｽ�ｽ螳茨ｽｿ�ｫ�ｽ�ｽ髯ｷ蟠趣ｽｼ謚ｫ�ｳ
+	// 鬮ｯ讖ｸ�ｽ�｢驕ｶ荳橸ｽ､�ｲ�ｽ�ｽ�ｽ�ｽ陞ｳ闌ｨ�ｽ�ｿ�ｽ�ｫ�ｽ�ｽ�ｽ�ｽ鬮ｯ�ｷ陝雜｣�ｽ�ｼ隰夲ｽｫ�ｽ�ｳ
 	actionObject(m_stageObjects);
 
-	// 髫ｰ�ｾ�ｽ�ｻ髫ｰ�ｦ�ｽ�ｽ�ｽ�ｽ髦ｮ蜷ｮ陞ｺ驛｢�ｧ鬮ｮ竏ｵ�ｽ髯橸ｽｳ陞｢�ｹ�ｽ�ｽ髯ｷ蟠趣ｽｼ謚ｫ�ｳ
+	// 鬮ｫ�ｰ�ｽ�ｾ�ｽ�ｽ�ｽ�ｻ鬮ｫ�ｰ�ｽ�ｦ�ｽ�ｽ�ｽ�ｽ�ｽ�ｽ�ｽ�ｽ鬮ｦ�ｮ陷ｷ�ｮ髯橸ｽｺ鬩幢ｽ｢�ｽ�ｧ鬯ｮ�ｮ遶擾ｽｵ�ｽ�ｽ鬮ｯ讖ｸ�ｽ�ｳ髯橸ｽ｢�ｽ�ｹ�ｽ�ｽ�ｽ�ｽ鬮ｯ�ｷ陝雜｣�ｽ�ｼ隰夲ｽｫ�ｽ�ｳ
 	actionObject(m_attackObjects);
 
-	// 髯橸ｽ｢遶丞､ｲ�ｽ�ｽ<->髫ｰ�ｾ�ｽ�ｻ髫ｰ�ｦ�ｽ�ｽ�ｽ�ｽ髯溷�萓ｭ隨ｳ�ｽ�ｹ�ｧ鬮ｮ竏ｵ�ｽ髯橸ｽｳ
+	// 鬮ｯ讖ｸ�ｽ�｢驕ｶ荳橸ｽ､�ｲ�ｽ�ｽ�ｽ�ｽ<->鬮ｫ�ｰ�ｽ�ｾ�ｽ�ｽ�ｽ�ｻ鬮ｫ�ｰ�ｽ�ｦ�ｽ�ｽ�ｽ�ｽ�ｽ�ｽ�ｽ�ｽ鬮ｯ貅ｷ�ｽ關難ｽｭ髫ｨ�ｳ�ｽ�ｽ�ｽ�ｹ�ｽ�ｧ鬯ｮ�ｮ遶擾ｽｵ�ｽ�ｽ鬮ｯ讖ｸ�ｽ�ｳ
 	atariStageAndAttack();
 
-	// 髫ｰ�ｾ�ｽ�ｻ髫ｰ�ｦ<->髫ｰ�ｾ�ｽ�ｻ髫ｰ�ｦ�ｽ�ｽ�ｽ�ｽ髯溷�萓ｭ隨ｳ�ｽ�ｹ�ｧ鬮ｮ竏ｵ�ｽ髯橸ｽｳ
+	// 鬮ｫ�ｰ�ｽ�ｾ�ｽ�ｽ�ｽ�ｻ鬮ｫ�ｰ�ｽ�ｦ<->鬮ｫ�ｰ�ｽ�ｾ�ｽ�ｽ�ｽ�ｻ鬮ｫ�ｰ�ｽ�ｦ�ｽ�ｽ�ｽ�ｽ�ｽ�ｽ�ｽ�ｽ鬮ｯ貅ｷ�ｽ關難ｽｭ髫ｨ�ｳ�ｽ�ｽ�ｽ�ｹ�ｽ�ｧ鬯ｮ�ｮ遶擾ｽｵ�ｽ�ｽ鬮ｯ讖ｸ�ｽ�ｳ
 	atariAttackAndAttack();
 }
 
-// Battle�ｽ�ｽ陞｢�ｹ邵ｺ�ｽ�ｹ�ｧ�ｽ�､驛｢譎｢�ｿ�ｽ�主､�ｸ�ｺ�ｽ�ｮ髯ｷ蟠趣ｽｼ謚ｫ�ｳ
+// Battle�ｽ�ｽ�ｽ�ｽ髯橸ｽ｢�ｽ�ｹ驍ｵ�ｺ�ｽ�ｽ�ｽ�ｹ�ｽ�ｧ�ｽ�ｽ�ｽ�､鬩幢ｽ｢隴趣ｽ｢�ｽ�ｿ�ｽ�ｽ�ｽ荳ｻ�､�ｽ�ｸ�ｽ�ｺ�ｽ�ｽ�ｽ�ｮ鬮ｯ�ｷ陝雜｣�ｽ�ｼ隰夲ｽｫ�ｽ�ｳ
 void World::controlItem() {
 	for (unsigned int i = 0; i < m_itemVector.size(); i++) {
-		// 髯ｷ�ｿ鬮｢�ｽ�ｾ驍�ｽｲ�ｽ�ｸ陋ｹ�ｻ遶擾ｽｩ
+		// 鬮ｯ�ｷ�ｽ�ｿ鬯ｮ�｢�ｽ�ｽ�ｽ�ｾ鬩搾ｿｽ�ｽ�ｲ�ｽ�ｽ�ｽ�ｸ髯具ｽｹ�ｽ�ｻ驕ｶ謫ｾ�ｽ�ｩ
 		if (m_itemVector[i]->getDeleteFlag()) {
-			// 髯ｷ莨夲ｽｽ�ｹ髫ｴ�ｫ隲橸ｽｺ雎ｬ�ｹ驍ｵ�ｺ隰疲ｻゑｽｿ�ｽ鬨ｾ蠅難ｽｻ莨夲ｽｽ�ｸ�ｽ�ｭ驍ｵ�ｺ�ｽ�ｧ驍ｵ�ｺ�ｽ�ｪ驍ｵ�ｺ�ｽ�ｽ遶企��ｹ�ｧ霑壼衷�朱ｬｮ�ｯ�ｽ�､
+			// 鬮ｯ�ｷ闔ｨ螟ｲ�ｽ�ｽ�ｽ�ｹ鬮ｫ�ｴ�ｽ�ｫ髫ｲ讖ｸ�ｽ�ｺ髮趣ｽｬ�ｽ�ｹ鬩搾ｽｵ�ｽ�ｺ髫ｰ逍ｲ�ｻ繧托ｽｽ�ｿ�ｽ�ｽ鬯ｨ�ｾ陟�屮�ｽ�ｻ闔ｨ螟ｲ�ｽ�ｽ�ｽ�ｸ�ｽ�ｽ�ｽ�ｭ鬩搾ｽｵ�ｽ�ｺ�ｽ�ｽ�ｽ�ｧ鬩搾ｽｵ�ｽ�ｺ�ｽ�ｽ�ｽ�ｪ鬩搾ｽｵ�ｽ�ｺ�ｽ�ｽ�ｽ�ｽ驕ｶ莨�ｿｽ�ｽ�ｹ�ｽ�ｧ髴大｣ｼ陦ｷ�ｽ譛ｱ�ｬ�ｮ�ｽ�ｯ�ｽ�ｽ�ｽ�､
 			if (CheckSoundMem(m_itemVector[i]->getSound()) == 0) {
 				delete m_itemVector[i];
 				m_itemVector[i] = m_itemVector.back();
@@ -1001,9 +1013,9 @@ void World::controlItem() {
 			}
 			continue;
 		}
-		// 髯具ｽｻ隴趣ｿｽ��刹�ｹ
+		// 鬮ｯ蜈ｷ�ｽ�ｻ髫ｴ雜｣�ｿ�ｽ�ｽ�ｽ蛻ｹ�ｽ�ｹ
 		m_itemVector[i]->init();
-		// 髯橸ｽ｢遶乗劼�ｽ�ｺ驗呻ｽｫ遶雁､�ｸ�ｺ�ｽ�ｮ髯溷�萓ｭ隨ｳ�ｽ�ｹ�ｧ鬮ｮ竏ｵ�ｽ髯橸ｽｳ
+		// 鬮ｯ讖ｸ�ｽ�｢驕ｶ荵怜款�ｽ�ｽ�ｽ�ｺ鬩怜遜�ｽ�ｫ驕ｶ髮�､�ｽ�ｸ�ｽ�ｺ�ｽ�ｽ�ｽ�ｮ鬮ｯ貅ｷ�ｽ關難ｽｭ髫ｨ�ｳ�ｽ�ｽ�ｽ�ｹ�ｽ�ｧ鬯ｮ�ｮ遶擾ｽｵ�ｽ�ｽ鬮ｯ讖ｸ�ｽ�ｳ
 		for (unsigned int j = 0; j < m_stageObjects.size(); j++) {
 			int x1 = 0, y1 = 0, x2 = 0, y2 = 0;
 			m_itemVector[i]->getPoint(&x1, &y1, &x2, &y2);
@@ -1012,48 +1024,49 @@ void World::controlItem() {
 				m_itemVector[i]->setY(m_stageObjects[j]->getY(m_itemVector[i]->getX()));
 			}
 		}
-		// 驛｢�ｧ�ｽ�ｭ驛｢譎｢�ｽ�｣驛｢譎｢�ｽ�ｩ驍ｵ�ｺ�ｽ�ｨ驍ｵ�ｺ�ｽ�ｮ髯溷�萓ｭ隨ｳ�ｽ�ｹ�ｧ鬮ｮ竏ｵ�ｽ髯橸ｽｳ
+		// 鬩幢ｽ｢�ｽ�ｧ�ｽ�ｽ�ｽ�ｭ鬩幢ｽ｢隴趣ｽ｢�ｽ�ｽ�ｽ�｣鬩幢ｽ｢隴趣ｽ｢�ｽ�ｽ�ｽ�ｩ鬩搾ｽｵ�ｽ�ｺ�ｽ�ｽ�ｽ�ｨ鬩搾ｽｵ�ｽ�ｺ�ｽ�ｽ�ｽ�ｮ鬮ｯ貅ｷ�ｽ關難ｽｭ髫ｨ�ｳ�ｽ�ｽ�ｽ�ｹ�ｽ�ｧ鬯ｮ�ｮ遶擾ｽｵ�ｽ�ｽ鬮ｯ讖ｸ�ｽ�ｳ
 		if (m_itemVector[i]->atariCharacter(m_player_p)) {
 			m_soundPlayer_p->pushSoundQueue(m_itemVector[i]->getSound());
 		}
-		// 髯ｷ蟠趣ｽｼ謚ｫ�ｳ
+		// 鬮ｯ�ｷ陝雜｣�ｽ�ｼ隰夲ｽｫ�ｽ�ｳ
 		m_itemVector[i]->action();
 	}
 }
 
-//  Battle�ｽ�ｽ陞｢�ｹ邵ｺ蜀暦ｽｹ譎｢�ｽ�｣驛｢譎｢�ｽ�ｩ驛｢�ｧ�ｽ�ｯ驛｢�ｧ�ｽ�ｿ驛｢譎｢�ｽ�ｼ驍ｵ�ｺ�ｽ�ｨ驛｢�ｧ�ｽ�ｪ驛｢譎�§邵ｺ螟ゑｽｹ�ｧ�ｽ�ｧ驛｢�ｧ�ｽ�ｯ驛｢譎冗樟�ｽ�ｽ髯溷�萓ｭ隨ｳ�ｽ�ｹ�ｧ鬮ｮ竏ｵ�ｽ髯橸ｽｳ
-void World::atariCharacterAndObject(CharacterController* controller, vector<Object*>& objects) {
-	// 髯橸ｽ｢遶丞､ｲ�ｽ�ｽ螳茨ｽｿ�ｫ邵ｺ讙趣ｽｹ譎�§邵ｺ螟ゑｽｹ�ｧ�ｽ�ｧ驛｢�ｧ�ｽ�ｯ驛｢譎冗樟�ｽ�ｽ髯ｷ�ｽ�ｽ�ｦ鬨ｾ (髯溷�萓ｭ隨ｳ�ｽ�ｹ�ｧ鬮ｮ竏ｵ�ｽ髯橸ｽｳ陞｢�ｹ遶雁ｮ壽↑髴域喚�ｳ)
+//  Battle：キャラクターとオブジェクトの当たり判定
+void World::atariCharacterAndObject(CharacterController* controller, vector<Object*>& objects, bool slope) {
+	// 壁や床オブジェクトの処理 (当たり判定と動き)
 	for (unsigned int i = 0; i < objects.size(); i++) {
-		// 髯溷�萓ｭ隨ｳ�ｽ�ｹ�ｧ鬮ｮ竏ｵ�ｽ髯橸ｽｳ陞｢�ｹ�ｽ蝣､�ｸ�ｺ髦ｮ蜻ｻ�ｼ�ｽ�ｸ�ｺ�ｽ�ｧ鬮ｯ�ｦ陟募ｨｯ魘ｬ
+		if (objects[i]->slopeFlag() != slope) { continue; }
+		// 当たり判定をここで行う
 		if (objects[i]->atari(controller)) {
 			const Character* character = controller->getAction()->getCharacter();
-			// 驛｢�ｧ�ｽ�ｨ驛｢譎�ｽｼ譁絶凾驛｢�ｧ�ｽ�ｯ驛｢譏懶ｽｺ蛹�ｽｽ�ｽ隲幄肩�ｿ�ｽ
+			// 鬩幢ｽ｢�ｽ�ｧ�ｽ�ｽ�ｽ�ｨ鬩幢ｽ｢隴趣ｿｽ�ｽ�ｼ隴∫ｵｶ蜃ｾ鬩幢ｽ｢�ｽ�ｧ�ｽ�ｽ�ｽ�ｯ鬩幢ｽ｢隴乗��ｽ�ｺ陋ｹ�ｽ�ｽ�ｽ�ｽ�ｽ髫ｲ蟷�か�ｽ�ｿ�ｽ�ｽ
 			int x = character->getCenterX();
 			int y = character->getCenterY();
 			Animation* atariAnimation = objects[i]->createAnimation(x, y, 3);
 			if (atariAnimation != nullptr) {
 				m_animations.push_back(atariAnimation);
 			}
-			// 効果音
+			// 蜉ｹ譫憺浹
 			int soundHandle = objects[i]->getSoundHandle();
 			int panPal = adjustPanSound(x, m_camera->getX());
 			m_soundPlayer_p->pushSoundQueue(soundHandle, panPal);
-			// HP = 0になったとき（やられたとき）
+			// HP = 0縺ｫ縺ｪ縺｣縺溘→縺搾ｼ医ｄ繧峨ｌ縺溘→縺搾ｼ
 			if (!character->haveDeadGraph() && character->getHp() == 0) {
 				m_animations.push_back(new Animation(x, y, 3, m_characterDeadGraph));
 				m_camera->shakingStart(20, 20);
 				m_soundPlayer_p->pushSoundQueue(m_characterDeadSound, panPal);
 				if (!m_duplicationFlag && character->getGroupId() != m_player_p->getGroupId() && GetRand(100) < 20) {
-					// 驛｢�ｧ�ｽ�ｹ驛｢�ｧ�ｽ�ｭ驛｢譎｢�ｽ�ｫ鬨ｾ蜈ｷ�ｽ�ｺ髯ｷ蜥ｲ�ｩ繧托ｽｽ�ｸ�ｽ�ｭ驍ｵ�ｺ�ｽ�ｧ驍ｵ�ｺ�ｽ�ｪ驍ｵ�ｺ闔会ｽ｣�ｽ讙趣ｽｸ�ｺ�ｽ�ｰ鬩墓慣�ｽ�ｺ鬩搾ｿｽ�ｿ�ｽ邵ｲ蝣､�ｹ�ｧ�ｽ�｢驛｢�ｧ�ｽ�､驛｢譎｢�ｿ�ｽ�主､�ｸ�ｺ霑ｹ螟奇ｽｪ驍ｵ�ｺ�ｽ�｡驛｢�ｧ
+					// 鬩幢ｽ｢�ｽ�ｧ�ｽ�ｽ�ｽ�ｹ鬩幢ｽ｢�ｽ�ｧ�ｽ�ｽ�ｽ�ｭ鬩幢ｽ｢隴趣ｽ｢�ｽ�ｽ�ｽ�ｫ鬯ｨ�ｾ陷茨ｽｷ�ｽ�ｽ�ｽ�ｺ鬮ｯ�ｷ陷･�ｲ�ｽ�ｩ郢ｧ謇假ｽｽ�ｽ�ｽ�ｸ�ｽ�ｽ�ｽ�ｭ鬩搾ｽｵ�ｽ�ｺ�ｽ�ｽ�ｽ�ｧ鬩搾ｽｵ�ｽ�ｺ�ｽ�ｽ�ｽ�ｪ鬩搾ｽｵ�ｽ�ｺ髣比ｼ夲ｽｽ�｣�ｽ�ｽ隶呵ｶ｣�ｽ�ｸ�ｽ�ｺ�ｽ�ｽ�ｽ�ｰ鬯ｩ蠅捺��ｽ�ｽ�ｽ�ｺ鬯ｩ謳ｾ�ｿ�ｽ�ｽ�ｿ�ｽ�ｽ驍ｵ�ｲ陜｣�､�ｽ�ｹ�ｽ�ｧ�ｽ�ｽ�ｽ�｢鬩幢ｽ｢�ｽ�ｧ�ｽ�ｽ�ｽ�､鬩幢ｽ｢隴趣ｽ｢�ｽ�ｿ�ｽ�ｽ�ｽ荳ｻ�､�ｽ�ｸ�ｽ�ｺ髴托ｽｹ陞溷･�ｽｽ�ｪ鬩搾ｽｵ�ｽ�ｺ�ｽ�ｽ�ｽ�｡鬩幢ｽ｢�ｽ�ｧ
 					m_itemVector.push_back(new CureItem("cure", x, y, 50));
 				}
 			}
 		}
-		// deleteFlag驍ｵ�ｺ髣戊ｼブe驍ｵ�ｺ�ｽ�ｪ驛｢�ｧ霑壼衷�朱ｬｮ�ｯ�ｽ�､驍ｵ�ｺ陷ｷ�ｶ�ｽ
+		// deleteFlag鬩搾ｽｵ�ｽ�ｺ鬮｣謌奇ｽｼ繝貌鬩搾ｽｵ�ｽ�ｺ�ｽ�ｽ�ｽ�ｪ鬩幢ｽ｢�ｽ�ｧ髴大｣ｼ陦ｷ�ｽ譛ｱ�ｬ�ｮ�ｽ�ｯ�ｽ�ｽ�ｽ�､鬩搾ｽｵ�ｽ�ｺ髯ｷ�ｷ�ｽ�ｶ�ｽ�ｽ
 		if (objects[i]->getDeleteFlag()) {
 			delete objects[i];
-			// 髫ｴ蟷｢�ｽ�ｫ髯晢ｿｽ�ｽ�ｾ驛｢�ｧ髮区ｨ抵ｽ朱ｬｮ�ｯ�ｽ�､驍ｵ�ｺ陷ｷ�ｶ�ｽ邇厄ｽｭ�ｽ�ｽ�ｹ驍ｵ�ｺ驕雋�∞�ｼ
+			// 鬮ｫ�ｴ陝ｷ�｢�ｽ�ｽ�ｽ�ｫ鬮ｯ譎｢�ｿ�ｽ�ｽ�ｽ�ｽ�ｾ鬩幢ｽ｢�ｽ�ｧ鬮ｮ蛹ｺ�ｨ謚ｵ�ｽ譛ｱ�ｬ�ｮ�ｽ�ｯ�ｽ�ｽ�ｽ�､鬩搾ｽｵ�ｽ�ｺ髯ｷ�ｷ�ｽ�ｶ�ｽ�ｽ驍�私�ｽ�ｭ�ｽ�ｽ�ｽ�ｽ�ｽ�ｹ鬩搾ｽｵ�ｽ�ｺ鬩髮具ｿｽ竏橸ｿｽ�ｼ
 			objects[i] = objects.back();
 			objects.pop_back();
 			i--;
@@ -1061,30 +1074,30 @@ void World::atariCharacterAndObject(CharacterController* controller, vector<Obje
 	}
 }
 
-//  Battle�ｽ�ｽ陞｢�ｹ邵ｺ蜀暦ｽｹ譎｢�ｽ�｣驛｢譎｢�ｽ�ｩ驛｢�ｧ�ｽ�ｯ驛｢�ｧ�ｽ�ｿ驛｢譎｢�ｽ�ｼ驍ｵ�ｺ�ｽ�ｨ髫ｰ�ｽ�ｳ�ｨ邵ｺ讙趣ｽｹ譎�§邵ｺ螟ゑｽｹ�ｧ�ｽ�ｧ驛｢�ｧ�ｽ�ｯ驛｢譎冗樟�ｽ�ｽ髯溷�萓ｭ隨ｳ�ｽ�ｹ�ｧ鬮ｮ竏ｵ�ｽ髯橸ｽｳ
+//  Battle�ｽ�ｽ�ｽ�ｽ髯橸ｽ｢�ｽ�ｹ驍ｵ�ｺ陷證ｦ�ｽ�ｹ隴趣ｽ｢�ｽ�ｽ�ｽ�｣鬩幢ｽ｢隴趣ｽ｢�ｽ�ｽ�ｽ�ｩ鬩幢ｽ｢�ｽ�ｧ�ｽ�ｽ�ｽ�ｯ鬩幢ｽ｢�ｽ�ｧ�ｽ�ｽ�ｽ�ｿ鬩幢ｽ｢隴趣ｽ｢�ｽ�ｽ�ｽ�ｼ鬩搾ｽｵ�ｽ�ｺ�ｽ�ｽ�ｽ�ｨ鬮ｫ�ｰ�ｽ�ｽ�ｽ�ｳ�ｽ�ｨ驍ｵ�ｺ隶呵ｶ｣�ｽ�ｹ隴趣ｿｽﾂｧ驍ｵ�ｺ陞溘ｑ�ｽ�ｹ�ｽ�ｧ�ｽ�ｽ�ｽ�ｧ鬩幢ｽ｢�ｽ�ｧ�ｽ�ｽ�ｽ�ｯ鬩幢ｽ｢隴主�讓滂ｿｽ�ｽ�ｽ�ｽ鬮ｯ貅ｷ�ｽ關難ｽｭ髫ｨ�ｳ�ｽ�ｽ�ｽ�ｹ�ｽ�ｧ鬯ｮ�ｮ遶擾ｽｵ�ｽ�ｽ鬮ｯ讖ｸ�ｽ�ｳ
 void World::atariCharacterAndDoor(CharacterController* controller, vector<Object*>& objects) {
 
-	// 驛｢�ｧ�ｽ�ｹ驛｢�ｧ�ｽ�ｭ驛｢譎｢�ｽ�ｫ鬨ｾ蜈ｷ�ｽ�ｺ髯ｷ蜥ｲ�ｩ繧托ｽｽ�ｸ�ｽ�ｭ驍ｵ�ｺ�ｽ�ｯ髫ｰ�ｽ�ｳ�ｨ遶頑･｢諤ｦ�ｽ�･驛｢�ｧ陟募ｨｯ�ｽ驍ｵ�ｺ
+	// 鬩幢ｽ｢�ｽ�ｧ�ｽ�ｽ�ｽ�ｹ鬩幢ｽ｢�ｽ�ｧ�ｽ�ｽ�ｽ�ｭ鬩幢ｽ｢隴趣ｽ｢�ｽ�ｽ�ｽ�ｫ鬯ｨ�ｾ陷茨ｽｷ�ｽ�ｽ�ｽ�ｺ鬮ｯ�ｷ陷･�ｲ�ｽ�ｩ郢ｧ謇假ｽｽ�ｽ�ｽ�ｸ�ｽ�ｽ�ｽ�ｭ鬩搾ｽｵ�ｽ�ｺ�ｽ�ｽ�ｽ�ｯ鬮ｫ�ｰ�ｽ�ｽ�ｽ�ｳ�ｽ�ｨ驕ｶ鬆托ｽ･�｢隲､�ｦ�ｽ�ｽ�ｽ�･鬩幢ｽ｢�ｽ�ｧ髯溷供�ｨ�ｯ�ｽ�ｽ鬩搾ｽｵ�ｽ�ｺ
 	if (m_skillFlag) { return; }
 
-	// 髯橸ｽ｢遶丞､ｲ�ｽ�ｽ螳茨ｽｿ�ｫ邵ｺ讙趣ｽｹ譎�§邵ｺ螟ゑｽｹ�ｧ�ｽ�ｧ驛｢�ｧ�ｽ�ｯ驛｢譎冗樟�ｽ�ｽ髯ｷ�ｽ�ｽ�ｦ鬨ｾ (髯溷�萓ｭ隨ｳ�ｽ�ｹ�ｧ鬮ｮ竏ｵ�ｽ髯橸ｽｳ陞｢�ｹ遶雁ｮ壽↑髴域喚�ｳ)
+	// 鬮ｯ讖ｸ�ｽ�｢驕ｶ荳橸ｽ､�ｲ�ｽ�ｽ�ｽ�ｽ陞ｳ闌ｨ�ｽ�ｿ�ｽ�ｫ驍ｵ�ｺ隶呵ｶ｣�ｽ�ｹ隴趣ｿｽﾂｧ驍ｵ�ｺ陞溘ｑ�ｽ�ｹ�ｽ�ｧ�ｽ�ｽ�ｽ�ｧ鬩幢ｽ｢�ｽ�ｧ�ｽ�ｽ�ｽ�ｯ鬩幢ｽ｢隴主�讓滂ｿｽ�ｽ�ｽ�ｽ鬮ｯ�ｷ�ｽ�ｽ�ｽ�ｽ�ｽ�ｦ鬯ｨ�ｾ (鬮ｯ貅ｷ�ｽ關難ｽｭ髫ｨ�ｳ�ｽ�ｽ�ｽ�ｹ�ｽ�ｧ鬯ｮ�ｮ遶擾ｽｵ�ｽ�ｽ鬮ｯ讖ｸ�ｽ�ｳ髯橸ｽ｢�ｽ�ｹ驕ｶ髮�ｽｮ螢ｽ竊鷹ｫｴ蝓溷繭�ｽ�ｳ)
 	for (unsigned int i = 0; i < objects.size(); i++) {
 		if (m_areaLock) {
 			objects[i]->setTextDisp(false);
 			continue;
 		}
-		// 髯溷�萓ｭ隨ｳ�ｽ�ｹ�ｧ鬮ｮ竏ｵ�ｽ髯橸ｽｳ陞｢�ｹ�ｽ蝣､�ｸ�ｺ髦ｮ蜻ｻ�ｼ�ｽ�ｸ�ｺ�ｽ�ｧ鬮ｯ�ｦ陟募ｨｯ魘ｬ
+		// 鬮ｯ貅ｷ�ｽ關難ｽｭ髫ｨ�ｳ�ｽ�ｽ�ｽ�ｹ�ｽ�ｧ鬯ｮ�ｮ遶擾ｽｵ�ｽ�ｽ鬮ｯ讖ｸ�ｽ�ｳ髯橸ｽ｢�ｽ�ｹ�ｽ�ｽ陜｣�､�ｽ�ｸ�ｽ�ｺ鬮ｦ�ｮ陷ｻ�ｻ�ｽ�ｼ�ｽ�ｽ�ｽ�ｸ�ｽ�ｺ�ｽ�ｽ�ｽ�ｧ鬯ｮ�ｯ�ｽ�ｦ髯溷供�ｨ�ｯ鬲假ｽｬ
 		if (objects[i]->atari(controller) && controller->getActionKey()) {
 			if (objects[i]->getAreaNum() == -1) {
-				// 驛｢譎擾ｽｳ�ｨ邵ｺ�ｽ�ｸ�ｺ陋滂ｽ･�ｽ�ｽ�ｸ�ｺ�ｽ�ｪ驍ｵ�ｺ
+				// 鬩幢ｽ｢隴取得�ｽ�ｳ�ｽ�ｨ驍ｵ�ｺ�ｽ�ｽ�ｽ�ｸ�ｽ�ｺ髯区ｻゑｽｽ�･�ｽ�ｽ�ｽ�ｽ�ｽ�ｸ�ｽ�ｺ�ｽ�ｽ�ｽ�ｪ鬩搾ｽｵ�ｽ�ｺ
 				if (objects[i]->getTextNum() != -1) {
 					m_objectConversation = new Conversation(objects[i]->getTextNum(), this, m_soundPlayer_p);
 				}
 			}
 			else {
-				// 髯溷�萓ｭ隨ｳ�ｽ�ｸ�ｺ�ｽ�｣驍ｵ�ｺ雋�ｽｷ�ｽ�ｴ髯ｷ�ｷ 驛｢�ｧ�ｽ�ｨ驛｢譎｢�ｽ�ｪ驛｢�ｧ�ｽ�｢鬩募∞�ｽ�ｻ髯ｷ蟠趣ｽｼ謚ｫ�ｲ鬨ｾ蜈ｷ�ｽ�ｺ鬨ｾ
+				// 鬮ｯ貅ｷ�ｽ關難ｽｭ髫ｨ�ｳ�ｽ�ｽ�ｽ�ｸ�ｽ�ｺ�ｽ�ｽ�ｽ�｣鬩搾ｽｵ�ｽ�ｺ髮具ｿｽ�ｽ�ｷ�ｽ�ｽ�ｽ�ｴ鬮ｯ�ｷ�ｽ�ｷ 鬩幢ｽ｢�ｽ�ｧ�ｽ�ｽ�ｽ�ｨ鬩幢ｽ｢隴趣ｽ｢�ｽ�ｽ�ｽ�ｪ鬩幢ｽ｢�ｽ�ｧ�ｽ�ｽ�ｽ�｢鬯ｩ蜍溪��ｽ�ｽ�ｽ�ｻ鬮ｯ�ｷ陝雜｣�ｽ�ｼ隰夲ｽｫ�ｽ�ｲ鬯ｨ�ｾ陷茨ｽｷ�ｽ�ｽ�ｽ�ｺ鬯ｨ�ｾ
 				m_nextAreaNum = objects[i]->getAreaNum();
-				// 鬨ｾ蛹�ｽｽ�ｻ鬯ｮ�ｱ�ｽ�｢驛｢�ｧ陷ｻ莠･蟆磯ｫｴ�ｽ�ｽ�｢
+				// 鬯ｨ�ｾ陋ｹ�ｽ�ｽ�ｽ�ｽ�ｻ鬯ｯ�ｮ�ｽ�ｱ�ｽ�ｽ�ｽ�｢鬩幢ｽ｢�ｽ�ｧ髯ｷ�ｻ闔�･陝�｣ｯ�ｫ�ｴ�ｽ�ｽ�ｽ�ｽ�ｽ�｢
 				m_brightValue--;
 				m_soundPlayer_p->pushSoundQueue(m_doorSound);
 			}
@@ -1093,15 +1106,15 @@ void World::atariCharacterAndDoor(CharacterController* controller, vector<Object
 
 }
 
-//  Battle�ｽ�ｽ陞｢�ｼ�ｽ�｣遶丞､ｲ�ｽ�ｽ<->髫ｰ�ｾ�ｽ�ｻ髫ｰ�ｦ�ｽ�ｽ�ｽ�ｽ髯溷�萓ｭ隨ｳ�ｽ�ｹ�ｧ鬮ｮ竏ｵ�ｽ髯橸ｽｳ
+//  Battle�ｽ�ｽ�ｽ�ｽ髯橸ｽ｢�ｽ�ｼ�ｽ�ｽ�ｽ�｣驕ｶ荳橸ｽ､�ｲ�ｽ�ｽ�ｽ�ｽ<->鬮ｫ�ｰ�ｽ�ｾ�ｽ�ｽ�ｽ�ｻ鬮ｫ�ｰ�ｽ�ｦ�ｽ�ｽ�ｽ�ｽ�ｽ�ｽ�ｽ�ｽ鬮ｯ貅ｷ�ｽ關難ｽｭ髫ｨ�ｳ�ｽ�ｽ�ｽ�ｹ�ｽ�ｧ鬯ｮ�ｮ遶擾ｽｵ�ｽ�ｽ鬮ｯ讖ｸ�ｽ�ｳ
 void World::atariStageAndAttack() {
 	for (unsigned int i = 0; i < m_attackObjects.size(); i++) {
 		int x = m_attackObjects[i]->getCenterX();
 		int y = m_attackObjects[i]->getCenterY();
 		for (unsigned int j = 0; j < m_stageObjects.size(); j++) {
-			// 髫ｰ�ｾ�ｽ�ｻ髫ｰ�ｦ�ｽ�ｽ遯ｶ�ｲ髯橸ｽ｢遶乗劼�ｽ�ｺ驗呻ｽｫ遶頑･｢蜀ｶ萓ｭ隨ｳ�ｽ�ｸ�ｺ�ｽ�｣驍ｵ�ｺ�ｽ�ｦ驍ｵ�ｺ�ｽ�ｽ�ｽ迢暦ｽｸ�ｺ陷ｿ�･隲｢蟷�･
+			// 鬮ｫ�ｰ�ｽ�ｾ�ｽ�ｽ�ｽ�ｻ鬮ｫ�ｰ�ｽ�ｦ�ｽ�ｽ�ｽ�ｽ驕ｯ�ｶ�ｽ�ｲ鬮ｯ讖ｸ�ｽ�｢驕ｶ荵怜款�ｽ�ｽ�ｽ�ｺ鬩怜遜�ｽ�ｫ驕ｶ鬆托ｽ･�｢陷�ｶ關難ｽｭ髫ｨ�ｳ�ｽ�ｽ�ｽ�ｸ�ｽ�ｺ�ｽ�ｽ�ｽ�｣鬩搾ｽｵ�ｽ�ｺ�ｽ�ｽ�ｽ�ｦ鬩搾ｽｵ�ｽ�ｺ�ｽ�ｽ�ｽ�ｽ�ｽ�ｽ霑｢證ｦ�ｽ�ｸ�ｽ�ｺ髯ｷ�ｿ�ｽ�･髫ｲ�｢陝ｷ�ｽ�･
 			if (m_stageObjects[j]->atariObject(m_attackObjects[i])) {
-				// エフェクト作成
+				// 繧ｨ繝輔ぉ繧ｯ繝井ｽ懈�
 				Animation* atariAnimation = m_attackObjects[i]->createAnimation(x, y, 3);
 				if (atariAnimation != nullptr) {
 					m_animations.push_back(atariAnimation);
@@ -1110,7 +1123,7 @@ void World::atariStageAndAttack() {
 				int panPal = adjustPanSound(x, m_camera->getX());
 				m_soundPlayer_p->pushSoundQueue(soundHandle, panPal);
 			}
-			// 髯橸ｽ｢遶乗劼�ｽ�ｺ驗呻ｽｫ�ｽ�ｽdeleteFlag驍ｵ�ｺ髣戊ｼブe驍ｵ�ｺ�ｽ�ｪ驛｢�ｧ霑壼衷�朱ｬｮ�ｯ�ｽ�､驍ｵ�ｺ陷ｷ�ｶ�ｽ
+			// 鬮ｯ讖ｸ�ｽ�｢驕ｶ荵怜款�ｽ�ｽ�ｽ�ｺ鬩怜遜�ｽ�ｫ�ｽ�ｽ�ｽ�ｽdeleteFlag鬩搾ｽｵ�ｽ�ｺ鬮｣謌奇ｽｼ繝貌鬩搾ｽｵ�ｽ�ｺ�ｽ�ｽ�ｽ�ｪ鬩幢ｽ｢�ｽ�ｧ髴大｣ｼ陦ｷ�ｽ譛ｱ�ｬ�ｮ�ｽ�ｯ�ｽ�ｽ�ｽ�､鬩搾ｽｵ�ｽ�ｺ髯ｷ�ｷ�ｽ�ｶ�ｽ�ｽ
 			if (m_stageObjects[j]->getDeleteFlag()) {
 				delete m_stageObjects[j];
 				m_stageObjects[j] = m_stageObjects.back();
@@ -1118,7 +1131,7 @@ void World::atariStageAndAttack() {
 				j--;
 			}
 		}
-		// 髫ｰ�ｾ�ｽ�ｻ髫ｰ�ｦ�ｽ�ｽ�ｽ�ｽdeleteFlag驍ｵ�ｺ髣戊ｼブe驍ｵ�ｺ�ｽ�ｪ驛｢�ｧ霑壼衷�朱ｬｮ�ｯ�ｽ�､驍ｵ�ｺ陷ｷ�ｶ�ｽ
+		// 鬮ｫ�ｰ�ｽ�ｾ�ｽ�ｽ�ｽ�ｻ鬮ｫ�ｰ�ｽ�ｦ�ｽ�ｽ�ｽ�ｽ�ｽ�ｽ�ｽ�ｽdeleteFlag鬩搾ｽｵ�ｽ�ｺ鬮｣謌奇ｽｼ繝貌鬩搾ｽｵ�ｽ�ｺ�ｽ�ｽ�ｽ�ｪ鬩幢ｽ｢�ｽ�ｧ髴大｣ｼ陦ｷ�ｽ譛ｱ�ｬ�ｮ�ｽ�ｯ�ｽ�ｽ�ｽ�､鬩搾ｽｵ�ｽ�ｺ髯ｷ�ｷ�ｽ�ｶ�ｽ�ｽ
 		if (m_attackObjects[i]->getDeleteFlag()) {
 			createBomb(x, y, m_attackObjects[i]);
 			delete m_attackObjects[i];
@@ -1129,16 +1142,16 @@ void World::atariStageAndAttack() {
 	}
 }
 
-//  Battle�ｽ�ｽ陞｢�ｽ陋ｻ�､髫ｰ�ｦ<->髫ｰ�ｾ�ｽ�ｻ髫ｰ�ｦ�ｽ�ｽ�ｽ�ｽ髯溷�萓ｭ隨ｳ�ｽ�ｹ�ｧ鬮ｮ竏ｵ�ｽ髯橸ｽｳ
+//  Battle�ｽ�ｽ�ｽ�ｽ髯橸ｽ｢�ｽ�ｽ髯具ｽｻ�ｽ�､鬮ｫ�ｰ�ｽ�ｦ<->鬮ｫ�ｰ�ｽ�ｾ�ｽ�ｽ�ｽ�ｻ鬮ｫ�ｰ�ｽ�ｦ�ｽ�ｽ�ｽ�ｽ�ｽ�ｽ�ｽ�ｽ鬮ｯ貅ｷ�ｽ關難ｽｭ髫ｨ�ｳ�ｽ�ｽ�ｽ�ｹ�ｽ�ｧ鬯ｮ�ｮ遶擾ｽｵ�ｽ�ｽ鬮ｯ讖ｸ�ｽ�ｳ
 void World::atariAttackAndAttack() {
 	if (m_attackObjects.size() == 0) { return; }
 	for (unsigned int i = 0; i < m_attackObjects.size() - 1; i++) {
 		int x = m_attackObjects[i]->getCenterX();
 		int y = m_attackObjects[i]->getCenterY();
 		for (unsigned int j = i + 1; j < m_attackObjects.size(); j++) {
-			// 髫ｰ�ｾ�ｽ�ｻ髫ｰ�ｦ�ｽ�ｽ遯ｶ�ｲ髯橸ｽ｢遶乗劼�ｽ�ｺ驗呻ｽｫ遶頑･｢蜀ｶ萓ｭ隨ｳ�ｽ�ｸ�ｺ�ｽ�｣驍ｵ�ｺ�ｽ�ｦ驍ｵ�ｺ�ｽ�ｽ�ｽ迢暦ｽｸ�ｺ陷ｿ�･隲｢蟷�･
+			// 鬮ｫ�ｰ�ｽ�ｾ�ｽ�ｽ�ｽ�ｻ鬮ｫ�ｰ�ｽ�ｦ�ｽ�ｽ�ｽ�ｽ驕ｯ�ｶ�ｽ�ｲ鬮ｯ讖ｸ�ｽ�｢驕ｶ荵怜款�ｽ�ｽ�ｽ�ｺ鬩怜遜�ｽ�ｫ驕ｶ鬆托ｽ･�｢陷�ｶ關難ｽｭ髫ｨ�ｳ�ｽ�ｽ�ｽ�ｸ�ｽ�ｺ�ｽ�ｽ�ｽ�｣鬩搾ｽｵ�ｽ�ｺ�ｽ�ｽ�ｽ�ｦ鬩搾ｽｵ�ｽ�ｺ�ｽ�ｽ�ｽ�ｽ�ｽ�ｽ霑｢證ｦ�ｽ�ｸ�ｽ�ｺ髯ｷ�ｿ�ｽ�･髫ｲ�｢陝ｷ�ｽ�･
 			if (m_attackObjects[j]->atariObject(m_attackObjects[i])) {
-				// エフェクト作成
+				// 繧ｨ繝輔ぉ繧ｯ繝井ｽ懈�
 				Animation* atariAnimation = m_attackObjects[j]->createAnimation(x, y, 3);
 				if (atariAnimation != nullptr) {
 					m_animations.push_back(atariAnimation);
@@ -1152,87 +1165,88 @@ void World::atariAttackAndAttack() {
 	}
 }
 
-// Battle: 爆発を起こす
+// Battle: 辷�匱繧定ｵｷ縺薙☆
 void World::createBomb(int x, int y, Object* attackObject) {
 	if (attackObject->getBomb()) {
-		// 爆発
+		// 辷�匱
 		BombObject* bomb = new BombObject(x, y, 500, 500, attackObject->getDamage(), new Animation(x, y, 3, m_bombGraph));
 		bomb->setCharacterId(attackObject->getCharacterId());
 		bomb->setGroupId(attackObject->getGroupId());
 		m_attackObjects.push_back(bomb);
-		// 効果音
+		// 蜉ｹ譫憺浹
 		m_soundPlayer_p->pushSoundQueue(m_bombSound, adjustPanSound(x, m_camera->getX()));
-		// 画面の揺れ
+		// 逕ｻ髱｢縺ｮ謠ｺ繧
 		m_camera->shakingStart(20, 20);
 	}
 }
 
-// 各キャラが目標地点へ移動するだけ 全員到達したらtrueを返す
+// 蜷�く繝｣繝ｩ縺檎岼讓吝慍轤ｹ縺ｸ遘ｻ蜍輔☆繧九□縺 蜈ｨ蜩｡蛻ｰ驕斐＠縺溘ｉtrue繧定ｿ斐☆
 bool World::moveGoalCharacter() {
-	// deleteFlag驍ｵ�ｺ髣戊ｼブe驍ｵ�ｺ�ｽ�ｮ驛｢�ｧ�ｽ�ｪ驛｢譎�§邵ｺ螟ゑｽｹ�ｧ�ｽ�ｧ驛｢�ｧ�ｽ�ｯ驛｢譎冗樟�ｽ螳壽≧闔ｨ竏晄ｱるし�ｺ陷ｷ�ｶ�ｽ迢暦ｽｸ�ｲ
+	// deleteFlag鬩搾ｽｵ�ｽ�ｺ鬮｣謌奇ｽｼ繝貌鬩搾ｽｵ�ｽ�ｺ�ｽ�ｽ�ｽ�ｮ鬩幢ｽ｢�ｽ�ｧ�ｽ�ｽ�ｽ�ｪ鬩幢ｽ｢隴趣ｿｽﾂｧ驍ｵ�ｺ陞溘ｑ�ｽ�ｹ�ｽ�ｧ�ｽ�ｽ�ｽ�ｧ鬩幢ｽ｢�ｽ�ｧ�ｽ�ｽ�ｽ�ｯ鬩幢ｽ｢隴主�讓滂ｿｽ�ｽ陞ｳ螢ｽ竕ｧ髣費ｽｨ遶乗刋�ｱ繧九＠�ｽ�ｺ髯ｷ�ｷ�ｽ�ｶ�ｽ�ｽ霑｢證ｦ�ｽ�ｸ�ｽ�ｲ
 	deleteObject(m_stageObjects);
 	deleteObject(m_attackObjects);
 
-	// 驛｢�ｧ�ｽ�ｭ驛｢譎｢�ｽ�｣驛｢譎｢�ｽ�ｩ驍ｵ�ｺ�ｽ�ｮ髫ｴ蜴�ｽｽ�ｴ髫ｴ�ｽ�ｽ�ｰ�ｽ�ｽ陜捺ｺｷ諢幃垈�ｦ�ｽ�ｽ�ｽ�ｯ�ｽ�ｾ鬮ｮ雜｣�ｽ�｡驍ｵ�ｺ�ｽ�ｮ髯樊ｺｽ蛻､陝ｲ�ｩ�ｽ�ｽ
-	// 髣包ｽｳ驗呻ｽｫ邵ｲ蝣､�ｹ�ｧ�ｽ�ｭ驛｢譎｢�ｽ�｣驛｢譎｢�ｽ�ｩ驛｢�ｧ髮区ｨ抵ｽ朱ｬｮ�ｯ�ｽ�､驍ｵ�ｺ陷会ｽｱ隨ｳ�ｽ�ｸ�ｺ闕ｵ譎｢�ｽ闃ｽ�ｭ蜴�ｽｽ�ｴ髫ｴ�ｽ�ｽ�ｰ驍ｵ�ｺ陷会ｽｱ隨ｳ�ｽ�ｸ�ｺ闕ｵ譎｢�ｽ闃ｽ�｢�ｽ�ｽ�ｽ�ｦ
+	// 鬩幢ｽ｢�ｽ�ｧ�ｽ�ｽ�ｽ�ｭ鬩幢ｽ｢隴趣ｽ｢�ｽ�ｽ�ｽ�｣鬩幢ｽ｢隴趣ｽ｢�ｽ�ｽ�ｽ�ｩ鬩搾ｽｵ�ｽ�ｺ�ｽ�ｽ�ｽ�ｮ鬮ｫ�ｴ陷ｴ�ｽ�ｽ�ｽ�ｽ�ｴ鬮ｫ�ｴ�ｽ�ｽ�ｽ�ｽ�ｽ�ｰ�ｽ�ｽ�ｽ�ｽ髯懈瑳�ｺ�ｷ隲｢蟷�梭�ｽ�ｦ�ｽ�ｽ�ｽ�ｽ�ｽ�ｽ�ｽ�ｯ�ｽ�ｽ�ｽ�ｾ鬯ｮ�ｮ髮懶ｽ｣�ｽ�ｽ�ｽ�｡鬩搾ｽｵ�ｽ�ｺ�ｽ�ｽ�ｽ�ｮ鬮ｯ讓奇ｽｺ�ｽ陋ｻ�､髯晢ｽｲ�ｽ�ｩ�ｽ�ｽ�ｽ�ｽ
+	// 鬮｣蛹�ｽｽ�ｳ鬩怜遜�ｽ�ｫ驍ｵ�ｲ陜｣�､�ｽ�ｹ�ｽ�ｧ�ｽ�ｽ�ｽ�ｭ鬩幢ｽ｢隴趣ｽ｢�ｽ�ｽ�ｽ�｣鬩幢ｽ｢隴趣ｽ｢�ｽ�ｽ�ｽ�ｩ鬩幢ｽ｢�ｽ�ｧ鬮ｮ蛹ｺ�ｨ謚ｵ�ｽ譛ｱ�ｬ�ｮ�ｽ�ｯ�ｽ�ｽ�ｽ�､鬩搾ｽｵ�ｽ�ｺ髯ｷ莨夲ｽｽ�ｱ髫ｨ�ｳ�ｽ�ｽ�ｽ�ｸ�ｽ�ｺ髣包ｽｵ隴趣ｽ｢�ｽ�ｽ髣�ｽｽ�ｽ�ｭ陷ｴ�ｽ�ｽ�ｽ�ｽ�ｴ鬮ｫ�ｴ�ｽ�ｽ�ｽ�ｽ�ｽ�ｰ鬩搾ｽｵ�ｽ�ｺ髯ｷ莨夲ｽｽ�ｱ髫ｨ�ｳ�ｽ�ｽ�ｽ�ｸ�ｽ�ｺ髣包ｽｵ隴趣ｽ｢�ｽ�ｽ髣�ｽｽ�ｽ�｢�ｽ�ｽ�ｽ�ｽ�ｽ�ｽ�ｽ�ｦ
 	updateCharacter();
 
-	// 驛｢�ｧ�ｽ�ｭ驛｢譎｢�ｽ�｣驛｢譎｢�ｽ�ｩ驛｢�ｧ�ｽ�ｯ驛｢�ｧ�ｽ�ｿ驛｢譎｢�ｽ�ｼ驍ｵ�ｺ�ｽ�ｮ髯ｷ蟠趣ｽｼ謚ｫ�ｳ
+	// 鬩幢ｽ｢�ｽ�ｧ�ｽ�ｽ�ｽ�ｭ鬩幢ｽ｢隴趣ｽ｢�ｽ�ｽ�ｽ�｣鬩幢ｽ｢隴趣ｽ｢�ｽ�ｽ�ｽ�ｩ鬩幢ｽ｢�ｽ�ｧ�ｽ�ｽ�ｽ�ｯ鬩幢ｽ｢�ｽ�ｧ�ｽ�ｽ�ｽ�ｿ鬩幢ｽ｢隴趣ｽ｢�ｽ�ｽ�ｽ�ｼ鬩搾ｽｵ�ｽ�ｺ�ｽ�ｽ�ｽ�ｮ鬮ｯ�ｷ陝雜｣�ｽ�ｼ隰夲ｽｫ�ｽ�ｳ
 	bool allCharacterAlreadyGoal = true;
 	size_t size = m_characterControllers.size();
 	for (unsigned int i = 0; i < size; i++) {
 		CharacterController* controller = m_characterControllers[i];
 
-		// HPが0ならスキップ
+		// HP縺0縺ｪ繧峨せ繧ｭ繝��
 		if (controller->getAction()->getCharacter()->getHp() == 0 && !controller->getAction()->getCharacter()->haveDeadGraph()) { 
 			continue;
 		}
 
-		// 鬮ｯ�ｦ隰疲ｺｯ蜉帝匚鮃ｹ莠ゑｿｽ�ｽ髯ｷ�ｽ�ｽ�ｦ鬨ｾ
+		// 鬯ｮ�ｯ�ｽ�ｦ髫ｰ逍ｲ�ｺ�ｯ陷牙ｸ晏建魄�ｽｹ闔繧托ｽｿ�ｽ�ｽ�ｽ鬮ｯ�ｷ�ｽ�ｽ�ｽ�ｽ�ｽ�ｦ鬯ｨ�ｾ
 		controller->init();
 
-		// 驛｢�ｧ�ｽ�ｪ驛｢譎�§邵ｺ螟ゑｽｹ�ｧ�ｽ�ｧ驛｢�ｧ�ｽ�ｯ驛｢譎冗樟遶雁､�ｸ�ｺ�ｽ�ｮ髯溷�萓ｭ隨ｳ�ｽ�ｹ�ｧ鬮ｮ竏ｵ�ｽ髯橸ｽｳ
-		atariCharacterAndObject(controller, m_stageObjects);
-		if (controller->getAction()->getCharacter()->getHp() > 0) {
-			atariCharacterAndObject(controller, m_attackObjects);
-		}
-		atariCharacterAndObject(controller, m_stageObjects); // 2回目呼ぶのは妥協案　1回目で斜面にいるかがわかり、それによって処理が変わるため2回目が必要
+		// オブジェクトとの当たり判定
+		atariCharacterAndObject(controller, m_stageObjects, true);
+		atariCharacterAndObject(controller, m_stageObjects, false); // 1回目で斜面にいるかがわかり、それによって処理が変わるため2回目が必要
 
-		// 鬨ｾ�ｶ�ｽ�ｮ髫ｶ轣倬它隲ｷ蟠趣ｽｽ�､�ｽ�ｹ驍ｵ�ｺ�ｽ�ｸ鬩募∞�ｽ�ｻ髯ｷ蟠趣ｽｼ謚ｫ�ｽ驛｢�ｧ陋ｹ�ｺ隴ｯ�ｽ謚 original驍ｵ�ｺ�ｽ�ｮ驛｢譏懶ｽｸ螂�ｽｿ�ｽ驛｢譎冗樟�ｽ�ｽ驛｢譎�ｽｼ驥�㏍�ｹ譎｢�ｽ�ｼ驛｢�ｧ�ｽ�ｺ
+		if (controller->getAction()->getCharacter()->getHp() > 0) {
+			atariCharacterAndObject(controller, m_attackObjects, false);
+		}
+
+		// 鬯ｨ�ｾ�ｽ�ｶ�ｽ�ｽ�ｽ�ｮ鬮ｫ�ｶ霓｣蛟ｬ螳�坿�ｷ陝雜｣�ｽ�ｽ�ｽ�､�ｽ�ｽ�ｽ�ｹ鬩搾ｽｵ�ｽ�ｺ�ｽ�ｽ�ｽ�ｸ鬯ｩ蜍溪��ｽ�ｽ�ｽ�ｻ鬮ｯ�ｷ陝雜｣�ｽ�ｼ隰夲ｽｫ�ｽ�ｽ鬩幢ｽ｢�ｽ�ｧ髯具ｽｹ�ｽ�ｺ髫ｴ�ｯ�ｽ�ｽ隰 original鬩搾ｽｵ�ｽ�ｺ�ｽ�ｽ�ｽ�ｮ鬩幢ｽ｢隴乗��ｽ�ｸ陞ゑｿｽ�ｽ�ｿ�ｽ�ｽ鬩幢ｽ｢隴主�讓滂ｿｽ�ｽ�ｽ�ｽ鬩幢ｽ｢隴趣ｿｽ�ｽ�ｼ鬩･�ｽ繽搾ｿｽ�ｹ隴趣ｽ｢�ｽ�ｽ�ｽ�ｼ鬩幢ｽ｢�ｽ�ｧ�ｽ�ｽ�ｽ�ｺ
 		if (!m_duplicationFlag || m_characterControllers[i]->getAction()->getCharacter()->getId() != m_playerId) {
 			allCharacterAlreadyGoal &= controller->moveGoal();
 			controller->setPlayerDirection(m_player_p);
 		}
 
-		// 髯ｷ�ｿ髢ｧ�ｴ闕ｳ original驍ｵ�ｺ�ｽ�ｮ驛｢譏懶ｽｸ螂�ｽｿ�ｽ驛｢譎冗樟�ｽ�ｽ驛｢譎�ｽｼ驥�㏍�ｹ譎｢�ｽ�ｼ驛｢�ｧ�ｽ�ｺ
+		// 鬮ｯ�ｷ�ｽ�ｿ鬮｢�ｧ�ｽ�ｴ髣包ｽｳ original鬩搾ｽｵ�ｽ�ｺ�ｽ�ｽ�ｽ�ｮ鬩幢ｽ｢隴乗��ｽ�ｸ陞ゑｿｽ�ｽ�ｿ�ｽ�ｽ鬩幢ｽ｢隴主�讓滂ｿｽ�ｽ�ｽ�ｽ鬩幢ｽ｢隴趣ｿｽ�ｽ�ｼ鬩･�ｽ繽搾ｿｽ�ｹ隴趣ｽ｢�ｽ�ｽ�ｽ�ｼ鬩幢ｽ｢�ｽ�ｧ�ｽ�ｽ�ｽ�ｺ
 		if (!m_duplicationFlag || m_characterControllers[i]->getAction()->getCharacter()->getId() != m_playerId) {
 			controller->action();
 		}
 
-		// 驛｢�ｧ�ｽ�ｪ驛｢譎�§邵ｺ螟ゑｽｹ�ｧ�ｽ�ｧ驛｢�ｧ�ｽ�ｯ驛｢譎冗樟遶雁､�ｸ�ｺ�ｽ�ｮ鬮ｮ蜈ｷ�ｽ�ｫ鬯ｨ�ｾ陞｢�ｼ隲｢蟷�･
+		// 鬩幢ｽ｢�ｽ�ｧ�ｽ�ｽ�ｽ�ｪ鬩幢ｽ｢隴趣ｿｽﾂｧ驍ｵ�ｺ陞溘ｑ�ｽ�ｹ�ｽ�ｧ�ｽ�ｽ�ｽ�ｧ鬩幢ｽ｢�ｽ�ｧ�ｽ�ｽ�ｽ�ｯ鬩幢ｽ｢隴主�讓滄�髮�､�ｽ�ｸ�ｽ�ｺ�ｽ�ｽ�ｽ�ｮ鬯ｮ�ｮ陷茨ｽｷ�ｽ�ｽ�ｽ�ｫ鬯ｯ�ｨ�ｽ�ｾ髯橸ｽ｢�ｽ�ｼ髫ｲ�｢陝ｷ�ｽ�･
 		penetrationCharacterAndObject(controller, m_stageObjects);
 	}
 
-	// 驛｢�ｧ�ｽ�ｪ驛｢譎�§邵ｺ螟ゑｽｹ�ｧ�ｽ�ｧ驛｢�ｧ�ｽ�ｯ驛｢譎冗樟�ｽ�ｽ髯ｷ蟠趣ｽｼ謚ｫ�ｳ
+	// 鬩幢ｽ｢�ｽ�ｧ�ｽ�ｽ�ｽ�ｪ鬩幢ｽ｢隴趣ｿｽﾂｧ驍ｵ�ｺ陞溘ｑ�ｽ�ｹ�ｽ�ｧ�ｽ�ｽ�ｽ�ｧ鬩幢ｽ｢�ｽ�ｧ�ｽ�ｽ�ｽ�ｯ鬩幢ｽ｢隴主�讓滂ｿｽ�ｽ�ｽ�ｽ鬮ｯ�ｷ陝雜｣�ｽ�ｼ隰夲ｽｫ�ｽ�ｳ
 	controlObject();
 
-	// 驛｢�ｧ�ｽ�｢驛｢�ｧ�ｽ�､驛｢譎｢�ｿ�ｽ�主､�ｸ�ｺ�ｽ�ｮ髯ｷ蟠趣ｽｼ謚ｫ�ｳ
+	// 鬩幢ｽ｢�ｽ�ｧ�ｽ�ｽ�ｽ�｢鬩幢ｽ｢�ｽ�ｧ�ｽ�ｽ�ｽ�､鬩幢ｽ｢隴趣ｽ｢�ｽ�ｿ�ｽ�ｽ�ｽ荳ｻ�､�ｽ�ｸ�ｽ�ｺ�ｽ�ｽ�ｽ�ｮ鬮ｯ�ｷ陝雜｣�ｽ�ｼ隰夲ｽｫ�ｽ�ｳ
 	controlItem();
 
-	// 驛｢�ｧ�ｽ�ｫ驛｢譎｢�ｽ�｡驛｢譎｢�ｽ�ｩ驍ｵ�ｺ�ｽ�ｮ髫ｴ蜴�ｽｽ�ｴ髫ｴ�ｽ�ｽ�ｰ
+	// 鬩幢ｽ｢�ｽ�ｧ�ｽ�ｽ�ｽ�ｫ鬩幢ｽ｢隴趣ｽ｢�ｽ�ｽ�ｽ�｡鬩幢ｽ｢隴趣ｽ｢�ｽ�ｽ�ｽ�ｩ鬩搾ｽｵ�ｽ�ｺ�ｽ�ｽ�ｽ�ｮ鬮ｫ�ｴ陷ｴ�ｽ�ｽ�ｽ�ｽ�ｴ鬮ｫ�ｴ�ｽ�ｽ�ｽ�ｽ�ｽ�ｰ
 	adjustBattleCamera();
 
-	// 驛｢�ｧ�ｽ�ｵ驛｢�ｧ�ｽ�ｦ驛｢譎｢�ｽ�ｳ驛｢譎擾ｽｳ�ｨ�ｽ�ｽ驛｢譎｢�ｽ�ｬ驛｢�ｧ�ｽ�､驛｢譎｢�ｽ�､驛｢譎｢�ｽ�ｼ驍ｵ�ｺ�ｽ�ｮ驛｢譏懶ｽｻ�｣�趣ｽｦ鬮ｫ�ｪ�ｽ�ｭ髯橸ｽｳ陞溘ｉ闊
+	// 鬩幢ｽ｢�ｽ�ｧ�ｽ�ｽ�ｽ�ｵ鬩幢ｽ｢�ｽ�ｧ�ｽ�ｽ�ｽ�ｦ鬩幢ｽ｢隴趣ｽ｢�ｽ�ｽ�ｽ�ｳ鬩幢ｽ｢隴取得�ｽ�ｳ�ｽ�ｨ�ｽ�ｽ�ｽ�ｽ鬩幢ｽ｢隴趣ｽ｢�ｽ�ｽ�ｽ�ｬ鬩幢ｽ｢�ｽ�ｧ�ｽ�ｽ�ｽ�､鬩幢ｽ｢隴趣ｽ｢�ｽ�ｽ�ｽ�､鬩幢ｽ｢隴趣ｽ｢�ｽ�ｽ�ｽ�ｼ鬩搾ｽｵ�ｽ�ｺ�ｽ�ｽ�ｽ�ｮ鬩幢ｽ｢隴乗��ｽ�ｻ�ｽ�｣�ｽ雜｣�ｽ�ｦ鬯ｮ�ｫ�ｽ�ｪ�ｽ�ｽ�ｽ�ｭ鬮ｯ讖ｸ�ｽ�ｳ髯樊ｺ假ｽ蛾頼
 	m_soundPlayer_p->setCameraX(m_camera->getX());
 
-	// 驛｢�ｧ�ｽ�｢驛｢譏懶ｽｹ譁滄豪�ｹ譎｢�ｽ�ｼ驛｢�ｧ�ｽ�ｷ驛｢譎｢�ｽ�ｧ驛｢譎｢�ｽ�ｳ驍ｵ�ｺ�ｽ�ｮ髫ｴ蜴�ｽｽ�ｴ髫ｴ�ｽ�ｽ�ｰ
+	// 鬩幢ｽ｢�ｽ�ｧ�ｽ�ｽ�ｽ�｢鬩幢ｽ｢隴乗��ｽ�ｹ隴∵ｻ�ｱｪ�ｽ�ｹ隴趣ｽ｢�ｽ�ｽ�ｽ�ｼ鬩幢ｽ｢�ｽ�ｧ�ｽ�ｽ�ｽ�ｷ鬩幢ｽ｢隴趣ｽ｢�ｽ�ｽ�ｽ�ｧ鬩幢ｽ｢隴趣ｽ｢�ｽ�ｽ�ｽ�ｳ鬩搾ｽｵ�ｽ�ｺ�ｽ�ｽ�ｽ�ｮ鬮ｫ�ｴ陷ｴ�ｽ�ｽ�ｽ�ｽ�ｴ鬮ｫ�ｴ�ｽ�ｽ�ｽ�ｽ�ｽ�ｰ
 	updateAnimation();
 
 	return allCharacterAlreadyGoal;
 }
 
 bool World::dealBrightValue() {
-	// 逕ｻ髱｢證苓ｻ｢荳ｭ 繧ｨ繝ｪ繧｢遘ｻ蜍輔°繝励Ξ繧､繝､繝ｼ繧�ｉ繧梧凾
+	// 騾包ｽｻ鬮ｱ�｢隴芽挙�ｻ�｢闕ｳ�ｭ 郢ｧ�ｨ郢晢ｽｪ郢ｧ�｢驕假ｽｻ陷崎ｼ板ｰ郢晏干ﾎ樒ｹｧ�､郢晢ｽ､郢晢ｽｼ郢ｧ�ｽ�臥ｹｧ譴ｧ蜃ｾ
 	if (m_brightValue != 255 || playerDead()) {
 		m_brightValue = max(0, m_brightValue - 10);
 		if (!playerDead()) { return true; }
@@ -1240,23 +1254,23 @@ bool World::dealBrightValue() {
 	return false;
 }
 
-// 莨夊ｩｱ縺輔○繧
+// 闔ｨ螟奇ｽｩ�ｱ邵ｺ霈披雷郢ｧ
 void World::talk() {
 	if (m_conversation_p != nullptr) {
 		updateCamera();
 		m_conversation_p->play();
-		// 髣費ｽｨ陞溷･�ｽｽ�ｩ�ｽ�ｱ鬩搾ｽｨ郢ｧ�ｽ�ｽ�ｺ
+		// 鬮｣雋ｻ�ｽ�ｨ髯樊ｺｷ�･�ｽ�ｽ�ｽ�ｽ�ｩ�ｽ�ｽ�ｽ�ｱ鬯ｩ謳ｾ�ｽ�ｨ驛｢�ｧ�ｽ�ｽ�ｽ�ｽ�ｽ�ｺ
 		if (m_conversation_p->getFinishFlag()) {
 			m_conversation_p = nullptr;
 		}
 	}
 }
 
-// 驛｢驛｢譎｢�ｽ�ｼ驛｢譎∽ｾｭ�ｽ�ｽ驛｢�ｧ陷ｻ闌ｨ�ｽ�ｵ遶丞｣ｺ�ｽ
+// 鬩幢ｽ｢鬩幢ｽ｢隴趣ｽ｢�ｽ�ｽ�ｽ�ｼ鬩幢ｽ｢隴寂或�ｾ�ｭ�ｽ�ｽ�ｽ�ｽ鬩幢ｽ｢�ｽ�ｧ髯ｷ�ｻ髣鯉ｽｨ�ｽ�ｽ�ｽ�ｵ驕ｶ荳橸ｽ｣�ｺ�ｽ�ｽ
 void World::moviePlay() {
 	if (m_movie_p != nullptr) {
 		m_movie_p->play();
-		// 驛｢驛｢譎｢�ｽ�ｼ驛｢譎∽ｾｭ�ｽ�ｽ鬩搾ｽｨ郢ｧ�ｽ�ｽ�ｺ
+		// 鬩幢ｽ｢鬩幢ｽ｢隴趣ｽ｢�ｽ�ｽ�ｽ�ｼ鬩幢ｽ｢隴寂或�ｾ�ｭ�ｽ�ｽ�ｽ�ｽ鬯ｩ謳ｾ�ｽ�ｨ驛｢�ｧ�ｽ�ｽ�ｽ�ｽ�ｽ�ｺ
 		if (m_movie_p->getFinishFlag()) {
 			m_movie_p = nullptr;
 		}
