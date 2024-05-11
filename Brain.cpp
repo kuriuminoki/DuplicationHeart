@@ -429,7 +429,7 @@ int NormalAI::bulletOrder() {
 	// ƒ‰ƒ“ƒ_ƒ€‚ÅŽËŒ‚
 	int rapid = m_characterAction_p->getCharacter()->getAttackInfo()->bulletRapid();
 	if (GetRand(rapid) == 0) {
-		return 1;
+		return m_characterAction_p->getBulletCnt() + 1;
 	}
 	return 0;
 }
@@ -929,6 +929,9 @@ Brain* HierarchyAI::createCopy(std::vector<Character*> characters, const Camera*
 	copyTarget(characters, getTargetId(), res);
 	setParam(res);
 	return res;
+}
+int HierarchyAI::bulletOrder() {
+	return m_characterAction_p->getBulletCnt() + 1;
 }
 void HierarchyAI::bulletTargetPoint(int& x, int& y) {
 	x = GetRand(600) - 300 + m_characterAction_p->getCharacter()->getCenterX();
