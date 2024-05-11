@@ -419,7 +419,7 @@ public:
 
 	Brain* createCopy(std::vector<Character*> characters, const Camera* camera);
 
-	int bulletOrder() { return 1; }
+	int bulletOrder();
 	void bulletTargetPoint(int& x, int& y);
 
 	void moveOrder(int& right, int& left, int& up, int& down) { return; }

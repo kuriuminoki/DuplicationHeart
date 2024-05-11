@@ -1043,6 +1043,8 @@ void BulletObject::setBulletParam(BulletObject* object) {
 	object->setD(m_d);
 	object->setDamage(m_damage);
 	object->setEffectHandles(m_effectHandles_p);
+	object->setGraphHandle(m_handle);
+	
 }
 Object* ParabolaBullet::createCopy() {
 	ParabolaBullet* res = new ParabolaBullet(m_x1, m_y1, m_handle, m_gx, m_gy);

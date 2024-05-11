@@ -77,7 +77,7 @@ public:
 	inline CharacterLoader* getCharacterLoader() const { return m_characterLoader; }
 	inline ObjectLoader* getObjectLoader() const { return m_objectLoader; }
 	inline const World* getWorld() const { return m_world_p; }
-	bool getBackPrevSaveFlag() const;
+	int getBackPrevSave() const;
 
 	// ƒZƒbƒ^
 	void setWorld(World* world);

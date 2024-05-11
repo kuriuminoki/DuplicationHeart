@@ -166,6 +166,7 @@ public:
 	inline int getCharacterDeadSound() const { return m_characterDeadSound; }
 	inline int getBombSound() const { return m_bombSound; }
 	inline int getDoorSound() const { return m_doorSound; }
+	inline bool getSkillFlag() const { return m_skillFlag; }
 
 	// Drawer—p‚ÌƒQƒbƒ^
 	std::vector<const CharacterAction*> getActions() const;

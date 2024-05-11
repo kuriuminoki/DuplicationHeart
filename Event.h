@@ -63,7 +63,7 @@ public:
 	virtual bool skillAble() { return true; }
 
 	// クリア時に前のセーブポイントへ戻る必要があるか
-	virtual bool needBackPrevSave() { return false; }
+	virtual int needBackPrevSave() { return 0; }
 
 	// セッタ
 	virtual void setWorld(World* world) { m_world_p = world; }
@@ -96,8 +96,8 @@ private:
 	// イベントの進捗(EventElementのインデックス)
 	int m_nowElement;
 
-	// 前のセーブポイントへ戻る要求
-	bool m_backPrevSaveFlag;
+	// 前のセーブポイントへ戻る要求 戻るならいくつ戻るか返す(>0)
+	int m_backPrevSave;
 
 	// 世界のバージョン
 	int m_version;
@@ -121,10 +121,10 @@ public:
 	// Worldを設定しなおす
 	void setWorld(World* world);
 
-	bool getBackPrevSaveFlag() const { return m_backPrevSaveFlag; }
+	int getBackPrevSave() const { return m_backPrevSave; }
 
 	// 前のセーブポイントへ戻ったことを教えてもらう
-	void doneBackPrevSave() { m_backPrevSaveFlag = false; }
+	void doneBackPrevSave() { m_backPrevSave = 0; }
 
 private:
 	void createFire(std::vector<std::string> param, World* world, SoundPlayer* soundPlayer);
@@ -550,6 +550,8 @@ private:
 	
 	int m_areaNum;
 
+	int m_backPrevSave;
+
 public:
 	PlayerDeadEvent(World* world, std::vector<std::string> param);
 
@@ -557,7 +559,7 @@ public:
 	EVENT_RESULT play();
 
 	// クリア時に前のセーブポイントへ戻る必要があるか
-	bool needBackPrevSave() { return true; }
+	int needBackPrevSave() { return m_backPrevSave; }
 };
 
 // 特定のエリアへ強制的に移動する
@@ -573,6 +575,9 @@ public:
 
 	// プレイ
 	EVENT_RESULT play();
+
+	// ハートのスキル発動が可能かどうか
+	bool skillAble() { return false; }
 };
 
 // 世界の描画をする・しない
@@ -588,6 +593,9 @@ public:
 
 	// プレイ
 	EVENT_RESULT play();
+
+	// ハートのスキル発動が可能かどうか
+	bool skillAble() { return false; }
 };
 
 // キャラの追加
@@ -611,6 +619,9 @@ public:
 
 	// プレイ
 	EVENT_RESULT play();
+
+	// ハートのスキル発動が可能かどうか
+	bool skillAble() { return false; }
 };
 
 // 待機
@@ -621,6 +632,24 @@ class WaitEvent :
 	int m_time;
 public:
 	WaitEvent(World* world, std::vector<std::string> param);
+
+	// プレイ
+	EVENT_RESULT play();
+
+	// ハートのスキル発動が可能かどうか
+	bool skillAble() { return false; }
+};
+
+// スキル発動まで戦闘を続けるイベント
+class WaitSkillEvent :
+	public EventElement
+{
+private:
+
+	bool m_skillFlag;
+
+public:
+	WaitSkillEvent(World* world, std::vector<std::string> param);
 
 	// プレイ
 	EVENT_RESULT play();
