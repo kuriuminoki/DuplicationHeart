@@ -271,6 +271,31 @@ void Character::getHandleSize(int& wide, int& height) const {
 // “–‚½‚è”»’è‚Ì”ÍˆÍ‚ðŽæ“¾
 void Character::getAtariArea(int* x1, int* y1, int* x2, int* y2) const {
 	m_graphHandle->getAtari(x1, y1, x2, y2);
+	if (m_leftDirection) {
+		int wide = getWide();
+		*x1 = wide - *x1;
+		*x2 = wide - *x2;
+		int tmp = *x1;
+		*x1 = *x2;
+		*x2 = tmp;
+	}
+	*x1 = *x1 + m_x;
+	*y1 = *y1 + m_y;
+	*x2 = *x2 + m_x;
+	*y2 = *y2 + m_y;
+}
+
+// “–‚½‚è”»’è‚Ì”ÍˆÍ‚ðŽæ“¾
+void Character::getDamageArea(int* x1, int* y1, int* x2, int* y2) const {
+	m_graphHandle->getDamage(x1, y1, x2, y2);
+	if (m_leftDirection) {
+		int wide = getWide();
+		*x1 = wide - *x1;
+		*x2 = wide - *x2;
+		int tmp = *x1;
+		*x1 = *x2;
+		*x2 = tmp;
+	}
 	*x1 = *x1 + m_x;
 	*y1 = *y1 + m_y;
 	*x2 = *x2 + m_x;
@@ -295,6 +320,16 @@ int Character::getWide() const {
 }
 int Character::getHeight() const {
 	return m_graphHandle->getHeight();
+}
+int Character::getAtariCenterX() const {
+	int x1 = 0, y1 = 0, x2 = 0, y2 = 0;
+	getAtariArea(&x1, &y1, &x2, &y2);
+	return (x1 + x2) / 2;
+}
+int Character::getAtariCenterY() const {
+	int x1 = 0, y1 = 0, x2 = 0, y2 = 0;
+	getAtariArea(&x1, &y1, &x2, &y2);
+	return (y1 + y2) / 2;
 }
 
 void Character::setLeftDirection(bool leftDirection) { 
@@ -568,14 +603,14 @@ Object* Siesta::slashAttack(bool leftDirection, int cnt, bool grand, SoundPlayer
 	int centerX = getCenterX();
 	int height = getHeight();
 	int x1 = centerX;
-	int x2 = centerX;
+	int x2 = x1;
 	if (leftDirection) { // ¶Œü‚«‚ÉUŒ‚
-		x1 += 50;
-		x2 -= m_attackInfo->slashLenX();
+		x1 += 100;
+		x2 = x1 - m_attackInfo->slashLenX();
 	}
 	else { // ‰EŒü‚«‚ÉUŒ‚
-		x1 -= 50;
-		x2 += m_attackInfo->slashLenX();
+		x1 -= 100;
+		x2 = x1 + m_attackInfo->slashLenX();
 	}
 
 	// UŒ‚‚Ì‰æ‘œ‚ÆŽ‘±ŽžŠÔ(cnt‚ðl—¶‚µ‚ÄŒˆ’è)

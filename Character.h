@@ -298,6 +298,7 @@ public:
 
 	// 当たり判定の範囲を取得
 	void getAtariArea(int* x1, int* y1, int* x2, int* y2) const;
+	void getDamageArea(int* x1, int* y1, int* x2, int* y2) const;
 
 	// Infoのバージョンを変更する
 	void changeInfoVersion(int version);
@@ -307,6 +308,8 @@ public:
 	int getCenterY() const;
 	int getWide() const;
 	int getHeight() const;
+	int getAtariCenterX() const;
+	int getAtariCenterY() const;
 	// 今描画する画像を取得
 	GraphHandle* getGraphHandle() const;
 	void getHandleSize(int& wide, int& height) const;

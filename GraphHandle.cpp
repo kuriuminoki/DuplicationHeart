@@ -147,46 +147,68 @@ void GraphHandles::draw(int x, int y, int index) {
 
 
 /*
-* “–‚½‚è”»’è‚Ìî•ñ•t‚«‚ÌGraphHandles
+* “–‚½‚è”»’è‚Ìî•ñ
 */
-GraphHandlesWithAtari::GraphHandlesWithAtari(GraphHandles* graphHandles, const char* graphName, CsvReader* csvReader) {
-	m_graphHandles = graphHandles;
+AtariArea::AtariArea(CsvReader* csvReader, const char* graphName, const char* prefix) {
 	map<string, string> data = csvReader->findOne("name", graphName);
 
+	string p = prefix;
+
+	string defaultWide = data[(p + "defaultWide")];
+	string defaultHeight = data[(p + "defaultHeight").c_str()];
+	string wide = data[(p + "wide").c_str()];
+	string height = data[(p + "height").c_str()];
+	string x1 = data[(p + "x1").c_str()];
+	string y1 = data[(p + "y1").c_str()];
+	string x2 = data[(p + "x2").c_str()];
+	string y2 = data[(p + "y2").c_str()];
+
 	// ‰¡
-	m_defaultWide = true;
+	m_defaultWide = false;
 	m_wide = -1;
 	m_x1 = 0, m_x2 = 0;
-	if (!(bool)stoi(data["defaultWide"])) {
-		m_defaultWide = false;
-		m_wide = stoi(data["wide"]);
-		if (m_wide == -1) {
-			m_x1 = stoi(data["x1"]);
-			m_x2 = stoi(data["x2"]);
+	m_x1none = true, m_x2none = true;
+	if (defaultWide == "1") {
+		m_defaultWide = true;
+	}
+	else if (wide != "-1") {
+		m_wide = stoi(wide);
+	}
+	else {
+		if (x1 != "null") {
+			m_x1 = stoi(x1);
+			m_x1none = false;
+		}
+		if (x2 != "null") {
+			m_x2 = stoi(x2);
+			m_x2none = false;
 		}
 	}
 
 	// c
-	m_defaultHeight = true;
+	m_defaultHeight = false;
 	m_height = -1;
 	m_y1 = 0, m_y2 = 0;
-	if (!(bool)stoi(data["defaultHeight"])) {
-		m_defaultHeight = false;
-		m_height = stoi(data["height"]);
-		if (m_height == -1) {
-			m_y1 = stoi(data["y1"]);
-			m_y2 = stoi(data["y2"]);
+	m_y1none = true, m_y2none = true;
+	if (defaultHeight == "1") {
+		m_defaultHeight = true;
+	}
+	else if (height != "-1") {
+		m_height = stoi(height);
+	}
+	else {
+		if (y1 != "null") {
+			m_y1 = stoi(y1);
+			m_y1none = false;
+		}
+		if (y2 != "null") {
+			m_y2 = stoi(y2);
+			m_y2none = false;
 		}
 	}
 }
 
-GraphHandlesWithAtari::~GraphHandlesWithAtari() {
-	delete m_graphHandles;
-}
-
-void GraphHandlesWithAtari::getAtari(int* x1, int* y1, int* x2, int* y2, int index) const {
-	int wide, height;
-	GetGraphSize(m_graphHandles->getHandle(index), &wide, &height);
+void AtariArea::getArea(int* x1, int* y1, int* x2, int* y2, int wide, int height) const {
 	// ‰¡
 	if (m_defaultWide) {
 		*x1 = 0;
@@ -197,8 +219,18 @@ void GraphHandlesWithAtari::getAtari(int* x1, int* y1, int* x2, int* y2, int ind
 		*x1 = wide / 2 - m_wide / 2;
 	}
 	else {
-		*x1 = m_x1;
-		*x2 = m_x2;
+		if (m_x1none) {
+			*x1 = 0;
+		}
+		else {
+			*x1 = m_x1;
+		}
+		if (m_x2none) {
+			*x2 = wide;
+		}
+		else {
+			*x2 = m_x2;
+		}
 	}
 	// c
 	if (m_defaultHeight) {
@@ -210,9 +242,50 @@ void GraphHandlesWithAtari::getAtari(int* x1, int* y1, int* x2, int* y2, int ind
 		*y1 = height / 2 - m_height / 2;
 	}
 	else {
-		*y1 = m_y1;
-		*y2 = m_y2;
+		if (m_y1none) {
+			*y1 = 0;
+		}
+		else {
+			*y1 = m_y1;
+		}
+		if (m_y2none) {
+			*y2 = height;
+		}
+		else {
+			*y2 = m_y2;
+		}
 	}
+}
+
+
+/*
+* “–‚½‚è”»’è‚Ìî•ñ•t‚«‚ÌGraphHandles
+*/
+GraphHandlesWithAtari::GraphHandlesWithAtari(GraphHandles* graphHandles, const char* graphName, CsvReader* csvReader) {
+	m_graphHandles = graphHandles;
+
+	m_atariArea = new AtariArea(csvReader, graphName, "");
+	m_damageArea = new AtariArea(csvReader, graphName, "damage_");
+
+}
+
+GraphHandlesWithAtari::~GraphHandlesWithAtari() {
+	delete m_graphHandles;
+	delete m_atariArea;
+	delete m_damageArea;
+}
+
+void GraphHandlesWithAtari::getAtari(int* x1, int* y1, int* x2, int* y2, int index) const {
+	int wide, height;
+	GetGraphSize(m_graphHandles->getHandle(index), &wide, &height);
+	m_atariArea->getArea(x1, y1, x2, y2, wide, height);
+}
+
+
+void GraphHandlesWithAtari::getDamage(int* x1, int* y1, int* x2, int* y2, int index) const {
+	int wide, height;
+	GetGraphSize(m_graphHandles->getHandle(index), &wide, &height);
+	m_damageArea->getArea(x1, y1, x2, y2, wide, height);
 }
 
 
@@ -344,6 +417,14 @@ CharacterGraphHandle::~CharacterGraphHandle() {
 
 void CharacterGraphHandle::getAtari(int* x1, int* y1, int* x2, int* y2) const {
 	m_dispGraphHandle_p->getAtari(x1, y1, x2, y2, m_dispGraphIndex);
+	*x1 = *x1 * m_ex;
+	*y1 = *y1 * m_ex;
+	*x2 = *x2 * m_ex;
+	*y2 = *y2 * m_ex;
+}
+
+void CharacterGraphHandle::getDamage(int* x1, int* y1, int* x2, int* y2) const {
+	m_dispGraphHandle_p->getDamage(x1, y1, x2, y2, m_dispGraphIndex);
 	*x1 = *x1 * m_ex;
 	*y1 = *y1 * m_ex;
 	*x2 = *x2 * m_ex;
