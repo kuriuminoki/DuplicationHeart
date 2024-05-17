@@ -21,7 +21,7 @@ using namespace std;
 
 
 // どこまで
-const int FINISH_STORY = 15;
+const int FINISH_STORY = 18;
 // エリア0でデバッグするときはtrueにする
 const bool TEST_MODE = true;
 // スキルが発動可能になるストーリー番号

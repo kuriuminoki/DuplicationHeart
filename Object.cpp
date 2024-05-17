@@ -640,7 +640,7 @@ bool BulletObject::atari(CharacterController* characterController) {
 	int characterY1 = characterController->getAction()->getCharacter()->getY();
 	int characterX2 = characterX1 + characterController->getAction()->getCharacter()->getWide();
 	int characterY2 = characterY1 + characterController->getAction()->getCharacter()->getHeight();
-	characterController->getAction()->getCharacter()->getAtariArea(&characterX1, &characterY1, &characterX2, &characterY2);
+	characterController->getAction()->getCharacter()->getDamageArea(&characterX1, &characterY1, &characterX2, &characterY2);
 
 	// “–‚½‚è”»’è
 	if (characterX2 > m_x1 && characterX1 < m_x2 && characterY2 > m_y1 && characterY1 < m_y2 && characterController->getAction()->ableDamage()) {
@@ -806,7 +806,7 @@ bool SlashObject::atari(CharacterController* characterController) {
 	int characterY1 = characterController->getAction()->getCharacter()->getY();
 	int characterX2 = characterX1 + characterController->getAction()->getCharacter()->getWide();
 	int characterY2 = characterY1 + characterController->getAction()->getCharacter()->getHeight();
-	characterController->getAction()->getCharacter()->getAtariArea(&characterX1, &characterY1, &characterX2, &characterY2);
+	characterController->getAction()->getCharacter()->getDamageArea(&characterX1, &characterY1, &characterX2, &characterY2);
 
 	// “–‚½‚è”»’è
 	if (characterX2 > m_x1 && characterX1 < m_x2 && characterY2 > m_y1 && characterY1 < m_y2 && characterController->getAction()->ableDamage()) {
@@ -892,7 +892,7 @@ bool BombObject::atari(CharacterController* characterController) {
 	int characterY1 = characterController->getAction()->getCharacter()->getY();
 	int characterX2 = characterX1 + characterController->getAction()->getCharacter()->getWide();
 	int characterY2 = characterY1 + characterController->getAction()->getCharacter()->getHeight();
-	characterController->getAction()->getCharacter()->getAtariArea(&characterX1, &characterY1, &characterX2, &characterY2);
+	characterController->getAction()->getCharacter()->getDamageArea(&characterX1, &characterY1, &characterX2, &characterY2);
 
 	// “–‚½‚è”»’è
 	if (characterX2 > m_x1 && characterX1 < m_x2 && characterY2 > m_y1 && characterY1 < m_y2 && characterController->getAction()->ableDamage()) {

@@ -43,14 +43,16 @@ CharacterDrawer::CharacterDrawer(const CharacterAction* const characterAction) {
 	getGameEx(m_exX, m_exY);
 
 	// デバッグ用
-	m_guideHandle = LoadGraph("picture/stick/atariGuide.png");
+	m_atariGuideHandle = LoadGraph("picture/stick/atariGuide.png");
+	m_damageGuideHandle = LoadGraph("picture/stick/damageGuide.png");
 	m_characterAction = characterAction;
 
 }
 
 CharacterDrawer::~CharacterDrawer() {
 	// デバッグ用
-	DeleteGraph(m_guideHandle);
+	DeleteGraph(m_atariGuideHandle);
+	DeleteGraph(m_damageGuideHandle);
 }
 
 // キャラを描画する
@@ -109,11 +111,18 @@ void CharacterDrawer::drawCharacter(const Camera* const camera, int enemyNoticeH
 
 	// デバッグ用
 	if (ATARI_DEBUG) {
+		// 壁や床との当たり判定
 		int x2 = 0, y2 = 0;
 		character->getAtariArea(&x1, &y1, &x2, &y2);
 		camera->setCamera(&x1, &y1, &ex);
 		camera->setCamera(&x2, &y2, &ex);
-		DrawExtendGraph(x1, y1, x2, y2, m_guideHandle, TRUE);
+		DrawExtendGraph(x1, y1, x2, y2, m_atariGuideHandle, TRUE);
+
+		// ダメージの当たり判定
+		character->getDamageArea(&x1, &y1, &x2, &y2);
+		camera->setCamera(&x1, &y1, &ex);
+		camera->setCamera(&x2, &y2, &ex);
+		DrawExtendGraph(x1, y1, x2, y2, m_damageGuideHandle, TRUE);
 	}
 
 }
