@@ -736,7 +736,7 @@ void World::updateCamera() {
 	for (unsigned int i = 0; i < size; i++) {
 		// 今フォーカスしているキャラの座標に合わせる
 		if (m_focusId == m_characters[i]->getId()) {
-			m_camera->setGPoint(m_characters[i]->getCenterX(), m_characters[i]->getCenterY());
+			m_camera->setGPoint(m_characters[i]->getAtariCenterX(), m_characters[i]->getAtariCenterY());
 		}
 		// フォーカスしているキャラ以外なら距離を調べる
 		else if (m_characters[i]->getHp() > 0) {

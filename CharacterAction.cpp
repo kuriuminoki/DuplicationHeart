@@ -57,6 +57,7 @@ CharacterAction::CharacterAction(Character* character, SoundPlayer* soundPlayer_
 	m_soundPlayer_p = soundPlayer_p;
 
 	//初期状態
+	m_prevLeftDirection = m_character_p->getLeftDirection();
 	m_state = CHARACTER_STATE::STAND;
 	m_characterVersion = character->getVersion();
 	m_characterMoveSpeed = character->getMoveSpeed();
@@ -161,6 +162,10 @@ void CharacterAction::setCharacterFreeze(bool freeze) {
 
 // 行動前の処理 毎フレーム行う
 void CharacterAction::init() {
+
+	// 前のフレームのleftDirectionを保存しておく
+	m_prevLeftDirection = m_character_p->getLeftDirection();
+
 	// いったん全方向に動けるようにする
 	m_rightLock = false;
 	m_leftLock = false;
@@ -468,7 +473,10 @@ void StickAction::action() {
 void StickAction::switchHandle() {
 	// セット前の画像のサイズ
 	int x1 = 0, y1 = 0, x2 = 0, y2 = 0;
+	bool nowLeftDirection = m_character_p->getLeftDirection();
+	m_character_p->setLeftDirection(m_prevLeftDirection);
 	m_character_p->getAtariArea(&x1, &y1, &x2, &y2);
+	
 	// やられ画像
 	if (m_grand && m_character_p->getHp() == 0 && m_character_p->haveDeadGraph() && getState() != CHARACTER_STATE::DAMAGE) {
 		m_character_p->switchDead();
@@ -569,6 +577,9 @@ void StickAction::switchHandle() {
 			break;
 		}
 	}
+
+	m_character_p->setLeftDirection(nowLeftDirection);
+
 	// セット後の画像のサイズ
 	int afterX1 = 0, afterY1 = 0, afterX2 = 0, afterY2 = 0;
 	m_character_p->getAtariArea(&afterX1, &afterY1, &afterX2, &afterY2);
@@ -576,7 +587,6 @@ void StickAction::switchHandle() {
 	// サイズ変更による位置調整
 	afterChangeGraph(x1, afterX1, y1, afterY1, x2, afterX2, y2, afterY2);
 
-	m_character_p->setLeftDirection(m_character_p->getLeftDirection());
 }
 
 // 歩く ダメージ中、しゃがみ中、壁ぶつかり中は不可
@@ -840,7 +850,10 @@ CharacterAction* FlightAction::createCopy(std::vector<Character*> characters) {
 void FlightAction::switchHandle() {
 	// セット前の画像のサイズ
 	int x1 = 0, y1 = 0, x2 = 0, y2 = 0;
+	bool nowLeftDirection = m_character_p->getLeftDirection();
+	m_character_p->setLeftDirection(m_prevLeftDirection);
 	m_character_p->getAtariArea(&x1, &y1, &x2, &y2);
+
 	if (m_grand) { // 地面にいるとき
 		switch (getState()) {
 		case CHARACTER_STATE::STAND: //立ち状態
@@ -888,6 +901,9 @@ void FlightAction::switchHandle() {
 			break;
 		}
 	}
+
+	m_character_p->setLeftDirection(nowLeftDirection);
+
 	// セット後の画像のサイズ
 	int afterX1 = 0, afterY1 = 0, afterX2 = 0, afterY2 = 0;
 	m_character_p->getAtariArea(&afterX1, &afterY1, &afterX2, &afterY2);
@@ -895,7 +911,6 @@ void FlightAction::switchHandle() {
 	// サイズ変更による位置調整
 	afterChangeGraph(x1, afterX1, y1, afterY1, x2, afterX2, y2, afterY2);
 
-	m_character_p->setLeftDirection(m_character_p->getLeftDirection());
 }
 
 // 物理演算 毎フレーム行う

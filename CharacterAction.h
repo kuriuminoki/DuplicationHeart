@@ -36,6 +36,9 @@ protected:
 	// 動かすキャラクター
 	Character* m_character_p;
 
+	// 前のフレームのleftDirection
+	bool m_prevLeftDirection;
+
 	// キャラのバージョン イベントでrunSpeedの変更した場合に対処するため
 	int m_characterVersion;
 	int m_characterMoveSpeed;
