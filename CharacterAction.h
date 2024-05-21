@@ -159,7 +159,7 @@ public:
 	void setLeftLock(bool lock);
 	void setUpLock(bool lock);
 	void setDownLock(bool lock);
-	void setBoost(bool leftDirection);
+	virtual void setBoost(bool leftDirection);
 	void finishBoost();
 	inline void setGrandRightSlope(bool grand) { m_grandRightSlope = grand; }
 	inline void setGrandLeftSlope(bool grand) { m_grandLeftSlope = grand; }
@@ -372,6 +372,8 @@ public:
 
 	// ジャンプ cntフレーム目
 	void jump(int cnt);
+
+	void setBoost(bool leftDirection);
 
 	// 射撃攻撃
 	Object* bulletAttack(int gx, int gy);

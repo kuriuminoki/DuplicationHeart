@@ -977,7 +977,12 @@ void FlightAction::action() {
 
 	// アニメーション用のカウント
 	if (m_landCnt > 0) { m_landCnt--; }
-	if (m_boostCnt > 0) { m_boostCnt--; }
+	if (m_boostCnt > 0) { 
+		m_boostCnt--;
+		if (m_boostCnt == 0) {
+			//finishBoost();
+		}
+	}
 
 	// 移動
 	if (m_vx > 0) {// 右
@@ -1090,6 +1095,26 @@ void FlightAction::move(bool right, bool left, bool up, bool down) {
 // ジャンプ cntフレーム目
 void FlightAction::jump(int cnt) {
 	
+}
+
+void FlightAction::setBoost(bool leftDirection) {
+	if ((leftDirection && m_leftLock) || (!leftDirection && m_rightLock)) {
+		return;
+	}
+	if (!damageFlag() && !m_grand && !m_boostDone) {
+		m_boostCnt = BOOST_TIME;
+		finishBullet();
+		finishSlash();
+		if (leftDirection) {
+			m_vx -= BOOST_SPEED;
+			m_boostDone = 2;
+		}
+		else {
+			m_vx += BOOST_SPEED;
+			m_boostDone = 1;
+		}
+		m_character_p->setLeftDirection(leftDirection);
+	}
 }
 
 // 射撃攻撃
