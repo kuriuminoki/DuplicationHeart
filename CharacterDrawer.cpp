@@ -85,7 +85,7 @@ void CharacterDrawer::drawCharacter(const Camera* const camera, int enemyNoticeH
 	}
 
 	// 描画 ダメージ状態なら点滅
-	if (m_characterAction->getState() == CHARACTER_STATE::DAMAGE && ++m_cnt / 2 % 2 == 1) {
+	if (!m_characterAction->ableDamage() && ++m_cnt / 2 % 2 == 1) {
 		int dark = max(0, bright - 100);
 		SetDrawBright(dark, dark, dark);
 		graphHandle->draw(x, y, ex);
