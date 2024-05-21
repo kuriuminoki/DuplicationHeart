@@ -931,14 +931,7 @@ void FlightAction::action() {
 	}
 
 	// ダメージ受け状態は最低１秒近くある
-	if (m_damageCnt > 0) { 
-		m_damageCnt--;
-		if (m_damageCnt == 0) {
-			m_vx = 0;
-			m_vy = 0;
-			m_state = CHARACTER_STATE::STAND;
-		}
-	}
+	if (m_damageCnt > 0) { m_damageCnt--; }
 
 	// アニメーション用のカウント
 	if (m_landCnt > 0) { m_landCnt--; }
