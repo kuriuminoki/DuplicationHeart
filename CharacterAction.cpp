@@ -87,6 +87,7 @@ CharacterAction::CharacterAction(Character* character, SoundPlayer* soundPlayer_
 
 	m_landCnt = 0;
 	m_boostCnt = 0;
+	m_boostDone = 0;
 	m_damageCnt = 0;
 	m_heavy = false;
 }
@@ -123,6 +124,7 @@ void CharacterAction::setParam(CharacterAction* action) {
 	action->setAttackLeftDirection(m_attackLeftDirection);
 	action->setLandCnt(m_landCnt);
 	action->setBoostCnt(m_boostCnt);
+	action->setBoostDone(m_boostDone);
 	action->setDamageCnt(m_damageCnt);
 	action->setHeavy(m_heavy);
 }
@@ -144,6 +146,38 @@ void CharacterAction::setUpLock(bool lock) {
 }
 void CharacterAction::setDownLock(bool lock) { 
 	m_downLock = lock;
+}
+
+// Boost
+void CharacterAction::setBoost(bool leftDirection) {
+	if ((leftDirection && m_leftLock) || (!leftDirection && m_rightLock)) {
+		return;
+	}
+	if (!damageFlag() && !m_grand && !m_boostDone) {
+		m_boostCnt = BOOST_TIME;
+		m_vy -= BOOST_SPEED;
+		finishBullet();
+		finishSlash();
+		if (leftDirection) {
+			m_vx -= BOOST_SPEED;
+			m_boostDone = 2;
+		}
+		else {
+			m_vx += BOOST_SPEED;
+			m_boostDone = 1;
+		}
+		m_character_p->setLeftDirection(leftDirection);
+	}
+}
+void CharacterAction::finishBoost() {
+	m_boostCnt = 0;
+	if (m_boostDone == 1) {
+		m_vx -= BOOST_SPEED;
+	}
+	else if (m_boostDone == 2) {
+		m_vx += BOOST_SPEED;
+	}
+	m_boostDone = false;
 }
 
 // キャラクターのセッタ
@@ -226,7 +260,7 @@ void CharacterAction::finishSlash() {
 }
 
 bool CharacterAction::ableDamage() const {
-	return !(m_state == CHARACTER_STATE::DAMAGE || m_damageCnt > 0);
+	return !(m_state == CHARACTER_STATE::DAMAGE || m_damageCnt > 0 || m_boostCnt > max(0, BOOST_TIME - 10));
 }
 
 bool CharacterAction::ableAttack() const {
@@ -257,6 +291,7 @@ void CharacterAction::setGrand(bool grand) {
 		}
 	}
 	m_grand = grand;
+	finishBoost();
 	if (m_state == CHARACTER_STATE::DAMAGE && m_damageCnt == 0) {
 		m_vx = 0;
 		m_vy = 0;
@@ -305,6 +340,9 @@ void CharacterAction::stopMoveLeft() {
 		m_moveLeft = false;
 		m_runCnt = -1;
 	}
+	if (m_boostDone == 2) {
+		finishBoost();
+	}
 }
 void CharacterAction::stopMoveRight() {
 	// 右へ歩くのをやめる
@@ -312,6 +350,9 @@ void CharacterAction::stopMoveRight() {
 		m_vx -= m_character_p->getMoveSpeed();
 		m_moveRight = false;
 		m_runCnt = -1;
+	}
+	if (m_boostDone == 1) {
+		finishBoost();
 	}
 }
 void CharacterAction::stopMoveUp() {
@@ -543,14 +584,14 @@ void StickAction::switchHandle() {
 	else { // 宙にいるとき
 		switch (getState()) {
 		case CHARACTER_STATE::STAND: //立ち状態(なにもなしの状態)
-			if (m_boostCnt > 0) {
-				m_character_p->switchBoost();
-			}
-			else if (m_slashCnt > 0) {
+			if (m_slashCnt > 0) {
 				m_character_p->switchAirSlash();
 			}
 			else if (m_bulletCnt > 0) {
 				m_character_p->switchAirBullet();
+			}
+			else if (m_boostCnt > 0) {
+				m_character_p->switchBoost();
 			}
 			else if (m_vy < 0) {
 				m_character_p->switchJump();
@@ -787,6 +828,7 @@ void ValkiriaAction::setGrand(bool grand) {
 		}
 	}
 	m_grand = grand;
+	finishBoost();
 	if (m_state == CHARACTER_STATE::DAMAGE && m_damageCnt == 0) {
 		m_vx = 0;
 		m_vy = 0;
@@ -857,7 +899,10 @@ void FlightAction::switchHandle() {
 	if (m_grand) { // 地面にいるとき
 		switch (getState()) {
 		case CHARACTER_STATE::STAND: //立ち状態
-			if (m_slashCnt > 0) {
+			if (m_runCnt != -1) {
+				m_character_p->switchRun(m_runCnt);
+			}
+			else if (m_slashCnt > 0) {
 				m_character_p->switchAirSlash();
 			}
 			else if (m_bulletCnt > 0) {
@@ -931,11 +976,23 @@ void FlightAction::action() {
 	}
 
 	// ダメージ受け状態は最低１秒近くある
-	if (m_damageCnt > 0) { m_damageCnt--; }
+	if (m_damageCnt > 0) {
+		m_damageCnt--;
+		if (m_damageCnt == 0 && !m_heavy) {
+			m_vx = 0;
+			m_vy = 0;
+			m_state = CHARACTER_STATE::STAND;
+		}
+	}
 
 	// アニメーション用のカウント
 	if (m_landCnt > 0) { m_landCnt--; }
-	if (m_boostCnt > 0) { m_boostCnt--; }
+	if (m_boostCnt > 0) { 
+		m_boostCnt--;
+		if (m_boostCnt == 0) {
+			finishBoost();
+		}
+	}
 
 	// 移動
 	if (m_vx > 0) {// 右
@@ -1005,16 +1062,10 @@ void FlightAction::walk(bool right, bool left, bool up, bool down) {
 	// 右へ歩き始める
 	if (!m_rightLock && !m_moveRight && !m_moveLeft && right && (!left || !m_character_p->getLeftDirection()) && !m_squat) { // 右へ歩く
 		startMoveRight();
-		if(m_grand){
-			startMoveUp();
-		}
 	}
 	// 左へ歩き始める
 	if (!m_leftLock && !m_moveRight && !m_moveLeft && left && (!right || m_character_p->getLeftDirection()) && !m_squat) { // 左へ歩く
 		startMoveLeft();
-		if (m_grand) {
-			startMoveUp();
-		}
 	}
 	// 上へ歩き始める
 	if (!m_upLock && !m_moveDown && !m_moveUp && up && !down) { // 上へ歩く
@@ -1048,6 +1099,26 @@ void FlightAction::move(bool right, bool left, bool up, bool down) {
 // ジャンプ cntフレーム目
 void FlightAction::jump(int cnt) {
 	
+}
+
+void FlightAction::setBoost(bool leftDirection) {
+	if ((leftDirection && m_leftLock) || (!leftDirection && m_rightLock)) {
+		return;
+	}
+	if (!damageFlag() && !m_grand && !m_boostDone) {
+		m_boostCnt = BOOST_TIME;
+		finishBullet();
+		finishSlash();
+		if (leftDirection) {
+			m_vx -= BOOST_SPEED;
+			m_boostDone = 2;
+		}
+		else {
+			m_vx += BOOST_SPEED;
+			m_boostDone = 1;
+		}
+		m_character_p->setLeftDirection(leftDirection);
+	}
 }
 
 // 射撃攻撃

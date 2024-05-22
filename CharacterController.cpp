@@ -170,9 +170,6 @@ void CharacterController::setActionUpLock(bool lock) {
 void CharacterController::setActionDownLock(bool lock) {
 	m_characterAction->setDownLock(lock);
 }
-void CharacterController::setActionBoost() {
-	m_characterAction->setBoost();
-}
 
 // キャラクターのセッタ
 void CharacterController::setCharacterX(int x) {
@@ -326,9 +323,6 @@ void NormalController::control() {
 		}
 		else {
 			jump = m_brain->jumpOrder();
-			if (jump == 1) {
-				jump;
-			}
 			m_jumpRecorder->writeRecord(jump);
 		}
 		m_jumpRecorder->addTime();
@@ -337,6 +331,11 @@ void NormalController::control() {
 		jump = m_brain->jumpOrder();
 	}
 	m_characterAction->jump(jump);
+
+	// ブースト
+	if (jump == 1 && (rightStick > 0 || leftStick > 0)) {
+		m_characterAction->setBoost(leftStick > rightStick);
+	}
 
 	// しゃがみ
 	int squat = 0;

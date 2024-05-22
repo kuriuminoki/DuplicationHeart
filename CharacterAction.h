@@ -72,7 +72,9 @@ protected:
 
 	// ブーストアニメの残り時間 または受け身状態
 	int m_boostCnt;
-	const int BOOST_TIME = 10;
+	const int BOOST_TIME = 30;
+	const int BOOST_SPEED = 6;
+	int m_boostDone;// 0:none 1:right 2:left
 
 	// やられ状態の時間
 	const int DAMAGE_TIME = 20;
@@ -157,7 +159,8 @@ public:
 	void setLeftLock(bool lock);
 	void setUpLock(bool lock);
 	void setDownLock(bool lock);
-	inline void setBoost() { if(!m_grand) m_boostCnt = BOOST_TIME; }
+	virtual void setBoost(bool leftDirection);
+	void finishBoost();
 	inline void setGrandRightSlope(bool grand) { m_grandRightSlope = grand; }
 	inline void setGrandLeftSlope(bool grand) { m_grandLeftSlope = grand; }
 	void setRunCnt(int runCnt) { m_runCnt = runCnt; }
@@ -173,6 +176,7 @@ public:
 	void setAttackLeftDirection(bool attackLeftDirection) { m_attackLeftDirection = attackLeftDirection; }
 	void setLandCnt(int landCnt) { m_landCnt = landCnt; }
 	void setBoostCnt(int boostCnt) { m_boostCnt = boostCnt; }
+	void setBoostDone(int boostDone) { m_boostDone = boostDone; }
 	void setDamageCnt(int damageCnt) { m_damageCnt = damageCnt; }
 	void setHeavy(bool heavy) { m_heavy = heavy; }
 
@@ -368,6 +372,8 @@ public:
 
 	// ジャンプ cntフレーム目
 	void jump(int cnt);
+
+	void setBoost(bool leftDirection);
 
 	// 射撃攻撃
 	Object* bulletAttack(int gx, int gy);
