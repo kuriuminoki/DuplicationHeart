@@ -338,8 +338,8 @@ bool TriangleObject::atari(CharacterController* characterController) {
 	characterController->getAction()->getCharacter()->getAtariArea(&characterX1, &characterY1, &characterX2, &characterY2);
 	characterWide = characterX2 - characterX1;
 	characterHeight = characterY2 - characterY1;
-	characterX1_5 = characterX1 + characterWide / 2;
-	characterY1_5 = characterY1 + characterHeight / 2;
+	characterX1_5 = (characterX1 + characterX2) / 2;
+	characterY1_5 = (characterY1 + characterY2) / 2;
 
 	// キャラが上下移動で当たっているか判定
 	if (characterX2 > m_x1 && characterX1 < m_x2) {
@@ -486,8 +486,8 @@ void TriangleObject::penetration(CharacterController* characterController) {
 	characterController->getAction()->getCharacter()->getAtariArea(&characterX1, &characterY1, &characterX2, &characterY2);
 	characterWide = characterX2 - characterX1;
 	characterHeight = characterY2 - characterY1;
-	characterX1_5 = characterX1 + characterWide / 2;
-	characterY1_5 = characterY1 + characterHeight / 2;
+	characterX1_5 = (characterX1 + characterX2) / 2;
+	characterY1_5 = (characterY1 + characterY2) / 2;
 	int slopeY = getY(characterX1_5);
 	// 万が一オブジェクトの中に入り込んでしまったら
 	if (characterY2 > slopeY && characterY1 < m_y2 && characterX2 > m_x1 && characterX1 < m_x2) {

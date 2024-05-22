@@ -899,7 +899,10 @@ void FlightAction::switchHandle() {
 	if (m_grand) { // 地面にいるとき
 		switch (getState()) {
 		case CHARACTER_STATE::STAND: //立ち状態
-			if (m_slashCnt > 0) {
+			if (m_runCnt != -1) {
+				m_character_p->switchRun(m_runCnt);
+			}
+			else if (m_slashCnt > 0) {
 				m_character_p->switchAirSlash();
 			}
 			else if (m_bulletCnt > 0) {
@@ -1059,16 +1062,10 @@ void FlightAction::walk(bool right, bool left, bool up, bool down) {
 	// 右へ歩き始める
 	if (!m_rightLock && !m_moveRight && !m_moveLeft && right && (!left || !m_character_p->getLeftDirection()) && !m_squat) { // 右へ歩く
 		startMoveRight();
-		if(m_grand){
-			startMoveUp();
-		}
 	}
 	// 左へ歩き始める
 	if (!m_leftLock && !m_moveRight && !m_moveLeft && left && (!right || m_character_p->getLeftDirection()) && !m_squat) { // 左へ歩く
 		startMoveLeft();
-		if (m_grand) {
-			startMoveUp();
-		}
 	}
 	// 上へ歩き始める
 	if (!m_upLock && !m_moveDown && !m_moveUp && up && !down) { // 上へ歩く
