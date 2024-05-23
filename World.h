@@ -107,6 +107,9 @@ private:
 	// キャラがやられた時のエフェクト画像
 	GraphHandles* m_characterDeadGraph;
 
+	// キャラがダメージ受けた時のエフェクト画像
+	GraphHandles* m_characterDamageGraph;
+
 	// 爆発の画像
 	GraphHandles* m_bombGraph;
 
@@ -162,6 +165,7 @@ public:
 	inline double getCameraMaxEx() const { return m_cameraMaxEx; }
 	inline double getCameraMinEx() const { return m_cameraMinEx; }
 	inline GraphHandles* getCharacterDeadGraph() const { return m_characterDeadGraph; }
+	inline GraphHandles* getCharacterDamageGraph() const { return m_characterDamageGraph; }
 	inline GraphHandles* getBombGraph() const { return m_bombGraph; }
 	inline int getCharacterDeadSound() const { return m_characterDeadSound; }
 	inline int getBombSound() const { return m_bombSound; }
@@ -309,6 +313,9 @@ private:
 
 	// Battle: 爆発を起こす
 	void createBomb(int x, int y, Object* attackObject);
+
+	// Battle: ダメージエフェクト作成
+	void createDamageEffect(int x, int y, int sum);
 
 };
 

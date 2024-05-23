@@ -147,6 +147,7 @@ World::World(int fromAreaNum, int toAreaNum, SoundPlayer* soundPlayer) :
 	m_camera->setEx(m_cameraMaxEx);
 
 	m_characterDeadGraph = new GraphHandles("picture/effect/dead", 5, 1.0, 0, true);
+	m_characterDamageGraph = new GraphHandles("picture/effect/damage", 1, 0.2, 0, true);
 	m_bombGraph = new GraphHandles("picture/effect/bomb", 9, 1.0, 0, true);
 	m_characterDeadSound = LoadSoundMem("sound/battle/dead.wav");
 	m_bombSound = LoadSoundMem("sound/battle/bomb.wav");
@@ -170,6 +171,7 @@ World::World(const World* original) :
 	// エリアをコピー (コピー元と共有するもの)
 	m_soundPlayer_p = original->getSoundPlayer();
 	m_characterDeadGraph = original->getCharacterDeadGraph();
+	m_characterDamageGraph = original->getCharacterDamageGraph();
 	m_bombGraph = original->getBombGraph();
 	m_characterDeadSound = original->getCharacterDeadSound();
 	m_bombSound = original->getBombSound();
@@ -255,6 +257,7 @@ World::~World() {
 	if (!m_duplicationFlag) {
 		DeleteGraph(m_backGroundGraph);
 		delete m_characterDeadGraph;
+		delete m_characterDamageGraph;
 		delete m_bombGraph;
 		DeleteSoundMem(m_characterDeadSound);
 		DeleteSoundMem(m_bombSound);
@@ -795,6 +798,7 @@ void World::updateCamera() {
 //  Battle：アニメーションの更新
 void World::updateAnimation() {
 	for (unsigned int i = 0; i < m_animations.size(); i++) {
+		m_animations[i]->setVy(m_animations[i]->getVy() + 1);
 		m_animations[i]->count();
 		if (m_animations[i]->getFinishFlag()) {
 			delete m_animations[i];
@@ -929,6 +933,7 @@ void World::atariCharacterAndObject(CharacterController* controller, vector<Obje
 			if (atariAnimation != nullptr) {
 				m_animations.push_back(atariAnimation);
 			}
+			createDamageEffect(x, y, GetRand(3) + 1);
 			// 効果音
 			int soundHandle = objects[i]->getSoundHandle();
 			int panPal = adjustPanSound(x, m_camera->getX());
@@ -1058,6 +1063,17 @@ void World::createBomb(int x, int y, Object* attackObject) {
 		m_soundPlayer_p->pushSoundQueue(m_bombSound, adjustPanSound(x, m_camera->getX()));
 		// 画面の揺れ
 		m_camera->shakingStart(20, 20);
+	}
+}
+
+// Battle: ダメージエフェクト作成
+void World::createDamageEffect(int x, int y, int sum) {
+	for (int i = 0; i < sum; i++) {
+		Animation* animation = new Animation(x + GetRand(100) - 50, y + GetRand(100) - 50, 120, m_characterDamageGraph);
+		animation->setVx(GetRand(30) - 15);
+		animation->setVy(GetRand(30) - 31);
+		animation->setMovable(true);
+		m_animations.push_back(animation);
 	}
 }
 
