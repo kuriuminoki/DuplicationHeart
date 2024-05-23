@@ -356,7 +356,7 @@ int NormalAI::jumpOrder() {
 	int maxJump = m_characterAction_p->getPreJumpMax();
 	int minJump = maxJump / 3;
 
-	if (m_characterAction_p->getPreJumpCnt() == -1) {
+	if (m_characterAction_p->getPreJumpCnt() == -1 && m_characterAction_p->getGrand()) {
 		// ランダムでジャンプ
 		if (m_squatCnt == 0 && GetRand(99) == 0) { m_jumpCnt = GetRand(maxJump - minJump) + minJump; }
 
@@ -406,7 +406,7 @@ int NormalAI::slashOrder() {
 		return 0;
 	}
 	// ランダムで斬撃
-	if (GetRand(50) == 0) {
+	if (GetRand(120) == 0) {
 		return 1;
 	}
 	return 0;
