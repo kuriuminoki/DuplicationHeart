@@ -24,6 +24,9 @@ private:
 	// HP
 	int m_hp;
 
+	// スキルゲージ
+	int m_skillGage;
+
 	// 無敵ならtrue
 	bool m_invincible;
 
@@ -68,6 +71,7 @@ public:
 	inline const char* name() const { return m_name.c_str(); }
 	inline const int version() const { return m_version; }
 	inline int hp() const { return m_hp; }
+	inline int skillGage() const { return m_skillGage; }
 	inline bool invincible() const { return m_invincible; }
 	inline int id() const { return m_id; }
 	inline int groupId() const { return m_groupId; }
@@ -84,6 +88,7 @@ public:
 	// セッタ
 	inline void setVersion(int version) { m_version = version; }
 	inline void setHp(int hp) { m_hp = hp; }
+	inline void getSkillGage(int skillGage) { m_skillGage = skillGage; }
 	inline void setInvincible(bool invincible) { m_invincible = invincible; }
 	inline void setId(int id) { m_id = id; }
 	inline void setGroupId(int groupId) { m_groupId = groupId; }
@@ -319,6 +324,7 @@ private:
 
 class Game {
 private:
+
 	GameData* m_gameData;
 
 	// サウンドプレイヤー
@@ -368,6 +374,9 @@ public:
 
 	// 描画していいならtrue
 	bool ableDraw();
+
+	// スキル発動できるところまでストーリーが進んでいるか
+	bool afterSkillUsableStoryNum() const;
 
 private:
 

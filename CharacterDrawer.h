@@ -45,7 +45,8 @@ public:
 
 	void drawCharacter(const Camera* const camera, int enemyNoticeHandle, int bright = 255);
 
-	void drawPlayerHpBar(const Character* player, int hpBarGraph);
+	void drawPlayerHpBar(int x, int y, int wide, int height, const Character* player, int hpBarGraph);
+	void drawPlayerSkillBar(int x, int y, int wide, int height, const Character* player, int hpBarGraph);
 
 };
 

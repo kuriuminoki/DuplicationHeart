@@ -59,7 +59,7 @@ void GameDrawer::draw() {
 	else {
 		m_worldDrawer->setWorld(m_game->getWorld());
 	}
-	m_worldDrawer->draw();
+	m_worldDrawer->draw(m_game->afterSkillUsableStoryNum());
 
 	// セーブ完了通知
 	int noticeSaveDone = m_game->getGameData()->getNoticeSaveDone();

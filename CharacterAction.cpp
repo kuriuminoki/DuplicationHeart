@@ -57,6 +57,7 @@ CharacterAction::CharacterAction(Character* character, SoundPlayer* soundPlayer_
 	m_soundPlayer_p = soundPlayer_p;
 
 	//初期状態
+	m_cnt = 0;
 	m_prevLeftDirection = m_character_p->getLeftDirection();
 	m_state = CHARACTER_STATE::STAND;
 	m_characterVersion = character->getVersion();
@@ -99,6 +100,7 @@ CharacterAction::CharacterAction() :
 }
 
 void CharacterAction::setParam(CharacterAction* action) {
+	action->setCnt(m_cnt);
 	action->setState(m_state);
 	action->setCharacterVersion(m_characterVersion);
 	action->setCharacterMoveSpeed(m_characterMoveSpeed);
@@ -196,6 +198,13 @@ void CharacterAction::setCharacterFreeze(bool freeze) {
 
 // 行動前の処理 毎フレーム行う
 void CharacterAction::init() {
+
+	m_cnt++;
+
+	// スキルゲージの回復
+	if (m_cnt % 30 == 29) {
+		m_character_p->setSkillGage(m_character_p->getSkillGage() + 1);
+	}
 
 	// 前のフレームのleftDirectionを保存しておく
 	m_prevLeftDirection = m_character_p->getLeftDirection();

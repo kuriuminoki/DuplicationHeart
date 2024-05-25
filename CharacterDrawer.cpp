@@ -127,15 +127,7 @@ void CharacterDrawer::drawCharacter(const Camera* const camera, int enemyNoticeH
 
 }
 
-void CharacterDrawer::drawPlayerHpBar(const Character* player, int hpBarGraph) {
-
-	// 座標
-	int x, y, wide, height;
-
-	x = 30;
-	y = 30;
-	wide = 525;
-	height = 150;
+void CharacterDrawer::drawPlayerHpBar(int x, int y, int wide, int height, const Character* player, int hpBarGraph) {
 
 	// 解像度変更に対応
 	x = (int)(x * m_exX);
@@ -151,5 +143,25 @@ void CharacterDrawer::drawPlayerHpBar(const Character* player, int hpBarGraph) {
 
 	// 体力の描画
 	drawHpBar(x + dx, y + dy1, x + wide - dx, y + height - dy2, player->getHp(), player->getPrevHp(), player->getMaxHp(), DAMAGE_COLOR, PREV_HP_COLOR, HP_COLOR);
+
+}
+
+void CharacterDrawer::drawPlayerSkillBar(int x, int y, int wide, int height, const Character* player, int hpBarGraph) {
+
+	// 解像度変更に対応
+	x = (int)(x * m_exX);
+	y = (int)(y * m_exY);
+	wide = (int)(wide * m_exX);
+	height = (int)(height * m_exY);
+
+	DrawExtendGraph(x, y, x + wide, y + height, hpBarGraph, TRUE);
+
+	int dx1 = (int)(155 * m_exX);
+	int dx2 = (int)(50 * m_exX);
+	int dy1 = (int)(10 * m_exY);
+	int dy2 = (int)(10 * m_exY);
+
+	// 体力の描画
+	drawHpBar(x + dx1, y + dy1, x + wide - dx2, y + height - dy2, player->getSkillGage(), player->getSkillGage(), player->getMaxSkillGage(), WHITE, ORANGE, ORANGE);
 
 }

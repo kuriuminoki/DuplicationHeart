@@ -210,6 +210,10 @@ protected:
 	// HPバーを表示する残り時間
 	int m_dispHpCnt;
 
+	// スキルゲージ 最大100
+	const int SKILL_MAX = 100;
+	int m_skillGage;
+
 	// 無敵ならtrue
 	bool m_invincible;
 
@@ -253,6 +257,8 @@ public:
 	inline int getVersion() const { return m_version; }
 	inline int getHp() const { return m_hp; }
 	inline int getPrevHp() const { return m_prevHp; }
+	inline int getSkillGage() const { return m_skillGage; }
+	inline int getMaxSkillGage() const { return SKILL_MAX; }
 	inline int getDispHpCnt() const { return m_dispHpCnt; }
 	inline bool getInvincible() const { return m_invincible; }
 	inline int getX() const { return m_x; }
@@ -269,6 +275,9 @@ public:
 	inline void setPrevHp(int prevHp) { 
 		m_prevHp = (prevHp < m_hp) ? m_hp : prevHp;
 		if (m_prevHp == m_hp && m_dispHpCnt > 0) { m_dispHpCnt--; }
+	}
+	inline void setSkillGage(int skillGage) { 
+		m_skillGage = skillGage > SKILL_MAX ? SKILL_MAX : (skillGage < 0 ? 0 : skillGage);
 	}
 	inline void setInvincible(bool invincible) { m_invincible = invincible; }
 	inline void setX(int x) { m_x = x; }

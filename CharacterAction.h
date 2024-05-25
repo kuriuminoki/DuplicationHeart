@@ -27,6 +27,10 @@ enum class CHARACTER_STATE {
 */
 class CharacterAction {
 protected:
+
+	// 時間計測
+	int m_cnt;
+
 	// サウンドプレイヤー
 	SoundPlayer* m_soundPlayer_p;
 
@@ -150,6 +154,7 @@ public:
 	virtual int getPreJumpMax() const { return PRE_JUMP_MAX; }
 
 	// セッタ
+	inline void setCnt(int cnt) { m_cnt = cnt; }
 	void setState(CHARACTER_STATE state);
 	inline void setCharacterVersion(int version) { m_characterVersion = version; }
 	inline void setCharacterMoveSpeed(int moveSpeed) { m_characterMoveSpeed = moveSpeed; }

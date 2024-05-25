@@ -23,10 +23,10 @@
 void Game::debug(int x, int y, int color) const {
 	DrawFormatString(x, y, color, "**GAME**");
 	DrawFormatString(x, y + DRAW_FORMAT_STRING_SIZE, color, "StoryNum=%d, doorSum=%d", m_gameData->getStoryNum(), m_gameData->getDoorSum());
-	for (int i = 0; i < m_gameData->getDoorSum(); i++) {
-		DrawFormatString(x, y + DRAW_FORMAT_STRING_SIZE + ((i + 1) * DRAW_FORMAT_STRING_SIZE), color, "from=%d, to=%d", m_gameData->getFrom(i), m_gameData->getTo(i));
-	}
-	//m_story->debug(x + DRAW_FORMAT_STRING_SIZE, y + DRAW_FORMAT_STRING_SIZE * 2, color);
+	//for (int i = 0; i < m_gameData->getDoorSum(); i++) {
+	//	DrawFormatString(x, y + DRAW_FORMAT_STRING_SIZE + ((i + 1) * DRAW_FORMAT_STRING_SIZE), color, "from=%d, to=%d", m_gameData->getFrom(i), m_gameData->getTo(i));
+	//}
+	m_story->debug(x + DRAW_FORMAT_STRING_SIZE, y + DRAW_FORMAT_STRING_SIZE * 2, color);
 	m_world->debug(1000, y + DRAW_FORMAT_STRING_SIZE * 3, color);
 }
 
@@ -60,7 +60,8 @@ void World::debug(int x, int y, int color) const {
 * Story
 */
 void Story::debug(int x, int y, int color) {
-	DrawFormatString(x, y + DRAW_FORMAT_STRING_SIZE, color, "**Story**");
+	DrawFormatString(x, y, color, "**Story**");
+	DrawFormatString(x, y + DRAW_FORMAT_STRING_SIZE, color, "MustEventSum=%d", m_mustEvent.size());
 }
 
 
