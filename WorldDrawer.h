@@ -60,6 +60,9 @@ private:
 	// HPバー
 	int m_hpBarGraph;
 
+	// skillバー
+	int m_skillBarGraph;
+
 	// 会話イベント
 	ConversationDrawer* m_conversationDrawer;
 
@@ -74,11 +77,11 @@ public:
 	void setWorld(World* world) { m_world = world; }
 
 	// 描画する
-	void draw();
+	void draw(bool drawSkillBar);
 
 private:
 
-	void drawBattleField(const Camera* camera, int bright);
+	void drawBattleField(const Camera* camera, int bright, bool drawSkillBar);
 };
 
 #endif

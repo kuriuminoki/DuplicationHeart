@@ -214,6 +214,7 @@ Character::Character(int hp, int x, int y, int groupId) {
 	m_hp = hp;
 	m_prevHp = m_hp;
 	m_dispHpCnt = 0;
+	m_skillGage = SKILL_MAX;
 	m_invincible = false;
 	m_x = x;
 	m_y = y;
@@ -254,6 +255,7 @@ void Character::setParam(Character* character) {
 	character->setLeftDirection(m_leftDirection);
 	character->setHp(m_hp);
 	character->setPrevHp(m_prevHp);
+	character->setSkillGage(m_skillGage);
 	character->setInvincible(m_invincible);
 	character->getCharacterGraphHandle()->setGraph(m_graphHandle->getDispGraphHandle(), m_graphHandle->getDispGraphIndex());
 }

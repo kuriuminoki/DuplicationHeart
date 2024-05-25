@@ -270,7 +270,10 @@ bool CharacterNearFire::fire() {
 		m_areaNum = m_world_p->getAreaNum();
 		m_target_p = m_world_p->getCharacterWithName(m_param[2]);
 	}
-	if (m_target_p == nullptr) { return false; }
+	if (m_target_p == nullptr) { 
+		m_target_p = m_world_p->getCharacterWithName(m_param[2]);
+		return false;
+	}
 	int x = m_character_p->getCenterX();
 	int y = m_character_p->getY() + m_character_p->getHeight();
 	int targetX = m_target_p->getCenterX();

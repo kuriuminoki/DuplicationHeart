@@ -508,6 +508,7 @@ void World::asignCharacterData(const char* name, CharacterData* data, int fromAr
 			const Character* c = m_characterControllers[i]->getAction()->getCharacter();
 			data->setVersion(c->getVersion());
 			data->setHp(c->getHp());
+			data->getSkillGage(c->getSkillGage());
 			data->setInvincible(c->getInvincible());
 			data->setId(c->getId());
 			data->setGroupId(c->getGroupId());
@@ -640,6 +641,7 @@ void World::asignedCharacter(Character* character, CharacterData* data, bool cha
 	if (data->id() != -1) {
 		// ‚±‚ÌƒQ[ƒ€‚Å‰“oê‚¶‚á‚È‚¢
 		character->setHp(data->hp());
+		character->setSkillGage(data->skillGage());
 	}
 	character->setInvincible(data->invincible());
 	character->setGroupId(data->groupId());

@@ -54,6 +54,7 @@ WorldDrawer::WorldDrawer(const World* world) {
 	m_animationDrawer = new AnimationDrawer(nullptr);
 	m_conversationDrawer = new ConversationDrawer(nullptr);
 	m_hpBarGraph = LoadGraph("picture/battleMaterial/hpBar.png");
+	m_skillBarGraph = LoadGraph("picture/battleMaterial/skillBar.png");
 	m_noonHaikei = LoadGraph("picture/stageMaterial/noon.jpg");
 	m_eveningHaikei = LoadGraph("picture/stageMaterial/evening.jpg");
 	m_nightHaikei = LoadGraph("picture/stageMaterial/night.jpg");
@@ -66,6 +67,7 @@ WorldDrawer::~WorldDrawer() {
 	delete m_animationDrawer;
 	delete m_conversationDrawer;
 	DeleteGraph(m_hpBarGraph);
+	DeleteGraph(m_skillBarGraph);
 	DeleteGraph(m_noonHaikei);
 	DeleteGraph(m_eveningHaikei);
 	DeleteGraph(m_nightHaikei);
@@ -74,7 +76,7 @@ WorldDrawer::~WorldDrawer() {
 
 
 // •`‰æ‚·‚é
-void WorldDrawer::draw() {
+void WorldDrawer::draw(bool drawSkillBar) {
 	
 	int bright = m_world->getBrightValue();
 	SetDrawBright(bright, bright, bright);
@@ -84,7 +86,7 @@ void WorldDrawer::draw() {
 
 	// íê
 	if (!m_world->getBlindFlag()) {
-		drawBattleField(camera, bright);
+		drawBattleField(camera, bright, drawSkillBar);
 	}
 
 	// ƒ€[ƒr[
@@ -120,7 +122,7 @@ void WorldDrawer::draw() {
 
 
 // íê‚Ì•`‰æ
-void WorldDrawer::drawBattleField(const Camera* camera, int bright) {
+void WorldDrawer::drawBattleField(const Camera* camera, int bright, bool drawSkillBar) {
 	// ”wŒi
 	int groundGraph = m_world->getBackGroundGraph();
 	if (groundGraph != -1) {
@@ -215,7 +217,14 @@ void WorldDrawer::drawBattleField(const Camera* camera, int bright) {
 	size = m_world->getCharacters().size();
 	for (unsigned int i = 0; i < size; i++) {
 		if (m_world->getCharacters()[i]->getName() == "ƒn[ƒg") {
-			m_characterDrawer->drawPlayerHpBar(m_world->getCharacters()[i], m_hpBarGraph);
+			const int x = 30;
+			const int y = 30;
+			const int wide = 525;
+			const int height = 150;
+			m_characterDrawer->drawPlayerHpBar(x, y, wide, height, m_world->getCharacters()[i], m_hpBarGraph);
+			if (drawSkillBar) {
+				m_characterDrawer->drawPlayerSkillBar(x, y + height + 10, wide, 30, m_world->getCharacters()[i], m_skillBarGraph);
+			}
 		}
 	}
 }
