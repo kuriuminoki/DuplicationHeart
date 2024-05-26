@@ -431,6 +431,33 @@ public:
 	void setWorld(World* world);
 };
 
+// キャラのbossFlagを変える
+class ChangeBossFlagEvent :
+	public EventElement
+{
+private:
+
+	// パラメータ
+	std::vector<std::string> m_param;
+
+	bool m_bossFlag;
+
+	// 対象のキャラ
+	Character* m_character_p;
+
+public:
+	ChangeBossFlagEvent(World* world, std::vector<std::string> param);
+
+	// プレイ
+	EVENT_RESULT play();
+
+	// ハートのスキル発動が可能かどうか
+	bool skillAble() { return false; }
+
+	// 世界を設定しなおす
+	void setWorld(World* world);
+};
+
 // キャラの座標を変える
 class ChangeCharacterPointEvent :
 	public EventElement
@@ -685,6 +712,23 @@ public:
 
 	// プレイ
 	EVENT_RESULT play();
+};
+
+class SetBgmEvent :
+	public EventElement
+{
+	std::string m_filePath;
+
+public:
+
+	SetBgmEvent(World* world, std::vector<std::string> param);
+
+	// プレイ
+	EVENT_RESULT play();
+
+	// ハートのスキル発動が可能かどうか
+	bool skillAble() { return false; }
+
 };
 
 // 永遠にbattle テスト用

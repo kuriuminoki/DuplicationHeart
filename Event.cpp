@@ -132,6 +132,9 @@ void Event::createElement(vector<string> param, World* world, SoundPlayer* sound
 	else if (param0 == "ChangeInfoVersion") {
 		element = new ChangeInfoVersionEvent(world, param);
 	}
+	else if (param0 == "ChangeBossFlag") {
+		element = new ChangeBossFlagEvent(world, param);
+	}
 	else if (param0 == "ChangeCharacterPoint") {
 		element = new ChangeCharacterPointEvent(world, param);
 	}
@@ -167,6 +170,9 @@ void Event::createElement(vector<string> param, World* world, SoundPlayer* sound
 	}
 	else if (param0 == "WaitSkill") {
 		element = new WaitSkillEvent(world, param);
+	}
+	else if (param0 == "SetBgm") {
+		element = new SetBgmEvent(world, param);
 	}
 	else if (param0 == "BattleForever") {
 		element = new BattleForever(world, param);
@@ -466,6 +472,25 @@ void ChangeInfoVersionEvent::setWorld(World* world) {
 }
 
 
+// キャラのBossFlagを変更する
+ChangeBossFlagEvent::ChangeBossFlagEvent(World* world, std::vector<string> param) :
+	EventElement(world)
+{
+	m_param = param;
+	m_bossFlag = (bool)stoi(param[1]);
+	m_character_p = m_world_p->getCharacterWithName(param[2]);
+}
+EVENT_RESULT ChangeBossFlagEvent::play() {
+	// 対象のキャラのGroupIdを変更する
+	m_character_p->setBossFlag(m_bossFlag);
+	return EVENT_RESULT::SUCCESS;
+}
+void ChangeBossFlagEvent::setWorld(World* world) {
+	EventElement::setWorld(world);
+	m_character_p = m_world_p->getCharacterWithName(m_param[2]);
+}
+
+
 // キャラの座標を変える
 ChangeCharacterPointEvent::ChangeCharacterPointEvent(World* world, std::vector<string> param) :
 	EventElement(world)
@@ -736,6 +761,20 @@ EVENT_RESULT WaitSkillEvent::play() {
 		return EVENT_RESULT::SUCCESS;
 	}
 	return EVENT_RESULT::NOW;
+}
+
+
+SetBgmEvent::SetBgmEvent(World* world, std::vector<std::string> param) :
+	EventElement(world)
+{
+	m_filePath = param[1];
+}
+
+// プレイ
+EVENT_RESULT SetBgmEvent::play() {
+	m_world_p->getSoundPlayer()->setBGM(m_filePath);
+	m_world_p->getSoundPlayer()->playBGM();
+	return EVENT_RESULT::SUCCESS;
 }
 
 

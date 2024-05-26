@@ -169,7 +169,7 @@ void WorldDrawer::drawBattleField(const Camera* camera, int bright, bool drawSki
 
 	// 各Actionを描画
 	vector<const CharacterAction*> actions = m_world->getActions();
-	int player = 0;
+	int player = -1;
 	const CharacterAction* bossCharacterAction = nullptr;
 	size = actions.size();
 	for (unsigned int i = 0; i < size; i++) {
@@ -184,7 +184,7 @@ void WorldDrawer::drawBattleField(const Camera* camera, int bright, bool drawSki
 			m_characterDrawer->setCharacterAction(actions[i]);
 			int enemyNotice = -1, groupId = actions[i]->getCharacter()->getGroupId();
 			// 中立と味方なら通知しない
-			if (groupId != -1 && groupId != actions[player]->getCharacter()->getGroupId()) {
+			if (groupId != -1 && player != -1 && groupId != actions[player]->getCharacter()->getGroupId()) {
 				enemyNotice = m_enemyNotice;
 			}
 			// カメラを使ってキャラを描画
@@ -194,8 +194,10 @@ void WorldDrawer::drawBattleField(const Camera* camera, int bright, bool drawSki
 		}
 	}
 	// プレイヤーは手前に描画
-	m_characterDrawer->setCharacterAction(actions[player]);
-	m_characterDrawer->drawCharacter(camera, -1, bright);
+	if (player != -1) {
+		m_characterDrawer->setCharacterAction(actions[player]);
+		m_characterDrawer->drawCharacter(camera, -1, bright);
+	}
 
 	// 各Objectを描画
 	objects = m_world->getFrontObjects();
@@ -220,14 +222,16 @@ void WorldDrawer::drawBattleField(const Camera* camera, int bright, bool drawSki
 	}
 
 	// ハートの情報
-	const Character* playerCharacter = actions[player]->getCharacter();
-	const int x = 30;
-	const int y = 30;
-	const int wide = 700;
-	const int height = 70;
-	m_characterDrawer->drawPlayerHpBar(x, y, wide, height, playerCharacter, m_hpBarGraph);
-	if (drawSkillBar) {
-		m_characterDrawer->drawPlayerSkillBar(x, y + height + 10, wide, 30, playerCharacter, m_skillBarGraph);
+	if (player != -1) {
+		const int x = 30;
+		const int y = 30;
+		const int wide = 700;
+		const int height = 70;
+		const Character* playerCharacter = actions[player]->getCharacter();
+		m_characterDrawer->drawPlayerHpBar(x, y, wide, height, playerCharacter, m_hpBarGraph);
+		if (drawSkillBar) {
+			m_characterDrawer->drawPlayerSkillBar(x, y + height + 10, wide, 30, playerCharacter, m_skillBarGraph);
+		}
 	}
 
 	// ボスの情報
