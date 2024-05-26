@@ -86,6 +86,34 @@ public:
 
 
 /*
+* 当たり判定の情報
+*/
+class AtariArea {
+private:
+	// 当たり判定
+	bool m_defaultWide, m_defaultHeight;
+	int m_wide, m_height;
+	int m_x1, m_y1, m_x2, m_y2;
+	bool m_x1none, m_y1none, m_x2none, m_y2none;
+
+public:
+	AtariArea(CsvReader* csvReader, const char* graphName, const char* prefix);
+
+	bool getDefaultWide() const { return m_defaultWide; }
+	bool getDefaultHeight() const { return m_defaultHeight; }
+	bool getWide() const { return m_wide; }
+	bool getHeight() const { return m_height; }
+	bool getX1() const { return m_x1; }
+	bool getY1() const { return m_y1; }
+	bool getX2() const { return m_x2; }
+	bool getY2() const { return m_y2; }
+
+	void getArea(int* x1, int* y1, int* x2, int* y2, int wide, int height) const;
+
+};
+
+
+/*
 * 当たり判定の情報付きのGraphHandles
 */
 class GraphHandlesWithAtari {
@@ -94,9 +122,8 @@ private:
 	GraphHandles* m_graphHandles;
 
 	// 当たり判定
-	bool m_defaultWide, m_defaultHeight;
-	int m_wide, m_height;
-	int m_x1, m_y1, m_x2, m_y2;
+	AtariArea* m_atariArea;
+	AtariArea* m_damageArea;
 
 public:
 
@@ -106,6 +133,7 @@ public:
 	GraphHandles* getGraphHandles() const { return m_graphHandles; }
 
 	void getAtari(int* x1, int* y1, int* x2, int* y2, int index) const;
+	void getDamage(int* x1, int* y1, int* x2, int* y2, int index) const;
 
 };
 
@@ -222,6 +250,12 @@ private:
 	// やられ画像
 	GraphHandlesWithAtari* m_deadHandles;
 
+	// ボスの初期アニメーション
+	GraphHandlesWithAtari* m_initHandles;
+
+	// 追加画像
+	GraphHandlesWithAtari* m_special1Handles;
+
 public:
 	// デフォルト値で初期化
 	CharacterGraphHandle();
@@ -237,6 +271,7 @@ public:
 	inline int getWide() const { return m_wide; }
 	inline int getHeight() const { return m_height; }
 	void getAtari(int* x1, int* y1, int* x2, int* y2) const;
+	void getDamage(int* x1, int* y1, int* x2, int* y2) const;
 
 	// 画像のゲッタ
 	inline GraphHandlesWithAtari* getSlashHandle() { return m_slashHandles; }
@@ -259,6 +294,8 @@ public:
 	inline GraphHandlesWithAtari* getAirSlashHandle() { return m_airSlashHandles; }
 	inline GraphHandlesWithAtari* getCloseHandle() { return m_closeHandles; }
 	inline GraphHandlesWithAtari* getDeadHandle() { return m_deadHandles; }
+	inline GraphHandlesWithAtari* getInitHandle() { return m_initHandles; }
+	inline GraphHandlesWithAtari* getSpecial1Handle() { return m_special1Handles; }
 
 	// 画像サイズをセット
 	void setGraphSize();
@@ -303,6 +340,10 @@ public:
 	void switchClose(int index = 0);
 	// やられ画像をセット
 	void switchDead(int index = 0);
+	// ボスの初期アニメーションをセット
+	void switchInit(int index = 0);
+	// 追加画像をセット
+	void switchSpecial1(int index = 0);
 };
 
 

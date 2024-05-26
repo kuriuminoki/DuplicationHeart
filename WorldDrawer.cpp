@@ -54,6 +54,8 @@ WorldDrawer::WorldDrawer(const World* world) {
 	m_animationDrawer = new AnimationDrawer(nullptr);
 	m_conversationDrawer = new ConversationDrawer(nullptr);
 	m_hpBarGraph = LoadGraph("picture/battleMaterial/hpBar.png");
+	m_skillBarGraph = LoadGraph("picture/battleMaterial/skillBar.png");
+	m_bossHpBarGraph = LoadGraph("picture/battleMaterial/bossHpBar.png");
 	m_noonHaikei = LoadGraph("picture/stageMaterial/noon.jpg");
 	m_eveningHaikei = LoadGraph("picture/stageMaterial/evening.jpg");
 	m_nightHaikei = LoadGraph("picture/stageMaterial/night.jpg");
@@ -66,6 +68,8 @@ WorldDrawer::~WorldDrawer() {
 	delete m_animationDrawer;
 	delete m_conversationDrawer;
 	DeleteGraph(m_hpBarGraph);
+	DeleteGraph(m_skillBarGraph);
+	DeleteGraph(m_bossHpBarGraph);
 	DeleteGraph(m_noonHaikei);
 	DeleteGraph(m_eveningHaikei);
 	DeleteGraph(m_nightHaikei);
@@ -74,7 +78,7 @@ WorldDrawer::~WorldDrawer() {
 
 
 // 描画する
-void WorldDrawer::draw() {
+void WorldDrawer::draw(bool drawSkillBar) {
 	
 	int bright = m_world->getBrightValue();
 	SetDrawBright(bright, bright, bright);
@@ -84,7 +88,7 @@ void WorldDrawer::draw() {
 
 	// 戦場
 	if (!m_world->getBlindFlag()) {
-		drawBattleField(camera, bright);
+		drawBattleField(camera, bright, drawSkillBar);
 	}
 
 	// ムービー
@@ -120,7 +124,7 @@ void WorldDrawer::draw() {
 
 
 // 戦場の描画
-void WorldDrawer::drawBattleField(const Camera* camera, int bright) {
+void WorldDrawer::drawBattleField(const Camera* camera, int bright, bool drawSkillBar) {
 	// 背景
 	int groundGraph = m_world->getBackGroundGraph();
 	if (groundGraph != -1) {
@@ -165,7 +169,8 @@ void WorldDrawer::drawBattleField(const Camera* camera, int bright) {
 
 	// 各Actionを描画
 	vector<const CharacterAction*> actions = m_world->getActions();
-	int player = 0;
+	int player = -1;
+	const CharacterAction* bossCharacterAction = nullptr;
 	size = actions.size();
 	for (unsigned int i = 0; i < size; i++) {
 		if (actions[i]->getCharacter()->getId() == m_world->getPlayerId()) {
@@ -173,21 +178,26 @@ void WorldDrawer::drawBattleField(const Camera* camera, int bright) {
 		}
 	}
 	for (unsigned int i = 0; i < size; i++) {
+		// プレイヤーは後で手前に描画
 		if (i != player) {
 			// キャラをDrawerにセット
 			m_characterDrawer->setCharacterAction(actions[i]);
 			int enemyNotice = -1, groupId = actions[i]->getCharacter()->getGroupId();
 			// 中立と味方なら通知しない
-			if (groupId != -1 && groupId != actions[player]->getCharacter()->getGroupId()) {
+			if (groupId != -1 && player != -1 && groupId != actions[player]->getCharacter()->getGroupId()) {
 				enemyNotice = m_enemyNotice;
 			}
 			// カメラを使ってキャラを描画
 			m_characterDrawer->drawCharacter(camera, enemyNotice, bright);
+			// ボスがいるなら保持しておく
+			if (actions[i]->getCharacter()->getBossFlag()) { bossCharacterAction = actions[i]; }
 		}
 	}
 	// プレイヤーは手前に描画
-	m_characterDrawer->setCharacterAction(actions[player]);
-	m_characterDrawer->drawCharacter(camera, -1, bright);
+	if (player != -1) {
+		m_characterDrawer->setCharacterAction(actions[player]);
+		m_characterDrawer->drawCharacter(camera, -1, bright);
+	}
 
 	// 各Objectを描画
 	objects = m_world->getFrontObjects();
@@ -212,10 +222,25 @@ void WorldDrawer::drawBattleField(const Camera* camera, int bright) {
 	}
 
 	// ハートの情報
-	size = m_world->getCharacters().size();
-	for (unsigned int i = 0; i < size; i++) {
-		if (m_world->getCharacters()[i]->getName() == "ハート") {
-			m_characterDrawer->drawPlayerHpBar(m_world->getCharacters()[i], m_hpBarGraph);
+	if (player != -1) {
+		const int x = 30;
+		const int y = 30;
+		const int wide = 700;
+		const int height = 70;
+		const Character* playerCharacter = actions[player]->getCharacter();
+		m_characterDrawer->drawPlayerHpBar(x, y, wide, height, playerCharacter, m_hpBarGraph);
+		if (drawSkillBar) {
+			m_characterDrawer->drawPlayerSkillBar(x, y + height + 10, wide, 30, playerCharacter, m_skillBarGraph);
 		}
 	}
+
+	// ボスの情報
+	const int bX = 30;
+	const int bY = 950;
+	const int bWide = 1500;
+	const int bHeight = 80;
+	if (bossCharacterAction != nullptr) {
+		m_characterDrawer->drawBossHpBar(bX, bY, bWide, bHeight, bossCharacterAction->getCharacter(), m_bossHpBarGraph);
+	}
+
 }

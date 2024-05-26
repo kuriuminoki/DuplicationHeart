@@ -21,7 +21,7 @@ using namespace std;
 
 
 // どこまで
-const int FINISH_STORY = 15;
+const int FINISH_STORY = 18;
 // エリア0でデバッグするときはtrueにする
 const bool TEST_MODE = false;
 // スキルが発動可能になるストーリー番号
@@ -35,6 +35,7 @@ CharacterData::CharacterData(const char* name) {
 	m_version = 1;
 	m_name = name;
 	m_hp = -1;
+	m_skillGage = 0;
 	m_invincible = false;
 	// id=-1はデータなしを意味する
 	m_id = -1;
@@ -53,6 +54,7 @@ CharacterData::CharacterData(const char* name) {
 void CharacterData::save(FILE* intFp, FILE* strFp) {
 	fwrite(&m_version, sizeof(m_version), 1, intFp);
 	fwrite(&m_hp, sizeof(m_hp), 1, intFp);
+	fwrite(&m_skillGage, sizeof(m_skillGage), 1, intFp);
 	fwrite(&m_invincible, sizeof(m_invincible), 1, intFp);
 	fwrite(&m_id, sizeof(m_id), 1, intFp);
 	fwrite(&m_groupId, sizeof(m_groupId), 1, intFp);
@@ -73,6 +75,7 @@ void CharacterData::save(FILE* intFp, FILE* strFp) {
 void CharacterData::load(FILE* intFp, FILE* strFp) {
 	fread(&m_version, sizeof(m_version), 1, intFp);
 	fread(&m_hp, sizeof(m_hp), 1, intFp);
+	fread(&m_skillGage, sizeof(m_skillGage), 1, intFp);
 	fread(&m_invincible, sizeof(m_invincible), 1, intFp);
 	fread(&m_id, sizeof(m_id), 1, intFp);
 	fread(&m_groupId, sizeof(m_groupId), 1, intFp);
@@ -219,7 +222,7 @@ GameData::GameData() {
 	}
 
 	// 主要キャラを設定
-	const int mainSum = 14;
+	const int mainSum = 15;
 	const char* mainCharacters[mainSum] = {
 		"ハート",
 		"シエスタ",
@@ -234,7 +237,8 @@ GameData::GameData() {
 		"アイギス",
 		"コハル",
 		"マスカーラ",
-		"ヴェルメリア"
+		"ヴェルメリア",
+		"サン"
 	};
 	for (int i = 0; i < mainSum; i++) {
 		m_characterData.push_back(new CharacterData(mainCharacters[i]));
@@ -711,16 +715,23 @@ bool Game::ableDraw() {
 	return !m_story->getInitDark();
 }
 
+// スキル発動できるところまでストーリーが進んでいるか
+bool Game::afterSkillUsableStoryNum() const {
+	return m_gameData->getStoryNum() >= SKILL_USEABLE_STORY;
+}
+
 // スキル発動可能かチェック
 bool Game::skillUsable() {
 	if (TEST_MODE) {
 		return true;
 	}
 	// スキル発動 Fキーかつスキル未発動状態かつ発動可能なイベント中（もしくはイベント中でない）かつエリア移動中でない
-	if (m_gameData->getStoryNum() >= SKILL_USEABLE_STORY) { // ストーリーの最初は発動できない
+	if (afterSkillUsableStoryNum()) { // ストーリーの最初は発動できない
 		if (m_skill == nullptr) { // スキル未発動時
 			if (m_story->skillAble() && m_world->getBrightValue() == 255) { // 特定のイベント時やエリア移動中はダメ
-				if (m_world->getCharacterWithName("ハート")->getHp() > 0) {
+				Character* character = m_world->getCharacterWithName("ハート");
+				if (character->getHp() > 0 && character->getSkillGage() == character->getMaxSkillGage()) {
+					character->setSkillGage(0);
 					return true;
 				}
 			}

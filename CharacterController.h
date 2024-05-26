@@ -90,7 +90,6 @@ public:
 	void setActionLeftLock(bool lock);
 	void setActionUpLock(bool lock);
 	void setActionDownLock(bool lock);
-	void setActionBoost();
 
 	// キャラクターのセッタ
 	void setCharacterX(int x);

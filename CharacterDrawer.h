@@ -14,7 +14,8 @@ private:
 
 	// デバッグ用
 	const bool ATARI_DEBUG = false;
-	int m_guideHandle;
+	int m_atariGuideHandle;
+	int m_damageGuideHandle;
 
 	// キャラの動きの情報 const関数しか呼ばない
 	const CharacterAction* m_characterAction;
@@ -44,7 +45,9 @@ public:
 
 	void drawCharacter(const Camera* const camera, int enemyNoticeHandle, int bright = 255);
 
-	void drawPlayerHpBar(const Character* player, int hpBarGraph);
+	void drawPlayerHpBar(int x, int y, int wide, int height, const Character* player, int hpBarGraph);
+	void drawPlayerSkillBar(int x, int y, int wide, int height, const Character* player, int hpBarGraph);
+	void drawBossHpBar(int x, int y, int wide, int height, const Character* player, int hpBarGraph);
 
 };
 

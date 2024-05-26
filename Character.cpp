@@ -46,6 +46,9 @@ Character* createCharacter(const char* characterName, int hp, int x, int y, int 
 	else if (name == "大砲") {
 		character = new ParabolaOnly(name.c_str(), hp, x, y, groupId);
 	}
+	else if (name == "サン") {
+		character = new Sun(name.c_str(), hp, x, y, groupId);
+	}
 	else {
 		character = new Heart(name.c_str(), hp, x, y, groupId);
 	}
@@ -74,12 +77,17 @@ CharacterInfo::CharacterInfo(const char* characterName) {
 	string filePath = "sound/stick/";
 	string fileName;
 	fileName = filePath + data["jumpSound"];
-	m_jumpSound = LoadSoundMem(fileName.c_str());
+	if (fileName != "null") {
+		m_jumpSound = LoadSoundMem(fileName.c_str());
+	}
 	fileName = filePath + data["passiveSound"];
-	m_passiveSound = LoadSoundMem(fileName.c_str());
+	if (fileName != "null") {
+		m_passiveSound = LoadSoundMem(fileName.c_str());
+	}
 	fileName = filePath + data["landSound"];
-	m_landSound = LoadSoundMem(fileName.c_str());
-	fileName = filePath + data["runSound"];
+	if (fileName != "null") {
+		m_landSound = LoadSoundMem(fileName.c_str());
+	}
 }
 
 CharacterInfo::~CharacterInfo() {
@@ -214,12 +222,14 @@ Character::Character(int hp, int x, int y, int groupId) {
 	m_hp = hp;
 	m_prevHp = m_hp;
 	m_dispHpCnt = 0;
+	m_skillGage = SKILL_MAX;
 	m_invincible = false;
 	m_x = x;
 	m_y = y;
 
 	m_leftDirection = true;
 	m_freeze = false;
+	m_bossFlag = false;
 
 	m_characterInfo = nullptr;
 	m_attackInfo = nullptr;
@@ -254,7 +264,9 @@ void Character::setParam(Character* character) {
 	character->setLeftDirection(m_leftDirection);
 	character->setHp(m_hp);
 	character->setPrevHp(m_prevHp);
+	character->setSkillGage(m_skillGage);
 	character->setInvincible(m_invincible);
+	character->setBossFlag(m_bossFlag);
 	character->getCharacterGraphHandle()->setGraph(m_graphHandle->getDispGraphHandle(), m_graphHandle->getDispGraphIndex());
 }
 
@@ -271,6 +283,31 @@ void Character::getHandleSize(int& wide, int& height) const {
 // 当たり判定の範囲を取得
 void Character::getAtariArea(int* x1, int* y1, int* x2, int* y2) const {
 	m_graphHandle->getAtari(x1, y1, x2, y2);
+	if (m_leftDirection) {
+		int wide = getWide();
+		*x1 = wide - *x1;
+		*x2 = wide - *x2;
+		int tmp = *x1;
+		*x1 = *x2;
+		*x2 = tmp;
+	}
+	*x1 = *x1 + m_x;
+	*y1 = *y1 + m_y;
+	*x2 = *x2 + m_x;
+	*y2 = *y2 + m_y;
+}
+
+// 当たり判定の範囲を取得
+void Character::getDamageArea(int* x1, int* y1, int* x2, int* y2) const {
+	m_graphHandle->getDamage(x1, y1, x2, y2);
+	if (m_leftDirection) {
+		int wide = getWide();
+		*x1 = wide - *x1;
+		*x2 = wide - *x2;
+		int tmp = *x1;
+		*x1 = *x2;
+		*x2 = tmp;
+	}
 	*x1 = *x1 + m_x;
 	*y1 = *y1 + m_y;
 	*x2 = *x2 + m_x;
@@ -295,6 +332,16 @@ int Character::getWide() const {
 }
 int Character::getHeight() const {
 	return m_graphHandle->getHeight();
+}
+int Character::getAtariCenterX() const {
+	int x1 = 0, y1 = 0, x2 = 0, y2 = 0;
+	getAtariArea(&x1, &y1, &x2, &y2);
+	return (x1 + x2) / 2;
+}
+int Character::getAtariCenterY() const {
+	int x1 = 0, y1 = 0, x2 = 0, y2 = 0;
+	getAtariArea(&x1, &y1, &x2, &y2);
+	return (y1 + y2) / 2;
 }
 
 void Character::setLeftDirection(bool leftDirection) { 
@@ -363,6 +410,10 @@ void Character::switchAirBullet(int cnt) { m_graphHandle->switchAirBullet(); }
 void Character::switchAirSlash(int cnt) { m_graphHandle->switchAirSlash(); }
 // やられ画像をセット
 void Character::switchDead(int cnt) { m_graphHandle->switchDead(); }
+// ボスの初期アニメーションをセット
+void Character::switchInit(int cnt) { m_graphHandle->switchInit(); }
+// 追加画像をセット
+void Character::switchSpecial1(int cnt) { m_graphHandle->switchSpecial1(); }
 
 
 /*
@@ -568,14 +619,14 @@ Object* Siesta::slashAttack(bool leftDirection, int cnt, bool grand, SoundPlayer
 	int centerX = getCenterX();
 	int height = getHeight();
 	int x1 = centerX;
-	int x2 = centerX;
+	int x2 = x1;
 	if (leftDirection) { // 左向きに攻撃
-		x1 += 50;
-		x2 -= m_attackInfo->slashLenX();
+		x1 += 100;
+		x2 = x1 - m_attackInfo->slashLenX();
 	}
 	else { // 右向きに攻撃
-		x1 -= 50;
-		x2 += m_attackInfo->slashLenX();
+		x1 -= 100;
+		x2 = x1 + m_attackInfo->slashLenX();
 	}
 
 	// 攻撃の画像と持続時間(cntを考慮して決定)
@@ -640,6 +691,8 @@ Character* Hierarchy::createCopy() {
 
 // 射撃攻撃をする
 Object* Hierarchy::bulletAttack(int gx, int gy, SoundPlayer* soundPlayer) {
+	//gx = GetRand(600) - 300 + getCenterX();
+	//gy = getCenterY() - GetRand(300);
 	BulletObject* attackObject = new BulletObject(getCenterX(), getCenterY(), m_graphHandle->getBulletHandle()->getGraphHandles()->getGraphHandle(), gx, gy, m_attackInfo);
 	// 自滅防止
 	attackObject->setCharacterId(m_id);
@@ -871,6 +924,55 @@ Character* ParabolaOnly::createCopy() {
 // 射撃攻撃をする
 Object* ParabolaOnly::bulletAttack(int gx, int gy, SoundPlayer* soundPlayer) {
 	ParabolaBullet* attackObject = new ParabolaBullet(getCenterX(), getCenterY(), m_bulletColor, gx, gy, m_attackInfo);
+	// 自滅防止
+	attackObject->setCharacterId(m_id);
+	// チームキル防止
+	attackObject->setGroupId(m_groupId);
+	// 効果音
+	if (soundPlayer != nullptr) {
+		soundPlayer->pushSoundQueue(m_attackInfo->bulletStartSoundeHandle(),
+			adjustPanSound(getCenterX(),
+				soundPlayer->getCameraX()));
+	}
+	return attackObject;
+}
+
+
+/*
+* Boss1: サン
+*/
+Sun::Sun(const char* name, int hp, int x, int y, int groupId) :
+	Heart(name, hp, x, y, groupId)
+{
+
+}
+Sun::Sun(const char* name, int hp, int x, int y, int groupId, AttackInfo* attackInfo) :
+	Heart(name, hp, x, y, groupId, attackInfo)
+{
+
+}
+
+Character* Sun::createCopy() {
+	Character* res = new Sun(m_characterInfo->name().c_str(), m_hp, m_x, m_y, m_groupId, m_attackInfo);
+	setParam(res);
+	return res;
+}
+
+// ボスの初期アニメーションをセット
+void Sun::switchInit(int cnt) { 
+	if (m_graphHandle->getInitHandle() == nullptr) { return; }
+	if (cnt < 0) {
+		m_graphHandle->switchSpecial1();
+		return;
+	}
+	int index = min(cnt / RUN_ANIME_SPEED, m_graphHandle->getInitHandle()->getGraphHandles()->getSize() - 1);
+	m_graphHandle->switchInit(index);
+}
+
+Object* Sun::bulletAttack(int gx, int gy, SoundPlayer* soundPlayer) {
+	int x = getCenterX() + GetRand(400) - 200;
+	int y = getCenterY() + GetRand(400) - 200;
+	ParabolaBullet* attackObject = new ParabolaBullet(x, y, m_graphHandle->getBulletHandle()->getGraphHandles()->getGraphHandle(), gx, gy, m_attackInfo);
 	// 自滅防止
 	attackObject->setCharacterId(m_id);
 	// チームキル防止

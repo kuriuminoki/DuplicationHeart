@@ -15,9 +15,9 @@ class SoundPlayer;
 enum class CHARACTER_STATE {
 	STAND,	// 何もしていない
 	DAMAGE,	// ダメージ受け中 着地で解除
-	BULLET,	// 射撃中
-	SLASH,	// 斬撃中
 	PREJUMP,	// ジャンプ前
+	SQUAT,	// しゃがみ状態
+	INIT,	// ボスの初期アニメーション
 };
 
 
@@ -27,6 +27,10 @@ enum class CHARACTER_STATE {
 */
 class CharacterAction {
 protected:
+
+	// 時間計測
+	int m_cnt;
+
 	// サウンドプレイヤー
 	SoundPlayer* m_soundPlayer_p;
 
@@ -35,6 +39,9 @@ protected:
 
 	// 動かすキャラクター
 	Character* m_character_p;
+
+	// 前のフレームのleftDirection
+	bool m_prevLeftDirection;
 
 	// キャラのバージョン イベントでrunSpeedの変更した場合に対処するため
 	int m_characterVersion;
@@ -52,9 +59,6 @@ protected:
 	// キャラが走っていないなら-1 そうでないなら走ったフレーム数
 	int m_runCnt;
 
-	// しゃがみ中
-	bool m_squat;
-
 	// ジャンプ前の動作
 	int m_preJumpCnt;
 
@@ -69,7 +73,9 @@ protected:
 
 	// ブーストアニメの残り時間 または受け身状態
 	int m_boostCnt;
-	const int BOOST_TIME = 10;
+	const int BOOST_TIME = 30;
+	const int BOOST_SPEED = 6;
+	int m_boostDone;// 0:none 1:right 2:left
 
 	// やられ状態の時間
 	const int DAMAGE_TIME = 20;
@@ -104,11 +110,23 @@ protected:
 
 	int m_damageCnt;
 
-private:
+protected:
+
+	// actionから呼び出す
+	virtual void bulletAction();
+	virtual void slashAction();
+	virtual void damageAction();
+	virtual void otherAction();
+	virtual void moveAction();
+
 	// キャラの画像を変更
 	virtual void switchHandle() = 0;
 
+	// 画像のサイズ変更による位置調整
+	void afterChangeGraph(int beforeX1, int afterX1, int beforeY1, int afterY1, int beforeX2, int afterX2, int beforeY2, int afterY2);
+
 public:
+
 	static const char* ACTION_NAME;
 	virtual const char* getActionName() const { return this->ACTION_NAME; }
 
@@ -145,6 +163,7 @@ public:
 	virtual int getPreJumpMax() const { return PRE_JUMP_MAX; }
 
 	// セッタ
+	inline void setCnt(int cnt) { m_cnt = cnt; }
 	void setState(CHARACTER_STATE state);
 	inline void setCharacterVersion(int version) { m_characterVersion = version; }
 	inline void setCharacterMoveSpeed(int moveSpeed) { m_characterMoveSpeed = moveSpeed; }
@@ -154,7 +173,8 @@ public:
 	void setLeftLock(bool lock);
 	void setUpLock(bool lock);
 	void setDownLock(bool lock);
-	inline void setBoost() { if(!m_grand) m_boostCnt = BOOST_TIME; }
+	virtual void setBoost(bool leftDirection);
+	void finishBoost();
 	inline void setGrandRightSlope(bool grand) { m_grandRightSlope = grand; }
 	inline void setGrandLeftSlope(bool grand) { m_grandLeftSlope = grand; }
 	void setRunCnt(int runCnt) { m_runCnt = runCnt; }
@@ -170,6 +190,7 @@ public:
 	void setAttackLeftDirection(bool attackLeftDirection) { m_attackLeftDirection = attackLeftDirection; }
 	void setLandCnt(int landCnt) { m_landCnt = landCnt; }
 	void setBoostCnt(int boostCnt) { m_boostCnt = boostCnt; }
+	void setBoostDone(int boostDone) { m_boostDone = boostDone; }
 	void setDamageCnt(int damageCnt) { m_damageCnt = damageCnt; }
 	void setHeavy(bool heavy) { m_heavy = heavy; }
 
@@ -189,7 +210,7 @@ public:
 	virtual void init();
 
 	// 物理演算 毎フレーム行う
-	virtual void action() = 0;
+	virtual void action();
 
 	// 移動 引数は４方向分 キャラによっては斜めに移動できるため。
 	virtual void move(bool right, bool left, bool up, bool down) = 0;
@@ -227,7 +248,7 @@ public:
 	// 今歩ける状態
 	virtual bool ableWalk() const;
 
-	// 方向転換可能
+	// 方向転換可能 FreezeAI用
 	virtual bool ableChangeDirection() const;
 
 	// 歩き始める
@@ -242,9 +263,6 @@ public:
 	void stopMoveUp();
 	void stopMoveDown();
 
-protected:
-	// 画像のサイズ変更による位置調整
-	void afterChangeGraph(int beforeX1, int afterX1, int beforeY1, int afterY1, int beforeX2, int afterX2, int beforeY2, int afterY2);
 };
 
 
@@ -262,7 +280,7 @@ private:
 	// 重力加速度
 	const int G = 1;
 
-private:
+protected:
 	// 横へ歩く 引数は右と左の２つ
 	void walk(bool right, bool left);
 
@@ -340,7 +358,11 @@ public:
 class FlightAction :
 	public CharacterAction
 {
-private:
+protected:
+
+	void damageAction();
+	void otherAction();
+	void moveAction();
 
 	// キャラの画像を状態(state)に応じて変更
 	void switchHandle();
@@ -357,20 +379,20 @@ public:
 
 	void debug(int x, int y, int color) const;
 
-	// 物理演算 毎フレーム行う
-	void action();
-
 	// 移動 引数は４方向分
 	void move(bool right, bool left, bool up, bool down);
 
 	// ジャンプ cntフレーム目
 	void jump(int cnt);
 
+	void setBoost(bool leftDirection);
+
 	// 射撃攻撃
 	Object* bulletAttack(int gx, int gy);
 
 	// 斬撃攻撃
 	Object* slashAttack(int gx, int gy);
+
 };
 
 
@@ -386,6 +408,7 @@ private:
 	const int BULLET_MOVE_SPEED = 2;
 
 public:
+
 	static const char* ACTION_NAME;
 	const char* getActionName() const { return this->ACTION_NAME; }
 
@@ -405,6 +428,119 @@ public:
 	bool ableAttack() const;
 
 	bool ableWalk() const;
+
+};
+
+
+class BossFreezeAction :
+	public CharacterAction
+{
+protected:
+
+	// キャラの画像を変更
+	void switchHandle();
+
+public:
+
+	static const char* ACTION_NAME;
+	virtual const char* getActionName() const { return this->ACTION_NAME; }
+
+	BossFreezeAction(Character* character, SoundPlayer* soundPlayer_p);
+
+	// コピー作成
+	CharacterAction* createCopy(std::vector<Character*> characters);
+
+	// デバッグ
+	void debug(int x, int y, int color) const { }
+	// 行動前の処理 毎フレーム行う
+	void init() { }
+
+	// 物理演算 毎フレーム行う
+	void action() { switchHandle(); }
+
+	// 移動 引数は４方向分 キャラによっては斜めに移動できるため。
+	void move(bool right, bool left, bool up, bool down) { }
+
+	// ジャンプ rate%の力で飛び上がる。
+	void jump(int rate) { }
+
+	// 射撃攻撃
+	Object* bulletAttack(int gx, int gy) { return nullptr; }
+
+	// 斬撃攻撃
+	Object* slashAttack(int gx, int gy) { return nullptr; }
+
+	// ダメージ 必要に応じてオーバーライド
+	void damage(int vx, int vy, int damageValue) { }
+
+	// 射撃開始の処理 必要に応じてオーバーライド
+	void startBullet() { }
+
+	// 射撃終了の処理 必要に応じてオーバーライド
+	void finishBullet() { }
+
+	// 斬撃開始の処理 必要に応じてオーバーライド
+	void startSlash() { }
+
+	// 斬撃終了の処理 必要に応じてオーバーライド
+	void finishSlash() { }
+
+	// 今無敵時間じゃない
+	bool ableDamage() const { return false; }
+
+	// 今攻撃可能状態
+	bool ableAttack() const { return false; }
+
+	// 今歩ける状態
+	bool ableWalk() const { return false; }
+
+	// 方向転換可能 FreezeAI用
+	bool ableChangeDirection() const { return false; }
+
+};
+
+
+/*
+* Boss1: サン
+*/
+class SunAction :
+	public FlightAction
+{
+private:
+
+	// ボスの初期アニメーションカウント用
+	int m_initCnt;
+	const int NOT_HIDE_CNT = 80;
+
+	// 初期体力
+	int m_initHp;
+
+	// 無敵状態
+	bool m_hideFlag;
+
+	int m_startAnimeCnt;
+
+public:
+	static const char* ACTION_NAME;
+	const char* getActionName() const { return this->ACTION_NAME; }
+
+	SunAction(Character* character, SoundPlayer* soundPlayer_p, bool duplicationFlag);
+
+	CharacterAction* createCopy(std::vector<Character*> characters);
+
+	// セッタ
+	inline void setInitCnt(int initCnt) { m_initCnt = initCnt; }
+	inline void setInitHp(int initHp) { m_initHp = initHp; }
+	inline void setHideFlag(int hideFlag) { m_hideFlag = hideFlag; }
+	inline void setStartAnimeCnt(int startAnimeCnt) { m_startAnimeCnt = startAnimeCnt; }
+
+	void action();
+
+protected:
+
+	// 状態に応じて画像セット
+	void switchHandle();
+
 };
 
 

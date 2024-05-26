@@ -18,6 +18,9 @@ using namespace std;
 Animation::Animation(int x, int y, int flameCnt, GraphHandles* graphHandles) {
 	m_x = x;
 	m_y = y;
+	m_vx = 0;
+	m_vy = 0;
+	m_movable = false;
 	m_handles_p = graphHandles;
 	m_flameCnt = flameCnt;
 	m_loopFlag = false;
@@ -26,6 +29,9 @@ Animation::Animation(int x, int y, int flameCnt, GraphHandles* graphHandles) {
 
 Animation* Animation::createCopy() {
 	Animation* res = new Animation(m_x, m_y, m_flameCnt, m_handles_p);
+	res->setVx(m_vx);
+	res->setVy(m_vy);
+	res->setMovable(m_movable);
 	res->setCnt(m_cnt);
 	res->setFinishCnt(m_finishCnt);
 	res->setFinishFlag(m_finishFlag);
@@ -49,6 +55,10 @@ void Animation::changeGraph(GraphHandles* nextGraph, int flameCnt) {
 
 // ƒJƒEƒ“ƒg
 void Animation::count() { 
+	if (m_movable) {
+		m_x += m_vx;
+		m_y += m_vy;
+	}
 	if (m_cnt == m_finishCnt) {
 		if (m_loopFlag) {
 			init();

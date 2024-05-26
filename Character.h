@@ -210,6 +210,10 @@ protected:
 	// HPバーを表示する残り時間
 	int m_dispHpCnt;
 
+	// スキルゲージ 最大100
+	const int SKILL_MAX = 100;
+	int m_skillGage;
+
 	// 無敵ならtrue
 	bool m_invincible;
 
@@ -221,6 +225,9 @@ protected:
 
 	// 一時的に動けない状態（ハートのスキル発動など）
 	bool m_freeze;
+
+	// ボスならtrue
+	bool m_bossFlag;
 
 	// キャラの情報
 	CharacterInfo* m_characterInfo;
@@ -253,12 +260,15 @@ public:
 	inline int getVersion() const { return m_version; }
 	inline int getHp() const { return m_hp; }
 	inline int getPrevHp() const { return m_prevHp; }
+	inline int getSkillGage() const { return m_skillGage; }
+	inline int getMaxSkillGage() const { return SKILL_MAX; }
 	inline int getDispHpCnt() const { return m_dispHpCnt; }
 	inline bool getInvincible() const { return m_invincible; }
 	inline int getX() const { return m_x; }
 	inline int getY() const { return m_y; }
 	inline bool getLeftDirection() const { return m_leftDirection; }
-	inline int getFreeze() const { return m_freeze; }
+	inline bool getFreeze() const { return m_freeze; }
+	inline bool getBossFlag() const { return m_bossFlag; }
 	FaceGraphHandle* getFaceHandle() const { return m_faceHandle; }
 	inline CharacterGraphHandle* getCharacterGraphHandle() const { return m_graphHandle; }
 	inline AttackInfo* getAttackInfo() const { return m_attackInfo; }
@@ -270,12 +280,16 @@ public:
 		m_prevHp = (prevHp < m_hp) ? m_hp : prevHp;
 		if (m_prevHp == m_hp && m_dispHpCnt > 0) { m_dispHpCnt--; }
 	}
+	inline void setSkillGage(int skillGage) { 
+		m_skillGage = skillGage > SKILL_MAX ? SKILL_MAX : (skillGage < 0 ? 0 : skillGage);
+	}
 	inline void setInvincible(bool invincible) { m_invincible = invincible; }
 	inline void setX(int x) { m_x = x; }
 	inline void setY(int y) { m_y = y; }
 	inline void setId(int id) { m_id = id; }
 	inline void setGroupId(int id) { m_groupId = id; }
 	inline void setFreeze(bool freeze) { m_freeze = freeze; }
+	inline void setBossFlag(bool bossFlag) { m_bossFlag = bossFlag; }
 	// キャラの向き変更は、画像の反転も行う
 	void setLeftDirection(bool leftDirection);
 	inline void setDuplicationFlag(bool flag) { m_duplicationFlag = flag; }
@@ -298,6 +312,7 @@ public:
 
 	// 当たり判定の範囲を取得
 	void getAtariArea(int* x1, int* y1, int* x2, int* y2) const;
+	void getDamageArea(int* x1, int* y1, int* x2, int* y2) const;
 
 	// Infoのバージョンを変更する
 	void changeInfoVersion(int version);
@@ -307,6 +322,8 @@ public:
 	int getCenterY() const;
 	int getWide() const;
 	int getHeight() const;
+	int getAtariCenterX() const;
+	int getAtariCenterY() const;
 	// 今描画する画像を取得
 	GraphHandle* getGraphHandle() const;
 	void getHandleSize(int& wide, int& height) const;
@@ -343,6 +360,10 @@ public:
 	virtual void switchAirSlash(int cnt = 0);
 	// やられ画像をセット
 	virtual void switchDead(int cnt = 0);
+	// ボスの初期アニメーションをセット
+	virtual void switchInit(int cnt = 0);
+	// 追加画像をセット
+	virtual void switchSpecial1(int cnt = 0);
 
 	// HP減少
 	void damageHp(int value);
@@ -573,6 +594,31 @@ public:
 
 	// 射撃攻撃をする
 	Object* bulletAttack(int gx, int gy, SoundPlayer* soundPlayer);
+};
+
+
+/*
+* Boss1: サン
+*/
+class Sun :
+	public Heart
+{
+public:
+	// コンストラクタ
+	Sun(const char* name, int hp, int x, int y, int groupId);
+	Sun(const char* name, int hp, int x, int y, int groupId, AttackInfo* attackInfo);
+
+	Character* createCopy();
+
+	// ボスの初期アニメーションをセット
+	void switchInit(int cnt);
+
+	// 射撃攻撃をする
+	Object* bulletAttack(int gx, int gy, SoundPlayer* soundPlayer);
+
+	// 斬撃攻撃をする
+	Object* slashAttack(bool leftDirection, int cnt, bool grand, SoundPlayer* soundPlayer) { return nullptr; }
+
 };
 
 

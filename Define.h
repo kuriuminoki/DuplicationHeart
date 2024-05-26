@@ -38,5 +38,7 @@ const int RED = GetColor(255, 0, 0);
 const int LIGHT_RED = GetColor(255, 100, 100);
 const int BLUE = GetColor(0, 0, 255);
 const int LIGHT_BLUE = GetColor(100, 100, 255);
+const int ORANGE = GetColor(255, 165, 0);
+const int DARK_ORANGE = GetColor(80, 50, 0);
 
 #endif

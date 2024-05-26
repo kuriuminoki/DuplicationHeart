@@ -338,8 +338,8 @@ bool TriangleObject::atari(CharacterController* characterController) {
 	characterController->getAction()->getCharacter()->getAtariArea(&characterX1, &characterY1, &characterX2, &characterY2);
 	characterWide = characterX2 - characterX1;
 	characterHeight = characterY2 - characterY1;
-	characterX1_5 = characterX1 + characterWide / 2;
-	characterY1_5 = characterY1 + characterHeight / 2;
+	characterX1_5 = (characterX1 + characterX2) / 2;
+	characterY1_5 = (characterY1 + characterY2) / 2;
 
 	// キャラが上下移動で当たっているか判定
 	if (characterX2 > m_x1 && characterX1 < m_x2) {
@@ -486,8 +486,8 @@ void TriangleObject::penetration(CharacterController* characterController) {
 	characterController->getAction()->getCharacter()->getAtariArea(&characterX1, &characterY1, &characterX2, &characterY2);
 	characterWide = characterX2 - characterX1;
 	characterHeight = characterY2 - characterY1;
-	characterX1_5 = characterX1 + characterWide / 2;
-	characterY1_5 = characterY1 + characterHeight / 2;
+	characterX1_5 = (characterX1 + characterX2) / 2;
+	characterY1_5 = (characterY1 + characterY2) / 2;
 	int slopeY = getY(characterX1_5);
 	// 万が一オブジェクトの中に入り込んでしまったら
 	if (characterY2 > slopeY && characterY1 < m_y2 && characterX2 > m_x1 && characterX1 < m_x2) {
@@ -640,7 +640,7 @@ bool BulletObject::atari(CharacterController* characterController) {
 	int characterY1 = characterController->getAction()->getCharacter()->getY();
 	int characterX2 = characterX1 + characterController->getAction()->getCharacter()->getWide();
 	int characterY2 = characterY1 + characterController->getAction()->getCharacter()->getHeight();
-	characterController->getAction()->getCharacter()->getAtariArea(&characterX1, &characterY1, &characterX2, &characterY2);
+	characterController->getAction()->getCharacter()->getDamageArea(&characterX1, &characterY1, &characterX2, &characterY2);
 
 	// 当たり判定
 	if (characterX2 > m_x1 && characterX1 < m_x2 && characterY2 > m_y1 && characterY1 < m_y2 && characterController->getAction()->ableDamage()) {
@@ -806,7 +806,7 @@ bool SlashObject::atari(CharacterController* characterController) {
 	int characterY1 = characterController->getAction()->getCharacter()->getY();
 	int characterX2 = characterX1 + characterController->getAction()->getCharacter()->getWide();
 	int characterY2 = characterY1 + characterController->getAction()->getCharacter()->getHeight();
-	characterController->getAction()->getCharacter()->getAtariArea(&characterX1, &characterY1, &characterX2, &characterY2);
+	characterController->getAction()->getCharacter()->getDamageArea(&characterX1, &characterY1, &characterX2, &characterY2);
 
 	// 当たり判定
 	if (characterX2 > m_x1 && characterX1 < m_x2 && characterY2 > m_y1 && characterY1 < m_y2 && characterController->getAction()->ableDamage()) {
@@ -892,11 +892,19 @@ bool BombObject::atari(CharacterController* characterController) {
 	int characterY1 = characterController->getAction()->getCharacter()->getY();
 	int characterX2 = characterX1 + characterController->getAction()->getCharacter()->getWide();
 	int characterY2 = characterY1 + characterController->getAction()->getCharacter()->getHeight();
-	characterController->getAction()->getCharacter()->getAtariArea(&characterX1, &characterY1, &characterX2, &characterY2);
+	characterController->getAction()->getCharacter()->getDamageArea(&characterX1, &characterY1, &characterX2, &characterY2);
 
 	// 当たり判定
 	if (characterX2 > m_x1 && characterX1 < m_x2 && characterY2 > m_y1 && characterY1 < m_y2 && characterController->getAction()->ableDamage()) {
-		double damageRate = calcDamageRate(characterController->getAction()->getCharacter()->getCenterX(), characterController->getAction()->getCharacter()->getCenterY());
+		double damageRate = 1.0;
+		int x = characterX1, y = abs(characterY1 - m_y);
+		if (abs(characterX2 - m_x) < abs(characterX1 - m_x)) {
+			x = characterX2;
+		}
+		if (abs(characterY2 - m_y) < abs(characterY1 - m_y)) {
+			y = characterY2;
+		}
+		damageRate = calcDamageRate(x, y);
 		int bombImpact = (int)(damageRate * BOMB_IMPACT);
 		if (characterX1 + characterX2 < m_x1 + m_x2) {
 			characterController->damage(-bombImpact, -bombImpact, (int)(m_damage * damageRate));
@@ -946,8 +954,8 @@ void BombObject::action() {
 double BombObject::calcDamageRate(int x, int y) {
 	x -= m_x;
 	y -= m_y;
-	double distance = sqrt(x * x + y + y);
-	return (m_distance - distance) / m_distance;
+	double distance = sqrt(x * x + y * y);
+	return min(1.0, (m_distance - distance) / m_distance);
 }
 
 bool BombObject::ableDamage() {

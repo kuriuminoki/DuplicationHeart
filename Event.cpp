@@ -120,6 +120,9 @@ void Event::createElement(vector<string> param, World* world, SoundPlayer* sound
 	else if (param0 == "MoveGoal") {
 		element = new MoveGoalEvent(world, param);
 	}
+	else if (param0 == "ChangeAction") {
+		element = new ChangeActionEvent(world, param);
+	}
 	else if (param0 == "ChangeBrain") {
 		element = new ChangeBrainEvent(world, param);
 	}
@@ -128,6 +131,9 @@ void Event::createElement(vector<string> param, World* world, SoundPlayer* sound
 	}
 	else if (param0 == "ChangeInfoVersion") {
 		element = new ChangeInfoVersionEvent(world, param);
+	}
+	else if (param0 == "ChangeBossFlag") {
+		element = new ChangeBossFlagEvent(world, param);
 	}
 	else if (param0 == "ChangeCharacterPoint") {
 		element = new ChangeCharacterPointEvent(world, param);
@@ -164,6 +170,9 @@ void Event::createElement(vector<string> param, World* world, SoundPlayer* sound
 	}
 	else if (param0 == "WaitSkill") {
 		element = new WaitSkillEvent(world, param);
+	}
+	else if (param0 == "SetBgm") {
+		element = new SetBgmEvent(world, param);
 	}
 	else if (param0 == "BattleForever") {
 		element = new BattleForever(world, param);
@@ -270,7 +279,10 @@ bool CharacterNearFire::fire() {
 		m_areaNum = m_world_p->getAreaNum();
 		m_target_p = m_world_p->getCharacterWithName(m_param[2]);
 	}
-	if (m_target_p == nullptr) { return false; }
+	if (m_target_p == nullptr) { 
+		m_target_p = m_world_p->getCharacterWithName(m_param[2]);
+		return false;
+	}
 	int x = m_character_p->getCenterX();
 	int y = m_character_p->getY() + m_character_p->getHeight();
 	int targetX = m_target_p->getCenterX();
@@ -327,6 +339,29 @@ EVENT_RESULT InvincibleEvent::play() {
 	return EVENT_RESULT::SUCCESS;
 }
 void InvincibleEvent::setWorld(World* world) {
+	EventElement::setWorld(world);
+	m_character_p = m_world_p->getCharacterWithName(m_param[2]);
+}
+
+
+// キャラのBrainを変更する
+ChangeActionEvent::ChangeActionEvent(World* world, vector<string> param) :
+	EventElement(world)
+{
+	m_actionName = param[1];
+	m_character_p = m_world_p->getCharacterWithName(param[2]);
+	m_param = param;
+}
+EVENT_RESULT ChangeActionEvent::play() {
+
+	// 対象のキャラのBrainを変更する
+	CharacterAction* action = createAction(m_actionName, m_character_p, m_world_p->getSoundPlayer());
+
+	m_world_p->getControllerWithName(m_param[2])->setAction(action);
+
+	return EVENT_RESULT::SUCCESS;
+}
+void ChangeActionEvent::setWorld(World* world) {
 	EventElement::setWorld(world);
 	m_character_p = m_world_p->getCharacterWithName(m_param[2]);
 }
@@ -432,6 +467,25 @@ EVENT_RESULT ChangeInfoVersionEvent::play() {
 	return EVENT_RESULT::SUCCESS;
 }
 void ChangeInfoVersionEvent::setWorld(World* world) {
+	EventElement::setWorld(world);
+	m_character_p = m_world_p->getCharacterWithName(m_param[2]);
+}
+
+
+// キャラのBossFlagを変更する
+ChangeBossFlagEvent::ChangeBossFlagEvent(World* world, std::vector<string> param) :
+	EventElement(world)
+{
+	m_param = param;
+	m_bossFlag = (bool)stoi(param[1]);
+	m_character_p = m_world_p->getCharacterWithName(param[2]);
+}
+EVENT_RESULT ChangeBossFlagEvent::play() {
+	// 対象のキャラのGroupIdを変更する
+	m_character_p->setBossFlag(m_bossFlag);
+	return EVENT_RESULT::SUCCESS;
+}
+void ChangeBossFlagEvent::setWorld(World* world) {
 	EventElement::setWorld(world);
 	m_character_p = m_world_p->getCharacterWithName(m_param[2]);
 }
@@ -707,6 +761,20 @@ EVENT_RESULT WaitSkillEvent::play() {
 		return EVENT_RESULT::SUCCESS;
 	}
 	return EVENT_RESULT::NOW;
+}
+
+
+SetBgmEvent::SetBgmEvent(World* world, std::vector<std::string> param) :
+	EventElement(world)
+{
+	m_filePath = param[1];
+}
+
+// プレイ
+EVENT_RESULT SetBgmEvent::play() {
+	m_world_p->getSoundPlayer()->setBGM(m_filePath);
+	m_world_p->getSoundPlayer()->playBGM();
+	return EVENT_RESULT::SUCCESS;
 }
 
 
