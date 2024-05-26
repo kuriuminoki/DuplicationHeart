@@ -524,7 +524,7 @@ public:
 	static const char* ACTION_NAME;
 	const char* getActionName() const { return this->ACTION_NAME; }
 
-	SunAction(Character* character, SoundPlayer* soundPlayer_p);
+	SunAction(Character* character, SoundPlayer* soundPlayer_p, bool duplicationFlag);
 
 	CharacterAction* createCopy(std::vector<Character*> characters);
 

@@ -48,7 +48,7 @@ CharacterAction* createAction(const string actionName, Character* character, Sou
 		action = new BossFreezeAction(character, soundPlayer_p);
 	}
 	else if (tmp == SunAction::ACTION_NAME) {
-		action = new SunAction(character, soundPlayer_p);
+		action = new SunAction(character, soundPlayer_p, false);
 	}
 
 	action->setHeavy(heavy);
@@ -1289,13 +1289,15 @@ void BossFreezeAction::switchHandle() {
 /*
 * Boss1: サン
 */
-SunAction::SunAction(Character* character, SoundPlayer* soundPlayer_p) :
+SunAction::SunAction(Character* character, SoundPlayer* soundPlayer_p, bool duplicationFlag) :
 	FlightAction(character, soundPlayer_p)
 {
 	m_state = CHARACTER_STATE::INIT;
 	m_initCnt = -60;
 	m_initHp = m_character_p->getHp();
-	m_character_p->setHp(min(1, m_initHp));
+	if (!duplicationFlag) {
+		m_character_p->setHp(min(1, m_initHp));
+	}
 	m_startAnimeCnt = 0;
 }
 
@@ -1303,7 +1305,7 @@ CharacterAction* SunAction::createCopy(vector<Character*> characters) {
 	SunAction* res = nullptr;
 	for (unsigned int i = 0; i < characters.size(); i++) {
 		if (m_character_p->getId() == characters[i]->getId()) {
-			res = new SunAction(characters[i], m_soundPlayer_p);
+			res = new SunAction(characters[i], m_soundPlayer_p, true);
 			// コピーする
 			setParam(res);
 		}
@@ -1336,25 +1338,27 @@ void SunAction::action() {
 		m_startAnimeCnt++;
 		// 隠れ・出現の開始
 		if (m_hideFlag) {
+			// 現在隠れ状態
 			m_bulletCnt = 1;
 			slashAction();
 			damageAction();
 			otherAction();
 			moveAction();
-			if (m_startAnimeCnt > 300 && GetRand(120) == 0) {
+			if (m_startAnimeCnt > 300 && (GetRand(120) == 0 || m_startAnimeCnt == 600)) {
 				m_hideFlag = false;
 				m_initCnt = 0;
 				m_startAnimeCnt = 0;
 			}
 		}
 		else {
+			// 現在出現状態
 			bulletAction();
 			slashAction();
 			damageAction();
 			otherAction();
-			if (m_startAnimeCnt > 300 && GetRand(300) == 0) {
+			if (m_startAnimeCnt > 300 && (GetRand(300) == 0 || m_startAnimeCnt == 600)) {
 				m_hideFlag = true;
-				m_initCnt = NOT_HIDE_CNT;
+				m_initCnt = NOT_HIDE_CNT - 1;
 				m_startAnimeCnt = 0;
 			}
 		}

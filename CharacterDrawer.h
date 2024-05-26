@@ -13,7 +13,7 @@ class CharacterDrawer {
 private:
 
 	// デバッグ用
-	const bool ATARI_DEBUG = true;
+	const bool ATARI_DEBUG = false;
 	int m_atariGuideHandle;
 	int m_damageGuideHandle;
 

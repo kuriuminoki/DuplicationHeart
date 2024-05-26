@@ -104,6 +104,8 @@ World::World() {
 
 	m_date = 0;
 
+	m_bossDeadEffectCnt = 0;
+
 }
 
 /*
@@ -178,6 +180,7 @@ World::World(const World* original) :
 	m_doorSound = original->getDoorSound();
 	m_backGroundGraph = original->getBackGroundGraph();
 	m_backGroundColor = original->getBackGroundColor();
+	m_bossDeadEffectCnt = original->getBossDeadEffextCnt();
 
 	// 新規作成するもの (ポインタが変わる)
 	m_camera = new Camera(original->getCamera());
@@ -278,6 +281,9 @@ vector<const CharacterAction*> World::getActions() const {
 	for (unsigned int i = 0; i < size; i++) {
 		// HPが０かつDeadGraphがないなら表示しない
 		if (m_characterControllers[i]->getAction()->getCharacter()->getHp() > 0 || m_characterControllers[i]->getAction()->getCharacter()->haveDeadGraph()) {
+			actions.push_back(m_characterControllers[i]->getAction());
+		}
+		else if (m_characterControllers[i]->getAction()->getCharacter()->getBossFlag() && m_bossDeadEffectCnt > 0) {
 			actions.push_back(m_characterControllers[i]->getAction());
 		}
 	}
@@ -717,6 +723,9 @@ void World::battle() {
 	// アイテムの動き
 	controlItem();
 
+	// ボス撃破のエフェクト
+	createBossDeadEffect();
+
 	// カメラの更新
 	updateCamera();
 
@@ -943,12 +952,17 @@ void World::atariCharacterAndObject(CharacterController* controller, vector<Obje
 			m_soundPlayer_p->pushSoundQueue(soundHandle, panPal);
 			// HP = 0になったとき（やられたとき）
 			if (!character->haveDeadGraph() && character->getHp() == 0) {
-				m_animations.push_back(new Animation(x, y, 3, m_characterDeadGraph));
-				m_camera->shakingStart(20, 20);
-				m_soundPlayer_p->pushSoundQueue(m_characterDeadSound, panPal);
-				if (!m_duplicationFlag && character->getGroupId() != m_player_p->getGroupId() && GetRand(100) < 20) {
-					// スキル発動中でなければ確率でアイテムが落ちる
-					m_itemVector.push_back(new CureItem("cure", x, y, 50));
+				if (character->getBossFlag()) {
+					m_bossDeadEffectCnt = 300;
+				}
+				else {
+					m_animations.push_back(new Animation(x, y, 3, m_characterDeadGraph));
+					m_camera->shakingStart(20, 20);
+					m_soundPlayer_p->pushSoundQueue(m_characterDeadSound, panPal);
+					if (!m_duplicationFlag && character->getGroupId() != m_player_p->getGroupId() && GetRand(100) < 20) {
+						// スキル発動中でなければ確率でアイテムが落ちる
+						m_itemVector.push_back(new CureItem("cure", x, y, 50));
+					}
 				}
 			}
 		}
@@ -1056,7 +1070,14 @@ void World::atariAttackAndAttack() {
 
 // Battle: 爆発を起こす
 void World::createBomb(int x, int y, Object* attackObject) {
-	if (attackObject->getBomb()) {
+	if (attackObject == nullptr) {
+		m_animations.push_back(new Animation(x, y, 3, m_bombGraph));
+		// 効果音
+		m_soundPlayer_p->pushSoundQueue(m_bombSound, adjustPanSound(x, m_camera->getX()));
+		// 画面の揺れ
+		m_camera->shakingStart(20, 20);
+	}
+	else if (attackObject->getBomb()) {
 		// 爆発
 		BombObject* bomb = new BombObject(x, y, 500, 500, attackObject->getDamage(), new Animation(x, y, 3, m_bombGraph));
 		bomb->setCharacterId(attackObject->getCharacterId());
@@ -1077,6 +1098,28 @@ void World::createDamageEffect(int x, int y, int sum) {
 		animation->setVy(GetRand(30) - 31);
 		animation->setMovable(true);
 		m_animations.push_back(animation);
+	}
+}
+
+// Battle: ボスがやられたときの爆発エフェクト
+void World::createBossDeadEffect() {
+	if (m_bossDeadEffectCnt > 0) {
+		m_bossDeadEffectCnt--;
+		if (m_bossDeadEffectCnt % 20 == 0) {
+			for (unsigned int i = 0; i < m_characters.size(); i++) {
+				if (m_characters[i]->getBossFlag()) {
+					int x1 = m_characters[i]->getX();
+					int y1 = m_characters[i]->getY();
+					int x2 = x1 + m_characters[i]->getWide();
+					int y2 = y1 + m_characters[i]->getHeight();
+					int x = GetRand(x2 - x1) + x1;
+					int y = GetRand(y2 - y1) + y1;
+					createBomb(x, y, nullptr);
+					createDamageEffect(x, y, 2);
+					break;
+				}
+			}
+		}
 	}
 }
 

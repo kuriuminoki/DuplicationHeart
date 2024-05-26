@@ -130,6 +130,9 @@ private:
 	int m_backGroundGraph;
 	int m_backGroundColor;
 
+	// ボスがやられた時のエフェクト中
+	int m_bossDeadEffectCnt;
+
 public:
 	World();
 	World(int fromAreaNum, int toAreaNum, SoundPlayer* soundPlayer);
@@ -171,6 +174,7 @@ public:
 	inline int getBombSound() const { return m_bombSound; }
 	inline int getDoorSound() const { return m_doorSound; }
 	inline bool getSkillFlag() const { return m_skillFlag; }
+	inline int getBossDeadEffextCnt() const { return m_bossDeadEffectCnt; }
 
 	// Drawer用のゲッタ
 	std::vector<const CharacterAction*> getActions() const;
@@ -316,6 +320,9 @@ private:
 
 	// Battle: ダメージエフェクト作成
 	void createDamageEffect(int x, int y, int sum);
+
+	// Battle: ボスがやられたときの爆発エフェクト
+	void createBossDeadEffect();
 
 };
 

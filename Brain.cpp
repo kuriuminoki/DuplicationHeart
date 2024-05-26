@@ -235,7 +235,7 @@ void NormalAI::moveOrder(int& right, int& left, int& up, int& down) {
 
 	// 現在地
 	int x = m_characterAction_p->getCharacter()->getCenterX();
-	int y = m_characterAction_p->getCharacter()->getY() + m_characterAction_p->getCharacter()->getHeight();
+	int y = m_characterAction_p->getCharacter()->getCenterY();
 
 	// (壁につっかえるなどで)移動できてないから諦める
 	if (m_moveCnt >= GIVE_UP_MOVE_CNT) {
@@ -252,11 +252,7 @@ void NormalAI::moveOrder(int& right, int& left, int& up, int& down) {
 	else if (alreadyGoal && GetRand(MOVE_RAND) == 0) {
 		if (m_target_p != nullptr && abs(x - m_target_p->getCenterX()) < TARGET_DISTANCE) {
 			// targetについていく
-			int NEAR_TARGET = 2000;
-			if (!m_characterAction_p->getCharacter()->haveBulletAttack()) {
-				NEAR_TARGET = 500; // 近距離攻撃しかないからより近づく
-			}
-			m_gx = m_target_p->getCenterX() + GetRand(NEAR_TARGET) - NEAR_TARGET / 2;
+			setGoalToTarget();
 		}
 		else {
 			// ランダムに設定
@@ -438,6 +434,15 @@ int NormalAI::bulletOrder() {
 	return 0;
 }
 
+void NormalAI::setGoalToTarget() {
+	// targetについていく
+	int NEAR_TARGET = 2000;
+	if (!m_characterAction_p->getCharacter()->haveBulletAttack()) {
+		NEAR_TARGET = 500; // 近距離攻撃しかないからより近づく
+	}
+	m_gx = m_target_p->getCenterX() + GetRand(NEAR_TARGET) - NEAR_TARGET / 2;
+}
+
 // 攻撃対象を決める(targetのままか、characterに変更するか)
 void NormalAI::searchTarget(const Character* character) {
 	if (GetRand(99) < 50) {
@@ -562,7 +567,7 @@ void FollowNormalAI::moveOrder(int& right, int& left, int& up, int& down) {
 
 	// 現在地
 	int x = m_characterAction_p->getCharacter()->getCenterX();
-	int y = m_characterAction_p->getCharacter()->getY() + m_characterAction_p->getCharacter()->getHeight();
+	int y = m_characterAction_p->getCharacter()->getCenterY();
 
 	// (壁につっかえるなどで)移動できてないから諦める
 	if (m_moveCnt >= GIVE_UP_MOVE_CNT) {
@@ -806,7 +811,7 @@ Brain* FlightAI::createCopy(std::vector<Character*> characters, const Camera* ca
 void FlightAI::moveOrder(int& right, int& left, int& up, int& down) {
 	// 現在地
 	int x = m_characterAction_p->getCharacter()->getCenterX();
-	int y = m_characterAction_p->getCharacter()->getY() + m_characterAction_p->getCharacter()->getHeight();
+	int y = m_characterAction_p->getCharacter()->getCenterY();
 
 	// 上下移動の制御
 	moveUpDownOrder(x, y, m_try);
@@ -820,14 +825,7 @@ void FlightAI::moveOrder(int& right, int& left, int& up, int& down) {
 	}
 	else if (alreadyGoal && GetRand(MOVE_RAND) == 0) {
 		if (m_target_p != nullptr && abs(x - m_target_p->getCenterX()) < TARGET_DISTANCE) {
-			// targetについていく
-			int NEAR_TARGET_X = 2000, NEAR_TARGET_Y = 800;
-			if (!m_characterAction_p->getCharacter()->haveBulletAttack()) {
-				NEAR_TARGET_X = 500; // 近距離攻撃しかないからより近づく
-				NEAR_TARGET_Y = 300;
-			}
-			m_gx = m_target_p->getCenterX() + GetRand(NEAR_TARGET_X) - NEAR_TARGET_X / 2;
-			m_gy = m_target_p->getCenterY() + GetRand(NEAR_TARGET_Y) - NEAR_TARGET_Y - 100;
+			setGoalToTarget();
 		}
 		else {
 			// ランダムに設定
@@ -848,6 +846,17 @@ bool FlightAI::moveGoalOrder(int& right, int& left, int& up, int& down, int& jum
 	moveUpDownOrder(x, y, m_try);
 	bool flag = NormalAI::moveGoalOrder(right, left, up, down, jump);
 	return flag;
+}
+
+void FlightAI::setGoalToTarget() {
+	// targetについていく
+	int NEAR_TARGET_X = 2000, NEAR_TARGET_Y = 600;
+	if (!m_characterAction_p->getCharacter()->haveBulletAttack()) {
+		NEAR_TARGET_X = 500; // 近距離攻撃しかないからより近づく
+		NEAR_TARGET_Y = 300;
+	}
+	m_gx = m_target_p->getCenterX() + GetRand(NEAR_TARGET_X) - NEAR_TARGET_X / 2;
+	m_gy = m_target_p->getCenterY() + GetRand(NEAR_TARGET_Y) - (NEAR_TARGET_Y - 200);
 }
 
 
@@ -878,7 +887,7 @@ void FollowFlightAI::moveOrder(int& right, int& left, int& up, int& down) {
 
 	// 現在地
 	int x = m_characterAction_p->getCharacter()->getCenterX();
-	int y = m_characterAction_p->getCharacter()->getY() + m_characterAction_p->getCharacter()->getHeight();
+	int y = m_characterAction_p->getCharacter()->getCenterY();
 
 	// 上下移動の制御
 	moveUpDownOrder(x, y, m_try);
@@ -1011,6 +1020,15 @@ Brain* SunAI::createCopy(std::vector<Character*> characters, const Camera* camer
 
 // 移動（上下左右の入力）
 void SunAI::moveOrder(int& right, int& left, int& up, int& down) {
+	// 現在地
+	int x = m_characterAction_p->getCharacter()->getCenterX();
+	int y = m_characterAction_p->getCharacter()->getCenterY();
+
+	if ((x < m_gx && m_characterAction_p->getLeftLock()) || (x > m_gx && m_characterAction_p->getRightLock())) {
+		m_gx = x, m_gy = y;
+		m_try = false;
+	}
+
 	if (m_characterAction_p->getState() != CHARACTER_STATE::INIT) {
 		FlightAI::moveOrder(right, left, up, down);
 	}
@@ -1043,7 +1061,19 @@ int SunAI::slashOrder() {
 // 遠距離攻撃
 int SunAI::bulletOrder() {
 	if (m_characterAction_p->getState() != CHARACTER_STATE::INIT) {
-		return FlightAI::bulletOrder();
+		return m_characterAction_p->getBulletCnt() + 1;
 	}
 	return 0;
+}
+
+void SunAI::bulletTargetPoint(int& x, int& y) {
+	x = GetRand(m_characterAction_p->getCharacter()->getWide()) + m_characterAction_p->getCharacter()->getX();
+	y = m_characterAction_p->getCharacter()->getY() - GetRand(300);
+}
+
+void SunAI::setGoalToTarget() {
+	// targetについていく
+	int NEAR_TARGET_X = 1500, NEAR_TARGET_Y = 400;
+	m_gx = m_characterAction_p->getCharacter()->getCenterX() + GetRand(NEAR_TARGET_X) - NEAR_TARGET_X / 2;
+	m_gy = m_target_p->getCenterY() + GetRand(NEAR_TARGET_Y) - (NEAR_TARGET_Y - 100);
 }

@@ -686,6 +686,8 @@ Character* Hierarchy::createCopy() {
 
 // ŽËŒ‚UŒ‚‚ð‚·‚é
 Object* Hierarchy::bulletAttack(int gx, int gy, SoundPlayer* soundPlayer) {
+	//gx = GetRand(600) - 300 + getCenterX();
+	//gy = getCenterY() - GetRand(300);
 	BulletObject* attackObject = new BulletObject(getCenterX(), getCenterY(), m_graphHandle->getBulletHandle()->getGraphHandles()->getGraphHandle(), gx, gy, m_attackInfo);
 	// Ž©–Å–hŽ~
 	attackObject->setCharacterId(m_id);
