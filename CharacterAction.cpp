@@ -14,6 +14,8 @@ const char* StickAction::ACTION_NAME = "StickAction";
 const char* ValkiriaAction::ACTION_NAME = "ValkiriaAction";
 const char* FlightAction::ACTION_NAME = "FlightAction";
 const char* KoharuAction::ACTION_NAME = "KoharuAction";
+const char* SunAction::ACTION_NAME = "SunAction";
+const char* BossFreezeAction::ACTION_NAME = "BossFreezeAction";
 
 // クラス名からCharacterActionを作成する関数
 CharacterAction* createAction(const string actionName, Character* character, SoundPlayer* soundPlayer_p) {
@@ -42,6 +44,12 @@ CharacterAction* createAction(const string actionName, Character* character, Sou
 	else if (tmp == KoharuAction::ACTION_NAME) {
 		action = new KoharuAction(character, soundPlayer_p);
 	}
+	else if (tmp == BossFreezeAction::ACTION_NAME) {
+		action = new BossFreezeAction(character, soundPlayer_p);
+	}
+	else if (tmp == SunAction::ACTION_NAME) {
+		action = new SunAction(character, soundPlayer_p);
+	}
 
 	action->setHeavy(heavy);
 
@@ -64,7 +72,6 @@ CharacterAction::CharacterAction(Character* character, SoundPlayer* soundPlayer_
 	m_characterMoveSpeed = character->getMoveSpeed();
 	m_grand = false;
 	m_runCnt = -1;
-	m_squat = false;
 	m_preJumpCnt = -1;
 	m_moveRight = false;
 	m_moveLeft = false;
@@ -74,18 +81,13 @@ CharacterAction::CharacterAction(Character* character, SoundPlayer* soundPlayer_
 	m_grandRightSlope = false;
 	m_vx = 0;
 	m_vy = 0;
-
 	m_rightLock = false;
 	m_leftLock = false;
 	m_upLock = false;
 	m_downLock = false;
-
 	m_bulletCnt = 0;
-
 	m_slashCnt = 0;
-
 	m_attackLeftDirection = false;
-
 	m_landCnt = 0;
 	m_boostCnt = 0;
 	m_boostDone = 0;
@@ -108,8 +110,6 @@ void CharacterAction::setParam(CharacterAction* action) {
 	action->setGrandLeftSlope(m_grandLeftSlope);
 	action->setGrandRightSlope(m_grandRightSlope);
 	action->setRunCnt(m_runCnt);
-
-	action->setSquat(m_squat);
 	action->setJumpCnt(m_preJumpCnt);
 	action->setMoveRight(m_moveRight);
 	action->setMoveLeft(m_moveLeft);
@@ -234,6 +234,86 @@ void CharacterAction::init() {
 	}
 }
 
+void CharacterAction::bulletAction() {
+	// 射撃のインターバル処理
+	if (m_bulletCnt > 0) {
+		m_bulletCnt--;
+		if (m_bulletCnt == 0) { finishBullet(); }
+	}
+}
+
+void CharacterAction::slashAction() {
+	// 斬撃のインターバル処理
+	if (m_slashCnt > 0) {
+		m_slashCnt--;
+		if (m_slashCnt == 0) { finishSlash(); }
+	}
+}
+
+void CharacterAction::damageAction() {
+	// ダメージ受け状態は最低１秒近くある
+	if (m_damageCnt > 0) { m_damageCnt--; }
+}
+
+void CharacterAction::otherAction() {
+	// アニメーション用のカウント
+	if (m_landCnt > 0) { m_landCnt--; }
+	if (m_boostCnt > 0) { m_boostCnt--; }
+}
+
+void CharacterAction::moveAction() {
+	// 移動
+	if (m_vx > 0) {// 右
+		if (m_rightLock) {
+			stopMoveLeft(); // 左に移動したいのに吹っ飛び等で右へ移動しているとき、いったん左移動への入力をキャンセルさせないとバグる
+			m_vx = 0;
+		}
+		else {
+			m_character_p->moveRight(m_vx);
+		}
+	}
+	else if (m_vx < 0) { // 左
+		if (m_leftLock) {
+			stopMoveRight();// 右に移動したいのに吹っ飛び等で左へ移動しているとき、いったん右移動への入力をキャンセルさせないとバグる
+			m_vx = 0;
+		}
+		else {
+			m_character_p->moveLeft(-m_vx);
+		}
+	}
+	if (m_vy < 0) { // 上
+		if (m_upLock) {
+			m_vy = 0;
+		}
+		else {
+			m_character_p->moveUp(-m_vy);
+		}
+	}
+	else if (m_vy > 0) { // 下
+		if (m_downLock) {
+			m_vy = 0;
+		}
+		else {
+			m_character_p->moveDown(m_vy);
+		}
+	}
+}
+
+void CharacterAction::action() {
+	// 状態(state)に応じて画像をセット
+	switchHandle();
+
+	bulletAction();
+
+	slashAction();
+
+	damageAction();
+
+	otherAction();
+
+	moveAction();
+}
+
 // ダメージ
 void CharacterAction::damage(int vx, int vy, int damageValue) {
 	m_damageCnt = DAMAGE_TIME;
@@ -277,7 +357,7 @@ bool CharacterAction::ableAttack() const {
 }
 
 bool CharacterAction::ableWalk() const {
-	return !m_moveRight && !m_moveLeft && !m_squat;
+	return !m_moveRight && !m_moveLeft && m_state != CHARACTER_STATE::SQUAT;
 }
 
 bool CharacterAction::ableChangeDirection() const {
@@ -309,13 +389,14 @@ void CharacterAction::setGrand(bool grand) {
 }
 
 void CharacterAction::setSquat(bool squat) {
-	if (squat && m_grand && m_state != CHARACTER_STATE::DAMAGE && m_state != CHARACTER_STATE::SLASH && m_state != CHARACTER_STATE::PREJUMP) {
-		// しゃがめる状態なのでしゃがむ
-		m_squat = true;
-	}
-	else {
-		// しゃがめない状態
-		m_squat = false;
+	if (m_state != CHARACTER_STATE::DAMAGE && m_state != CHARACTER_STATE::PREJUMP && m_state != CHARACTER_STATE::INIT) {
+		if (squat && m_grand && m_slashCnt == 0) {
+			// しゃがめる状態なのでしゃがむ
+			m_state = CHARACTER_STATE::SQUAT;
+		}
+		else {
+			m_state = CHARACTER_STATE::STAND;
+		}
 	}
 }
 
@@ -453,70 +534,12 @@ CharacterAction* StickAction::createCopy(vector<Character*> characters) {
 }
 
 void StickAction::action() {
-	// 状態(state)に応じて画像をセット
-	switchHandle();
-
-	// 射撃のインターバル処理
-	if (m_bulletCnt > 0) { 
-		m_bulletCnt--;
-		if (m_bulletCnt == 0) { finishBullet(); }
-	}
-
-	// 斬撃のインターバル処理
-	if (m_slashCnt > 0) { 
-		m_slashCnt--;
-		if (m_slashCnt == 0) { finishSlash(); }
-	}
-
-	// ダメージ受け状態は最低１秒近くある
-	if (m_damageCnt > 0) { m_damageCnt--; }
-
 	// 重力の処理
-	// 宙にいる
-	if(!m_grand) { 
+	if (!m_grand) {
 		// 重力
 		m_vy += G;
 	}
-
-	// アニメーション用のカウント
-	if (m_landCnt > 0) { m_landCnt--; }
-	if (m_boostCnt > 0) { m_boostCnt--; }
-
-	// 移動
-	if (m_vx > 0) {// 右
-		if (m_rightLock) {
-			stopMoveLeft(); // 左に移動したいのに吹っ飛び等で右へ移動しているとき、いったん左移動への入力をキャンセルさせないとバグる
-			m_vx = 0;
-		}
-		else {
-			m_character_p->moveRight(m_vx);
-		}
-	}
-	else if (m_vx < 0) { // 左
-		if (m_leftLock) {
-			stopMoveRight();// 右に移動したいのに吹っ飛び等で左へ移動しているとき、いったん右移動への入力をキャンセルさせないとバグる
-			m_vx = 0;
-		}
-		else {
-			m_character_p->moveLeft(-m_vx);
-		}
-	}
-	if (m_vy < 0) { // 上
-		if (m_upLock) {
-			m_vy = 0;
-		}
-		else {
-			m_character_p->moveUp(-m_vy);
-		}
-	}
-	else if (m_vy > 0) { // 下
-		if (m_downLock) {
-			m_vy = 0;
-		}
-		else {
-			m_character_p->moveDown(m_vy);
-		}
-	}
+	CharacterAction::action();
 }
 
 // 状態に応じて画像セット
@@ -528,11 +551,11 @@ void StickAction::switchHandle() {
 	m_character_p->getAtariArea(&x1, &y1, &x2, &y2);
 	
 	// やられ画像
-	if (m_grand && m_character_p->getHp() == 0 && m_character_p->haveDeadGraph() && getState() != CHARACTER_STATE::DAMAGE) {
+	if (m_grand && m_character_p->getHp() == 0 && m_character_p->haveDeadGraph() && m_state != CHARACTER_STATE::DAMAGE) {
 		m_character_p->switchDead();
 	}
 	else if (m_grand) { // 地面にいるとき
-		switch (getState()) {
+		switch (m_state) {
 		case CHARACTER_STATE::STAND: //立ち状態
 			if (m_slashCnt > 0) {
 				m_character_p->switchSlash();
@@ -544,21 +567,23 @@ void StickAction::switchHandle() {
 				if (m_runCnt != -1) {
 					m_character_p->switchRunBullet(m_runCnt);
 				}
-				else if (m_squat) {
-					m_character_p->switchSquatBullet();
-				}
 				else {
 					m_character_p->switchBullet();
 				}
-			}
-			else if (m_squat) {
-				m_character_p->switchSquat();
 			}
 			else if (m_runCnt != -1) {
 				m_character_p->switchRun(m_runCnt);
 			}
 			else {
 				m_character_p->switchStand();
+			}
+			break;
+		case CHARACTER_STATE::SQUAT:
+			if (m_bulletCnt > 0) {
+				m_character_p->switchSquatBullet();
+			}
+			else {
+				m_character_p->switchSquat();
 			}
 			break;
 		case CHARACTER_STATE::PREJUMP:
@@ -572,9 +597,6 @@ void StickAction::switchHandle() {
 				else if (m_bulletCnt > 0) {
 					if (m_runCnt != -1) {
 						m_character_p->switchRunBullet(m_runCnt);
-					}
-					else if (m_squat) {
-						m_character_p->switchSquatBullet();
 					}
 					else {
 						m_character_p->switchBullet();
@@ -591,7 +613,7 @@ void StickAction::switchHandle() {
 		}
 	}
 	else { // 宙にいるとき
-		switch (getState()) {
+		switch (m_state) {
 		case CHARACTER_STATE::STAND: //立ち状態(なにもなしの状態)
 			if (m_slashCnt > 0) {
 				m_character_p->switchAirSlash();
@@ -642,7 +664,7 @@ void StickAction::switchHandle() {
 // 歩く ダメージ中、しゃがみ中、壁ぶつかり中は不可
 void StickAction::walk(bool right, bool left) {
 	// 右へ歩くのをやめる
-	if (!right || m_rightLock || m_squat || damageFlag()) {
+	if (!right || m_rightLock || m_state == CHARACTER_STATE::SQUAT || damageFlag()) {
 		stopMoveRight();
 	}
 	if (m_slashCnt > 0 && !m_attackLeftDirection && (m_rightLock || damageFlag()) && m_vx > 0) {
@@ -652,7 +674,7 @@ void StickAction::walk(bool right, bool left) {
 		finishBullet();
 	}
 	// 左へ歩くのをやめる
-	if (!left || m_leftLock || m_squat || damageFlag()) {
+	if (!left || m_leftLock || m_state == CHARACTER_STATE::SQUAT || damageFlag()) {
 		stopMoveLeft();
 	}
 	if (m_slashCnt > 0 && m_attackLeftDirection && (m_leftLock || damageFlag()) && m_vx < 0) {
@@ -681,7 +703,7 @@ void StickAction::walk(bool right, bool left) {
 
 // 移動
 void StickAction::move(bool right, bool left, bool up, bool down) {
-	if (getState() == CHARACTER_STATE::STAND && m_grand && m_slashCnt == 0 && m_bulletCnt == 0) {
+	if ((m_state == CHARACTER_STATE::STAND || m_state == CHARACTER_STATE::SQUAT) && m_grand && m_slashCnt == 0 && m_bulletCnt == 0) {
 		// 移動方向へ向く
 		if(left && !right){
 			m_character_p->setLeftDirection(true);
@@ -724,7 +746,7 @@ void StickAction::jump(int cnt) {
 	// 宙に浮いたらジャンプ中止
 	if (!m_grand) {
 		m_preJumpCnt = -1;
-		if (getState() == CHARACTER_STATE::PREJUMP) {
+		if (m_state == CHARACTER_STATE::PREJUMP) {
 			setState(CHARACTER_STATE::STAND);
 		}
 	}
@@ -787,7 +809,7 @@ Object* StickAction::slashAttack(int gx, int gy) {
 	if (ableAttack()) {
 		// ジャンプはキャンセル
 		m_preJumpCnt = -1;
-		if (getState() == CHARACTER_STATE::PREJUMP) {
+		if (m_state == CHARACTER_STATE::PREJUMP) {
 			setState(CHARACTER_STATE::STAND);
 		}
 		m_attackLeftDirection = m_character_p->getCenterX() > gx;
@@ -906,7 +928,7 @@ void FlightAction::switchHandle() {
 	m_character_p->getAtariArea(&x1, &y1, &x2, &y2);
 
 	if (m_grand) { // 地面にいるとき
-		switch (getState()) {
+		switch (m_state) {
 		case CHARACTER_STATE::STAND: //立ち状態
 			if (m_runCnt != -1) {
 				m_character_p->switchRun(m_runCnt);
@@ -927,7 +949,7 @@ void FlightAction::switchHandle() {
 		}
 	}
 	else { // 宙にいるとき
-		switch (getState()) {
+		switch (m_state) {
 		case CHARACTER_STATE::STAND: //立ち状態(なにもなしの状態)
 			if (m_slashCnt > 0) {
 				m_character_p->switchAirSlash();
@@ -967,23 +989,7 @@ void FlightAction::switchHandle() {
 
 }
 
-// 物理演算 毎フレーム行う
-void FlightAction::action() {
-	// 状態(state)に応じて画像をセット
-	switchHandle();
-
-	// 射撃のインターバル処理
-	if (m_bulletCnt > 0) { 
-		m_bulletCnt--;
-		if (m_bulletCnt == 0) { finishBullet(); }
-	}
-
-	// 斬撃のインターバル処理
-	if (m_slashCnt > 0) {
-		m_slashCnt--;
-		if (m_slashCnt == 0) { finishSlash(); }
-	}
-
+void FlightAction::damageAction() {
 	// ダメージ受け状態は最低１秒近くある
 	if (m_damageCnt > 0) {
 		m_damageCnt--;
@@ -993,16 +999,18 @@ void FlightAction::action() {
 			m_state = CHARACTER_STATE::STAND;
 		}
 	}
-
+}
+void FlightAction::otherAction() {
 	// アニメーション用のカウント
 	if (m_landCnt > 0) { m_landCnt--; }
-	if (m_boostCnt > 0) { 
+	if (m_boostCnt > 0) {
 		m_boostCnt--;
 		if (m_boostCnt == 0) {
 			finishBoost();
 		}
 	}
-
+}
+void FlightAction::moveAction() {
 	// 移動
 	if (m_vx > 0) {// 右
 		if (m_rightLock) {
@@ -1044,14 +1052,14 @@ void FlightAction::action() {
 
 void FlightAction::walk(bool right, bool left, bool up, bool down) {
 	// 右へ歩くのをやめる
-	if (!right || m_rightLock || m_squat || damageFlag()) {
+	if (!right || m_rightLock || m_state == CHARACTER_STATE::SQUAT || damageFlag()) {
 		stopMoveRight();
 	}
 	if (m_slashCnt > 0 && !m_attackLeftDirection && (m_rightLock || damageFlag())) {
 		finishSlash();
 	}
 	// 左へ歩くのをやめる
-	if (!left || m_leftLock || m_squat || damageFlag()) {
+	if (!left || m_leftLock || m_state == CHARACTER_STATE::SQUAT || damageFlag()) {
 		stopMoveLeft();
 	}
 	if (m_slashCnt > 0 && m_attackLeftDirection && (m_leftLock || damageFlag())) {
@@ -1069,11 +1077,11 @@ void FlightAction::walk(bool right, bool left, bool up, bool down) {
 		return;
 	}
 	// 右へ歩き始める
-	if (!m_rightLock && !m_moveRight && !m_moveLeft && right && (!left || !m_character_p->getLeftDirection()) && !m_squat) { // 右へ歩く
+	if (!m_rightLock && !m_moveRight && !m_moveLeft && right && (!left || !m_character_p->getLeftDirection()) && m_state != CHARACTER_STATE::SQUAT) { // 右へ歩く
 		startMoveRight();
 	}
 	// 左へ歩き始める
-	if (!m_leftLock && !m_moveRight && !m_moveLeft && left && (!right || m_character_p->getLeftDirection()) && !m_squat) { // 左へ歩く
+	if (!m_leftLock && !m_moveRight && !m_moveLeft && left && (!right || m_character_p->getLeftDirection()) && m_state != CHARACTER_STATE::SQUAT) { // 左へ歩く
 		startMoveLeft();
 	}
 	// 上へ歩き始める
@@ -1092,7 +1100,7 @@ void FlightAction::walk(bool right, bool left, bool up, bool down) {
 
 // 移動 引数は４方向分
 void FlightAction::move(bool right, bool left, bool up, bool down) {
-	if (getState() == CHARACTER_STATE::STAND && m_slashCnt == 0 && m_bulletCnt == 0) {
+	if ((m_state == CHARACTER_STATE::STAND || m_state == CHARACTER_STATE::SQUAT) && m_slashCnt == 0 && m_bulletCnt == 0) {
 		// 移動方向へ向く
 		if (left && !right) {
 			m_character_p->setLeftDirection(true);
@@ -1250,4 +1258,140 @@ bool KoharuAction::ableAttack() const {
 
 bool KoharuAction::ableWalk() const {
 	return StickAction::ableWalk() && m_bulletCnt == 0;
+}
+
+
+/*
+* 行動開始前のBoss
+*/
+BossFreezeAction::BossFreezeAction(Character* character, SoundPlayer* soundPlayer_p) :
+	CharacterAction(character, soundPlayer_p)
+{
+
+}
+
+CharacterAction* BossFreezeAction::createCopy(vector<Character*> characters) {
+	CharacterAction* res = nullptr;
+	for (unsigned int i = 0; i < characters.size(); i++) {
+		if (m_character_p->getId() == characters[i]->getId()) {
+			res = new BossFreezeAction(characters[i], m_soundPlayer_p);
+			// コピーする
+			setParam(res);
+		}
+	}
+	return res;
+}
+void BossFreezeAction::switchHandle() {
+	m_character_p->switchSpecial1();
+}
+
+
+/*
+* Boss1: サン
+*/
+SunAction::SunAction(Character* character, SoundPlayer* soundPlayer_p) :
+	FlightAction(character, soundPlayer_p)
+{
+	m_state = CHARACTER_STATE::INIT;
+	m_initCnt = -60;
+	m_initHp = m_character_p->getHp();
+	m_character_p->setHp(min(1, m_initHp));
+	m_startAnimeCnt = 0;
+}
+
+CharacterAction* SunAction::createCopy(vector<Character*> characters) {
+	SunAction* res = nullptr;
+	for (unsigned int i = 0; i < characters.size(); i++) {
+		if (m_character_p->getId() == characters[i]->getId()) {
+			res = new SunAction(characters[i], m_soundPlayer_p);
+			// コピーする
+			setParam(res);
+		}
+	}
+	res->setInitHp(m_initHp);
+	res->setInitCnt(m_initCnt);
+	res->setHideFlag(m_hideFlag);
+	res->setStartAnimeCnt(m_startAnimeCnt);
+	return res;
+}
+
+void SunAction::action() {
+	// 状態(state)に応じて画像をセット
+	switchHandle();
+	if (m_hideFlag && m_initCnt != 0) {
+		// 隠れ途中
+		m_initCnt--;
+	}
+	else if (!m_hideFlag && m_initCnt != NOT_HIDE_CNT) {
+		// 出現途中
+		m_initCnt++;
+		if (m_state == CHARACTER_STATE::INIT) {
+			m_character_p->setHp(min(m_character_p->getHp() + 10, m_initHp));
+		}
+		if (m_initCnt == NOT_HIDE_CNT && m_character_p->getHp() == m_initHp) {
+			m_state = CHARACTER_STATE::STAND;
+		}
+	}
+	else {
+		m_startAnimeCnt++;
+		// 隠れ・出現の開始
+		if (m_hideFlag) {
+			m_bulletCnt = 1;
+			slashAction();
+			damageAction();
+			otherAction();
+			moveAction();
+			if (m_startAnimeCnt > 300 && GetRand(120) == 0) {
+				m_hideFlag = false;
+				m_initCnt = 0;
+				m_startAnimeCnt = 0;
+			}
+		}
+		else {
+			bulletAction();
+			slashAction();
+			damageAction();
+			otherAction();
+			if (m_startAnimeCnt > 300 && GetRand(300) == 0) {
+				m_hideFlag = true;
+				m_initCnt = NOT_HIDE_CNT;
+				m_startAnimeCnt = 0;
+			}
+		}
+	}
+}
+
+// 状態に応じて画像セット
+void SunAction::switchHandle() {
+
+	m_prevLeftDirection = false;
+	m_character_p->setLeftDirection(false);
+
+	if (m_initCnt != NOT_HIDE_CNT) {
+		// セット前の画像のサイズ
+		int x1 = 0, y1 = 0, x2 = 0, y2 = 0;
+		bool nowLeftDirection = false;
+		m_character_p->setLeftDirection(false);
+		m_character_p->getAtariArea(&x1, &y1, &x2, &y2);
+
+		// 画像セット
+		if (m_initCnt == 0 && m_hideFlag) {
+			m_character_p->switchSpecial1();
+		}
+		else {
+			m_character_p->switchInit(m_initCnt);
+		}
+
+		m_character_p->setLeftDirection(nowLeftDirection);
+
+		// セット後の画像のサイズ
+		int afterX1 = 0, afterY1 = 0, afterX2 = 0, afterY2 = 0;
+		m_character_p->getAtariArea(&afterX1, &afterY1, &afterX2, &afterY2);
+
+		// サイズ変更による位置調整
+		afterChangeGraph(x1, afterX1, y1, afterY1, x2, afterX2, y2, afterY2);
+	}
+	else {
+		FlightAction::switchHandle();
+	}
 }

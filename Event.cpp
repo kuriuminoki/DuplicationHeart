@@ -120,6 +120,9 @@ void Event::createElement(vector<string> param, World* world, SoundPlayer* sound
 	else if (param0 == "MoveGoal") {
 		element = new MoveGoalEvent(world, param);
 	}
+	else if (param0 == "ChangeAction") {
+		element = new ChangeActionEvent(world, param);
+	}
 	else if (param0 == "ChangeBrain") {
 		element = new ChangeBrainEvent(world, param);
 	}
@@ -330,6 +333,29 @@ EVENT_RESULT InvincibleEvent::play() {
 	return EVENT_RESULT::SUCCESS;
 }
 void InvincibleEvent::setWorld(World* world) {
+	EventElement::setWorld(world);
+	m_character_p = m_world_p->getCharacterWithName(m_param[2]);
+}
+
+
+// キャラのBrainを変更する
+ChangeActionEvent::ChangeActionEvent(World* world, vector<string> param) :
+	EventElement(world)
+{
+	m_actionName = param[1];
+	m_character_p = m_world_p->getCharacterWithName(param[2]);
+	m_param = param;
+}
+EVENT_RESULT ChangeActionEvent::play() {
+
+	// 対象のキャラのBrainを変更する
+	CharacterAction* action = createAction(m_actionName, m_character_p, m_world_p->getSoundPlayer());
+
+	m_world_p->getControllerWithName(m_param[2])->setAction(action);
+
+	return EVENT_RESULT::SUCCESS;
+}
+void ChangeActionEvent::setWorld(World* world) {
 	EventElement::setWorld(world);
 	m_character_p = m_world_p->getCharacterWithName(m_param[2]);
 }

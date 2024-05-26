@@ -46,6 +46,9 @@ Character* createCharacter(const char* characterName, int hp, int x, int y, int 
 	else if (name == "大砲") {
 		character = new ParabolaOnly(name.c_str(), hp, x, y, groupId);
 	}
+	else if (name == "サン") {
+		character = new Sun(name.c_str(), hp, x, y, groupId);
+	}
 	else {
 		character = new Heart(name.c_str(), hp, x, y, groupId);
 	}
@@ -221,6 +224,7 @@ Character::Character(int hp, int x, int y, int groupId) {
 
 	m_leftDirection = true;
 	m_freeze = false;
+	m_bossFlag = false;
 
 	m_characterInfo = nullptr;
 	m_attackInfo = nullptr;
@@ -257,6 +261,7 @@ void Character::setParam(Character* character) {
 	character->setPrevHp(m_prevHp);
 	character->setSkillGage(m_skillGage);
 	character->setInvincible(m_invincible);
+	character->setBossFlag(m_bossFlag);
 	character->getCharacterGraphHandle()->setGraph(m_graphHandle->getDispGraphHandle(), m_graphHandle->getDispGraphIndex());
 }
 
@@ -400,6 +405,10 @@ void Character::switchAirBullet(int cnt) { m_graphHandle->switchAirBullet(); }
 void Character::switchAirSlash(int cnt) { m_graphHandle->switchAirSlash(); }
 // やられ画像をセット
 void Character::switchDead(int cnt) { m_graphHandle->switchDead(); }
+// ボスの初期アニメーションをセット
+void Character::switchInit(int cnt) { m_graphHandle->switchInit(); }
+// 追加画像をセット
+void Character::switchSpecial1(int cnt) { m_graphHandle->switchSpecial1(); }
 
 
 /*
@@ -908,6 +917,55 @@ Character* ParabolaOnly::createCopy() {
 // 射撃攻撃をする
 Object* ParabolaOnly::bulletAttack(int gx, int gy, SoundPlayer* soundPlayer) {
 	ParabolaBullet* attackObject = new ParabolaBullet(getCenterX(), getCenterY(), m_bulletColor, gx, gy, m_attackInfo);
+	// 自滅防止
+	attackObject->setCharacterId(m_id);
+	// チームキル防止
+	attackObject->setGroupId(m_groupId);
+	// 効果音
+	if (soundPlayer != nullptr) {
+		soundPlayer->pushSoundQueue(m_attackInfo->bulletStartSoundeHandle(),
+			adjustPanSound(getCenterX(),
+				soundPlayer->getCameraX()));
+	}
+	return attackObject;
+}
+
+
+/*
+* Boss1: サン
+*/
+Sun::Sun(const char* name, int hp, int x, int y, int groupId) :
+	Heart(name, hp, x, y, groupId)
+{
+	m_bossFlag = true;
+}
+Sun::Sun(const char* name, int hp, int x, int y, int groupId, AttackInfo* attackInfo) :
+	Heart(name, hp, x, y, groupId, attackInfo)
+{
+	m_bossFlag = true;
+}
+
+Character* Sun::createCopy() {
+	Character* res = new Sun(m_characterInfo->name().c_str(), m_hp, m_x, m_y, m_groupId, m_attackInfo);
+	setParam(res);
+	return res;
+}
+
+// ボスの初期アニメーションをセット
+void Sun::switchInit(int cnt) { 
+	if (m_graphHandle->getInitHandle() == nullptr) { return; }
+	if (cnt < 0) {
+		m_graphHandle->switchSpecial1();
+		return;
+	}
+	int index = min(cnt / RUN_ANIME_SPEED, m_graphHandle->getInitHandle()->getGraphHandles()->getSize() - 1);
+	m_graphHandle->switchInit(index);
+}
+
+Object* Sun::bulletAttack(int gx, int gy, SoundPlayer* soundPlayer) {
+	int x = getCenterX() + GetRand(400) - 200;
+	int y = getCenterY() + GetRand(400) - 200;
+	ParabolaBullet* attackObject = new ParabolaBullet(x, y, m_graphHandle->getBulletHandle()->getGraphHandles()->getGraphHandle(), gx, gy, m_attackInfo);
 	// 自滅防止
 	attackObject->setCharacterId(m_id);
 	// チームキル防止

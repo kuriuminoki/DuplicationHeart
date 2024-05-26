@@ -24,6 +24,7 @@ const char* FlightAI::BRAIN_NAME = "FlightAI";
 const char* FollowFlightAI::BRAIN_NAME = "FollowFlightAI";
 const char* HierarchyAI::BRAIN_NAME = "HierarchyAI";
 const char* FrenchAI::BRAIN_NAME = "FrenchAI";
+const char* SunAI::BRAIN_NAME = "SunAI";
 
 // クラス名からBrainを作成する関数
 Brain* createBrain(const string brainName, const Camera* camera_p) {
@@ -60,6 +61,9 @@ Brain* createBrain(const string brainName, const Camera* camera_p) {
 	}
 	else if (brainName == FrenchAI::BRAIN_NAME) {
 		brain = new FrenchAI();
+	}
+	else if (brainName == SunAI::BRAIN_NAME) {
+		brain = new SunAI();
 	}
 	return brain;
 }
@@ -986,4 +990,60 @@ void FrenchAI::moveOrder(int& right, int& left, int& up, int& down) {
 		return;
 	}
 	NormalAI::moveOrder(right, left, up, down);
+}
+
+
+/*
+* Boss1: サン
+*/
+SunAI::SunAI() :
+	FlightAI()
+{
+
+}
+
+Brain* SunAI::createCopy(std::vector<Character*> characters, const Camera* camera) {
+	SunAI* res = new SunAI();
+	copyTarget(characters, getTargetId(), res);
+	setParam(res);
+	return res;
+}
+
+// 移動（上下左右の入力）
+void SunAI::moveOrder(int& right, int& left, int& up, int& down) {
+	if (m_characterAction_p->getState() != CHARACTER_STATE::INIT) {
+		FlightAI::moveOrder(right, left, up, down);
+	}
+}
+
+// ジャンプの制御
+int SunAI::jumpOrder() {
+	if (m_characterAction_p->getState() != CHARACTER_STATE::INIT) {
+		return FlightAI::jumpOrder();
+	}
+	return 0;
+}
+
+// しゃがみの制御
+int SunAI::squatOrder() {
+	if (m_characterAction_p->getState() != CHARACTER_STATE::INIT) {
+		return FlightAI::squatOrder();
+	}
+	return 0;
+}
+
+// 近距離攻撃
+int SunAI::slashOrder() {
+	if (m_characterAction_p->getState() != CHARACTER_STATE::INIT) {
+		return FlightAI::slashOrder();
+	}
+	return 0;
+}
+
+// 遠距離攻撃
+int SunAI::bulletOrder() {
+	if (m_characterAction_p->getState() != CHARACTER_STATE::INIT) {
+		return FlightAI::bulletOrder();
+	}
+	return 0;
 }

@@ -13,7 +13,7 @@ class CharacterDrawer {
 private:
 
 	// デバッグ用
-	const bool ATARI_DEBUG = false;
+	const bool ATARI_DEBUG = true;
 	int m_atariGuideHandle;
 	int m_damageGuideHandle;
 
@@ -47,6 +47,7 @@ public:
 
 	void drawPlayerHpBar(int x, int y, int wide, int height, const Character* player, int hpBarGraph);
 	void drawPlayerSkillBar(int x, int y, int wide, int height, const Character* player, int hpBarGraph);
+	void drawBossHpBar(int x, int y, int wide, int height, const Character* player, int hpBarGraph);
 
 };
 

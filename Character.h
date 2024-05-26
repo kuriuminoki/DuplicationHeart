@@ -226,6 +226,9 @@ protected:
 	// 一時的に動けない状態（ハートのスキル発動など）
 	bool m_freeze;
 
+	// ボスならtrue
+	bool m_bossFlag;
+
 	// キャラの情報
 	CharacterInfo* m_characterInfo;
 
@@ -264,7 +267,8 @@ public:
 	inline int getX() const { return m_x; }
 	inline int getY() const { return m_y; }
 	inline bool getLeftDirection() const { return m_leftDirection; }
-	inline int getFreeze() const { return m_freeze; }
+	inline bool getFreeze() const { return m_freeze; }
+	inline bool getBossFlag() const { return m_bossFlag; }
 	FaceGraphHandle* getFaceHandle() const { return m_faceHandle; }
 	inline CharacterGraphHandle* getCharacterGraphHandle() const { return m_graphHandle; }
 	inline AttackInfo* getAttackInfo() const { return m_attackInfo; }
@@ -285,6 +289,7 @@ public:
 	inline void setId(int id) { m_id = id; }
 	inline void setGroupId(int id) { m_groupId = id; }
 	inline void setFreeze(bool freeze) { m_freeze = freeze; }
+	inline void setBossFlag(bool bossFlag) { m_bossFlag = bossFlag; }
 	// キャラの向き変更は、画像の反転も行う
 	void setLeftDirection(bool leftDirection);
 	inline void setDuplicationFlag(bool flag) { m_duplicationFlag = flag; }
@@ -355,6 +360,10 @@ public:
 	virtual void switchAirSlash(int cnt = 0);
 	// やられ画像をセット
 	virtual void switchDead(int cnt = 0);
+	// ボスの初期アニメーションをセット
+	virtual void switchInit(int cnt = 0);
+	// 追加画像をセット
+	virtual void switchSpecial1(int cnt = 0);
 
 	// HP減少
 	void damageHp(int value);
@@ -585,6 +594,31 @@ public:
 
 	// 射撃攻撃をする
 	Object* bulletAttack(int gx, int gy, SoundPlayer* soundPlayer);
+};
+
+
+/*
+* Boss1: サン
+*/
+class Sun :
+	public Heart
+{
+public:
+	// コンストラクタ
+	Sun(const char* name, int hp, int x, int y, int groupId);
+	Sun(const char* name, int hp, int x, int y, int groupId, AttackInfo* attackInfo);
+
+	Character* createCopy();
+
+	// ボスの初期アニメーションをセット
+	void switchInit(int cnt);
+
+	// 射撃攻撃をする
+	Object* bulletAttack(int gx, int gy, SoundPlayer* soundPlayer);
+
+	// 斬撃攻撃をする
+	Object* slashAttack(bool leftDirection, int cnt, bool grand, SoundPlayer* soundPlayer) { return nullptr; }
+
 };
 
 
