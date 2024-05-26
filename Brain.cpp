@@ -1024,7 +1024,7 @@ void SunAI::moveOrder(int& right, int& left, int& up, int& down) {
 	int x = m_characterAction_p->getCharacter()->getCenterX();
 	int y = m_characterAction_p->getCharacter()->getCenterY();
 
-	if ((x < m_gx && m_characterAction_p->getLeftLock()) || (x > m_gx && m_characterAction_p->getRightLock())) {
+	if ((x > m_gx && m_characterAction_p->getLeftLock()) || (x < m_gx && m_characterAction_p->getRightLock())) {
 		m_gx = x, m_gy = y;
 		m_try = false;
 	}
@@ -1075,5 +1075,11 @@ void SunAI::setGoalToTarget() {
 	// target‚É‚Â‚¢‚Ä‚¢‚­
 	int NEAR_TARGET_X = 1500, NEAR_TARGET_Y = 400;
 	m_gx = m_characterAction_p->getCharacter()->getCenterX() + GetRand(NEAR_TARGET_X) - NEAR_TARGET_X / 2;
-	m_gy = m_target_p->getCenterY() + GetRand(NEAR_TARGET_Y) - (NEAR_TARGET_Y - 100);
+	m_gy = m_target_p->getCenterY() + GetRand(NEAR_TARGET_Y) - (NEAR_TARGET_Y / 2);
+	if (m_characterAction_p->getLeftLock()) {
+		m_gx += NEAR_TARGET_X / 2;
+	}
+	else if (m_characterAction_p->getRightLock()) {
+		m_gx -= NEAR_TARGET_X / 2;
+	}
 }

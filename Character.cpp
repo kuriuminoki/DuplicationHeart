@@ -77,12 +77,17 @@ CharacterInfo::CharacterInfo(const char* characterName) {
 	string filePath = "sound/stick/";
 	string fileName;
 	fileName = filePath + data["jumpSound"];
-	m_jumpSound = LoadSoundMem(fileName.c_str());
+	if (fileName != "null") {
+		m_jumpSound = LoadSoundMem(fileName.c_str());
+	}
 	fileName = filePath + data["passiveSound"];
-	m_passiveSound = LoadSoundMem(fileName.c_str());
+	if (fileName != "null") {
+		m_passiveSound = LoadSoundMem(fileName.c_str());
+	}
 	fileName = filePath + data["landSound"];
-	m_landSound = LoadSoundMem(fileName.c_str());
-	fileName = filePath + data["runSound"];
+	if (fileName != "null") {
+		m_landSound = LoadSoundMem(fileName.c_str());
+	}
 }
 
 CharacterInfo::~CharacterInfo() {
@@ -939,12 +944,12 @@ Object* ParabolaOnly::bulletAttack(int gx, int gy, SoundPlayer* soundPlayer) {
 Sun::Sun(const char* name, int hp, int x, int y, int groupId) :
 	Heart(name, hp, x, y, groupId)
 {
-	m_bossFlag = true;
+
 }
 Sun::Sun(const char* name, int hp, int x, int y, int groupId, AttackInfo* attackInfo) :
 	Heart(name, hp, x, y, groupId, attackInfo)
 {
-	m_bossFlag = true;
+
 }
 
 Character* Sun::createCopy() {
