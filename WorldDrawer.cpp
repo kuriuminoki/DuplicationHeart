@@ -55,6 +55,7 @@ WorldDrawer::WorldDrawer(const World* world) {
 	m_conversationDrawer = new ConversationDrawer(nullptr);
 	m_hpBarGraph = LoadGraph("picture/battleMaterial/hpBar.png");
 	m_skillBarGraph = LoadGraph("picture/battleMaterial/skillBar.png");
+	m_bossHpBarGraph = LoadGraph("picture/battleMaterial/bossHpBar.png");
 	m_noonHaikei = LoadGraph("picture/stageMaterial/noon.jpg");
 	m_eveningHaikei = LoadGraph("picture/stageMaterial/evening.jpg");
 	m_nightHaikei = LoadGraph("picture/stageMaterial/night.jpg");
@@ -68,6 +69,7 @@ WorldDrawer::~WorldDrawer() {
 	delete m_conversationDrawer;
 	DeleteGraph(m_hpBarGraph);
 	DeleteGraph(m_skillBarGraph);
+	DeleteGraph(m_bossHpBarGraph);
 	DeleteGraph(m_noonHaikei);
 	DeleteGraph(m_eveningHaikei);
 	DeleteGraph(m_nightHaikei);
@@ -168,6 +170,7 @@ void WorldDrawer::drawBattleField(const Camera* camera, int bright, bool drawSki
 	// 各Actionを描画
 	vector<const CharacterAction*> actions = m_world->getActions();
 	int player = 0;
+	const CharacterAction* bossCharacterAction = nullptr;
 	size = actions.size();
 	for (unsigned int i = 0; i < size; i++) {
 		if (actions[i]->getCharacter()->getId() == m_world->getPlayerId()) {
@@ -175,6 +178,7 @@ void WorldDrawer::drawBattleField(const Camera* camera, int bright, bool drawSki
 		}
 	}
 	for (unsigned int i = 0; i < size; i++) {
+		// プレイヤーは後で手前に描画
 		if (i != player) {
 			// キャラをDrawerにセット
 			m_characterDrawer->setCharacterAction(actions[i]);
@@ -185,6 +189,8 @@ void WorldDrawer::drawBattleField(const Camera* camera, int bright, bool drawSki
 			}
 			// カメラを使ってキャラを描画
 			m_characterDrawer->drawCharacter(camera, enemyNotice, bright);
+			// ボスがいるなら保持しておく
+			if (actions[i]->getCharacter()->getBossFlag()) { bossCharacterAction = actions[i]; }
 		}
 	}
 	// プレイヤーは手前に描画
@@ -214,17 +220,23 @@ void WorldDrawer::drawBattleField(const Camera* camera, int bright, bool drawSki
 	}
 
 	// ハートの情報
-	size = m_world->getCharacters().size();
-	for (unsigned int i = 0; i < size; i++) {
-		if (m_world->getCharacters()[i]->getName() == "ハート") {
-			const int x = 30;
-			const int y = 30;
-			const int wide = 525;
-			const int height = 150;
-			m_characterDrawer->drawPlayerHpBar(x, y, wide, height, m_world->getCharacters()[i], m_hpBarGraph);
-			if (drawSkillBar) {
-				m_characterDrawer->drawPlayerSkillBar(x, y + height + 10, wide, 30, m_world->getCharacters()[i], m_skillBarGraph);
-			}
-		}
+	const Character* playerCharacter = actions[player]->getCharacter();
+	const int x = 30;
+	const int y = 30;
+	const int wide = 700;
+	const int height = 70;
+	m_characterDrawer->drawPlayerHpBar(x, y, wide, height, playerCharacter, m_hpBarGraph);
+	if (drawSkillBar) {
+		m_characterDrawer->drawPlayerSkillBar(x, y + height + 10, wide, 30, playerCharacter, m_skillBarGraph);
 	}
+
+	// ボスの情報
+	const int bX = 30;
+	const int bY = 950;
+	const int bWide = 1500;
+	const int bHeight = 80;
+	if (bossCharacterAction != nullptr) {
+		m_characterDrawer->drawBossHpBar(bX, bY, bWide, bHeight, bossCharacterAction->getCharacter(), m_bossHpBarGraph);
+	}
+
 }

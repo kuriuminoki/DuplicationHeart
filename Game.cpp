@@ -23,7 +23,7 @@ using namespace std;
 // どこまで
 const int FINISH_STORY = 18;
 // エリア0でデバッグするときはtrueにする
-const bool TEST_MODE = false;
+const bool TEST_MODE = true;
 // スキルが発動可能になるストーリー番号
 const int SKILL_USEABLE_STORY = 14;
 
@@ -222,7 +222,7 @@ GameData::GameData() {
 	}
 
 	// 主要キャラを設定
-	const int mainSum = 14;
+	const int mainSum = 15;
 	const char* mainCharacters[mainSum] = {
 		"ハート",
 		"シエスタ",
@@ -237,7 +237,8 @@ GameData::GameData() {
 		"アイギス",
 		"コハル",
 		"マスカーラ",
-		"ヴェルメリア"
+		"ヴェルメリア",
+		"サン"
 	};
 	for (int i = 0; i < mainSum; i++) {
 		m_characterData.push_back(new CharacterData(mainCharacters[i]));

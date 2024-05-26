@@ -56,6 +56,11 @@ public:
 	// 遠距離攻撃
 	virtual int bulletOrder() = 0;
 
+	// 目標地点へ移動するだけ 達成済みならtrueで何もしない
+	virtual bool moveGoalOrder(int& right, int& left, int& up, int& down, int& jump) { return true; }
+
+	virtual void setGoalToTarget() = 0;
+
 	// 攻撃対象を決める(AIクラスでオーバライドする。)
 	virtual void searchTarget(const Character* character) { }
 
@@ -80,8 +85,6 @@ public:
 	// 追跡対象の近くにいるか判定
 	virtual bool checkAlreadyFollow() { return true; }
 
-	// 目標地点へ移動するだけ 達成済みならtrueで何もしない
-	virtual bool moveGoalOrder(int& right, int& left, int& up, int& down, int& jump) { return true; }
 };
 
 
@@ -120,6 +123,7 @@ public:
 	int squatOrder();
 	int slashOrder();
 	int bulletOrder();
+	void setGoalToTarget() {}
 };
 
 
@@ -150,6 +154,7 @@ public:
 	int squatOrder() { return 0; }
 	int slashOrder() { return 0; }
 	int bulletOrder() { return 0; }
+	void setGoalToTarget() {}
 };
 
 
@@ -192,7 +197,7 @@ protected:
 	int m_moveCnt;
 
 	// 移動を諦めるまでの時間
-	const int GIVE_UP_MOVE_CNT = 300;
+	const int GIVE_UP_MOVE_CNT = 180;
 
 public:
 	static const char* BRAIN_NAME;
@@ -226,6 +231,7 @@ public:
 	int squatOrder();
 	int slashOrder();
 	int bulletOrder();
+	void setGoalToTarget();
 
 	// 攻撃対象を決める(targetのままか、characterに変更するか)
 	void searchTarget(const Character* character);
@@ -362,7 +368,7 @@ public:
 class FlightAI :
 	public NormalAI
 {
-private:
+protected:
 	// 壁にぶつかったとき、trueにして上か下へ移動する。trueのとき天井や床にぶつかっていたら逆へ移動
 	bool m_try;
 public:
@@ -377,6 +383,8 @@ public:
 
 	// 目標地点へ移動するだけ 達成済みならtrueで何もしない
 	bool moveGoalOrder(int& right, int& left, int& up, int& down, int& jump);
+
+	void setGoalToTarget();
 };
 
 
@@ -452,6 +460,44 @@ public:
 	void moveOrder(int& right, int& left, int& up, int& down);
 	int jumpOrder() { return 0; }
 	int squatOrder() { m_squatCnt = 0; return 0; }
+};
+
+
+/*
+* Boss1: サン
+*/
+class SunAI :
+	public FlightAI
+{
+private:
+
+public:
+	static const char* BRAIN_NAME;
+	const char* getBrainName() const { return this->BRAIN_NAME; }
+
+	SunAI();
+
+	Brain* createCopy(std::vector<Character*> characters, const Camera* camera);
+
+	// 移動（上下左右の入力）
+	void moveOrder(int& right, int& left, int& up, int& down);
+
+	// ジャンプの制御
+	int jumpOrder();
+
+	// しゃがみの制御
+	int squatOrder();
+
+	// 近距離攻撃
+	int slashOrder();
+
+	// 遠距離攻撃
+	int bulletOrder();
+
+	void bulletTargetPoint(int& x, int& y);
+
+	void setGoalToTarget();
+
 };
 
 

@@ -244,6 +244,7 @@ public:
 	EVENT_RESULT play();
 
 };
+
 // キャラを無敵にする
 class InvincibleEvent :
 	public EventElement
@@ -271,6 +272,7 @@ public:
 	// 世界を設定しなおす
 	void setWorld(World* world);
 };
+
 // キャラの目標地点を設定を変える
 class SetGoalPointEvent :
 	public EventElement
@@ -298,6 +300,7 @@ public:
 	// 世界を設定しなおす
 	void setWorld(World* world);
 };
+
 // 全キャラが目標地点へ移動するまで待機
 class MoveGoalEvent :
 	public EventElement
@@ -317,6 +320,35 @@ public:
 	bool skillAble() { return false; }
 
 };
+
+// キャラのAIを変える
+class ChangeActionEvent :
+	public EventElement
+{
+private:
+
+	// パラメータ
+	std::vector<std::string> m_param;
+
+	// Actionのクラス名
+	std::string m_actionName;
+
+	// 対象のキャラ
+	Character* m_character_p;
+
+public:
+	ChangeActionEvent(World* world, std::vector<std::string> param);
+
+	// プレイ
+	EVENT_RESULT play();
+
+	// ハートのスキル発動が可能かどうか
+	bool skillAble() { return false; }
+
+	// 世界を設定しなおす
+	void setWorld(World* world);
+};
+
 // キャラのAIを変える
 class ChangeBrainEvent :
 	public EventElement

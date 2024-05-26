@@ -63,6 +63,9 @@ private:
 	// skillバー
 	int m_skillBarGraph;
 
+	// ボスのHPバー
+	int m_bossHpBarGraph;
+
 	// 会話イベント
 	ConversationDrawer* m_conversationDrawer;
 

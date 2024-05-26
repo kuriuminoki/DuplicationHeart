@@ -152,60 +152,69 @@ void GraphHandles::draw(int x, int y, int index) {
 AtariArea::AtariArea(CsvReader* csvReader, const char* graphName, const char* prefix) {
 	map<string, string> data = csvReader->findOne("name", graphName);
 
-	string p = prefix;
-
-	string defaultWide = data[(p + "defaultWide")];
-	string defaultHeight = data[(p + "defaultHeight").c_str()];
-	string wide = data[(p + "wide").c_str()];
-	string height = data[(p + "height").c_str()];
-	string x1 = data[(p + "x1").c_str()];
-	string y1 = data[(p + "y1").c_str()];
-	string x2 = data[(p + "x2").c_str()];
-	string y2 = data[(p + "y2").c_str()];
-
-	// 横
 	m_defaultWide = false;
 	m_wide = -1;
 	m_x1 = 0, m_x2 = 0;
 	m_x1none = true, m_x2none = true;
-	if (defaultWide == "1") {
-		m_defaultWide = true;
-	}
-	else if (wide != "-1") {
-		m_wide = stoi(wide);
-	}
-	else {
-		if (x1 != "null") {
-			m_x1 = stoi(x1);
-			m_x1none = false;
-		}
-		if (x2 != "null") {
-			m_x2 = stoi(x2);
-			m_x2none = false;
-		}
-	}
 
-	// 縦
 	m_defaultHeight = false;
 	m_height = -1;
 	m_y1 = 0, m_y2 = 0;
 	m_y1none = true, m_y2none = true;
-	if (defaultHeight == "1") {
+
+	if (data.size() == 0) {
+		m_defaultWide = true;
 		m_defaultHeight = true;
 	}
-	else if (height != "-1") {
-		m_height = stoi(height);
-	}
 	else {
-		if (y1 != "null") {
-			m_y1 = stoi(y1);
-			m_y1none = false;
+		string p = prefix;
+
+		string defaultWide = data[(p + "defaultWide")];
+		string defaultHeight = data[(p + "defaultHeight").c_str()];
+		string wide = data[(p + "wide").c_str()];
+		string height = data[(p + "height").c_str()];
+		string x1 = data[(p + "x1").c_str()];
+		string y1 = data[(p + "y1").c_str()];
+		string x2 = data[(p + "x2").c_str()];
+		string y2 = data[(p + "y2").c_str()];
+
+		// 横
+		if (defaultWide == "1") {
+			m_defaultWide = true;
 		}
-		if (y2 != "null") {
-			m_y2 = stoi(y2);
-			m_y2none = false;
+		else if (wide != "-1") {
+			m_wide = stoi(wide);
+		}
+		else {
+			if (x1 != "null") {
+				m_x1 = stoi(x1);
+				m_x1none = false;
+			}
+			if (x2 != "null") {
+				m_x2 = stoi(x2);
+				m_x2none = false;
+			}
+		}
+
+		// 縦
+		if (defaultHeight == "1") {
+			m_defaultHeight = true;
+		}
+		else if (height != "-1") {
+			m_height = stoi(height);
+		}
+		else {
+			if (y1 != "null") {
+				m_y1 = stoi(y1);
+				m_y1none = false;
+			}
+			if (y2 != "null") {
+				m_y2 = stoi(y2);
+				m_y2none = false;
+			}
 		}
 	}
+
 }
 
 void AtariArea::getArea(int* x1, int* y1, int* x2, int* y2, int wide, int height) const {
@@ -388,6 +397,8 @@ CharacterGraphHandle::CharacterGraphHandle(const char* characterName, double dra
 	loadCharacterGraph(dir, characterName, m_airSlashHandles, "airSlash", data, m_ex, &atariReader);
 	loadCharacterGraph(dir, characterName, m_closeHandles, "close", data, m_ex, &atariReader);
 	loadCharacterGraph(dir, characterName, m_deadHandles, "dead", data, m_ex, &atariReader);
+	loadCharacterGraph(dir, characterName, m_initHandles, "init", data, m_ex, &atariReader);
+	loadCharacterGraph(dir, characterName, m_special1Handles, "special1", data, m_ex, &atariReader);
 
 	switchStand();
 }
@@ -413,22 +424,24 @@ CharacterGraphHandle::~CharacterGraphHandle() {
 	if (m_airSlashHandles != nullptr) { delete m_airSlashHandles; }
 	if (m_closeHandles != nullptr) { delete m_closeHandles; }
 	if (m_deadHandles != nullptr) { delete m_deadHandles; }
+	if (m_initHandles != nullptr) { delete m_initHandles; }
+	if (m_special1Handles != nullptr) { delete m_special1Handles; }
 }
 
 void CharacterGraphHandle::getAtari(int* x1, int* y1, int* x2, int* y2) const {
 	m_dispGraphHandle_p->getAtari(x1, y1, x2, y2, m_dispGraphIndex);
-	*x1 = *x1 * m_ex;
-	*y1 = *y1 * m_ex;
-	*x2 = *x2 * m_ex;
-	*y2 = *y2 * m_ex;
+	*x1 = (int)(*x1 * m_ex);
+	*y1 = (int)(*y1 * m_ex);
+	*x2 = (int)(*x2 * m_ex);
+	*y2 = (int)(*y2 * m_ex);
 }
 
 void CharacterGraphHandle::getDamage(int* x1, int* y1, int* x2, int* y2) const {
 	m_dispGraphHandle_p->getDamage(x1, y1, x2, y2, m_dispGraphIndex);
-	*x1 = *x1 * m_ex;
-	*y1 = *y1 * m_ex;
-	*x2 = *x2 * m_ex;
-	*y2 = *y2 * m_ex;
+	*x1 = (int)(*x1 * m_ex);
+	*y1 = (int)(*y1 * m_ex);
+	*x2 = (int)(*x2 * m_ex);
+	*y2 = (int)(*y2 * m_ex);
 }
 
 // 画像のサイズをセット
@@ -530,6 +543,14 @@ void CharacterGraphHandle::switchClose(int index) {
 // やられ画像をセット
 void CharacterGraphHandle::switchDead(int index) {
 	setGraph(m_deadHandles, index);
+}
+// ボスの初期アニメーションをセット
+void CharacterGraphHandle::switchInit(int index) {
+	setGraph(m_initHandles, index);
+}
+// 追加画像をセット
+void CharacterGraphHandle::switchSpecial1(int index) {
+	setGraph(m_special1Handles, index);
 }
 
 
