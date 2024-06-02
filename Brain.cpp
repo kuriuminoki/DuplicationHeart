@@ -440,7 +440,9 @@ void NormalAI::setGoalToTarget() {
 	if (!m_characterAction_p->getCharacter()->haveBulletAttack()) {
 		NEAR_TARGET = 500; // ‹ß‹——£UŒ‚‚µ‚©‚È‚¢‚©‚ç‚æ‚è‹ß‚Ã‚­
 	}
-	m_gx = m_target_p->getCenterX() + GetRand(NEAR_TARGET) - NEAR_TARGET / 2;
+	int targetX1 = 0, targetY1 = 0, targetX2 = 0, targetY2 = 0;
+	m_target_p->getAtariArea(&targetX1, &targetY1, &targetX2, &targetY2);
+	m_gx = (targetX1 + targetX2) / 2 + GetRand(NEAR_TARGET) - NEAR_TARGET / 2;
 }
 
 // UŒ‚‘ÎÛ‚ðŒˆ‚ß‚é(target‚Ì‚Ü‚Ü‚©Acharacter‚É•ÏX‚·‚é‚©)
@@ -855,8 +857,10 @@ void FlightAI::setGoalToTarget() {
 		NEAR_TARGET_X = 500; // ‹ß‹——£UŒ‚‚µ‚©‚È‚¢‚©‚ç‚æ‚è‹ß‚Ã‚­
 		NEAR_TARGET_Y = 300;
 	}
-	m_gx = m_target_p->getCenterX() + GetRand(NEAR_TARGET_X) - NEAR_TARGET_X / 2;
-	m_gy = m_target_p->getCenterY() + GetRand(NEAR_TARGET_Y) - (NEAR_TARGET_Y - 200);
+	int targetX1 = 0, targetY1 = 0, targetX2 = 0, targetY2 = 0;
+	m_target_p->getAtariArea(&targetX1, &targetY1, &targetX2, &targetY2);
+	m_gx = (targetX1 + targetX2) / 2 + GetRand(NEAR_TARGET_X) - NEAR_TARGET_X / 2;
+	m_gy = targetY1 + GetRand(NEAR_TARGET_Y) - (NEAR_TARGET_Y - 200);
 }
 
 

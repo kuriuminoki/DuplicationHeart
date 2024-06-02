@@ -71,6 +71,10 @@ private:
 
 	int m_enemyNotice;
 
+	double m_exX, m_exY;
+
+	int m_font;
+
 public:
 	WorldDrawer(const World* world);
 

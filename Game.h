@@ -203,6 +203,9 @@ private:
 	// 音量
 	int m_soundVolume;
 
+	// 所持金
+	int m_money;
+
 	// セーブ完了の通知を表示する残り時間
 	int m_noticeSaveDone;
 
@@ -229,6 +232,7 @@ public:
 	inline int getAreaNum() const { return m_areaNum; }
 	inline int getStoryNum() const { return m_storyNum; }
 	inline int getSoundVolume() const { return m_soundVolume; }
+	inline int getMoney() const { return m_money; }
 	inline const char* getSaveFilePath() const { return m_saveFilePath.c_str(); }
 	inline int getDoorSum() const { return (int)m_doorData.size(); }
 	inline int getFrom(int i) const { return m_doorData[i]->from(); }

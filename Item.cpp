@@ -14,6 +14,7 @@ Item::Item(const char* itemName, int x, int y) {
 	m_itemName = itemName;
 	m_x = x;
 	m_y = y;
+	m_cnt = 0;
 	m_vx = 0;
 	m_vy = 0;
 	m_grand = false;
@@ -32,8 +33,11 @@ Item::~Item() {
 
 // コピー
 void Item::setParam(Item* item) {
+	item->setCnt(m_cnt);
 	item->setGrand(m_grand);
 	item->setAnimation(m_animation->createCopy());
+	item->setVx(m_vx);
+	item->setVy(m_vy);
 }
 
 void Item::setY(int y) {
@@ -74,6 +78,11 @@ void Item::init() {
 // 動き 毎フレーム呼ぶ
 void Item::action() {
 
+	m_cnt++;
+	if (m_cnt > ERASE_CNT) {
+		m_deleteFlag = true;
+	}
+
 	// アニメをリセット
 	if (m_animation->getFinishFlag()) {
 		m_animation->init();
@@ -84,17 +93,20 @@ void Item::action() {
 
 	if (m_grand) {
 		// 着地してる
+		m_vx = 0;
 		m_vy = 0;
 	}
-	
+
 	// 移動
 	m_x += m_vx;
 	m_y += m_vy;
 	m_animation->setX(m_x);
 	m_animation->setY(m_y);
 
-	// 重力
-	m_vy += 1;
+	if (!m_grand) {
+		// 重力
+		m_vy += 1;
+	}
 
 }
 
@@ -144,4 +156,27 @@ Item* CureItem::createCopy() {
 void CureItem::arrangePlayer(Character* player) {
 	// HP回復
 	player->setHp(player->getHp() + m_cureValue);
+}
+
+
+/*
+* お金獲得アイテム
+*/
+MoneyItem::MoneyItem(const char* itemName, int x, int y, int moneyValue) :
+	Item(itemName, x, y)
+{
+	m_moneyValue = moneyValue;
+}
+
+// スキル発動用
+Item* MoneyItem::createCopy() {
+	MoneyItem* item = new MoneyItem(m_itemName.c_str(), m_x, m_y, m_moneyValue);
+	setParam(item);
+	return item;
+}
+
+// プレイヤーに対するアクション
+void MoneyItem::arrangePlayer(Character* player) {
+	// お金獲得
+	player->setMoney(player->getMoney() + m_moneyValue);
 }

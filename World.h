@@ -133,6 +133,10 @@ private:
 	// ボスがやられた時のエフェクト中
 	int m_bossDeadEffectCnt;
 
+	// 所持金
+	const int MAX_MONEY = 999;
+	int m_money;
+
 public:
 	World();
 	World(int fromAreaNum, int toAreaNum, SoundPlayer* soundPlayer);
@@ -175,6 +179,7 @@ public:
 	inline int getDoorSound() const { return m_doorSound; }
 	inline bool getSkillFlag() const { return m_skillFlag; }
 	inline int getBossDeadEffextCnt() const { return m_bossDeadEffectCnt; }
+	inline int getMoney() const { return m_money; }
 
 	// Drawer用のゲッタ
 	std::vector<const CharacterAction*> getActions() const;
@@ -198,6 +203,7 @@ public:
 	inline void setAreaLock(bool lock) { m_areaLock = lock; }
 	inline void setDate(int date) { m_date = date; }
 	inline void setBlindFlag(bool blindFlag) { m_blindFlag = blindFlag; }
+	inline void setMoney(int money) { m_money = money; }
 
 	// 強制的にエリア移動
 	inline void moveArea(int nextArea) { m_brightValue--; m_nextAreaNum = nextArea; m_resetBgmFlag = true; }
