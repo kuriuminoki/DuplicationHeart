@@ -11,6 +11,16 @@
 using namespace std;
 
 
+string getChapterName(int storyNum) {
+	// story››.csv‚ğƒ[ƒh
+	ostringstream oss;
+	oss << "data/story/story" << storyNum << ".csv";
+	CsvReader2 csvReader2(oss.str().c_str());
+	string s = csvReader2.getDomainData("NAME:")[0]["name"];
+	return s;
+}
+
+
 Story::Story(int storyNum, World* world, SoundPlayer* soundPlayer, EventData* eventData) {
 	m_world_p = world;
 	m_nowEvent = nullptr;

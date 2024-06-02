@@ -7,6 +7,7 @@
 #include "Define.h"
 #include "Control.h"
 #include "Sound.h"
+#include "Story.h"
 #include "DxLib.h"
 
 #include <sstream>
@@ -34,6 +35,7 @@ SelectSaveData::SelectSaveData() {
 	double exX, exY;
 	getGameEx(exX, exY);
 	m_font = CreateFontToHandle(nullptr, (int)(50 * exX), 3);
+	int maxStoryNum = 0;
 	for (int i = 0; i < GAME_DATA_SUM; i++) {
 		string text;
 		ostringstream oss;
@@ -47,12 +49,19 @@ SelectSaveData::SelectSaveData() {
 		m_dataButton[i] = new Button(text, (int)(100 * exX), (int)(300 * exY + (i * 150 * exY)), (int)(500 * exX), (int)(100 * exY), WHITE, GRAY2, m_font, BLACK);
 		m_dataInitButton[i] = new Button("削除", (int)(650 * exX), (int)(300 * exY + (i * 150 * exY)), (int)(100 * exX), (int)(100 * exY), LIGHT_RED, RED, m_font, BLACK);
 		int latestStoryNum = m_gameData[i]->getLatestStoryNum();
+		maxStoryNum = max(maxStoryNum, latestStoryNum);
 		if (latestStoryNum > 1) {
 			m_startStoryNum[i] = new ControlBar(900, 350 + (i * 150), 1600, 400 + (i * 150), 1, latestStoryNum, latestStoryNum, "チャプター");
 		}
 		else {
 			m_startStoryNum[i] = nullptr;
 		}
+	}
+
+	// チャプター名を取得
+	for (int i = 0; i < maxStoryNum; i++) {
+		string s = getChapterName(i + 1);
+		m_chapterNames.push_back(s);
 	}
 
 	// 背景
@@ -141,7 +150,8 @@ void SelectSaveData::draw(int handX, int handY) {
 		m_dataButton[i]->draw(handX, handY);
 		m_dataInitButton[i]->draw(handX, handY);
 		if (m_startStoryNum[i] != nullptr) {
-			m_startStoryNum[i]->draw(handX, handY);
+			int n = m_startStoryNum[i]->getNowValue();
+			m_startStoryNum[i]->draw(handX, handY, m_chapterNames[n - 1]);
 		}
 	}
 

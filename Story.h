@@ -1,6 +1,7 @@
 #ifndef STORY_H_INCLUDED
 #define STORY_H_INCLUDED
 
+#include <string>
 #include <vector>
 
 class Event;
@@ -9,6 +10,9 @@ class World;
 class SoundPlayer;
 class CharacterLoader;
 class ObjectLoader;
+
+
+std::string getChapterName(int storyNum);
 
 
 // ÉXÉgÅ[ÉäÅ|
