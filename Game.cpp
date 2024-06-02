@@ -208,6 +208,8 @@ GameData::GameData() {
 
 	m_soundVolume = 50;
 
+	m_money = 0;
+
 	loadCommon(&m_soundVolume, &GAME_WIDE, &GAME_HEIGHT);
 
 	m_saveFilePath = "";
@@ -312,6 +314,7 @@ bool GameData::save(bool force) {
 		fwrite(&m_areaNum, sizeof(m_areaNum), 1, intFp);
 		fwrite(&m_storyNum, sizeof(m_storyNum), 1, intFp);
 		fwrite(&m_latestStoryNum, sizeof(m_latestStoryNum), 1, intFp);
+		fwrite(&m_money, sizeof(m_money), 1, intFp);
 		for (unsigned int i = 0; i < m_characterData.size(); i++) {
 			m_characterData[i]->save(intFp, strFp);
 		}
@@ -351,6 +354,7 @@ bool GameData::load() {
 	fread(&m_areaNum, sizeof(m_areaNum), 1, intFp);
 	fread(&m_storyNum, sizeof(m_storyNum), 1, intFp);
 	fread(&m_latestStoryNum, sizeof(m_latestStoryNum), 1, intFp);
+	fread(&m_money, sizeof(m_money), 1, intFp);
 	for (unsigned int i = 0; i < m_characterData.size(); i++) {
 		if (feof(intFp) != 0 || feof(strFp) != 0) { break; }
 		m_characterData[i]->load(intFp, strFp);
@@ -447,6 +451,7 @@ void GameData::asignWorld(World* world, bool playerHpReset) {
 	if (playerHpReset) {
 		world->playerHpReset();
 	}
+	world->setMoney(m_money);
 }
 
 // Worldのデータを自身に反映させる
@@ -456,6 +461,7 @@ void GameData::asignedWorld(const World* world, bool notCharacterPoint) {
 		world->asignCharacterData(m_characterData[i]->name(), m_characterData[i], m_areaNum, notCharacterPoint);
 	}
 	world->asignDoorData(m_doorData, m_areaNum);
+	m_money = world->getMoney();
 }
 
 // ストーリーが進んだ時にセーブデータを更新する エリア外（World以外）も考慮する
@@ -466,6 +472,7 @@ void GameData::updateStory(Story* story) {
 	m_storyNum = story->getStoryNum();
 	m_latestStoryNum = max(m_latestStoryNum, m_storyNum);
 	m_soundVolume = story->getWorld()->getSoundPlayer()->getVolume();
+	m_money = story->getWorld()->getMoney();
 	// Storyによって変更・新登場されたキャラ情報を取得
 	CharacterLoader* characterLoader = story->getCharacterLoader();
 	size_t size = m_characterData.size();
@@ -484,6 +491,7 @@ void GameData::resetWorld() {
 		m_characterData[i]->setAreaNum(-1);
 	}
 	m_doorData.clear();
+	m_money = 0;
 }
 
 
@@ -506,6 +514,7 @@ Game::Game(const char* saveFilePath, int storyNum) {
 
 	// 世界
 	m_world = new World(-1, m_gameData->getAreaNum(), m_soundPlayer);
+	m_world->setMoney(m_gameData->getMoney());
 	m_soundPlayer->stopBGM();
 
 	// ストーリー
@@ -517,7 +526,7 @@ Game::Game(const char* saveFilePath, int storyNum) {
 	m_gameData->updateStory(m_story);
 
 	// データを世界に反映
-	m_gameData->asignWorld(m_world, true);
+	m_gameData->asignWorld(m_world, false);
 
 	m_world->cameraPointInit();
 

@@ -12,6 +12,8 @@
 #include "Define.h"
 #include "DxLib.h"
 #include <queue>
+#include <sstream>
+
 
 using namespace std;
 
@@ -60,6 +62,8 @@ WorldDrawer::WorldDrawer(const World* world) {
 	m_eveningHaikei = LoadGraph("picture/stageMaterial/evening.jpg");
 	m_nightHaikei = LoadGraph("picture/stageMaterial/night.jpg");
 	m_enemyNotice = LoadGraph("picture/battleMaterial/enemyNotice.png");
+	getGameEx(m_exX, m_exY);
+	m_font = CreateFontToHandle(nullptr, (int)(50 * m_exX), 10);
 }
 
 WorldDrawer::~WorldDrawer() {
@@ -74,6 +78,7 @@ WorldDrawer::~WorldDrawer() {
 	DeleteGraph(m_eveningHaikei);
 	DeleteGraph(m_nightHaikei);
 	DeleteGraph(m_enemyNotice);
+	DeleteFontToHandle(m_font);
 }
 
 
@@ -242,5 +247,11 @@ void WorldDrawer::drawBattleField(const Camera* camera, int bright, bool drawSki
 	if (bossCharacterAction != nullptr) {
 		m_characterDrawer->drawBossHpBar(bX, bY, bWide, bHeight, bossCharacterAction->getCharacter(), m_bossHpBarGraph);
 	}
+
+	// ‚¨‹à
+	int money = m_world->getMoney();
+	ostringstream oss;
+	oss << "F" << money;
+	DrawStringToHandle((int)(1700 * m_exX), (int)(20 * m_exY), oss.str().c_str(), BLACK, m_font);
 
 }
