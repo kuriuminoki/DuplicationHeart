@@ -517,7 +517,7 @@ Game::Game(const char* saveFilePath, int storyNum) {
 	m_gameData->updateStory(m_story);
 
 	// ƒf[ƒ^‚ð¢ŠE‚É”½‰f
-	m_gameData->asignWorld(m_world, true);
+	m_gameData->asignWorld(m_world, false);
 
 	m_world->cameraPointInit();
 
