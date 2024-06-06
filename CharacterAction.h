@@ -177,22 +177,23 @@ public:
 	void finishBoost();
 	inline void setGrandRightSlope(bool grand) { m_grandRightSlope = grand; }
 	inline void setGrandLeftSlope(bool grand) { m_grandLeftSlope = grand; }
-	void setRunCnt(int runCnt) { m_runCnt = runCnt; }
-	void setJumpCnt(int preJumpCnt) { m_preJumpCnt = preJumpCnt; }
-	void setMoveRight(bool moveRight) { m_moveRight = moveRight; }
-	void setMoveLeft(bool moveLeft) { m_moveLeft = moveLeft; }
-	void setMoveUp(bool moveUp) { m_moveUp = moveUp; }
-	void setMoveDown(bool moveDown) { m_moveDown = moveDown; }
-	void setVx(int vx) { m_vx = vx; }
-	void setVy(int vy) { m_vy = vy; }
-	void setBulletCnt(int bulletCnt) { m_bulletCnt = bulletCnt; }
-	void setSlashCnt(int slashCnt) { m_slashCnt = slashCnt; }
-	void setAttackLeftDirection(bool attackLeftDirection) { m_attackLeftDirection = attackLeftDirection; }
-	void setLandCnt(int landCnt) { m_landCnt = landCnt; }
-	void setBoostCnt(int boostCnt) { m_boostCnt = boostCnt; }
-	void setBoostDone(int boostDone) { m_boostDone = boostDone; }
-	void setDamageCnt(int damageCnt) { m_damageCnt = damageCnt; }
-	void setHeavy(bool heavy) { m_heavy = heavy; }
+	inline void setRunCnt(int runCnt) { m_runCnt = runCnt; }
+	inline void setJumpCnt(int preJumpCnt) { m_preJumpCnt = preJumpCnt; }
+	inline void setMoveRight(bool moveRight) { m_moveRight = moveRight; }
+	inline void setMoveLeft(bool moveLeft) { m_moveLeft = moveLeft; }
+	inline void setMoveUp(bool moveUp) { m_moveUp = moveUp; }
+	inline void setMoveDown(bool moveDown) { m_moveDown = moveDown; }
+	inline void setVx(int vx) { m_vx = vx; }
+	inline void setVy(int vy) { m_vy = vy; }
+	inline void setBulletCnt(int bulletCnt) { m_bulletCnt = bulletCnt; }
+	inline void setSlashCnt(int slashCnt) { m_slashCnt = slashCnt; }
+	inline void setAttackLeftDirection(bool attackLeftDirection) { m_attackLeftDirection = attackLeftDirection; }
+	inline void setLandCnt(int landCnt) { m_landCnt = landCnt; }
+	inline void setBoostCnt(int boostCnt) { m_boostCnt = boostCnt; }
+	inline void setBoostDone(int boostDone) { m_boostDone = boostDone; }
+	inline void setDamageCnt(int damageCnt) { m_damageCnt = damageCnt; }
+	inline void setHeavy(bool heavy) { m_heavy = heavy; }
+	inline void setSoundPlayer(SoundPlayer* soundPlayer) { m_soundPlayer_p = soundPlayer; }
 
 	// ç°É_ÉÅÅ[ÉWÇéÛÇØÇƒÇ¢ÇƒìÆÇØÇ»Ç¢
 	inline bool damageFlag() const { return m_state == CHARACTER_STATE::DAMAGE; }

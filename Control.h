@@ -22,6 +22,9 @@ int controlA();
 // Dキー（右キー）
 int controlD();
 
+// Eキー（キャラチェンジ）
+int controlE();
+
 // Fキー（スキル発動）
 int controlF();
 
