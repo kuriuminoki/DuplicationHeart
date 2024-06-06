@@ -578,7 +578,6 @@ void FollowNormalAI::moveOrder(int& right, int& left, int& up, int& down) {
 	}
 
 	// 目標地点設定用パラメータ
-	int followX = m_follow_p->getCenterX();
 	bool alreadyGoal = m_gx > x - GX_ERROR && m_gx < x + GX_ERROR;
 	bool alreadyFollow = checkAlreadyFollow();
 

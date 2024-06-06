@@ -671,6 +671,7 @@ bool BulletObject::atari(CharacterController* characterController) {
 	int characterX2 = characterX1 + characterController->getAction()->getCharacter()->getWide();
 	int characterY2 = characterY1 + characterController->getAction()->getCharacter()->getHeight();
 	characterController->getAction()->getCharacter()->getDamageArea(&characterX1, &characterY1, &characterX2, &characterY2);
+	if (characterX1 == characterX2 && characterY1 == characterY2) { return false; }
 
 	// “–‚½‚è”»’è
 	if (characterX2 > m_x1 && characterX1 < m_x2 && characterY2 > m_y1 && characterY1 < m_y2 && characterController->getAction()->ableDamage()) {
