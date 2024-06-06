@@ -250,6 +250,12 @@ private:
 	// やられ画像
 	GraphHandlesWithAtari* m_deadHandles;
 
+	// ボスの初期アニメーション
+	GraphHandlesWithAtari* m_initHandles;
+
+	// 追加画像
+	GraphHandlesWithAtari* m_special1Handles;
+
 public:
 	// デフォルト値で初期化
 	CharacterGraphHandle();
@@ -288,6 +294,8 @@ public:
 	inline GraphHandlesWithAtari* getAirSlashHandle() { return m_airSlashHandles; }
 	inline GraphHandlesWithAtari* getCloseHandle() { return m_closeHandles; }
 	inline GraphHandlesWithAtari* getDeadHandle() { return m_deadHandles; }
+	inline GraphHandlesWithAtari* getInitHandle() { return m_initHandles; }
+	inline GraphHandlesWithAtari* getSpecial1Handle() { return m_special1Handles; }
 
 	// 画像サイズをセット
 	void setGraphSize();
@@ -332,6 +340,10 @@ public:
 	void switchClose(int index = 0);
 	// やられ画像をセット
 	void switchDead(int index = 0);
+	// ボスの初期アニメーションをセット
+	void switchInit(int index = 0);
+	// 追加画像をセット
+	void switchSpecial1(int index = 0);
 };
 
 

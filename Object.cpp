@@ -63,14 +63,29 @@ void Object::decreaseHp(int damageValue) {
 }
 
 // 単純に四角の落下物と衝突しているか
-bool Object::atariDropBox(int x1, int y1, int x2, int y2, int vx, int vy) {
-	// 埋まっている
-	if (x2 > m_x1 && x1 < m_x2 && y2 > m_y1 && y1 < m_y2) {
+bool Object::atariDropBox(int x1, int y1, int x2, int y2, int& vx, int& vy) {
+	// 上から衝突してきた
+	if (x2 + vx >= m_x1 && x1 + vx <= m_x2 && y2 < m_y1 && y2 + vy >= m_y1) {
 		return true;
 	}
-	// 上から衝突してきた
-	if (x2 + vx > m_x1 && x1 + vx < m_x2 && y2 < m_y1 && y2 + vy > m_y1) {
-		return true;
+	// 左右からの衝突
+	if (x2 <= m_x1 && x2 + vx >= m_x1 && y2 > m_y1 && y1 < m_y2) {
+		vx = 0;
+		return false;
+	}
+	if (x1 >= m_x2 && x1 + vx <= m_x2 && y2 > m_y1 && y1 < m_y2) {
+		vx = 0;
+		return false;
+	}
+	// 下からの衝突
+	if (y1 > y2 && y1 + vy <= y2 && x2 > m_x1 && x1 < m_x2) {
+		vy = 0;
+		return false;
+	}
+	// 埋まっている
+	if (x2 > m_x1 && x1 < m_x2 && y2 > m_y1 && y1 < m_y2) {
+		vx = 0; vy = 0;
+		return false;
 	}
 	return false;
 }
@@ -338,8 +353,8 @@ bool TriangleObject::atari(CharacterController* characterController) {
 	characterController->getAction()->getCharacter()->getAtariArea(&characterX1, &characterY1, &characterX2, &characterY2);
 	characterWide = characterX2 - characterX1;
 	characterHeight = characterY2 - characterY1;
-	characterX1_5 = characterX1 + characterWide / 2;
-	characterY1_5 = characterY1 + characterHeight / 2;
+	characterX1_5 = (characterX1 + characterX2) / 2;
+	characterY1_5 = (characterY1 + characterY2) / 2;
 
 	// キャラが上下移動で当たっているか判定
 	if (characterX2 > m_x1 && characterX1 < m_x2) {
@@ -459,15 +474,30 @@ bool TriangleObject::atari(CharacterController* characterController) {
 }
 
 // 単純に四角の落下物と衝突しているか
-bool TriangleObject::atariDropBox(int x1, int y1, int x2, int y2, int vx, int vy) {
+bool TriangleObject::atariDropBox(int x1, int y1, int x2, int y2, int& vx, int& vy) {
 	int y = getY((x1 + x2) / 2);
-	// 埋まっている
-	if (x2 > m_x1 && x1 < m_x2 && y2 > y && y1 < m_y2) {
+	// 上から衝突してきた
+	if (x2 + vx >= m_x1 && x1 + vx <= m_x2 && y2 < y && y2 + vy >= y) {
 		return true;
 	}
-	// 上から衝突してきた
-	if (x2 + vx > m_x1 && x1 + vx < m_x2 && y2 < y && y2 + vy > y) {
-		return true;
+	// 左右からの衝突
+	if (x2 <= m_x1 && x2 + vx >= m_x1 && y2 > y && y1 < m_y2) {
+		vx = 0;
+		return false;
+	}
+	if (x1 >= m_x2 && x1 + vx <= m_x2 && y2 > y && y1 < m_y2) {
+		vx = 0;
+		return false;
+	}
+	// 下からの衝突
+	if (y1 > y2 && y1 + vy <= y2 && x2 > m_x1 && x1 < m_x2) {
+		vy = 0;
+		return false;
+	}
+	// 埋まっている
+	if (x2 > m_x1 && x1 < m_x2 && y2 > y && y1 < m_y2) {
+		vx = 0; vy = 0;
+		return false;
 	}
 	return false;
 }
@@ -486,8 +516,8 @@ void TriangleObject::penetration(CharacterController* characterController) {
 	characterController->getAction()->getCharacter()->getAtariArea(&characterX1, &characterY1, &characterX2, &characterY2);
 	characterWide = characterX2 - characterX1;
 	characterHeight = characterY2 - characterY1;
-	characterX1_5 = characterX1 + characterWide / 2;
-	characterY1_5 = characterY1 + characterHeight / 2;
+	characterX1_5 = (characterX1 + characterX2) / 2;
+	characterY1_5 = (characterY1 + characterY2) / 2;
 	int slopeY = getY(characterX1_5);
 	// 万が一オブジェクトの中に入り込んでしまったら
 	if (characterY2 > slopeY && characterY1 < m_y2 && characterX2 > m_x1 && characterX1 < m_x2) {
@@ -896,7 +926,15 @@ bool BombObject::atari(CharacterController* characterController) {
 
 	// 当たり判定
 	if (characterX2 > m_x1 && characterX1 < m_x2 && characterY2 > m_y1 && characterY1 < m_y2 && characterController->getAction()->ableDamage()) {
-		double damageRate = calcDamageRate(characterController->getAction()->getCharacter()->getCenterX(), characterController->getAction()->getCharacter()->getCenterY());
+		double damageRate = 1.0;
+		int x = characterX1, y = abs(characterY1 - m_y);
+		if (abs(characterX2 - m_x) < abs(characterX1 - m_x)) {
+			x = characterX2;
+		}
+		if (abs(characterY2 - m_y) < abs(characterY1 - m_y)) {
+			y = characterY2;
+		}
+		damageRate = calcDamageRate(x, y);
 		int bombImpact = (int)(damageRate * BOMB_IMPACT);
 		if (characterX1 + characterX2 < m_x1 + m_x2) {
 			characterController->damage(-bombImpact, -bombImpact, (int)(m_damage * damageRate));
@@ -946,8 +984,8 @@ void BombObject::action() {
 double BombObject::calcDamageRate(int x, int y) {
 	x -= m_x;
 	y -= m_y;
-	double distance = sqrt(x * x + y + y);
-	return (m_distance - distance) / m_distance;
+	double distance = sqrt(x * x + y * y);
+	return min(1.0, (m_distance - distance) / m_distance);
 }
 
 bool BombObject::ableDamage() {

@@ -16,27 +16,27 @@ class SoundPlayer;
 
 
 /*
-* ƒRƒ“ƒgƒ[ƒ‰‚ÌŠî’êƒNƒ‰ƒXiƒLƒƒƒ‰ƒNƒ^[‚ğ‘€ì‚·‚éƒNƒ‰ƒXj
+* ã‚³ãƒ³ãƒˆãƒ­ãƒ¼ãƒ©ã®åŸºåº•ã‚¯ãƒ©ã‚¹ï¼ˆã‚­ãƒ£ãƒ©ã‚¯ã‚¿ãƒ¼ã‚’æ“ä½œã™ã‚‹ã‚¯ãƒ©ã‚¹ï¼‰
 */
 class CharacterController {
 protected:
-	// •¡»‚È‚çtrue Recorder‚ğƒfƒŠ[ƒg‚µ‚È‚¢‚½‚ß
+	// è¤‡è£½ãªã‚‰true Recorderã‚’ãƒ‡ãƒªãƒ¼ãƒˆã—ãªã„ãŸã‚
 	bool m_duplicationFlag;
 
-	// ‚±‚¢‚Â‚ª‘€ì‚ğ–½—ß‚µ‚Ä‚­‚é Controller‚ªƒfƒŠ[ƒg‚·‚é
+	// ã“ã„ã¤ãŒæ“ä½œã‚’å‘½ä»¤ã—ã¦ãã‚‹ ControllerãŒãƒ‡ãƒªãƒ¼ãƒˆã™ã‚‹
 	Brain* m_brain;
 
-	// ‘€ì‘ÎÛ Controller‚ªƒfƒŠ[ƒg‚·‚é
+	// æ“ä½œå¯¾è±¡ ControllerãŒãƒ‡ãƒªãƒ¼ãƒˆã™ã‚‹
 	CharacterAction* m_characterAction;
 
-	// ‘€ì‚Ì‹L˜^ g‚í‚È‚¢‚È‚çnullptr
+	// æ“ä½œã®è¨˜éŒ² ä½¿ã‚ãªã„ãªã‚‰nullptr
 	ControllerRecorder* m_stickRecorder;
 	ControllerRecorder* m_jumpRecorder;
 	ControllerRecorder* m_squatRecorder;
 	ControllerRecorder* m_slashRecorder;
 	ControllerRecorder* m_bulletRecorder;
 
-	// ƒ_ƒ[ƒW‚Ì‹L˜^ •Ï‰»‚µ‚½‚ç‚»‚êˆÈ~‚ÌƒŒƒR[ƒh‚ğíœ‚·‚é
+	// ãƒ€ãƒ¡ãƒ¼ã‚¸ã®è¨˜éŒ² å¤‰åŒ–ã—ãŸã‚‰ãã‚Œä»¥é™ã®ãƒ¬ã‚³ãƒ¼ãƒ‰ã‚’å‰Šé™¤ã™ã‚‹
 	ControllerRecorder* m_damageRecorder;
 
 public:
@@ -49,11 +49,11 @@ public:
 
 	virtual CharacterController* createCopy(std::vector<Character*> characters, const Camera* camera) = 0;
 
-	// ƒfƒoƒbƒO
+	// ãƒ‡ãƒãƒƒã‚°
 	void debugController(int x, int y, int color) const;
 	virtual void debug(int x, int y, int color) const = 0;
 
-	// ƒQƒbƒ^
+	// ã‚²ãƒƒã‚¿
 	inline const CharacterAction* getAction() const { return m_characterAction; }
 	inline const Brain* getBrain() const { return m_brain; }
 	inline const ControllerRecorder* getStickRecorder() const { return m_stickRecorder; }
@@ -63,7 +63,7 @@ public:
 	inline const ControllerRecorder* getBulletRecorder() const { return m_bulletRecorder; }
 	inline const ControllerRecorder* getDamageRecorder() const { return m_damageRecorder; }
 
-	// ƒZƒbƒ^
+	// ã‚»ãƒƒã‚¿
 	void setAction(CharacterAction* action);
 	void setBrain(Brain* brain);
 	void setStickRecorder(ControllerRecorder* recorder);
@@ -75,15 +75,15 @@ public:
 	void setTarget(Character* character);
 	void setDuplicationFlag(bool flag) { m_duplicationFlag = flag; }
 
-	// ƒŒƒR[ƒ_‚ğ‰Šú‰»
+	// ãƒ¬ã‚³ãƒ¼ãƒ€ã‚’åˆæœŸåŒ–
 	void initRecorder();
-	// ƒŒƒR[ƒh‚ğ‚â‚ß‚é
+	// ãƒ¬ã‚³ãƒ¼ãƒ‰ã‚’ã‚„ã‚ã‚‹
 	void eraseRecorder();
 
-	// ˜b‚µ‚©‚¯‚½‚è”à‚É“ü‚Á‚½‚è‚·‚éƒ{ƒ^ƒ“‚ªtrue‚©
+	// è©±ã—ã‹ã‘ãŸã‚Šæ‰‰ã«å…¥ã£ãŸã‚Šã™ã‚‹ãƒœã‚¿ãƒ³ãŒtrueã‹
 	virtual bool getActionKey() const;
 
-	// ƒAƒNƒVƒ‡ƒ“‚ÌƒZƒbƒ^
+	// ã‚¢ã‚¯ã‚·ãƒ§ãƒ³ã®ã‚»ãƒƒã‚¿
 	void setCharacterGrand(bool grand);
 	void setCharacterGrandRightSlope(bool grand);
 	void setCharacterGrandLeftSlope(bool grand);
@@ -91,45 +91,43 @@ public:
 	void setActionLeftLock(bool lock);
 	void setActionUpLock(bool lock);
 	void setActionDownLock(bool lock);
-	void setActionBoost();
-	void setActionSound(SoundPlayer* soundPlayer);
 
-	// ƒLƒƒƒ‰ƒNƒ^[‚ÌƒZƒbƒ^
+	// ã‚­ãƒ£ãƒ©ã‚¯ã‚¿ãƒ¼ã®ã‚»ãƒƒã‚¿
 	void setCharacterX(int x);
 	void setCharacterY(int y);
 	void setCharacterFreeze(bool freeze);
 
-	// s“®‘O‚Ìˆ— –ˆƒtƒŒ[ƒ€s‚¤
+	// è¡Œå‹•å‰ã®å‡¦ç† æ¯ãƒ•ãƒ¬ãƒ¼ãƒ è¡Œã†
 	void init();
 
-	// UŒ‚‘ÎÛ‚ğ•ÏX
+	// æ”»æ’ƒå¯¾è±¡ã‚’å¤‰æ›´
 	void searchTargetCandidate(Character* character);
 
-	// ’ÇÕ‘ÎÛ‚ğ•ÏX
+	// è¿½è·¡å¯¾è±¡ã‚’å¤‰æ›´
 	void searchFollowCandidate(Character* character);
 
-	// ‘€ì‚â“–‚½‚è”»’è‚ÌŒ‹‰Ê‚ğ”½‰fiÀÛ‚ÉƒLƒƒƒ‰‚ğ“®‚©‚·j–ˆƒtƒŒ[ƒ€s‚¤
+	// æ“ä½œã‚„å½“ãŸã‚Šåˆ¤å®šã®çµæœã‚’åæ˜ ï¼ˆå®Ÿéš›ã«ã‚­ãƒ£ãƒ©ã‚’å‹•ã‹ã™ï¼‰æ¯ãƒ•ãƒ¬ãƒ¼ãƒ è¡Œã†
 	void action();
 
-	// ƒLƒƒƒ‰‚Ì‘€ì
+	// ã‚­ãƒ£ãƒ©ã®æ“ä½œ
 	virtual void control() = 0;
 
-	// ËŒ‚UŒ‚
+	// å°„æ’ƒæ”»æ’ƒ
 	virtual Object* bulletAttack() = 0;
 
-	// aŒ‚UŒ‚
+	// æ–¬æ’ƒæ”»æ’ƒ
 	virtual Object* slashAttack() = 0;
 
-	// ƒ_ƒ[ƒW
+	// ãƒ€ãƒ¡ãƒ¼ã‚¸
 	virtual void damage(int vx, int vy, int damageValue) = 0;
 
-	// Brain‚ªFreeze‚È‚çƒvƒŒƒCƒ„[‚Ì•ûŒü‚ğŒü‚©‚¹‚é all‚ªtrue‚È‚çFreezeˆÈŠO‚Ì‘SƒLƒƒƒ‰‚ª‘ÎÛ
+	// BrainãŒFreezeãªã‚‰ãƒ—ãƒ¬ã‚¤ãƒ¤ãƒ¼ã®æ–¹å‘ã‚’å‘ã‹ã›ã‚‹ allãŒtrueãªã‚‰Freezeä»¥å¤–ã®å…¨ã‚­ãƒ£ãƒ©ãŒå¯¾è±¡
 	void setPlayerDirection(Character* player_p, bool all = false);
 
-	// AI‚Ì–Ú•W’n“_‚ğİ’è
+	// AIã®ç›®æ¨™åœ°ç‚¹ã‚’è¨­å®š
 	void setGoal(int gx, int gy);
 
-	// –Ú•W’n“_‚ÖˆÚ“®‚·‚é‚¾‚¯
+	// ç›®æ¨™åœ°ç‚¹ã¸ç§»å‹•ã™ã‚‹ã ã‘
 	bool moveGoal();
 };
 
@@ -138,13 +136,13 @@ CharacterController* createController(const std::string controllerName, Brain* b
 
 
 /*
-* •’Ê‚ÌƒRƒ“ƒgƒ[ƒ‰
+* æ™®é€šã®ã‚³ãƒ³ãƒˆãƒ­ãƒ¼ãƒ©
 */
 class NormalController :
 	public CharacterController {
 
 private:
-	// ƒWƒƒƒ“ƒvƒL[‚ğ’·‰Ÿ‚µ‚·‚éÅ‘åŠÔ
+	// ã‚¸ãƒ£ãƒ³ãƒ—ã‚­ãƒ¼ã‚’é•·æŠ¼ã—ã™ã‚‹æœ€å¤§æ™‚é–“
 	const int JUMP_KEY_LONG = 10;
 public:
 	static const char* CONTROLLER_NAME;
@@ -156,16 +154,16 @@ public:
 
 	void debug(int x, int y, int color) const;
 
-	// ƒLƒƒƒ‰‚ÌˆÚ“®‚â‚µ‚á‚ª‚İ(;UŒ‚ˆÈŠO‚Ì)‘€ì –ˆƒtƒŒ[ƒ€s‚¤
+	// ã‚­ãƒ£ãƒ©ã®ç§»å‹•ã‚„ã—ã‚ƒãŒã¿(;æ”»æ’ƒä»¥å¤–ã®)æ“ä½œ æ¯ãƒ•ãƒ¬ãƒ¼ãƒ è¡Œã†
 	void control();
 
-	// ËŒ‚UŒ‚
+	// å°„æ’ƒæ”»æ’ƒ
 	Object* bulletAttack();
 
-	// aŒ‚UŒ‚
+	// æ–¬æ’ƒæ”»æ’ƒ
 	Object* slashAttack();
 
-	// ƒ_ƒ\ƒW
+	// ãƒ€ãƒ¡â€•ã‚¸
 	void damage(int vx, int vy, int damageValue);
 };
 

@@ -85,7 +85,7 @@ void CharacterDrawer::drawCharacter(const Camera* const camera, int enemyNoticeH
 	}
 
 	// 描画 ダメージ状態なら点滅
-	if (m_characterAction->getState() == CHARACTER_STATE::DAMAGE && ++m_cnt / 2 % 2 == 1) {
+	if (!m_characterAction->ableDamage() && ++m_cnt / 2 % 2 == 1) {
 		int dark = max(0, bright - 100);
 		SetDrawBright(dark, dark, dark);
 		graphHandle->draw(x, y, ex);
@@ -95,8 +95,7 @@ void CharacterDrawer::drawCharacter(const Camera* const camera, int enemyNoticeH
 		graphHandle->draw(x, y, ex);
 	}
 
-	// 体力バー
-	if (character->getDispHpCnt() > 0 && character->getName() != "ハート") {
+	if (character->getDispHpCnt() > 0 && character->getName() != "ハート" && !character->getBossFlag()) {
 		// 座標をカメラで調整
 		x = character->getX() + (character->getWide() / 2);
 		y = character->getY();
@@ -127,15 +126,7 @@ void CharacterDrawer::drawCharacter(const Camera* const camera, int enemyNoticeH
 
 }
 
-void CharacterDrawer::drawPlayerHpBar(const Character* player, int hpBarGraph) {
-
-	// 座標
-	int x, y, wide, height;
-
-	x = 30;
-	y = 30;
-	wide = 525;
-	height = 150;
+void CharacterDrawer::drawPlayerHpBar(int x, int y, int wide, int height, const Character* player, int hpBarGraph) {
 
 	// 解像度変更に対応
 	x = (int)(x * m_exX);
@@ -145,11 +136,59 @@ void CharacterDrawer::drawPlayerHpBar(const Character* player, int hpBarGraph) {
 
 	DrawExtendGraph(x, y, x + wide, y + height, hpBarGraph, TRUE);
 
-	int dx = (int)(40 * m_exX);
-	int dy1 = (int)(80 * m_exY);
+	int dx1 = (int)(230 * m_exX);
+	int dx2 = (int)(40 * m_exX);
+	int dy1 = (int)(15 * m_exY);
 	int dy2 = (int)(15 * m_exY);
 
 	// 体力の描画
-	drawHpBar(x + dx, y + dy1, x + wide - dx, y + height - dy2, player->getHp(), player->getPrevHp(), player->getMaxHp(), DAMAGE_COLOR, PREV_HP_COLOR, HP_COLOR);
+	drawHpBar(x + dx1, y + dy1, x + wide - dx2, y + height - dy2, player->getHp(), player->getPrevHp(), player->getMaxHp(), DAMAGE_COLOR, PREV_HP_COLOR, HP_COLOR);
+
+}
+
+void CharacterDrawer::drawPlayerSkillBar(int x, int y, int wide, int height, const Character* player, int hpBarGraph) {
+
+	// 解像度変更に対応
+	x = (int)(x * m_exX);
+	y = (int)(y * m_exY);
+	wide = (int)(wide * m_exX);
+	height = (int)(height * m_exY);
+
+	DrawExtendGraph(x, y, x + wide, y + height, hpBarGraph, TRUE);
+
+	int dx1 = (int)(200 * m_exX);
+	int dx2 = (int)(65 * m_exX);
+	int dy1 = (int)(10 * m_exY);
+	int dy2 = (int)(10 * m_exY);
+
+	// 体力の描画
+	int skillGage = player->getSkillGage();
+	int maxSkillGage = player->getMaxSkillGage();
+	if (skillGage == maxSkillGage) {
+		drawHpBar(x + dx1, y + dy1, x + wide - dx2, y + height - dy2, player->getSkillGage(), player->getSkillGage(), player->getMaxSkillGage(), WHITE, ORANGE, ORANGE);
+	}
+	else {
+		drawHpBar(x + dx1, y + dy1, x + wide - dx2, y + height - dy2, player->getSkillGage(), player->getSkillGage(), player->getMaxSkillGage(), WHITE, DARK_ORANGE, DARK_ORANGE);
+	}
+
+}
+
+void CharacterDrawer::drawBossHpBar(int x, int y, int wide, int height, const Character* player, int hpBarGraph) {
+
+	// 解像度変更に対応
+	x = (int)(x * m_exX);
+	y = (int)(y * m_exY);
+	wide = (int)(wide * m_exX);
+	height = (int)(height * m_exY);
+
+	DrawExtendGraph(x, y, x + wide, y + height, hpBarGraph, TRUE);
+
+	int dx1 = (int)(370 * m_exX);
+	int dx2 = (int)(100 * m_exX);
+	int dy1 = (int)(20 * m_exY);
+	int dy2 = (int)(20 * m_exY);
+
+	// 体力の描画
+	drawHpBar(x + dx1, y + dy1, x + wide - dx2, y + height - dy2, player->getHp(), player->getPrevHp(), player->getMaxHp(), DAMAGE_COLOR, PREV_HP_COLOR, HP_COLOR);
 
 }

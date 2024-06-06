@@ -134,6 +134,9 @@ private:
 	// キャラがやられた時のエフェクト画像
 	GraphHandles* m_characterDeadGraph;
 
+	// キャラがダメージ受けた時のエフェクト画像
+	GraphHandles* m_characterDamageGraph;
+
 	// 爆発の画像
 	GraphHandles* m_bombGraph;
 
@@ -153,6 +156,13 @@ private:
 	// 背景
 	int m_backGroundGraph;
 	int m_backGroundColor;
+
+	// ボスがやられた時のエフェクト中
+	int m_bossDeadEffectCnt;
+
+	// 所持金
+	const int MAX_MONEY = 999;
+	int m_money;
 
 public:
 	World();
@@ -189,11 +199,14 @@ public:
 	inline double getCameraMaxEx() const { return m_cameraMaxEx; }
 	inline double getCameraMinEx() const { return m_cameraMinEx; }
 	inline GraphHandles* getCharacterDeadGraph() const { return m_characterDeadGraph; }
+	inline GraphHandles* getCharacterDamageGraph() const { return m_characterDamageGraph; }
 	inline GraphHandles* getBombGraph() const { return m_bombGraph; }
 	inline int getCharacterDeadSound() const { return m_characterDeadSound; }
 	inline int getBombSound() const { return m_bombSound; }
 	inline int getDoorSound() const { return m_doorSound; }
 	inline bool getSkillFlag() const { return m_skillFlag; }
+	inline int getBossDeadEffextCnt() const { return m_bossDeadEffectCnt; }
+	inline int getMoney() const { return m_money; }
 
 	// Drawer用のゲッタ
 	std::vector<const CharacterAction*> getActions() const;
@@ -217,6 +230,7 @@ public:
 	inline void setAreaLock(bool lock) { m_areaLock = lock; }
 	inline void setDate(int date) { m_date = date; }
 	inline void setBlindFlag(bool blindFlag) { m_blindFlag = blindFlag; }
+	inline void setMoney(int money) { m_money = money; }
 
 	// 強制的にエリア移動
 	inline void moveArea(int nextArea) { m_brightValue--; m_nextAreaNum = nextArea; m_resetBgmFlag = true; }
@@ -342,6 +356,12 @@ private:
 
 	// Battle: 爆発を起こす
 	void createBomb(int x, int y, Object* attackObject);
+
+	// Battle: ダメージエフェクト作成
+	void createDamageEffect(int x, int y, int sum);
+
+	// Battle: ボスがやられたときの爆発エフェクト
+	void createBossDeadEffect();
 
 };
 

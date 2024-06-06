@@ -17,6 +17,12 @@ private:
 
 	// 座標
 	int m_x, m_y;
+
+	// 速度
+	int m_vx, m_vy;
+
+	// 速度を使う
+	bool m_movable;
 	
 	// カウント
 	int m_cnt;
@@ -41,12 +47,17 @@ public:
 	// ゲッタ
 	inline int getX() const { return m_x; }
 	inline int getY() const { return m_y; }
+	inline int getVx() const { return m_vx; }
+	inline int getVy() const { return m_vy; }
 	inline bool getFinishFlag() const { return m_finishFlag; }
 	inline int getCnt() const { return m_cnt; }
 
 	// セッタ
 	inline void setX(int x) { m_x = x; }
 	inline void setY(int y) { m_y = y; }
+	inline void setVx(int vx) { m_vx = vx; }
+	inline void setVy(int vy) { m_vy = vy; }
+	inline void setMovable(bool movable) { m_movable = movable; }
 	inline void setCnt(int cnt) { m_cnt = cnt; }
 	inline void setFinishCnt(int finishCnt) { m_finishCnt = finishCnt; }
 	inline void setFinishFlag(bool finishFlag) { m_finishFlag = finishFlag; }

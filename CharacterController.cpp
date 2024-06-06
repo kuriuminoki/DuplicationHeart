@@ -13,11 +13,11 @@
 using namespace std;
 
 
-// ƒNƒ‰ƒX–¼
+// ã‚¯ãƒ©ã‚¹å
 const char* CharacterController::CONTROLLER_NAME = "CharacterController";
 const char* NormalController::CONTROLLER_NAME = "NormalController";
 
-// ƒNƒ‰ƒX–¼‚©‚çƒRƒ“ƒgƒ[ƒ‰‚ğì¬‚·‚éŠÖ”
+// ã‚¯ãƒ©ã‚¹åã‹ã‚‰ã‚³ãƒ³ãƒˆãƒ­ãƒ¼ãƒ©ã‚’ä½œæˆã™ã‚‹é–¢æ•°
 CharacterController* createController(const string controllerName, Brain* brain, CharacterAction* action) {
 	CharacterController* controller = nullptr;
 	if (controllerName == NormalController::CONTROLLER_NAME) {
@@ -28,18 +28,18 @@ CharacterController* createController(const string controllerName, Brain* brain,
 
 
 /*
-* ƒRƒ“ƒgƒ[ƒ‰
+* ã‚³ãƒ³ãƒˆãƒ­ãƒ¼ãƒ©
 */
 CharacterController::CharacterController(Brain* brain, CharacterAction* characterAction) {
 
-	// ‰Šú‰»
+	// åˆæœŸåŒ–
 	m_brain = brain;
 	m_characterAction = characterAction;
 
-	// Brain‚ÉAction‚ğ’“ü
+	// Brainã«Actionã‚’æ³¨å…¥
 	m_brain->setCharacterAction(m_characterAction);
 
-	// ƒŒƒR[ƒ_‚ÍƒfƒtƒHƒ‹ƒg‚Åg‚í‚È‚¢
+	// ãƒ¬ã‚³ãƒ¼ãƒ€ã¯ãƒ‡ãƒ•ã‚©ãƒ«ãƒˆã§ä½¿ã‚ãªã„
 	m_stickRecorder = nullptr;
 	m_jumpRecorder = nullptr;
 	m_squatRecorder = nullptr;
@@ -56,7 +56,7 @@ CharacterController::CharacterController() :
 
 }
 
-// ActionƒCƒ“ƒXƒ^ƒ“ƒX‚Í‚±‚±‚Å‚Ì‚İƒfƒŠ[ƒg‚·‚é
+// Actionã‚¤ãƒ³ã‚¹ã‚¿ãƒ³ã‚¹ã¯ã“ã“ã§ã®ã¿ãƒ‡ãƒªãƒ¼ãƒˆã™ã‚‹
 CharacterController::~CharacterController() {
 	if (m_characterAction != nullptr) {
 		delete m_characterAction;
@@ -76,7 +76,7 @@ CharacterController::~CharacterController() {
 	}
 }
 
-// ƒŒƒR[ƒ_‚ğ‰Šú‰»
+// ãƒ¬ã‚³ãƒ¼ãƒ€ã‚’åˆæœŸåŒ–
 void CharacterController::initRecorder() {
 	if (m_stickRecorder != nullptr) {
 		m_stickRecorder->init();
@@ -90,7 +90,7 @@ void CharacterController::initRecorder() {
 	}
 }
 
-// ƒŒƒR[ƒh‚ğ‚â‚ß‚é
+// ãƒ¬ã‚³ãƒ¼ãƒ‰ã‚’ã‚„ã‚ã‚‹
 void CharacterController::eraseRecorder() { 
 	if (m_stickRecorder != nullptr) { 
 		delete m_stickRecorder;
@@ -110,7 +110,7 @@ void CharacterController::eraseRecorder() {
 	}
 }
 
-// ˜b‚µ‚©‚¯‚½‚è”à‚É“ü‚Á‚½‚è‚·‚éƒ{ƒ^ƒ“‚ªtrue‚©
+// è©±ã—ã‹ã‘ãŸã‚Šæ‰‰ã«å…¥ã£ãŸã‚Šã™ã‚‹ãƒœã‚¿ãƒ³ãŒtrueã‹
 bool CharacterController::getActionKey() const { return m_brain->actionOrder(); }
 
 void CharacterController::setAction(CharacterAction* action) {
@@ -124,7 +124,7 @@ void CharacterController::setBrain(Brain* brain) {
 	m_brain->setCharacterAction(m_characterAction);
 }
 
-// ƒŒƒR[ƒ_‚ÌƒZƒbƒ^
+// ãƒ¬ã‚³ãƒ¼ãƒ€ã®ã‚»ãƒƒã‚¿
 void CharacterController::setStickRecorder(ControllerRecorder* recorder) {
 	m_stickRecorder = recorder;
 }
@@ -148,7 +148,7 @@ void CharacterController::setTarget(Character* character) {
 	m_brain->setTarget(character);
 }
 
-// ƒAƒNƒVƒ‡ƒ“‚ÌƒZƒbƒ^
+// ã‚¢ã‚¯ã‚·ãƒ§ãƒ³ã®ã‚»ãƒƒã‚¿
 void CharacterController::setCharacterGrand(bool grand) {
 	m_characterAction->setGrand(grand);
 }
@@ -170,14 +170,12 @@ void CharacterController::setActionUpLock(bool lock) {
 void CharacterController::setActionDownLock(bool lock) {
 	m_characterAction->setDownLock(lock);
 }
-void CharacterController::setActionBoost() {
-	m_characterAction->setBoost();
-}
+
 void CharacterController::setActionSound(SoundPlayer* soundPlayer) {
 	m_characterAction->setSoundPlayer(soundPlayer);
 }
 
-// ƒLƒƒƒ‰ƒNƒ^[‚ÌƒZƒbƒ^
+// ã‚­ãƒ£ãƒ©ã‚¯ã‚¿ãƒ¼ã®ã‚»ãƒƒã‚¿
 void CharacterController::setCharacterX(int x) {
 	m_characterAction->setCharacterX(x);
 }
@@ -188,55 +186,55 @@ void CharacterController::setCharacterFreeze(bool freeze) {
 	m_characterAction->setCharacterFreeze(freeze);
 }
 
-// s“®‘O‚Ìˆ—
+// è¡Œå‹•å‰ã®å‡¦ç†
 void CharacterController::init() {
 	m_characterAction->init();
 }
 
-// UŒ‚‘ÎÛ‚ğ•ÏX
+// æ”»æ’ƒå¯¾è±¡ã‚’å¤‰æ›´
 void CharacterController::searchTargetCandidate(Character* character) {
 	m_brain->searchTarget(character);
 }
 
-// ’ÇÕ‘ÎÛ‚ğ•ÏX
+// è¿½è·¡å¯¾è±¡ã‚’å¤‰æ›´
 void CharacterController::searchFollowCandidate(Character* character) {
 	m_brain->searchFollow(character);
 }
 
-// s“®‚ÌŒ‹‰Ê”½‰f
+// è¡Œå‹•ã®çµæœåæ˜ 
 void CharacterController::action() {
-	// •¨—‰‰Z
+	// ç‰©ç†æ¼”ç®—
 	m_characterAction->action();
 }
 
-// Brain‚ªFreeze‚È‚çƒvƒŒƒCƒ„[‚Ì•ûŒü‚ğŒü‚©‚¹‚é
+// BrainãŒFreezeãªã‚‰ãƒ—ãƒ¬ã‚¤ãƒ¤ãƒ¼ã®æ–¹å‘ã‚’å‘ã‹ã›ã‚‹
 void CharacterController::setPlayerDirection(Character* player_p, bool all) {
 	if (m_brain->getBrainName() != "Freeze" && !all) { return; }
 	if (!m_characterAction->ableChangeDirection()) { return; }
 	m_characterAction->setCharacterLeftDirection(player_p->getCenterX() < m_characterAction->getCharacter()->getCenterX());
 }
 
-// AI‚Ì–Ú•W’n“_‚ğİ’è
+// AIã®ç›®æ¨™åœ°ç‚¹ã‚’è¨­å®š
 void CharacterController::setGoal(int gx, int gy) {
 	m_brain->setGx(gx);
 	m_brain->setGy(gy);
 }
 
-// –Ú•W’n“_‚ÖˆÚ“®‚·‚é‚¾‚¯
+// ç›®æ¨™åœ°ç‚¹ã¸ç§»å‹•ã™ã‚‹ã ã‘
 bool CharacterController::moveGoal() {
-	// ˆÚ“® stick‚È‚Ç‚Ì“ü—Íó‘Ô‚ğXV‚·‚é
+	// ç§»å‹• stickãªã©ã®å…¥åŠ›çŠ¶æ…‹ã‚’æ›´æ–°ã™ã‚‹
 	int rightStick = 0, leftStick = 0, upStick = 0, downStick = 0, jump = 0;
 	bool alreadyGoal = m_brain->moveGoalOrder(rightStick, leftStick, upStick, downStick, jump);
-	// stick‚É‰‚¶‚ÄˆÚ“®
+	// stickã«å¿œã˜ã¦ç§»å‹•
 	m_characterAction->move(rightStick, leftStick, upStick, downStick);
-	// ƒWƒƒƒ“ƒv
+	// ã‚¸ãƒ£ãƒ³ãƒ—
 	m_characterAction->jump(jump);
 	return alreadyGoal;
 }
 
 
 /*
-* ƒLƒƒƒ‰ƒRƒ“ƒgƒ[ƒ‹ ƒ}ƒEƒX‚ğg‚¤‰Â”\«‚à‚ ‚é‚Ì‚ÅCamera‚ª•K—v
+* ã‚­ãƒ£ãƒ©ã‚³ãƒ³ãƒˆãƒ­ãƒ¼ãƒ« ãƒã‚¦ã‚¹ã‚’ä½¿ã†å¯èƒ½æ€§ã‚‚ã‚ã‚‹ã®ã§CameraãŒå¿…è¦
 */
 NormalController::NormalController(Brain* brain, CharacterAction* characterAction):
 	CharacterController(brain, characterAction)
@@ -249,7 +247,7 @@ CharacterController* NormalController::createCopy(std::vector<Character*> charac
 	Brain* brain = m_brain->createCopy(characters, camera);
 	brain->setCharacterAction(action);
 	CharacterController* res = new NormalController(brain, action);
-	// •¡»‚ÍƒŒƒR[ƒ_‚ğƒfƒŠ[ƒg‚µ‚È‚¢‚½‚ßFlag‚ğtrue‚É‚·‚é
+	// è¤‡è£½ã¯ãƒ¬ã‚³ãƒ¼ãƒ€ã‚’ãƒ‡ãƒªãƒ¼ãƒˆã—ãªã„ãŸã‚Flagã‚’trueã«ã™ã‚‹
 	res->setDuplicationFlag(true);
 	res->setStickRecorder(m_stickRecorder);
 	res->setJumpRecorder(m_jumpRecorder);
@@ -261,12 +259,12 @@ CharacterController* NormalController::createCopy(std::vector<Character*> charac
 }
 
 void NormalController::control() {
-	// ƒ_ƒ[ƒW‚ÌƒŒƒR[ƒhi‚à‚µ‹L˜^‚ÆŒ»ó‚ªˆá‚¦‚ÎˆÈ~‚ÌƒŒƒR[ƒh‚ğíœj
+	// ãƒ€ãƒ¡ãƒ¼ã‚¸ã®ãƒ¬ã‚³ãƒ¼ãƒ‰ï¼ˆã‚‚ã—è¨˜éŒ²ã¨ç¾çŠ¶ãŒé•ãˆã°ä»¥é™ã®ãƒ¬ã‚³ãƒ¼ãƒ‰ã‚’å‰Šé™¤ï¼‰
 	if (m_damageRecorder != nullptr) {
-		// Œ»ó
+		// ç¾çŠ¶
 		bool flag = (m_characterAction->getState() == CHARACTER_STATE::DAMAGE);
 		if (m_damageRecorder->existRecord()) {
-			// ‹L˜^‚Æ”äŠr
+			// è¨˜éŒ²ã¨æ¯”è¼ƒ
 			if ((bool)m_damageRecorder->checkInput() != flag) {
 				m_stickRecorder->discardRecord();
 				m_jumpRecorder->discardRecord();
@@ -283,10 +281,10 @@ void NormalController::control() {
 		m_damageRecorder->addTime();
 	}
 
-	// ˆÚ“® stick‚È‚Ç‚Ì“ü—Íó‘Ô‚ğXV‚·‚é
+	// ç§»å‹• stickãªã©ã®å…¥åŠ›çŠ¶æ…‹ã‚’æ›´æ–°ã™ã‚‹
 	int rightStick = 0, leftStick = 0, upStick = 0, downStick = 0;
 	if (m_characterAction->getCharacter()->getHp() == 0) {
-		// ‚â‚ç‚ê‚Ä‚¢‚é‚©‚ç‰½‚à‚µ‚È‚¢
+		// ã‚„ã‚‰ã‚Œã¦ã„ã‚‹ã‹ã‚‰ä½•ã‚‚ã—ãªã„
 	}
 	else if (m_stickRecorder != nullptr) {
 		if (m_stickRecorder->existRecord()) {
@@ -315,13 +313,13 @@ void NormalController::control() {
 		m_brain->moveOrder(rightStick, leftStick, upStick, downStick);
 	}
 
-	// stick‚É‰‚¶‚ÄˆÚ“®
+	// stickã«å¿œã˜ã¦ç§»å‹•
 	m_characterAction->move(rightStick, leftStick, upStick, downStick);
 
-	// ƒWƒƒƒ“ƒv
+	// ã‚¸ãƒ£ãƒ³ãƒ—
 	int jump = 0;
 	if (m_characterAction->getCharacter()->getHp() == 0) {
-		// ‚â‚ç‚ê‚Ä‚¢‚é‚©‚ç‰½‚à‚µ‚È‚¢
+		// ã‚„ã‚‰ã‚Œã¦ã„ã‚‹ã‹ã‚‰ä½•ã‚‚ã—ãªã„
 	}
 	else if (m_jumpRecorder != nullptr) {
 		if (m_jumpRecorder->existRecord()) {
@@ -329,9 +327,6 @@ void NormalController::control() {
 		}
 		else {
 			jump = m_brain->jumpOrder();
-			if (jump == 1) {
-				jump;
-			}
 			m_jumpRecorder->writeRecord(jump);
 		}
 		m_jumpRecorder->addTime();
@@ -341,10 +336,15 @@ void NormalController::control() {
 	}
 	m_characterAction->jump(jump);
 
-	// ‚µ‚á‚ª‚İ
+	// ãƒ–ãƒ¼ã‚¹ãƒˆ
+	if (jump == 1 && (rightStick > 0 || leftStick > 0)) {
+		m_characterAction->setBoost(leftStick > rightStick);
+	}
+
+	// ã—ã‚ƒãŒã¿
 	int squat = 0;
 	if (m_characterAction->getCharacter()->getHp() == 0) {
-		// ‚â‚ç‚ê‚Ä‚¢‚é‚©‚ç‰½‚à‚µ‚È‚¢
+		// ã‚„ã‚‰ã‚Œã¦ã„ã‚‹ã‹ã‚‰ä½•ã‚‚ã—ãªã„
 	}
 	else if (m_squatRecorder != nullptr) {
 		if (m_squatRecorder->existRecord()) {
@@ -368,16 +368,16 @@ Object* NormalController::bulletAttack() {
 		return nullptr;
 	}
 
-	// UŒ‚–Ú•W
+	// æ”»æ’ƒç›®æ¨™
 	int targetX = 0, targetY = 0;
 	m_brain->bulletTargetPoint(targetX, targetY);
 
-	// –½—ß
+	// å‘½ä»¤
 	int order = 0;
 	if (m_bulletRecorder != nullptr) {
 		if (m_bulletRecorder->existRecord()) {
 			order = m_bulletRecorder->checkInput();
-			// UŒ‚–Ú•W‚ğæ“¾
+			// æ”»æ’ƒç›®æ¨™ã‚’å–å¾—
 			m_bulletRecorder->getGoal(targetX, targetY);
 			targetX += m_characterAction->getCharacter()->getCenterX();
 			targetY += m_characterAction->getCharacter()->getCenterY();
@@ -385,7 +385,7 @@ Object* NormalController::bulletAttack() {
 		else {
 			order = m_brain->bulletOrder();
 			m_bulletRecorder->writeRecord(order);
-			// UŒ‚–Ú•W‚ğ‘‚«‚İ
+			// æ”»æ’ƒç›®æ¨™ã‚’æ›¸ãè¾¼ã¿
 			m_bulletRecorder->setGoal(
 				targetX - m_characterAction->getCharacter()->getCenterX(),
 				targetY - m_characterAction->getCharacter()->getCenterY()
@@ -397,9 +397,9 @@ Object* NormalController::bulletAttack() {
 		order = m_brain->bulletOrder();
 	}
 
-	// ‰“‹——£UŒ‚‚Ì–½—ß‚ª‚³‚ê‚Ä‚¢‚é‚È‚ç
+	// é è·é›¢æ”»æ’ƒã®å‘½ä»¤ãŒã•ã‚Œã¦ã„ã‚‹ãªã‚‰
 	if (order > 0) {
-		// –Ú•W‚ÉŒü‚©‚Á‚ÄËŒ‚
+		// ç›®æ¨™ã«å‘ã‹ã£ã¦å°„æ’ƒ
 		return m_characterAction->bulletAttack(targetX, targetY);
 	}
 	return nullptr;
@@ -411,16 +411,16 @@ Object* NormalController::slashAttack() {
 		return nullptr;
 	}
 
-	// UŒ‚–Ú•W
+	// æ”»æ’ƒç›®æ¨™
 	int targetX = 0, targetY = 0;
 	m_brain->slashTargetPoint(targetX, targetY);
 
-	// –½—ß
+	// å‘½ä»¤
 	int order = 0;
 	if (m_slashRecorder != nullptr) {
 		if (m_slashRecorder->existRecord()) {
 			order = m_slashRecorder->checkInput();
-			// UŒ‚–Ú•W‚ğæ“¾
+			// æ”»æ’ƒç›®æ¨™ã‚’å–å¾—
 			m_slashRecorder->getGoal(targetX, targetY);
 			targetX += m_characterAction->getCharacter()->getCenterX();
 			targetY += m_characterAction->getCharacter()->getCenterY();
@@ -428,7 +428,7 @@ Object* NormalController::slashAttack() {
 		else {
 			order = m_brain->slashOrder();
 			m_slashRecorder->writeRecord(order);
-			// UŒ‚–Ú•W‚ğ‘‚«‚İ
+			// æ”»æ’ƒç›®æ¨™ã‚’æ›¸ãè¾¼ã¿
 			m_slashRecorder->setGoal(
 				targetX - m_characterAction->getCharacter()->getCenterX(),
 				targetY - m_characterAction->getCharacter()->getCenterY()
@@ -440,7 +440,7 @@ Object* NormalController::slashAttack() {
 		order = m_brain->slashOrder();
 	}
 
-	// ‹ß‹——£UŒ‚‚Ì–½—ß‚ª‚³‚ê‚½‚©A‚µ‚½Œã‚Å¡‚ªUŒ‚ƒ^ƒCƒ~ƒ“ƒO‚È‚ç
+	// è¿‘è·é›¢æ”»æ’ƒã®å‘½ä»¤ãŒã•ã‚ŒãŸã‹ã€ã—ãŸå¾Œã§ä»ŠãŒæ”»æ’ƒã‚¿ã‚¤ãƒŸãƒ³ã‚°ãªã‚‰
 	if (order == 1 || m_characterAction->getSlashCnt() > 0) {
 		return m_characterAction->slashAttack(targetX, targetY);
 	}

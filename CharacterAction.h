@@ -11,107 +11,122 @@ class Object;
 class SoundPlayer;
 
 
-// ƒLƒƒƒ‰ƒNƒ^[‚Ìó‘Ô
+// ã‚­ãƒ£ãƒ©ã‚¯ã‚¿ãƒ¼ã®çŠ¶æ…‹
 enum class CHARACTER_STATE {
-	STAND,	// ‰½‚à‚µ‚Ä‚¢‚È‚¢
-	DAMAGE,	// ƒ_ƒ[ƒWó‚¯’† ’…’n‚Å‰ğœ
-	BULLET,	// ËŒ‚’†
-	SLASH,	// aŒ‚’†
-	PREJUMP,	// ƒWƒƒƒ“ƒv‘O
+	STAND,	// ä½•ã‚‚ã—ã¦ã„ãªã„
+	DAMAGE,	// ãƒ€ãƒ¡ãƒ¼ã‚¸å—ã‘ä¸­ ç€åœ°ã§è§£é™¤
+	PREJUMP,	// ã‚¸ãƒ£ãƒ³ãƒ—å‰
+	SQUAT,	// ã—ã‚ƒãŒã¿çŠ¶æ…‹
+	INIT,	// ãƒœã‚¹ã®åˆæœŸã‚¢ãƒ‹ãƒ¡ãƒ¼ã‚·ãƒ§ãƒ³
 };
 
 
 /*
-* ƒLƒƒƒ‰ƒNƒ^[‚ğ“®‚©‚·ƒNƒ‰ƒX
-* Controller‚ªg—p‚·‚éB‚»‚êˆÈŠO‚ÌƒCƒ“ƒXƒ^ƒ“ƒX‚©‚çg‚í‚ê‚é‚±‚Æ‚Í‚È‚¢B
+* ã‚­ãƒ£ãƒ©ã‚¯ã‚¿ãƒ¼ã‚’å‹•ã‹ã™ã‚¯ãƒ©ã‚¹
+* ControllerãŒä½¿ç”¨ã™ã‚‹ã€‚ãã‚Œä»¥å¤–ã®ã‚¤ãƒ³ã‚¹ã‚¿ãƒ³ã‚¹ã‹ã‚‰ä½¿ã‚ã‚Œã‚‹ã“ã¨ã¯ãªã„ã€‚
 */
 class CharacterAction {
 protected:
-	// ƒTƒEƒ“ƒhƒvƒŒƒCƒ„[
+
+	// æ™‚é–“è¨ˆæ¸¬
+	int m_cnt;
+
+	// ã‚µã‚¦ãƒ³ãƒ‰ãƒ—ãƒ¬ã‚¤ãƒ¤ãƒ¼
 	SoundPlayer* m_soundPlayer_p;
 
-	// ƒLƒƒƒ‰‚Ìó‘Ô
+	// ã‚­ãƒ£ãƒ©ã®çŠ¶æ…‹
 	CHARACTER_STATE m_state;
 
-	// “®‚©‚·ƒLƒƒƒ‰ƒNƒ^[
+	// å‹•ã‹ã™ã‚­ãƒ£ãƒ©ã‚¯ã‚¿ãƒ¼
 	Character* m_character_p;
 
-	// ‘O‚ÌƒtƒŒ[ƒ€‚ÌleftDirection
+	// å‰ã®ãƒ•ãƒ¬ãƒ¼ãƒ ã®leftDirection
 	bool m_prevLeftDirection;
 
-	// ƒLƒƒƒ‰‚Ìƒo[ƒWƒ‡ƒ“ ƒCƒxƒ“ƒg‚ÅrunSpeed‚Ì•ÏX‚µ‚½ê‡‚É‘Îˆ‚·‚é‚½‚ß
+	// ã‚­ãƒ£ãƒ©ã®ãƒãƒ¼ã‚¸ãƒ§ãƒ³ ã‚¤ãƒ™ãƒ³ãƒˆã§runSpeedã®å¤‰æ›´ã—ãŸå ´åˆã«å¯¾å‡¦ã™ã‚‹ãŸã‚
 	int m_characterVersion;
 	int m_characterMoveSpeed;
 
-	// ƒLƒƒƒ‰‚ª’n–Ê‚É‚¢‚é
+	// ã‚­ãƒ£ãƒ©ãŒåœ°é¢ã«ã„ã‚‹
 	bool m_grand;
 
-	// ‰EŒ¨‰º‚ª‚è‚Ìâ‚É‚¢‚é
+	// å³è‚©ä¸‹ãŒã‚Šã®å‚ã«ã„ã‚‹
 	bool m_grandRightSlope;
 	
-	// ¶Œ¨‰º‚ª‚è‚Ìâ‚É‚¢‚é
+	// å·¦è‚©ä¸‹ãŒã‚Šã®å‚ã«ã„ã‚‹
 	bool m_grandLeftSlope;
 
-	// ƒLƒƒƒ‰‚ª‘–‚Á‚Ä‚¢‚È‚¢‚È‚ç-1 ‚»‚¤‚Å‚È‚¢‚È‚ç‘–‚Á‚½ƒtƒŒ[ƒ€”
+	// ã‚­ãƒ£ãƒ©ãŒèµ°ã£ã¦ã„ãªã„ãªã‚‰-1 ãã†ã§ãªã„ãªã‚‰èµ°ã£ãŸãƒ•ãƒ¬ãƒ¼ãƒ æ•°
 	int m_runCnt;
 
-	// ‚µ‚á‚ª‚İ’†
-	bool m_squat;
-
-	// ƒWƒƒƒ“ƒv‘O‚Ì“®ì
+	// ã‚¸ãƒ£ãƒ³ãƒ—å‰ã®å‹•ä½œ
 	int m_preJumpCnt;
 
-	// ƒWƒƒƒ“ƒv‚Ì‚½‚ßŠÔ‚ÌÅ‘å
+	// ã‚¸ãƒ£ãƒ³ãƒ—ã®ãŸã‚æ™‚é–“ã®æœ€å¤§
 	const int PRE_JUMP_MAX = 10;
 
-	// ’…’nƒ‚[ƒVƒ‡ƒ“‚Ìc‚èŠÔ
+	// ç€åœ°ãƒ¢ãƒ¼ã‚·ãƒ§ãƒ³ã®æ®‹ã‚Šæ™‚é–“
 	int m_landCnt;
 
-	// ’…’nƒ‚[ƒVƒ‡ƒ“‚Ì‘ŠÔ
+	// ç€åœ°ãƒ¢ãƒ¼ã‚·ãƒ§ãƒ³ã®ç·æ™‚é–“
 	const int LAND_TIME = 10;
 
-	// ƒu[ƒXƒgƒAƒjƒ‚Ìc‚èŠÔ ‚Ü‚½‚Íó‚¯gó‘Ô
+	// ãƒ–ãƒ¼ã‚¹ãƒˆã‚¢ãƒ‹ãƒ¡ã®æ®‹ã‚Šæ™‚é–“ ã¾ãŸã¯å—ã‘èº«çŠ¶æ…‹
 	int m_boostCnt;
-	const int BOOST_TIME = 10;
+	const int BOOST_TIME = 30;
+	const int BOOST_SPEED = 6;
+	int m_boostDone;// 0:none 1:right 2:left
 
-	// ‚â‚ç‚êó‘Ô‚ÌŠÔ
+	// ã‚„ã‚‰ã‚ŒçŠ¶æ…‹ã®æ™‚é–“
 	const int DAMAGE_TIME = 20;
 
-	// ƒmƒbƒNƒoƒbƒN‚È‚µ‚ÌƒLƒƒƒ‰‚È‚çtrue
+	// ãƒãƒƒã‚¯ãƒãƒƒã‚¯ãªã—ã®ã‚­ãƒ£ãƒ©ãªã‚‰true
 	bool m_heavy = false;
 
-	// ˆÚ“®’†
+	// ç§»å‹•ä¸­
 	bool m_moveRight;
 	bool m_moveLeft;
 	bool m_moveUp;
 	bool m_moveDown;
 
-	// ‰Á‘¬“x
+	// åŠ é€Ÿåº¦
 	int m_vx;
 	int m_vy;
 
-	// ˆÚ“®‚ÌƒƒbƒNiƒIƒuƒWƒFƒNƒg“™‚Å“®‚¯‚È‚¢•ûŒü‚Ítruej
+	// ç§»å‹•ã®ãƒ­ãƒƒã‚¯ï¼ˆã‚ªãƒ–ã‚¸ã‚§ã‚¯ãƒˆç­‰ã§å‹•ã‘ãªã„æ–¹å‘ã¯trueï¼‰
 	bool m_rightLock;
 	bool m_leftLock;
 	bool m_upLock;
 	bool m_downLock;
 
-	// ËŒ‚—pƒJƒEƒ“ƒg
+	// å°„æ’ƒç”¨ã‚«ã‚¦ãƒ³ãƒˆ
 	int m_bulletCnt;
 
-	// aŒ‚—pƒJƒEƒ“ƒg
+	// æ–¬æ’ƒç”¨ã‚«ã‚¦ãƒ³ãƒˆ
 	int m_slashCnt;
 
-	// UŒ‚‚·‚é•ûŒü
+	// æ”»æ’ƒã™ã‚‹æ–¹å‘
 	bool m_attackLeftDirection;
 
 	int m_damageCnt;
 
-private:
-	// ƒLƒƒƒ‰‚Ì‰æ‘œ‚ğ•ÏX
+protected:
+
+	// actionã‹ã‚‰å‘¼ã³å‡ºã™
+	virtual void bulletAction();
+	virtual void slashAction();
+	virtual void damageAction();
+	virtual void otherAction();
+	virtual void moveAction();
+
+	// ã‚­ãƒ£ãƒ©ã®ç”»åƒã‚’å¤‰æ›´
 	virtual void switchHandle() = 0;
 
+	// ç”»åƒã®ã‚µã‚¤ã‚ºå¤‰æ›´ã«ã‚ˆã‚‹ä½ç½®èª¿æ•´
+	void afterChangeGraph(int beforeX1, int afterX1, int beforeY1, int afterY1, int beforeX2, int afterX2, int beforeY2, int afterY2);
+
 public:
+
 	static const char* ACTION_NAME;
 	virtual const char* getActionName() const { return this->ACTION_NAME; }
 
@@ -119,17 +134,17 @@ public:
 	CharacterAction(Character* character, SoundPlayer* soundPlayer_p);
 	virtual ~CharacterAction() {}
 
-	// ƒRƒs[ì¬
+	// ã‚³ãƒ”ãƒ¼ä½œæˆ
 	virtual CharacterAction* createCopy(std::vector<Character*> characters) = 0;
 
-	// ƒRƒs[ì¬—p
+	// ã‚³ãƒ”ãƒ¼ä½œæˆç”¨
 	void setParam(CharacterAction* action);
 
-	// ƒfƒoƒbƒO
+	// ãƒ‡ãƒãƒƒã‚°
 	void debugAction(int x, int y, int color) const;
 	virtual void debug(int x, int y, int color) const = 0;
 
-	// ƒQƒbƒ^
+	// ã‚²ãƒƒã‚¿
 	inline const Character* getCharacter() const { return m_character_p; }
 	inline CHARACTER_STATE getState() const { return m_state; }
 	inline bool getGrand() const { return m_grand; }
@@ -147,7 +162,8 @@ public:
 	inline int getPreJumpCnt() const { return m_preJumpCnt; }
 	virtual int getPreJumpMax() const { return PRE_JUMP_MAX; }
 
-	// ƒZƒbƒ^
+	// ã‚»ãƒƒã‚¿
+	inline void setCnt(int cnt) { m_cnt = cnt; }
 	void setState(CHARACTER_STATE state);
 	inline void setCharacterVersion(int version) { m_characterVersion = version; }
 	inline void setCharacterMoveSpeed(int moveSpeed) { m_characterMoveSpeed = moveSpeed; }
@@ -157,8 +173,8 @@ public:
 	void setLeftLock(bool lock);
 	void setUpLock(bool lock);
 	void setDownLock(bool lock);
-	inline void setBoost() { if(!m_grand) m_boostCnt = BOOST_TIME; }
-	inline void setSoundPlayer(SoundPlayer* soundPlayer) { m_soundPlayer_p = soundPlayer; }
+	virtual void setBoost(bool leftDirection);
+	void finishBoost();
 	inline void setGrandRightSlope(bool grand) { m_grandRightSlope = grand; }
 	inline void setGrandLeftSlope(bool grand) { m_grandLeftSlope = grand; }
 	void setRunCnt(int runCnt) { m_runCnt = runCnt; }
@@ -174,103 +190,101 @@ public:
 	void setAttackLeftDirection(bool attackLeftDirection) { m_attackLeftDirection = attackLeftDirection; }
 	void setLandCnt(int landCnt) { m_landCnt = landCnt; }
 	void setBoostCnt(int boostCnt) { m_boostCnt = boostCnt; }
+	void setBoostDone(int boostDone) { m_boostDone = boostDone; }
 	void setDamageCnt(int damageCnt) { m_damageCnt = damageCnt; }
 	void setHeavy(bool heavy) { m_heavy = heavy; }
 
-	// ¡ƒ_ƒ[ƒW‚ğó‚¯‚Ä‚¢‚Ä“®‚¯‚È‚¢
+	// ä»Šãƒ€ãƒ¡ãƒ¼ã‚¸ã‚’å—ã‘ã¦ã„ã¦å‹•ã‘ãªã„
 	inline bool damageFlag() const { return m_state == CHARACTER_STATE::DAMAGE; }
 
-	// squat==true‚È‚ç‚µ‚á‚ª‚ŞAfalse‚È‚ç—§‚Â
+	// squat==trueãªã‚‰ã—ã‚ƒãŒã‚€ã€falseãªã‚‰ç«‹ã¤
 	void setSquat(bool squat);
 
-	// ƒLƒƒƒ‰ƒNƒ^[‚ÌƒZƒbƒ^
+	// ã‚­ãƒ£ãƒ©ã‚¯ã‚¿ãƒ¼ã®ã‚»ãƒƒã‚¿
 	void setCharacterX(int x);
 	void setCharacterY(int y);
 	void setCharacterLeftDirection(bool leftDirection);
 	void setCharacterFreeze(bool freeze);
 
-	// s“®‘O‚Ìˆ— –ˆƒtƒŒ[ƒ€s‚¤
+	// è¡Œå‹•å‰ã®å‡¦ç† æ¯ãƒ•ãƒ¬ãƒ¼ãƒ è¡Œã†
 	virtual void init();
 
-	// •¨—‰‰Z –ˆƒtƒŒ[ƒ€s‚¤
-	virtual void action() = 0;
+	// ç‰©ç†æ¼”ç®— æ¯ãƒ•ãƒ¬ãƒ¼ãƒ è¡Œã†
+	virtual void action();
 
-	// ˆÚ“® ˆø”‚Í‚S•ûŒü•ª ƒLƒƒƒ‰‚É‚æ‚Á‚Ä‚ÍÎ‚ß‚ÉˆÚ“®‚Å‚«‚é‚½‚ßB
+	// ç§»å‹• å¼•æ•°ã¯ï¼”æ–¹å‘åˆ† ã‚­ãƒ£ãƒ©ã«ã‚ˆã£ã¦ã¯æ–œã‚ã«ç§»å‹•ã§ãã‚‹ãŸã‚ã€‚
 	virtual void move(bool right, bool left, bool up, bool down) = 0;
 
-	// ƒWƒƒƒ“ƒv rate%‚Ì—Í‚Å”ò‚Ñã‚ª‚éB
+	// ã‚¸ãƒ£ãƒ³ãƒ— rate%ã®åŠ›ã§é£›ã³ä¸ŠãŒã‚‹ã€‚
 	virtual void jump(int rate) = 0;
 
-	// ËŒ‚UŒ‚
+	// å°„æ’ƒæ”»æ’ƒ
 	virtual Object* bulletAttack(int gx, int gy) = 0;
 
-	// aŒ‚UŒ‚
+	// æ–¬æ’ƒæ”»æ’ƒ
 	virtual Object* slashAttack(int gx, int gy) = 0;
 
-	// ƒ_ƒ[ƒW •K—v‚É‰‚¶‚ÄƒI[ƒo[ƒ‰ƒCƒh
+	// ãƒ€ãƒ¡ãƒ¼ã‚¸ å¿…è¦ã«å¿œã˜ã¦ã‚ªãƒ¼ãƒãƒ¼ãƒ©ã‚¤ãƒ‰
 	virtual void damage(int vx, int vy, int damageValue);
 
-	// ËŒ‚ŠJn‚Ìˆ— •K—v‚É‰‚¶‚ÄƒI[ƒo[ƒ‰ƒCƒh
+	// å°„æ’ƒé–‹å§‹ã®å‡¦ç† å¿…è¦ã«å¿œã˜ã¦ã‚ªãƒ¼ãƒãƒ¼ãƒ©ã‚¤ãƒ‰
 	virtual void startBullet();
 
-	// ËŒ‚I—¹‚Ìˆ— •K—v‚É‰‚¶‚ÄƒI[ƒo[ƒ‰ƒCƒh
+	// å°„æ’ƒçµ‚äº†ã®å‡¦ç† å¿…è¦ã«å¿œã˜ã¦ã‚ªãƒ¼ãƒãƒ¼ãƒ©ã‚¤ãƒ‰
 	virtual void finishBullet();
 
-	// aŒ‚ŠJn‚Ìˆ— •K—v‚É‰‚¶‚ÄƒI[ƒo[ƒ‰ƒCƒh
+	// æ–¬æ’ƒé–‹å§‹ã®å‡¦ç† å¿…è¦ã«å¿œã˜ã¦ã‚ªãƒ¼ãƒãƒ¼ãƒ©ã‚¤ãƒ‰
 	virtual void startSlash();
 
-	// aŒ‚I—¹‚Ìˆ— •K—v‚É‰‚¶‚ÄƒI[ƒo[ƒ‰ƒCƒh
+	// æ–¬æ’ƒçµ‚äº†ã®å‡¦ç† å¿…è¦ã«å¿œã˜ã¦ã‚ªãƒ¼ãƒãƒ¼ãƒ©ã‚¤ãƒ‰
 	virtual void finishSlash();
 
-	// ¡–³“GŠÔ‚¶‚á‚È‚¢
+	// ä»Šç„¡æ•µæ™‚é–“ã˜ã‚ƒãªã„
 	bool ableDamage() const;
 
-	// ¡UŒ‚‰Â”\ó‘Ô
+	// ä»Šæ”»æ’ƒå¯èƒ½çŠ¶æ…‹
 	virtual bool ableAttack() const;
 
-	// ¡•à‚¯‚éó‘Ô
+	// ä»Šæ­©ã‘ã‚‹çŠ¶æ…‹
 	virtual bool ableWalk() const;
 
-	// •ûŒü“]Š·‰Â”\
+	// æ–¹å‘è»¢æ›å¯èƒ½ FreezeAIç”¨
 	virtual bool ableChangeDirection() const;
 
-	// •à‚«n‚ß‚é
+	// æ­©ãå§‹ã‚ã‚‹
 	void startMoveLeft();
 	void startMoveRight();
 	void startMoveUp();
 	void startMoveDown();
 
-	// •à‚­‚Ì‚ğ‚â‚ß‚é
+	// æ­©ãã®ã‚’ã‚„ã‚ã‚‹
 	void stopMoveLeft();
 	void stopMoveRight();
 	void stopMoveUp();
 	void stopMoveDown();
 
-protected:
-	// ‰æ‘œ‚ÌƒTƒCƒY•ÏX‚É‚æ‚éˆÊ’u’²®
-	void afterChangeGraph(int beforeX1, int afterX1, int beforeY1, int afterY1, int beforeX2, int afterX2, int beforeY2, int afterY2);
 };
 
 
-// ƒNƒ‰ƒX–¼‚©‚çCharacterAction‚ğì¬‚·‚éŠÖ”
+// ã‚¯ãƒ©ã‚¹åã‹ã‚‰CharacterActionã‚’ä½œæˆã™ã‚‹é–¢æ•°
 CharacterAction* createAction(const std::string actionName, Character* character, SoundPlayer* soundPlayer_p);
 
 
 /*
-* ‹ó‚ğ”ò‚Î‚È‚¢•’Ê‚Ì–_lŠÔ
+* ç©ºã‚’é£›ã°ãªã„æ™®é€šã®æ£’äººé–“
 */
 class StickAction :
 	public CharacterAction 
 {
 private:
-	// d—Í‰Á‘¬“x
+	// é‡åŠ›åŠ é€Ÿåº¦
 	const int G = 1;
 
-private:
-	// ‰¡‚Ö•à‚­ ˆø”‚Í‰E‚Æ¶‚Ì‚Q‚Â
+protected:
+	// æ¨ªã¸æ­©ã å¼•æ•°ã¯å³ã¨å·¦ã®ï¼’ã¤
 	void walk(bool right, bool left);
 
-	// ƒLƒƒƒ‰‚Ì‰æ‘œ‚ğó‘Ô(state)‚É‰‚¶‚Ä•ÏX
+	// ã‚­ãƒ£ãƒ©ã®ç”»åƒã‚’çŠ¶æ…‹(state)ã«å¿œã˜ã¦å¤‰æ›´
 	void switchHandle();
 
 public:
@@ -283,34 +297,34 @@ public:
 
 	void debug(int x, int y, int color) const;
 
-	// •¨—‰‰Z –ˆƒtƒŒ[ƒ€s‚¤
+	// ç‰©ç†æ¼”ç®— æ¯ãƒ•ãƒ¬ãƒ¼ãƒ è¡Œã†
 	void action();
 
-	// ˆÚ“® ˆø”‚Í‚S•ûŒü•ª
+	// ç§»å‹• å¼•æ•°ã¯ï¼”æ–¹å‘åˆ†
 	void move(bool right, bool left, bool up, bool down);
 
-	// ƒWƒƒƒ“ƒv cntƒtƒŒ[ƒ€–Ú
+	// ã‚¸ãƒ£ãƒ³ãƒ— cntãƒ•ãƒ¬ãƒ¼ãƒ ç›®
 	void jump(int cnt);
 
-	// ËŒ‚UŒ‚
+	// å°„æ’ƒæ”»æ’ƒ
 	Object* bulletAttack(int gx, int gy);
 
-	// aŒ‚UŒ‚
+	// æ–¬æ’ƒæ”»æ’ƒ
 	Object* slashAttack(int gx, int gy);
 };
 
 
 /*
-* ƒ”ƒ@ƒ‹ƒLƒŠƒA—pAction
+* ãƒ´ã‚¡ãƒ«ã‚­ãƒªã‚¢ç”¨Action
 */
 class ValkiriaAction :
 	public StickAction
 {
 private:
-	// ƒWƒƒƒ“ƒv‚Ì‚½‚ßŠÔ‚ÌÅ‘å
+	// ã‚¸ãƒ£ãƒ³ãƒ—ã®ãŸã‚æ™‚é–“ã®æœ€å¤§
 	const int PRE_JUMP_MAX = 30;
 
-	// aŒ‚UŒ‚‚É‚æ‚éˆÚ“®‘¬“x
+	// æ–¬æ’ƒæ”»æ’ƒã«ã‚ˆã‚‹ç§»å‹•é€Ÿåº¦
 	const int SLASH_MOVE_SPEED = 25;
 
 public:
@@ -327,26 +341,30 @@ public:
 
 	void setGrand(bool grand);
 
-	// aŒ‚ŠJn‚Ìˆ—
+	// æ–¬æ’ƒé–‹å§‹ã®å‡¦ç†
 	void startSlash();
 
-	// aŒ‚I—¹‚Ìˆ—
+	// æ–¬æ’ƒçµ‚äº†ã®å‡¦ç†
 	void finishSlash();
 
-	// ƒ_ƒ[ƒW
+	// ãƒ€ãƒ¡ãƒ¼ã‚¸
 	void damage(int vx, int vy, int damageValue);
 };
 
 
 /*
-* ‹ó‚ğ”ò‚ÔƒLƒƒƒ‰
+* ç©ºã‚’é£›ã¶ã‚­ãƒ£ãƒ©
 */
 class FlightAction :
 	public CharacterAction
 {
-private:
+protected:
 
-	// ƒLƒƒƒ‰‚Ì‰æ‘œ‚ğó‘Ô(state)‚É‰‚¶‚Ä•ÏX
+	void damageAction();
+	void otherAction();
+	void moveAction();
+
+	// ã‚­ãƒ£ãƒ©ã®ç”»åƒã‚’çŠ¶æ…‹(state)ã«å¿œã˜ã¦å¤‰æ›´
 	void switchHandle();
 
 	void walk(bool right, bool left, bool up, bool down);
@@ -361,35 +379,36 @@ public:
 
 	void debug(int x, int y, int color) const;
 
-	// •¨—‰‰Z –ˆƒtƒŒ[ƒ€s‚¤
-	void action();
-
-	// ˆÚ“® ˆø”‚Í‚S•ûŒü•ª
+	// ç§»å‹• å¼•æ•°ã¯ï¼”æ–¹å‘åˆ†
 	void move(bool right, bool left, bool up, bool down);
 
-	// ƒWƒƒƒ“ƒv cntƒtƒŒ[ƒ€–Ú
+	// ã‚¸ãƒ£ãƒ³ãƒ— cntãƒ•ãƒ¬ãƒ¼ãƒ ç›®
 	void jump(int cnt);
 
-	// ËŒ‚UŒ‚
+	void setBoost(bool leftDirection);
+
+	// å°„æ’ƒæ”»æ’ƒ
 	Object* bulletAttack(int gx, int gy);
 
-	// aŒ‚UŒ‚
+	// æ–¬æ’ƒæ”»æ’ƒ
 	Object* slashAttack(int gx, int gy);
+
 };
 
 
 /*
-* ƒRƒnƒ‹—pAction
+* ã‚³ãƒãƒ«ç”¨Action
 */
 class KoharuAction :
 	public StickAction
 {
 private:
 
-	// ËŒ‚UŒ‚‚É‚æ‚éˆÚ“®‘¬“x
+	// å°„æ’ƒæ”»æ’ƒã«ã‚ˆã‚‹ç§»å‹•é€Ÿåº¦
 	const int BULLET_MOVE_SPEED = 2;
 
 public:
+
 	static const char* ACTION_NAME;
 	const char* getActionName() const { return this->ACTION_NAME; }
 
@@ -399,7 +418,7 @@ public:
 
 	void debug(int x, int y, int color) const;
 
-	// ËŒ‚UŒ‚
+	// å°„æ’ƒæ”»æ’ƒ
 	Object* bulletAttack(int gx, int gy);
 
 	void startBullet();
@@ -409,6 +428,119 @@ public:
 	bool ableAttack() const;
 
 	bool ableWalk() const;
+
+};
+
+
+class BossFreezeAction :
+	public CharacterAction
+{
+protected:
+
+	// ã‚­ãƒ£ãƒ©ã®ç”»åƒã‚’å¤‰æ›´
+	void switchHandle();
+
+public:
+
+	static const char* ACTION_NAME;
+	virtual const char* getActionName() const { return this->ACTION_NAME; }
+
+	BossFreezeAction(Character* character, SoundPlayer* soundPlayer_p);
+
+	// ã‚³ãƒ”ãƒ¼ä½œæˆ
+	CharacterAction* createCopy(std::vector<Character*> characters);
+
+	// ãƒ‡ãƒãƒƒã‚°
+	void debug(int x, int y, int color) const { }
+	// è¡Œå‹•å‰ã®å‡¦ç† æ¯ãƒ•ãƒ¬ãƒ¼ãƒ è¡Œã†
+	void init() { }
+
+	// ç‰©ç†æ¼”ç®— æ¯ãƒ•ãƒ¬ãƒ¼ãƒ è¡Œã†
+	void action() { switchHandle(); }
+
+	// ç§»å‹• å¼•æ•°ã¯ï¼”æ–¹å‘åˆ† ã‚­ãƒ£ãƒ©ã«ã‚ˆã£ã¦ã¯æ–œã‚ã«ç§»å‹•ã§ãã‚‹ãŸã‚ã€‚
+	void move(bool right, bool left, bool up, bool down) { }
+
+	// ã‚¸ãƒ£ãƒ³ãƒ— rate%ã®åŠ›ã§é£›ã³ä¸ŠãŒã‚‹ã€‚
+	void jump(int rate) { }
+
+	// å°„æ’ƒæ”»æ’ƒ
+	Object* bulletAttack(int gx, int gy) { return nullptr; }
+
+	// æ–¬æ’ƒæ”»æ’ƒ
+	Object* slashAttack(int gx, int gy) { return nullptr; }
+
+	// ãƒ€ãƒ¡ãƒ¼ã‚¸ å¿…è¦ã«å¿œã˜ã¦ã‚ªãƒ¼ãƒãƒ¼ãƒ©ã‚¤ãƒ‰
+	void damage(int vx, int vy, int damageValue) { }
+
+	// å°„æ’ƒé–‹å§‹ã®å‡¦ç† å¿…è¦ã«å¿œã˜ã¦ã‚ªãƒ¼ãƒãƒ¼ãƒ©ã‚¤ãƒ‰
+	void startBullet() { }
+
+	// å°„æ’ƒçµ‚äº†ã®å‡¦ç† å¿…è¦ã«å¿œã˜ã¦ã‚ªãƒ¼ãƒãƒ¼ãƒ©ã‚¤ãƒ‰
+	void finishBullet() { }
+
+	// æ–¬æ’ƒé–‹å§‹ã®å‡¦ç† å¿…è¦ã«å¿œã˜ã¦ã‚ªãƒ¼ãƒãƒ¼ãƒ©ã‚¤ãƒ‰
+	void startSlash() { }
+
+	// æ–¬æ’ƒçµ‚äº†ã®å‡¦ç† å¿…è¦ã«å¿œã˜ã¦ã‚ªãƒ¼ãƒãƒ¼ãƒ©ã‚¤ãƒ‰
+	void finishSlash() { }
+
+	// ä»Šç„¡æ•µæ™‚é–“ã˜ã‚ƒãªã„
+	bool ableDamage() const { return false; }
+
+	// ä»Šæ”»æ’ƒå¯èƒ½çŠ¶æ…‹
+	bool ableAttack() const { return false; }
+
+	// ä»Šæ­©ã‘ã‚‹çŠ¶æ…‹
+	bool ableWalk() const { return false; }
+
+	// æ–¹å‘è»¢æ›å¯èƒ½ FreezeAIç”¨
+	bool ableChangeDirection() const { return false; }
+
+};
+
+
+/*
+* Boss1: ã‚µãƒ³
+*/
+class SunAction :
+	public FlightAction
+{
+private:
+
+	// ãƒœã‚¹ã®åˆæœŸã‚¢ãƒ‹ãƒ¡ãƒ¼ã‚·ãƒ§ãƒ³ã‚«ã‚¦ãƒ³ãƒˆç”¨
+	int m_initCnt;
+	const int NOT_HIDE_CNT = 80;
+
+	// åˆæœŸä½“åŠ›
+	int m_initHp;
+
+	// ç„¡æ•µçŠ¶æ…‹
+	bool m_hideFlag;
+
+	int m_startAnimeCnt;
+
+public:
+	static const char* ACTION_NAME;
+	const char* getActionName() const { return this->ACTION_NAME; }
+
+	SunAction(Character* character, SoundPlayer* soundPlayer_p, bool duplicationFlag);
+
+	CharacterAction* createCopy(std::vector<Character*> characters);
+
+	// ã‚»ãƒƒã‚¿
+	inline void setInitCnt(int initCnt) { m_initCnt = initCnt; }
+	inline void setInitHp(int initHp) { m_initHp = initHp; }
+	inline void setHideFlag(int hideFlag) { m_hideFlag = hideFlag; }
+	inline void setStartAnimeCnt(int startAnimeCnt) { m_startAnimeCnt = startAnimeCnt; }
+
+	void action();
+
+protected:
+
+	// çŠ¶æ…‹ã«å¿œã˜ã¦ç”»åƒã‚»ãƒƒãƒˆ
+	void switchHandle();
+
 };
 
 
