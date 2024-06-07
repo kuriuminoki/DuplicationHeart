@@ -256,6 +256,9 @@ public:
 	// プレイヤーのHPが0ならtrue
 	bool playerDead();
 
+	// 今操作しているキャラがハートか
+	std::string getControlCharacterName() const;
+
 	// プレイヤーのHPをMAXにする
 	void playerHpReset();
 

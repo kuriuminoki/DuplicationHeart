@@ -731,15 +731,12 @@ bool Game::afterSkillUsableStoryNum() const {
 
 // スキル発動可能かチェック
 bool Game::skillUsable() {
-	if (TEST_MODE) {
-		return true;
-	}
 	// スキル発動 Fキーかつスキル未発動状態かつ発動可能なイベント中（もしくはイベント中でない）かつエリア移動中でない
-	if (afterSkillUsableStoryNum()) { // ストーリーの最初は発動できない
+	if (afterSkillUsableStoryNum() || TEST_MODE) { // ストーリーの最初は発動できない
 		if (m_skill == nullptr) { // スキル未発動時
 			if (m_story->skillAble() && m_world->getBrightValue() == 255) { // 特定のイベント時やエリア移動中はダメ
 				Character* character = m_world->getCharacterWithName("ハート");
-				if (character->getHp() > 0 && character->getSkillGage() == character->getMaxSkillGage()) {
+				if (character->getHp() > 0 && character->getSkillGage() == character->getMaxSkillGage() && m_world->getControlCharacterName() == "ハート") {
 					character->setSkillGage(0);
 					return true;
 				}

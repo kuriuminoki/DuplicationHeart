@@ -458,6 +458,11 @@ bool World::playerDead() {
 	return m_player_p->getHp() <= 0;
 }
 
+// 今操作しているキャラの名前
+string World::getControlCharacterName() const {
+	return m_playerChanger->getNowPlayer()->getCharacterInfo()->name();
+}
+
 // プレイヤーのHPをMAXにする
 void World::playerHpReset() {
 	m_player_p->setHp(m_player_p->getMaxHp());
@@ -798,7 +803,9 @@ void World::battle() {
 	updateAnimation();
 
 	// キャラ変更
-	changePlayer(m_playerChanger->play(m_soundPlayer_p, m_characterControllers));
+	if (!m_duplicationFlag && !m_skillFlag) {
+		changePlayer(m_playerChanger->play(m_soundPlayer_p, m_characterControllers));
+	}
 
 }
 
