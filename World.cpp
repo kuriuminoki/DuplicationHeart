@@ -210,6 +210,7 @@ World::World(int fromAreaNum, int toAreaNum, SoundPlayer* soundPlayer) :
 	m_characterDeadSound = LoadSoundMem("sound/battle/dead.wav");
 	m_bombSound = LoadSoundMem("sound/battle/bomb.wav");
 	m_doorSound = LoadSoundMem("sound/battle/door.wav");
+	m_characterChangeSound = LoadSoundMem("sound/battle/characterChange.mp3");
 	m_cameraInSound = LoadSoundMem("sound/battle/cameraIn.mp3");
 	m_cameraOutSound = LoadSoundMem("sound/battle/cameraOut.mp3");
 
@@ -324,6 +325,7 @@ World::~World() {
 		DeleteSoundMem(m_characterDeadSound);
 		DeleteSoundMem(m_bombSound);
 		DeleteSoundMem(m_doorSound);
+		DeleteSoundMem(m_characterChangeSound);
 		DeleteSoundMem(m_cameraInSound);
 		DeleteSoundMem(m_cameraOutSound);
 	}
@@ -706,6 +708,9 @@ void World::changePlayer(const Character* nextPlayer) {
 		return;
 	}
 
+	// 効果音
+	m_soundPlayer_p->pushSoundQueue(m_characterChangeSound);
+
 	// 今操作中のキャラをNPCに変更(Brainを戻す)
 	for (unsigned int i = 0; i < m_characterControllers.size(); i++) {
 		if (m_characterControllers[i]->getAction()->getCharacter()->getId() == m_playerChanger->getNowPlayer()->getId()) {
@@ -1005,6 +1010,15 @@ void World::controlObject() {
 
 // Battle：アイテムの動き
 void World::controlItem() {
+
+	Character* targetCharacter = nullptr;
+	for (unsigned int i = 0; i < m_characters.size(); i++) {
+		if (m_characters[i]->getId() == m_playerChanger->getNowPlayer()->getId()) { 
+			targetCharacter = m_characters[i];
+			break;
+		}
+	}
+
 	for (unsigned int i = 0; i < m_itemVector.size(); i++) {
 		// 取得済み
 		if (m_itemVector[i]->getDeleteFlag()) {
@@ -1033,11 +1047,12 @@ void World::controlItem() {
 			m_itemVector[i]->setVy(vy);
 		}
 		// キャラとの当たり判定
-		if (m_itemVector[i]->atariCharacter(m_player_p)) {
+		if (targetCharacter != nullptr && m_itemVector[i]->atariCharacter(targetCharacter)) {
 			m_soundPlayer_p->pushSoundQueue(m_itemVector[i]->getSound());
 			// ここでお金をWorldに反映
-			m_money = min(m_money + m_player_p->getMoney(), MAX_MONEY);
-			m_player_p->setMoney(0);
+			m_money = min(m_money + targetCharacter->getMoney(), MAX_MONEY);
+			targetCharacter->setMoney(0);
+			break;
 		}
 		// 動き
 		m_itemVector[i]->action();

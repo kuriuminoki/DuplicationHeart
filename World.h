@@ -155,6 +155,9 @@ private:
 	// ドアに入った時の効果音
 	int m_doorSound;
 
+	// キャラ切り替え時の効果音
+	int m_characterChangeSound;
+
 	// カメラのズームイン・アウトの効果音
 	int m_cameraInSound;
 	int m_cameraOutSound;
@@ -210,6 +213,7 @@ public:
 	inline int getCharacterDeadSound() const { return m_characterDeadSound; }
 	inline int getBombSound() const { return m_bombSound; }
 	inline int getDoorSound() const { return m_doorSound; }
+	inline int getCharacterChangeSound() const { return m_characterChangeSound; }
 	inline bool getSkillFlag() const { return m_skillFlag; }
 	inline int getBossDeadEffextCnt() const { return m_bossDeadEffectCnt; }
 	inline int getMoney() const { return m_money; }
