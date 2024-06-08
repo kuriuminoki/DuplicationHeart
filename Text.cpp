@@ -1,5 +1,6 @@
 #include "Text.h"
 #include "Animation.h"
+#include "Button.h"
 #include "World.h"
 #include "GraphHandle.h"
 #include "Control.h"
@@ -111,10 +112,18 @@ void TextAction::play() {
 */
 Conversation::Conversation(int textNum, World* world, SoundPlayer* soundPlayer) {
 
+	double exX = 0, exY = 0;
+	getGameEx(exX, exY);
+
 	m_finishCnt = 0;
 	m_skipCnt = 0;
 	m_startCnt = FINISH_COUNT;
 	m_finishFlag = false;
+	m_if = false;
+	m_font = CreateFontToHandle(nullptr, (int)(50 * exX), 3);
+	m_yesButton = new Button("はい", (int)(400 * exX), (int)(800 * exY), (int)(200 * exX), (int)(100 * exY), LIGHT_BLUE, BLUE, m_font, BLACK);
+	m_noButton = new Button("いいえ", (int)(700 * exX), (int)(800 * exY), (int)(200 * exX), (int)(100 * exY), LIGHT_BLUE, BLUE, m_font, BLACK);
+	m_selectFlag = false;
 	m_world_p = world;
 	m_soundPlayer_p = soundPlayer;
 	m_speakerName = "ハート";
@@ -139,9 +148,6 @@ Conversation::Conversation(int textNum, World* world, SoundPlayer* soundPlayer) 
 	oss << "data/text/text" << textNum << ".txt";
 	m_fp = FileRead_open(oss.str().c_str());
 
-	double exX = 0, exY = 0;
-	getGameEx(exX, exY);
-
 	// クリックエフェクト
 	m_clickGraph = new GraphHandles("picture/system/clickEffect", 4, 0.5 * exX, 0, true);
 
@@ -151,6 +157,9 @@ Conversation::Conversation(int textNum, World* world, SoundPlayer* soundPlayer) 
 }
 
 Conversation::~Conversation() {
+	DeleteFontToHandle(m_font);
+	delete m_yesButton;
+	delete m_noButton;
 	// 効果音削除
 	DeleteSoundMem(m_displaySound);
 	DeleteSoundMem(m_nextSound);
@@ -275,7 +284,19 @@ bool Conversation::play() {
 
 	// プレイヤーからのアクション（スペースキー入力）
 	if (leftClick() == 1 && m_cnt > MOVE_FINAL_ABLE) {
-		if (finishText() && m_cnt > NEXT_TEXT_ABLE) {
+		if (m_selectFlag) {
+			int mouseX, mouseY;
+			GetMousePoint(&mouseX, &mouseY);
+			if (m_yesButton->overlap(mouseX, mouseY)) {
+				m_marks.push_back("yesSelect");
+				m_selectFlag = false;
+			}
+			else if (m_noButton->overlap(mouseX, mouseY)) {
+				m_marks.push_back("noSelect");
+				m_selectFlag = false;
+			}
+		}
+		if (!m_selectFlag && finishText() && m_cnt > NEXT_TEXT_ABLE) {
 			// アニメーションのリセット
 			m_textAction.init();
 			// 全ての会話が終わった
@@ -325,10 +346,23 @@ void Conversation::loadNextBlock() {
 	// ブロックの1行目
 	string str = "";
 	while (FileRead_eof(m_fp) == 0) {
-		// 空行以外が来るまでループ
 		FileRead_gets(buff, size, m_fp);
 		str = buff;
+
+		// ifブロック内なら@endifまでループ
+		if (m_if) { 
+			if (str == "@endif") {
+				m_if = false;
+			}
+			continue;
+		}
+		
+		// 空行以外が来るまでループ
 		if (str != "") { break; }
+	}
+	if (str == "") { 
+		m_finishCnt++;
+		return;
 	}
 	if (str == "@eventStart" || str == "@eventPic" || str == "@eventToDark" || str == "@eventToClear") {
 		// 挿絵の始まり
@@ -393,6 +427,47 @@ void Conversation::loadNextBlock() {
 		FileRead_gets(buff, size, m_fp);
 		m_originalBgmPath = "sound/";
 		m_originalBgmPath += buff;
+		loadNextBlock();
+	}
+	else if (str == "@select") {
+		// Yes, Noの選択をさせNoなら終了
+		m_selectFlag = true;
+		loadNextBlock();
+	}
+	else if (str == "@cure") {
+		// ＨＰを回復
+		FileRead_gets(buff, size, m_fp);
+		string s = buff;
+		int cure = stoi(s);
+		m_world_p->cureHpOfHearts(cure);
+		loadNextBlock();
+	}
+	else if (str == "@money") {
+		// 所持金の変動
+		FileRead_gets(buff, size, m_fp);
+		string s = buff;
+		int money = stoi(s);
+		if (m_world_p->getMoney() + money < 0) {
+			m_marks.push_back("noMoney");
+		}
+		else {
+			m_marks.push_back("haveMoney");
+			m_world_p->setMoney(m_world_p->getMoney() + money);
+		}
+		loadNextBlock();
+	}
+	else if (str == "@if") {
+		FileRead_gets(buff, size, m_fp);
+		m_if = true;
+		for (unsigned int i = 0; i < m_marks.size(); i++) {
+			if (m_marks[i] == buff) {
+				m_if = false;
+			}
+		}
+		loadNextBlock();
+	}
+	else if (str == "@endif") {
+		// ミスで余分に@endifが書かれているだけ。無視する
 		loadNextBlock();
 	}
 	else if (str == "@startCnt") {
