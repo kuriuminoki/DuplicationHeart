@@ -44,6 +44,7 @@ Event::Event(int eventNum, World* world, SoundPlayer* soundPlayer, int version) 
 	m_world_p = world;
 	m_soundPlayer_p = soundPlayer;
 	m_version = version;
+	m_backPrevSave = 0;
 
 	ostringstream oss;
 	oss << "data/event/event" << m_eventNum << ".csv";

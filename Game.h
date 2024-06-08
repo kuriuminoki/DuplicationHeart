@@ -387,6 +387,9 @@ public:
 
 private:
 
+	// ƒXƒLƒ‹‚ÌI—¹
+	void endSkill();
+
 	bool skillUsable();
 
 };

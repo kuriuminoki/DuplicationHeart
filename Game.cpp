@@ -654,10 +654,7 @@ bool Game::play() {
 	}
 	else if (m_skill != nullptr) { // スキル発動中で、最後のループ中
 		if (m_skill->play()) {
-			// スキル終了
-			delete m_skill;
-			m_skill = nullptr;
-			m_world->setSkillFlag(false);
+			endSkill();
 		}
 	}
 
@@ -673,6 +670,7 @@ bool Game::play() {
 	// 前のセーブポイントへ戻ることが要求された
 	int prevStoryNum = m_story->getBackPrevSave();
 	if (prevStoryNum > 0) {
+		endSkill();
 		backPrevSave(prevStoryNum - 1);
 		m_story->doneBackPrevSave();
 		return true;
@@ -728,6 +726,15 @@ bool Game::ableDraw() {
 // スキル発動できるところまでストーリーが進んでいるか
 bool Game::afterSkillUsableStoryNum() const {
 	return m_gameData->getStoryNum() >= SKILL_USEABLE_STORY;
+}
+
+// スキル終了
+void Game::endSkill() {
+	if (m_skill != nullptr) {
+		delete m_skill;
+		m_skill = nullptr;
+		m_world->setSkillFlag(false);
+	}
 }
 
 // スキル発動可能かチェック
