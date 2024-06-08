@@ -5,6 +5,7 @@
 #include "Control.h"
 #include "Brain.h"
 #include "ControllerRecorder.h"
+#include "Sound.h"
 #include "Define.h"
 #include "DxLib.h"
 #include <algorithm>
@@ -170,6 +171,9 @@ void CharacterController::setActionUpLock(bool lock) {
 void CharacterController::setActionDownLock(bool lock) {
 	m_characterAction->setDownLock(lock);
 }
+void CharacterController::setActionSound(SoundPlayer* soundPlayer) {
+	m_characterAction->setSoundPlayer(soundPlayer);
+}
 
 // キャラクターのセッタ
 void CharacterController::setCharacterX(int x) {
@@ -188,13 +192,23 @@ void CharacterController::init() {
 }
 
 // 攻撃対象を変更
-void CharacterController::searchTargetCandidate(Character* character) {
+void CharacterController::searchTargetCandidate(const Character* character) {
 	m_brain->searchTarget(character);
 }
 
 // 追跡対象を変更
-void CharacterController::searchFollowCandidate(Character* character) {
+void CharacterController::searchFollowCandidate(const Character* character) {
 	m_brain->searchFollow(character);
+}
+
+// 攻撃対象を強制変更
+void CharacterController::setBrainTarget(const Character* character) {
+	m_brain->setTarget(character);
+}
+
+// 追跡対象を強制変更
+void CharacterController::setBrainFollow(const Character* character) {
+	m_brain->setFollow(character);
 }
 
 // 行動の結果反映

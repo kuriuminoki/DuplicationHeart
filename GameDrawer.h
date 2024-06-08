@@ -18,6 +18,10 @@ private:
 	const int SKILL_SIZE = 100;
 	int m_skillHandle;
 
+	// スキルの情報の枠
+	int m_skillInfoHandle;
+	int m_skillInfoBackHandle;
+
 	// ゲームオーバーの画像
 	int m_gameoverHandle;
 

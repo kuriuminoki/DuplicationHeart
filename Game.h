@@ -268,6 +268,11 @@ public:
 
 // ハートのスキル
 class HeartSkill {
+public:
+
+	// 何秒間か
+	const int DUPLICATION_TIME = 600;
+
 private:
 	// 複製の数
 	int m_loopNum;
@@ -280,9 +285,6 @@ private:
 
 	// 複製
 	World* m_duplicationWorld;
-
-	// 何秒間か
-	const int DUPLICATION_TIME = 600;
 
 	// DUPLICATION_TIMEまでカウントする
 	int m_cnt;
@@ -304,6 +306,7 @@ public:
 	inline int getLoopNum() const { return m_loopNum; }
 	inline int getLoopNow() const { return m_loopNow; }
 	inline World* getWorld() const { return m_loopNow < m_loopNum ? m_duplicationWorld : m_world_p; }
+	inline int getOriginalCnt() const { return m_cnt; }
 	inline double getCnt() const { return ((double)DUPLICATION_TIME / 60.0) - ((double)m_cnt / 60.0); }
 
 	// スキル進行中 スキル終了時にtrue
@@ -383,6 +386,9 @@ public:
 	bool afterSkillUsableStoryNum() const;
 
 private:
+
+	// スキルの終了
+	void endSkill();
 
 	bool skillUsable();
 

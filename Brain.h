@@ -80,7 +80,8 @@ public:
 	virtual const char* getFollowName() const { return ""; }
 	virtual const Character* getFollow() const { return nullptr; }
 
-	virtual void setTarget(Character* character) {  }
+	virtual void setFollow(const Character* character){  }
+	virtual void setTarget(const Character* character) {  }
 
 	// 追跡対象の近くにいるか判定
 	virtual bool checkAlreadyFollow() { return true; }
@@ -220,7 +221,7 @@ public:
 	void setGx(int gx) { m_gx = gx; }
 	void setGy(int gy) { m_gy = gy; }
 	void setMoveCnt(int cnt) { m_moveCnt = cnt; }
-	void setTarget(Character* character) { m_target_p = character; }
+	void setTarget(const Character* character) { m_target_p = character; }
 	void setCharacterAction(const CharacterAction* characterAction);
 
 	void bulletTargetPoint(int& x, int& y);
@@ -281,7 +282,7 @@ public:
 	const Character* getFollow() const;
 
 	// 追跡対象をセット
-	void setFollow(Character* character) { m_follow_p = character; }
+	void setFollow(const Character* character) { m_follow_p = character; }
 
 	// 移動の目標地点設定
 	void moveOrder(int& right, int& left, int& up, int& down);

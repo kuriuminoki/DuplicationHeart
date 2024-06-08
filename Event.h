@@ -60,7 +60,7 @@ public:
 	virtual EVENT_RESULT play() = 0;
 
 	// ハートのスキル発動が可能かどうか
-	virtual bool skillAble() { return true; }
+	virtual bool skillAble() { return false; }
 
 	// クリア時に前のセーブポイントへ戻る必要があるか
 	virtual int needBackPrevSave() { return 0; }
@@ -245,6 +245,25 @@ public:
 
 };
 
+
+// 操作キャラ変更を禁止する
+class LockControlCharacterEvent :
+	public EventElement
+{
+private:
+
+	// 禁止ならtrue
+	bool m_lock;
+
+public:
+	LockControlCharacterEvent(World* world, std::vector<std::string> param);
+
+	// プレイ
+	EVENT_RESULT play();
+
+};
+
+
 // キャラを無敵にする
 class InvincibleEvent :
 	public EventElement
@@ -265,9 +284,6 @@ public:
 
 	// プレイ
 	EVENT_RESULT play();
-
-	// ハートのスキル発動が可能かどうか
-	bool skillAble() { return false; }
 
 	// 世界を設定しなおす
 	void setWorld(World* world);
@@ -294,9 +310,6 @@ public:
 	// プレイ
 	EVENT_RESULT play();
 
-	// ハートのスキル発動が可能かどうか
-	bool skillAble() { return false; }
-
 	// 世界を設定しなおす
 	void setWorld(World* world);
 };
@@ -315,9 +328,6 @@ public:
 
 	// プレイ
 	EVENT_RESULT play();
-
-	// ハートのスキル発動が可能かどうか
-	bool skillAble() { return false; }
 
 };
 
@@ -341,9 +351,6 @@ public:
 
 	// プレイ
 	EVENT_RESULT play();
-
-	// ハートのスキル発動が可能かどうか
-	bool skillAble() { return false; }
 
 	// 世界を設定しなおす
 	void setWorld(World* world);
@@ -370,9 +377,6 @@ public:
 	// プレイ
 	EVENT_RESULT play();
 
-	// ハートのスキル発動が可能かどうか
-	bool skillAble() { return false; }
-
 	// 世界を設定しなおす
 	void setWorld(World* world);
 };
@@ -396,9 +400,6 @@ public:
 
 	// プレイ
 	EVENT_RESULT play();
-
-	// ハートのスキル発動が可能かどうか
-	bool skillAble() { return false; }
 
 	// 世界を設定しなおす
 	void setWorld(World* world);
@@ -424,9 +425,6 @@ public:
 	// プレイ
 	EVENT_RESULT play();
 
-	// ハートのスキル発動が可能かどうか
-	bool skillAble() { return false; }
-
 	// 世界を設定しなおす
 	void setWorld(World* world);
 };
@@ -451,9 +449,6 @@ public:
 	// プレイ
 	EVENT_RESULT play();
 
-	// ハートのスキル発動が可能かどうか
-	bool skillAble() { return false; }
-
 	// 世界を設定しなおす
 	void setWorld(World* world);
 };
@@ -477,9 +472,6 @@ public:
 
 	// プレイ
 	EVENT_RESULT play();
-
-	// ハートのスキル発動が可能かどうか
-	bool skillAble() { return false; }
 
 	// 世界を設定しなおす
 	void setWorld(World* world);
@@ -509,9 +501,6 @@ public:
 	// プレイ
 	EVENT_RESULT play();
 
-	// ハートのスキル発動が可能かどうか
-	bool skillAble() { return false; }
-
 	// 世界を設定しなおす
 	void setWorld(World* world);
 };
@@ -536,6 +525,9 @@ public:
 
 	// 世界を設定しなおす
 	void setWorld(World* world);
+
+	// ハートのスキル発動が可能かどうか
+	bool skillAble() { return true; }
 };
 
 // 特定のグループが全滅するまで戦う
@@ -555,6 +547,9 @@ public:
 
 	// プレイ
 	EVENT_RESULT play();
+
+	// ハートのスキル発動が可能かどうか
+	bool skillAble() { return true; }
 };
 
 // 会話イベント
@@ -571,9 +566,6 @@ public:
 
 	// プレイ
 	EVENT_RESULT play();
-
-	// ハートのスキル発動が可能かどうか
-	bool skillAble() { return false; }
 
 	// セッタ
 	void setWorld(World* world);
@@ -596,9 +588,6 @@ public:
 
 	// プレイ
 	EVENT_RESULT play();
-
-	// ハートのスキル発動が可能かどうか
-	bool skillAble() { return false; }
 };
 
 // 特定のエリアでプレイヤーがやられるイベント
@@ -619,6 +608,9 @@ public:
 
 	// クリア時に前のセーブポイントへ戻る必要があるか
 	int needBackPrevSave() { return m_backPrevSave; }
+
+	// ハートのスキル発動が可能かどうか
+	bool skillAble() { return true; }
 };
 
 // 特定のエリアへ強制的に移動する
@@ -634,9 +626,6 @@ public:
 
 	// プレイ
 	EVENT_RESULT play();
-
-	// ハートのスキル発動が可能かどうか
-	bool skillAble() { return false; }
 };
 
 // 世界の描画をする・しない
@@ -652,9 +641,22 @@ public:
 
 	// プレイ
 	EVENT_RESULT play();
+};
 
-	// ハートのスキル発動が可能かどうか
-	bool skillAble() { return false; }
+class ChangeControlCharacterEvent :
+	public EventElement
+{
+private:
+
+	// 変更先のキャラ名
+	std::string m_name;
+
+public:
+
+	ChangeControlCharacterEvent(World* world, std::vector<std::string> param);
+
+	// プレイ
+	EVENT_RESULT play();
 };
 
 // キャラの追加
@@ -678,9 +680,6 @@ public:
 
 	// プレイ
 	EVENT_RESULT play();
-
-	// ハートのスキル発動が可能かどうか
-	bool skillAble() { return false; }
 };
 
 // 待機
@@ -694,9 +693,6 @@ public:
 
 	// プレイ
 	EVENT_RESULT play();
-
-	// ハートのスキル発動が可能かどうか
-	bool skillAble() { return false; }
 };
 
 // スキル発動まで戦闘を続けるイベント
@@ -712,6 +708,9 @@ public:
 
 	// プレイ
 	EVENT_RESULT play();
+
+	// ハートのスキル発動が可能かどうか
+	bool skillAble() { return true; }
 };
 
 class SetBgmEvent :
@@ -725,10 +724,6 @@ public:
 
 	// プレイ
 	EVENT_RESULT play();
-
-	// ハートのスキル発動が可能かどうか
-	bool skillAble() { return false; }
-
 };
 
 // 永遠にbattle テスト用
@@ -740,6 +735,9 @@ public:
 
 	// プレイ
 	EVENT_RESULT play();
+
+	// ハートのスキル発動が可能かどうか
+	bool skillAble() { return true; }
 };
 
 #endif

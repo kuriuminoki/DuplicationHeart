@@ -118,6 +118,7 @@ void Story::loadCsvData(const char* fileName, World* world, SoundPlayer* soundPl
 			oss << "data/story/version" << m_version << ".csv";
 			loadCsvData(oss.str().c_str(), world, soundPlayer);
 		}
+		m_loop = stoi(versionData[0]["loop"]);
 	}
 
 	// Story‚Ì‰Šúó‘Ô

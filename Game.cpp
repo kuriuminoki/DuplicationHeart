@@ -21,7 +21,7 @@ using namespace std;
 
 
 // どこまで
-const int FINISH_STORY = 21;
+const int FINISH_STORY = 22;
 // エリア0でデバッグするときはtrueにする
 const bool TEST_MODE = false;
 // スキルが発動可能になるストーリー番号
@@ -609,7 +609,7 @@ bool Game::play() {
 	// スキル発動
 	if (controlF() == 1 && skillUsable()) {
 		m_world->setSkillFlag(true);
-		m_skill = new HeartSkill(1, m_world, m_soundPlayer);
+		m_skill = new HeartSkill(m_story->getLoop(), m_world, m_soundPlayer);
 	}
 
 	// これ以上ストーリーを進ませない（テスト用）
@@ -654,10 +654,7 @@ bool Game::play() {
 	}
 	else if (m_skill != nullptr) { // スキル発動中で、最後のループ中
 		if (m_skill->play()) {
-			// スキル終了
-			delete m_skill;
-			m_skill = nullptr;
-			m_world->setSkillFlag(false);
+			endSkill();
 		}
 	}
 
@@ -673,6 +670,7 @@ bool Game::play() {
 	// 前のセーブポイントへ戻ることが要求された
 	int prevStoryNum = m_story->getBackPrevSave();
 	if (prevStoryNum > 0) {
+		endSkill();
 		backPrevSave(prevStoryNum - 1);
 		m_story->doneBackPrevSave();
 		return true;
@@ -685,6 +683,7 @@ bool Game::play() {
 	}
 	// エリア移動
 	else if (m_world->getBrightValue() == 0 && CheckSoundMem(m_world->getDoorSound()) == 0) {
+		m_world->changePlayer(m_world->getCharacterWithName("ハート"));
 		int fromAreaNum = m_world->getAreaNum();
 		int toAreaNum = m_world->getNextAreaNum();
 		m_gameData->asignedWorld(m_world, false);
@@ -729,23 +728,39 @@ bool Game::afterSkillUsableStoryNum() const {
 	return m_gameData->getStoryNum() >= SKILL_USEABLE_STORY;
 }
 
+// スキル終了
+void Game::endSkill() {
+	if (m_skill != nullptr) {
+		delete m_skill;
+		m_skill = nullptr;
+		m_world->setSkillFlag(false);
+	}
+}
+
 // スキル発動可能かチェック
 bool Game::skillUsable() {
-	if (TEST_MODE) {
-		return true;
-	}
-	// スキル発動 Fキーかつスキル未発動状態かつ発動可能なイベント中（もしくはイベント中でない）かつエリア移動中でない
-	if (afterSkillUsableStoryNum()) { // ストーリーの最初は発動できない
-		if (m_skill == nullptr) { // スキル未発動時
-			if (m_story->skillAble() && m_world->getBrightValue() == 255) { // 特定のイベント時やエリア移動中はダメ
+
+	// ストーリーの最初は発動できない
+	if (afterSkillUsableStoryNum() || TEST_MODE) { 
+		// スキル発動中、重複して発動はダメ
+		if (m_skill == nullptr) {
+			// 特定のイベント時やエリア移動中はダメ
+			if (m_story->skillAble() && 
+				m_world->getBrightValue() == 255 && 
+				m_world->getControlCharacterName() == "ハート" &&
+				m_world->getConversation() == nullptr &&
+				m_world->getObjectConversation() == nullptr) 
+			{
+				// ハート自身がスキル発動可能な状態か
 				Character* character = m_world->getCharacterWithName("ハート");
-				if (character->getHp() > 0 && character->getSkillGage() == character->getMaxSkillGage()) {
+				if (character->getHp() > 0 && character->getSkillGage() == character->getMaxSkillGage()){
 					character->setSkillGage(0);
 					return true;
 				}
 			}
 		}
 	}
+
 	return false;
 }
 

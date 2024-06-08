@@ -19,6 +19,9 @@ std::string getChapterName(int storyNum);
 class Story {
 private:
 
+	// ‰½T–Ú‚Ì¢ŠE‚©
+	int m_loop;
+
 	// ‘ÎÛ‚Ì¢ŠE
 	World* m_world_p;
 
@@ -82,6 +85,7 @@ public:
 	inline ObjectLoader* getObjectLoader() const { return m_objectLoader; }
 	inline const World* getWorld() const { return m_world_p; }
 	int getBackPrevSave() const;
+	int getLoop() const { return m_loop; }
 
 	// ƒZƒbƒ^
 	void setWorld(World* world);

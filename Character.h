@@ -187,6 +187,10 @@ private:
 * プレイヤーやエネミーの基底クラス
 */
 class Character {
+public:
+
+	const int SKILL_MAX = 100;
+
 protected:
 	static int characterId;
 
@@ -211,7 +215,6 @@ protected:
 	int m_dispHpCnt;
 
 	// スキルゲージ 最大100
-	const int SKILL_MAX = 100;
 	int m_skillGage;
 
 	// 無敵ならtrue

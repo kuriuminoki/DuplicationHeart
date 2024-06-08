@@ -12,6 +12,7 @@ class Object;
 class Camera;
 class Brain;
 class ControllerRecorder;
+class SoundPlayer;
 
 
 /*
@@ -90,6 +91,7 @@ public:
 	void setActionLeftLock(bool lock);
 	void setActionUpLock(bool lock);
 	void setActionDownLock(bool lock);
+	void setActionSound(SoundPlayer* soundPlayer);
 
 	// キャラクターのセッタ
 	void setCharacterX(int x);
@@ -100,10 +102,16 @@ public:
 	void init();
 
 	// 攻撃対象を変更
-	void searchTargetCandidate(Character* character);
+	void searchTargetCandidate(const Character* character);
 
 	// 追跡対象を変更
-	void searchFollowCandidate(Character* character);
+	void searchFollowCandidate(const Character* character);
+
+	// 攻撃対象を強制変更
+	void setBrainTarget(const Character* character);
+
+	// 追跡対象を強制変更
+	void setBrainFollow(const Character* character);
 
 	// 操作や当たり判定の結果を反映（実際にキャラを動かす）毎フレーム行う
 	void action();
