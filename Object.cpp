@@ -63,14 +63,29 @@ void Object::decreaseHp(int damageValue) {
 }
 
 // 単純に四角の落下物と衝突しているか
-bool Object::atariDropBox(int x1, int y1, int x2, int y2, int vx, int vy) {
-	// 埋まっている
-	if (x2 > m_x1 && x1 < m_x2 && y2 > m_y1 && y1 < m_y2) {
+bool Object::atariDropBox(int x1, int y1, int x2, int y2, int& vx, int& vy) {
+	// 上から衝突してきた
+	if (x2 + vx >= m_x1 && x1 + vx <= m_x2 && y2 < m_y1 && y2 + vy >= m_y1) {
 		return true;
 	}
-	// 上から衝突してきた
-	if (x2 + vx > m_x1 && x1 + vx < m_x2 && y2 < m_y1 && y2 + vy > m_y1) {
-		return true;
+	// 左右からの衝突
+	if (x2 <= m_x1 && x2 + vx >= m_x1 && y2 > m_y1 && y1 < m_y2) {
+		vx = 0;
+		return false;
+	}
+	if (x1 >= m_x2 && x1 + vx <= m_x2 && y2 > m_y1 && y1 < m_y2) {
+		vx = 0;
+		return false;
+	}
+	// 下からの衝突
+	if (y1 > y2 && y1 + vy <= y2 && x2 > m_x1 && x1 < m_x2) {
+		vy = 0;
+		return false;
+	}
+	// 埋まっている
+	if (x2 > m_x1 && x1 < m_x2 && y2 > m_y1 && y1 < m_y2) {
+		vx = 0; vy = 0;
+		return false;
 	}
 	return false;
 }
@@ -459,15 +474,30 @@ bool TriangleObject::atari(CharacterController* characterController) {
 }
 
 // 単純に四角の落下物と衝突しているか
-bool TriangleObject::atariDropBox(int x1, int y1, int x2, int y2, int vx, int vy) {
+bool TriangleObject::atariDropBox(int x1, int y1, int x2, int y2, int& vx, int& vy) {
 	int y = getY((x1 + x2) / 2);
-	// 埋まっている
-	if (x2 > m_x1 && x1 < m_x2 && y2 > y && y1 < m_y2) {
+	// 上から衝突してきた
+	if (x2 + vx >= m_x1 && x1 + vx <= m_x2 && y2 < y && y2 + vy >= y) {
 		return true;
 	}
-	// 上から衝突してきた
-	if (x2 + vx > m_x1 && x1 + vx < m_x2 && y2 < y && y2 + vy > y) {
-		return true;
+	// 左右からの衝突
+	if (x2 <= m_x1 && x2 + vx >= m_x1 && y2 > y && y1 < m_y2) {
+		vx = 0;
+		return false;
+	}
+	if (x1 >= m_x2 && x1 + vx <= m_x2 && y2 > y && y1 < m_y2) {
+		vx = 0;
+		return false;
+	}
+	// 下からの衝突
+	if (y1 > y2 && y1 + vy <= y2 && x2 > m_x1 && x1 < m_x2) {
+		vy = 0;
+		return false;
+	}
+	// 埋まっている
+	if (x2 > m_x1 && x1 < m_x2 && y2 > y && y1 < m_y2) {
+		vx = 0; vy = 0;
+		return false;
 	}
 	return false;
 }
@@ -641,6 +671,7 @@ bool BulletObject::atari(CharacterController* characterController) {
 	int characterX2 = characterX1 + characterController->getAction()->getCharacter()->getWide();
 	int characterY2 = characterY1 + characterController->getAction()->getCharacter()->getHeight();
 	characterController->getAction()->getCharacter()->getDamageArea(&characterX1, &characterY1, &characterX2, &characterY2);
+	if (characterX1 == characterX2 && characterY1 == characterY2) { return false; }
 
 	// 当たり判定
 	if (characterX2 > m_x1 && characterX1 < m_x2 && characterY2 > m_y1 && characterY1 < m_y2 && characterController->getAction()->ableDamage()) {

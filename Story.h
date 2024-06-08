@@ -1,6 +1,7 @@
 #ifndef STORY_H_INCLUDED
 #define STORY_H_INCLUDED
 
+#include <string>
 #include <vector>
 
 class Event;
@@ -11,9 +12,15 @@ class CharacterLoader;
 class ObjectLoader;
 
 
+std::string getChapterName(int storyNum);
+
+
 // ƒXƒg[ƒŠ|
 class Story {
 private:
+
+	// ‰½T–Ú‚Ì¢ŠE‚©
+	int m_loop;
 
 	// ‘ÎÛ‚Ì¢ŠE
 	World* m_world_p;
@@ -78,6 +85,7 @@ public:
 	inline ObjectLoader* getObjectLoader() const { return m_objectLoader; }
 	inline const World* getWorld() const { return m_world_p; }
 	int getBackPrevSave() const;
+	int getLoop() const { return m_loop; }
 
 	// ƒZƒbƒ^
 	void setWorld(World* world);

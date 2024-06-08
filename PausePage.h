@@ -78,7 +78,7 @@ public:
 	void play(int handX, int handY);
 
 	// •`‰æ
-	void draw(int handX, int handY);
+	void draw(int handX, int handY, std::string appendix = "");
 	
 	// ƒQƒbƒ^
 	inline int getNowValue() { return m_nowValue; }

@@ -127,7 +127,7 @@ public:
 	virtual bool atari(CharacterController* characterController) = 0;
 
 	// 単純に四角の落下物と衝突しているか
-	virtual bool atariDropBox(int x1, int y1, int x2, int y2, int vx, int vy);
+	virtual bool atariDropBox(int x1, int y1, int x2, int y2, int& vx, int& vy);
 
 	// キャラがオブジェクトに入り込んでいるときの処理
 	virtual void penetration(CharacterController* characterController) {};
@@ -228,7 +228,7 @@ public:
 	bool atari(CharacterController* characterController);
 
 	// 単純に四角の落下物と衝突しているか
-	bool atariDropBox(int x1, int y1, int x2, int y2, int vx, int vy);
+	bool atariDropBox(int x1, int y1, int x2, int y2, int& vx, int& vy);
 
 	// キャラがオブジェクトに入り込んでいるときの処理
 	void penetration(CharacterController* characterController);

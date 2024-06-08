@@ -203,6 +203,9 @@ private:
 	// 音量
 	int m_soundVolume;
 
+	// 所持金
+	int m_money;
+
 	// セーブ完了の通知を表示する残り時間
 	int m_noticeSaveDone;
 
@@ -229,6 +232,7 @@ public:
 	inline int getAreaNum() const { return m_areaNum; }
 	inline int getStoryNum() const { return m_storyNum; }
 	inline int getSoundVolume() const { return m_soundVolume; }
+	inline int getMoney() const { return m_money; }
 	inline const char* getSaveFilePath() const { return m_saveFilePath.c_str(); }
 	inline int getDoorSum() const { return (int)m_doorData.size(); }
 	inline int getFrom(int i) const { return m_doorData[i]->from(); }
@@ -264,6 +268,11 @@ public:
 
 // ハートのスキル
 class HeartSkill {
+public:
+
+	// 何秒間か
+	const int DUPLICATION_TIME = 600;
+
 private:
 	// 複製の数
 	int m_loopNum;
@@ -276,9 +285,6 @@ private:
 
 	// 複製
 	World* m_duplicationWorld;
-
-	// 何秒間か
-	const int DUPLICATION_TIME = 600;
 
 	// DUPLICATION_TIMEまでカウントする
 	int m_cnt;
@@ -300,6 +306,7 @@ public:
 	inline int getLoopNum() const { return m_loopNum; }
 	inline int getLoopNow() const { return m_loopNow; }
 	inline World* getWorld() const { return m_loopNow < m_loopNum ? m_duplicationWorld : m_world_p; }
+	inline int getOriginalCnt() const { return m_cnt; }
 	inline double getCnt() const { return ((double)DUPLICATION_TIME / 60.0) - ((double)m_cnt / 60.0); }
 
 	// スキル進行中 スキル終了時にtrue
@@ -379,6 +386,9 @@ public:
 	bool afterSkillUsableStoryNum() const;
 
 private:
+
+	// スキルの終了
+	void endSkill();
 
 	bool skillUsable();
 

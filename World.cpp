@@ -24,6 +24,58 @@
 using namespace std;
 
 
+/*
+* プレイヤー切り替え処理
+*/
+PlayerChanger::PlayerChanger(std::vector<CharacterController*> controllers_p, const Character* player_p) {
+	m_nowCharacter_p = player_p;
+	for (unsigned int i = 0; i < controllers_p.size(); i++) {
+		if (controllers_p[i]->getAction()->getCharacter()->getId() == m_nowCharacter_p->getId()) {
+			m_prevBrainName = controllers_p[i]->getBrain()->getBrainName();
+			if (m_prevBrainName == "KeyboardBrain") {
+				m_prevBrainName = "FollowNormalAI";
+			}
+			break;
+		}
+	}
+}
+
+const Character* PlayerChanger::play(SoundPlayer* soundPlayer_p, std::vector<CharacterController*> controllers_p) {
+	if (controlE() != 1) {
+		return nullptr;
+	}
+
+	const Character* minCharacter = nullptr;
+	const Character* nextPlayer = nullptr;
+	for (unsigned int i = 0; i < controllers_p.size(); i++) {
+		const Character* target = controllers_p[i]->getAction()->getCharacter();
+		int groupId = target->getGroupId();
+		int id = target->getId();
+		if (id == m_nowCharacter_p->getId()) { continue; }
+		// 仲間かどうか判定
+		if (groupId == m_nowCharacter_p->getGroupId()) {
+			if (minCharacter == nullptr || id < minCharacter->getId()) {
+				minCharacter = target;
+			}
+			if (id > m_nowCharacter_p->getId()) {
+				if (nextPlayer == nullptr || id < nextPlayer->getId()) {
+					nextPlayer = target;
+				}
+			}
+		}
+	}
+	if (nextPlayer == nullptr) {
+		nextPlayer = minCharacter;
+	}
+	return nextPlayer;
+}
+
+void PlayerChanger::changeCharacter(string prevBrainName, const Character* nextCharacter_p) {
+	m_prevBrainName = prevBrainName;
+	m_nowCharacter_p = nextCharacter_p;
+}
+
+
 // vectorに入った全オブジェクトを削除する
 void deleteAllObject(vector<Object*>& objects) {
 	for (int i = (int)objects.size() - 1; i >= 0; i--) {
@@ -101,10 +153,13 @@ World::World() {
 	m_cameraMinEx *= m_exX;
 
 	m_areaLock = false;
+	m_controlCharacterLock = false;
 
 	m_date = 0;
 
 	m_bossDeadEffectCnt = 0;
+
+	m_money = 0;
 
 }
 
@@ -146,6 +201,8 @@ World::World(int fromAreaNum, int toAreaNum, SoundPlayer* soundPlayer) :
 		m_characterControllers[i]->setPlayerDirection(m_player_p, true);
 	}
 
+	m_playerChanger = new PlayerChanger(m_characterControllers, m_player_p);
+
 	m_camera->setEx(m_cameraMaxEx);
 
 	m_characterDeadGraph = new GraphHandles("picture/effect/dead", 5, 1.0, 0, true);
@@ -154,6 +211,7 @@ World::World(int fromAreaNum, int toAreaNum, SoundPlayer* soundPlayer) :
 	m_characterDeadSound = LoadSoundMem("sound/battle/dead.wav");
 	m_bombSound = LoadSoundMem("sound/battle/bomb.wav");
 	m_doorSound = LoadSoundMem("sound/battle/door.wav");
+	m_characterChangeSound = LoadSoundMem("sound/battle/characterChange.mp3");
 	m_cameraInSound = LoadSoundMem("sound/battle/cameraIn.mp3");
 	m_cameraOutSound = LoadSoundMem("sound/battle/cameraOut.mp3");
 
@@ -169,6 +227,9 @@ World::World(const World* original) :
 	m_focusId = original->getFocusId();
 	m_playerId = original->getPlayerId();
 	m_date = original->getDate();
+	m_money = original->getMoney();
+	m_areaLock = original->getAreaLock();
+	m_controlCharacterLock = original->getControlCharacterLock();
 
 	// エリアをコピー (コピー元と共有するもの)
 	m_soundPlayer_p = original->getSoundPlayer();
@@ -256,6 +317,8 @@ World::~World() {
 		delete m_characters[i];
 	}
 
+	delete m_playerChanger;
+
 	// 背景
 	if (!m_duplicationFlag) {
 		DeleteGraph(m_backGroundGraph);
@@ -265,6 +328,7 @@ World::~World() {
 		DeleteSoundMem(m_characterDeadSound);
 		DeleteSoundMem(m_bombSound);
 		DeleteSoundMem(m_doorSound);
+		DeleteSoundMem(m_characterChangeSound);
 		DeleteSoundMem(m_cameraInSound);
 		DeleteSoundMem(m_cameraOutSound);
 	}
@@ -320,7 +384,10 @@ vector<const Animation*> World::getConstAnimations() const {
 	// アイテム
 	for (unsigned int i = 0; i < m_itemVector.size(); i++) {
 		if (!m_itemVector[i]->getDeleteFlag()) {
-			allAnimations.push_back(m_itemVector[i]->getAnimation());
+			// 消滅しそうなら点滅
+			if (m_itemVector[i]->getCnt() < m_itemVector[i]->ERASE_CNT * 2 / 3 || m_itemVector[i]->getCnt() / 3 % 2 == 0) {
+				allAnimations.push_back(m_itemVector[i]->getAnimation());
+			}
 		}
 	}
 
@@ -399,6 +466,12 @@ bool World::playerDead() {
 // プレイヤーのHPをMAXにする
 void World::playerHpReset() {
 	m_player_p->setHp(m_player_p->getMaxHp());
+	m_player_p->setSkillGage(m_player_p->SKILL_MAX);
+}
+
+// 今操作しているキャラの名前を取得
+string World::getControlCharacterName() const {
+	return m_playerChanger->getNowPlayer()->getCharacterInfo()->name();
 }
 
 
@@ -632,6 +705,49 @@ void World::setPlayerFollowerPoint() {
 	}
 }
 
+void World::changePlayer(const Character* nextPlayer) {
+
+	// 禁止されている
+	if (m_controlCharacterLock) {
+		return;
+	}
+
+	// 変更できるキャラがいない
+	if (nextPlayer == nullptr || nextPlayer->getId() == m_playerChanger->getNowPlayer()->getId()) { 
+		return;
+	}
+
+	// 効果音
+	m_soundPlayer_p->pushSoundQueue(m_characterChangeSound);
+
+	// 今操作中のキャラをNPCに変更(Brainを戻す)
+	for (unsigned int i = 0; i < m_characterControllers.size(); i++) {
+		if (m_characterControllers[i]->getAction()->getCharacter()->getId() == m_playerChanger->getNowPlayer()->getId()) {
+			m_characterControllers[i]->setBrain(createBrain(m_playerChanger->getPrevBrainName(), m_camera));
+			m_characterControllers[i]->setActionSound(nullptr);
+			break;
+		}
+	}
+	// 次操作するキャラを修正(BrainをKeyboardにする)
+	for (unsigned int i = 0; i < m_characterControllers.size(); i++) {
+		if (nextPlayer->getId() == m_characterControllers[i]->getAction()->getCharacter()->getId()) {
+			string brainName = m_characterControllers[i]->getBrain()->getBrainName();
+			m_playerChanger->changeCharacter(brainName, nextPlayer);
+			m_characterControllers[i]->setBrain(new KeyboardBrain(m_camera));
+			m_characterControllers[i]->setActionSound(m_soundPlayer_p);
+			break;
+		}
+	}
+	// 追跡対象を操作キャラにする
+	for (unsigned int i = 0; i < m_characterControllers.size(); i++) {
+		if (nextPlayer->getGroupId() == m_characterControllers[i]->getAction()->getCharacter()->getGroupId()) {
+			m_characterControllers[i]->setBrainFollow(nextPlayer);
+		}
+	}
+	// カメラが注目するキャラも変更
+	m_focusId = nextPlayer->getId();
+}
+
 // データ管理：カメラの位置をリセット
 void World::cameraPointInit() {
 	for (unsigned int i = 0; i < m_characters.size(); i++) {
@@ -734,6 +850,11 @@ void World::battle() {
 
 	// アニメーションの更新
 	updateAnimation();
+
+	// キャラ変更
+	if (!m_duplicationFlag && !m_skillFlag) {
+		changePlayer(m_playerChanger->play(m_soundPlayer_p, m_characterControllers));
+	}
 
 }
 
@@ -898,6 +1019,17 @@ void World::controlObject() {
 
 // Battle：アイテムの動き
 void World::controlItem() {
+
+	if (m_itemVector.size() == 0) { return; }
+	// 今操作しているキャラが当たり判定の対象
+	Character* targetCharacter = nullptr;
+	for (unsigned int i = 0; i < m_characters.size(); i++) {
+		if (m_characters[i]->getId() == m_playerChanger->getNowPlayer()->getId()) { 
+			targetCharacter = m_characters[i];
+			break;
+		}
+	}
+
 	for (unsigned int i = 0; i < m_itemVector.size(); i++) {
 		// 取得済み
 		if (m_itemVector[i]->getDeleteFlag()) {
@@ -916,14 +1048,22 @@ void World::controlItem() {
 		for (unsigned int j = 0; j < m_stageObjects.size(); j++) {
 			int x1 = 0, y1 = 0, x2 = 0, y2 = 0;
 			m_itemVector[i]->getPoint(&x1, &y1, &x2, &y2);
-			if (m_stageObjects[j]->atariDropBox(x1, y1, x2, y2, m_itemVector[i]->getVx(), m_itemVector[i]->getVy())) {
+			int vx = m_itemVector[i]->getVx();
+			int vy = m_itemVector[i]->getVy();
+			if (m_stageObjects[j]->atariDropBox(x1, y1, x2, y2, vx, vy)) {
 				m_itemVector[i]->setGrand(true);
 				m_itemVector[i]->setY(m_stageObjects[j]->getY(m_itemVector[i]->getX()));
 			}
+			m_itemVector[i]->setVx(vx);
+			m_itemVector[i]->setVy(vy);
 		}
 		// キャラとの当たり判定
-		if (m_itemVector[i]->atariCharacter(m_player_p)) {
+		if (targetCharacter != nullptr && m_itemVector[i]->atariCharacter(targetCharacter)) {
 			m_soundPlayer_p->pushSoundQueue(m_itemVector[i]->getSound());
+			// ここでお金をWorldに反映
+			m_money = min(m_money + targetCharacter->getMoney(), MAX_MONEY);
+			targetCharacter->setMoney(0);
+			break;
 		}
 		// 動き
 		m_itemVector[i]->action();
@@ -938,9 +1078,11 @@ void World::atariCharacterAndObject(CharacterController* controller, vector<Obje
 		// 当たり判定をここで行う
 		if (objects[i]->atari(controller)) {
 			const Character* character = controller->getAction()->getCharacter();
+			int targetX1 = 0, targetY1 = 0, targetX2 = 0, targetY2 = 0;
+			character->getAtariArea(&targetX1, &targetY1, &targetX2, &targetY2);
 			// エフェクト作成
-			int x = character->getCenterX();
-			int y = character->getCenterY();
+			int x = (targetX1 + targetX2) / 2;
+			int y = (targetY1 + targetY2) / 2;
 			Animation* atariAnimation = objects[i]->createAnimation(x, y, 3);
 			if (atariAnimation != nullptr) {
 				m_animations.push_back(atariAnimation);
@@ -959,9 +1101,20 @@ void World::atariCharacterAndObject(CharacterController* controller, vector<Obje
 					m_animations.push_back(new Animation(x, y, 3, m_characterDeadGraph));
 					m_camera->shakingStart(20, 20);
 					m_soundPlayer_p->pushSoundQueue(m_characterDeadSound, panPal);
-					if (!m_duplicationFlag && character->getGroupId() != m_player_p->getGroupId() && GetRand(100) < 20) {
-						// スキル発動中でなければ確率でアイテムが落ちる
-						m_itemVector.push_back(new CureItem("cure", x, y, 50));
+					if (!m_duplicationFlag && character->getGroupId() != m_player_p->getGroupId() && !character->getBossFlag()) {
+						int r = GetRand(100);
+						// スキル発動中でなければ雑魚キャラは確率でアイテムが落ちる
+						if (r < 20) {
+							m_itemVector.push_back(new CureItem("cure", x, y, 50));
+						}
+						else {
+							for (int i = 0; i < r % 4; i++) {
+								MoneyItem* money = new MoneyItem("money", x, y, 1);
+								money->setVx(GetRand(30) - 15);
+								money->setVy(GetRand(30) - 31);
+								m_itemVector.push_back(money);
+							}
+						}
 					}
 				}
 			}

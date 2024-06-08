@@ -1,6 +1,9 @@
 #ifndef TITLE_H_INCLUDED
 #define TITLE_H_INCLUDED
 
+#include <string>
+#include <vector>
+
 
 class SoundPlayer;
 class Button;
@@ -45,6 +48,9 @@ private:
 
 	// 背景
 	TitleBackGround* m_haikei;
+
+	// チャプター名
+	std::vector<std::string> m_chapterNames;
 
 public:
 

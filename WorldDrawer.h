@@ -45,6 +45,9 @@ private:
 	int m_eveningHaikei;
 	int m_nightHaikei;
 
+	// ‚¨‹à‚Ì•`‰æ˜g
+	int m_moneyBoxGraph;
+
 	// ƒLƒƒƒ‰•`‰æ—p
 	CharacterDrawer* m_characterDrawer;
 
@@ -70,6 +73,10 @@ private:
 	ConversationDrawer* m_conversationDrawer;
 
 	int m_enemyNotice;
+
+	double m_exX, m_exY;
+
+	int m_font;
 
 public:
 	WorldDrawer(const World* world);

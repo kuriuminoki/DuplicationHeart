@@ -112,11 +112,14 @@ void ControlBar::play(int handX, int handY) {
 }
 
 // •`‰æ
-void ControlBar::draw(int handX, int handY) {
+void ControlBar::draw(int handX, int handY, string appendix) {
 	int d = (int)(10 * m_exX);
 
 	ostringstream oss;
-	oss << m_name << " : " << m_nowValue;
+	oss << m_name << " " << m_nowValue;
+	if (appendix != "") {
+		oss << "F" << appendix;
+	}
 	DrawStringToHandle(m_drawX1 - m_buttonWide - d, m_drawY1 - d - m_fontSize, oss.str().c_str(), WHITE, m_font);
 
 	// ‰¹—Ê’²ß—Ìˆæ

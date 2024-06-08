@@ -21,7 +21,7 @@ using namespace std;
 
 
 // どこまで
-const int FINISH_STORY = 18;
+const int FINISH_STORY = 22;
 // エリア0でデバッグするときはtrueにする
 const bool TEST_MODE = false;
 // スキルが発動可能になるストーリー番号
@@ -208,6 +208,8 @@ GameData::GameData() {
 
 	m_soundVolume = 50;
 
+	m_money = 0;
+
 	loadCommon(&m_soundVolume, &GAME_WIDE, &GAME_HEIGHT);
 
 	m_saveFilePath = "";
@@ -312,6 +314,7 @@ bool GameData::save(bool force) {
 		fwrite(&m_areaNum, sizeof(m_areaNum), 1, intFp);
 		fwrite(&m_storyNum, sizeof(m_storyNum), 1, intFp);
 		fwrite(&m_latestStoryNum, sizeof(m_latestStoryNum), 1, intFp);
+		fwrite(&m_money, sizeof(m_money), 1, intFp);
 		for (unsigned int i = 0; i < m_characterData.size(); i++) {
 			m_characterData[i]->save(intFp, strFp);
 		}
@@ -351,6 +354,7 @@ bool GameData::load() {
 	fread(&m_areaNum, sizeof(m_areaNum), 1, intFp);
 	fread(&m_storyNum, sizeof(m_storyNum), 1, intFp);
 	fread(&m_latestStoryNum, sizeof(m_latestStoryNum), 1, intFp);
+	fread(&m_money, sizeof(m_money), 1, intFp);
 	for (unsigned int i = 0; i < m_characterData.size(); i++) {
 		if (feof(intFp) != 0 || feof(strFp) != 0) { break; }
 		m_characterData[i]->load(intFp, strFp);
@@ -447,6 +451,7 @@ void GameData::asignWorld(World* world, bool playerHpReset) {
 	if (playerHpReset) {
 		world->playerHpReset();
 	}
+	world->setMoney(m_money);
 }
 
 // Worldのデータを自身に反映させる
@@ -456,6 +461,7 @@ void GameData::asignedWorld(const World* world, bool notCharacterPoint) {
 		world->asignCharacterData(m_characterData[i]->name(), m_characterData[i], m_areaNum, notCharacterPoint);
 	}
 	world->asignDoorData(m_doorData, m_areaNum);
+	m_money = world->getMoney();
 }
 
 // ストーリーが進んだ時にセーブデータを更新する エリア外（World以外）も考慮する
@@ -466,6 +472,7 @@ void GameData::updateStory(Story* story) {
 	m_storyNum = story->getStoryNum();
 	m_latestStoryNum = max(m_latestStoryNum, m_storyNum);
 	m_soundVolume = story->getWorld()->getSoundPlayer()->getVolume();
+	m_money = story->getWorld()->getMoney();
 	// Storyによって変更・新登場されたキャラ情報を取得
 	CharacterLoader* characterLoader = story->getCharacterLoader();
 	size_t size = m_characterData.size();
@@ -484,6 +491,7 @@ void GameData::resetWorld() {
 		m_characterData[i]->setAreaNum(-1);
 	}
 	m_doorData.clear();
+	m_money = 0;
 }
 
 
@@ -506,6 +514,7 @@ Game::Game(const char* saveFilePath, int storyNum) {
 
 	// 世界
 	m_world = new World(-1, m_gameData->getAreaNum(), m_soundPlayer);
+	m_world->setMoney(m_gameData->getMoney());
 	m_soundPlayer->stopBGM();
 
 	// ストーリー
@@ -517,7 +526,7 @@ Game::Game(const char* saveFilePath, int storyNum) {
 	m_gameData->updateStory(m_story);
 
 	// データを世界に反映
-	m_gameData->asignWorld(m_world, true);
+	m_gameData->asignWorld(m_world, false);
 
 	m_world->cameraPointInit();
 
@@ -600,7 +609,7 @@ bool Game::play() {
 	// スキル発動
 	if (controlF() == 1 && skillUsable()) {
 		m_world->setSkillFlag(true);
-		m_skill = new HeartSkill(1, m_world, m_soundPlayer);
+		m_skill = new HeartSkill(m_story->getLoop(), m_world, m_soundPlayer);
 	}
 
 	// これ以上ストーリーを進ませない（テスト用）
@@ -645,10 +654,7 @@ bool Game::play() {
 	}
 	else if (m_skill != nullptr) { // スキル発動中で、最後のループ中
 		if (m_skill->play()) {
-			// スキル終了
-			delete m_skill;
-			m_skill = nullptr;
-			m_world->setSkillFlag(false);
+			endSkill();
 		}
 	}
 
@@ -664,6 +670,7 @@ bool Game::play() {
 	// 前のセーブポイントへ戻ることが要求された
 	int prevStoryNum = m_story->getBackPrevSave();
 	if (prevStoryNum > 0) {
+		endSkill();
 		backPrevSave(prevStoryNum - 1);
 		m_story->doneBackPrevSave();
 		return true;
@@ -676,6 +683,7 @@ bool Game::play() {
 	}
 	// エリア移動
 	else if (m_world->getBrightValue() == 0 && CheckSoundMem(m_world->getDoorSound()) == 0) {
+		m_world->changePlayer(m_world->getCharacterWithName("ハート"));
 		int fromAreaNum = m_world->getAreaNum();
 		int toAreaNum = m_world->getNextAreaNum();
 		m_gameData->asignedWorld(m_world, false);
@@ -720,23 +728,39 @@ bool Game::afterSkillUsableStoryNum() const {
 	return m_gameData->getStoryNum() >= SKILL_USEABLE_STORY;
 }
 
+// スキル終了
+void Game::endSkill() {
+	if (m_skill != nullptr) {
+		delete m_skill;
+		m_skill = nullptr;
+		m_world->setSkillFlag(false);
+	}
+}
+
 // スキル発動可能かチェック
 bool Game::skillUsable() {
-	if (TEST_MODE) {
-		return true;
-	}
-	// スキル発動 Fキーかつスキル未発動状態かつ発動可能なイベント中（もしくはイベント中でない）かつエリア移動中でない
-	if (afterSkillUsableStoryNum()) { // ストーリーの最初は発動できない
-		if (m_skill == nullptr) { // スキル未発動時
-			if (m_story->skillAble() && m_world->getBrightValue() == 255) { // 特定のイベント時やエリア移動中はダメ
+
+	// ストーリーの最初は発動できない
+	if (afterSkillUsableStoryNum() || TEST_MODE) { 
+		// スキル発動中、重複して発動はダメ
+		if (m_skill == nullptr) {
+			// 特定のイベント時やエリア移動中はダメ
+			if (m_story->skillAble() && 
+				m_world->getBrightValue() == 255 && 
+				m_world->getControlCharacterName() == "ハート" &&
+				m_world->getConversation() == nullptr &&
+				m_world->getObjectConversation() == nullptr) 
+			{
+				// ハート自身がスキル発動可能な状態か
 				Character* character = m_world->getCharacterWithName("ハート");
-				if (character->getHp() > 0 && character->getSkillGage() == character->getMaxSkillGage()) {
+				if (character->getHp() > 0 && character->getSkillGage() == character->getMaxSkillGage()){
 					character->setSkillGage(0);
 					return true;
 				}
 			}
 		}
 	}
+
 	return false;
 }
 

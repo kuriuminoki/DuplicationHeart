@@ -830,14 +830,15 @@ Object* StickAction::slashAttack(int gx, int gy) {
 ValkiriaAction::ValkiriaAction(Character* character, SoundPlayer* soundPlayer_p) :
 	StickAction(character, soundPlayer_p)
 {
-
+	m_slashNow = false;
 }
 
 CharacterAction* ValkiriaAction::createCopy(vector<Character*> characters) {
-	CharacterAction* res = nullptr;
+	ValkiriaAction* res = nullptr;
 	for (unsigned int i = 0; i < characters.size(); i++) {
 		if (m_character_p->getId() == characters[i]->getId()) {
 			res = new ValkiriaAction(characters[i], m_soundPlayer_p);
+			res->setSlashNow(m_slashNow);
 			// コピーする
 			setParam(res);
 		}
@@ -848,7 +849,7 @@ CharacterAction* ValkiriaAction::createCopy(vector<Character*> characters) {
 // 着地 ヴァルキリアは斬撃中に着地しても着地モーションにならない
 void ValkiriaAction::setGrand(bool grand) {
 	if (m_vy > 0) { // 着地モーションになる
-		if (m_slashCnt == 0) {
+		if (m_slashCnt == 0) { // 斬撃中ではない
 			m_landCnt = LAND_TIME;
 			// 効果音
 			if (m_soundPlayer_p != nullptr) {
@@ -869,21 +870,30 @@ void ValkiriaAction::setGrand(bool grand) {
 
 void ValkiriaAction::startSlash() {
 	if (m_attackLeftDirection) {
-		m_vx -= SLASH_MOVE_SPEED;
+		if (!m_leftLock) {
+			m_vx -= SLASH_MOVE_SPEED;
+			m_slashNow = true;
+		}
 	}
 	else {
-		m_vx += SLASH_MOVE_SPEED;
+		if (!m_rightLock) {
+			m_vx += SLASH_MOVE_SPEED;
+			m_slashNow = true;
+		}
 	}
 }
 
 void ValkiriaAction::finishSlash() {
 	CharacterAction::finishSlash();
-	if (m_attackLeftDirection && !m_leftLock) {
-		m_vx += SLASH_MOVE_SPEED;
+	if (m_slashNow) {
+		if (m_attackLeftDirection && !m_leftLock) {
+			m_vx += SLASH_MOVE_SPEED;
+		}
+		else if (!m_rightLock) {
+			m_vx -= SLASH_MOVE_SPEED;
+		}
 	}
-	else if(!m_rightLock) {
-		m_vx -= SLASH_MOVE_SPEED;
-	}
+	m_slashNow = false;
 }
 
 // ダメージを受ける ヴァルキリアは斬撃中はHPが減るだけ

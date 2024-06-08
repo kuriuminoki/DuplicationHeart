@@ -187,6 +187,10 @@ private:
 * プレイヤーやエネミーの基底クラス
 */
 class Character {
+public:
+
+	const int SKILL_MAX = 100;
+
 protected:
 	static int characterId;
 
@@ -211,7 +215,6 @@ protected:
 	int m_dispHpCnt;
 
 	// スキルゲージ 最大100
-	const int SKILL_MAX = 100;
 	int m_skillGage;
 
 	// 無敵ならtrue
@@ -240,6 +243,9 @@ protected:
 
 	// 顔画像
 	FaceGraphHandle* m_faceHandle;
+
+	// 獲得したお金 Worldに渡したら0にする
+	int m_money;
 
 public:
 	// コンストラクタ
@@ -273,6 +279,7 @@ public:
 	inline CharacterGraphHandle* getCharacterGraphHandle() const { return m_graphHandle; }
 	inline AttackInfo* getAttackInfo() const { return m_attackInfo; }
 	inline CharacterInfo* getCharacterInfo() const { return m_characterInfo; }
+	inline int getMoney() const { return m_money; }
 
 	// セッタ
 	inline void setHp(int hp) { m_hp = (hp > m_characterInfo->maxHp()) ? m_characterInfo->maxHp() : hp; m_prevHp = m_hp; }
@@ -295,6 +302,7 @@ public:
 	inline void setDuplicationFlag(bool flag) { m_duplicationFlag = flag; }
 	inline void setAttackInfo(AttackInfo* attackInfo) { m_attackInfo = attackInfo; }
 	inline void setCharacterInfo(CharacterInfo* characterInfo) { m_characterInfo = characterInfo; }
+	inline void setMoney(int money) { m_money = money; }
 
 	// CharacterInfoからキャラのスペックを取得
 	inline std::string getName() const { return m_characterInfo->name(); }

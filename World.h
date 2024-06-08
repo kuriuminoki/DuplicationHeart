@@ -25,6 +25,36 @@ class ObjectLoader;
 class SoundPlayer;
 
 
+/*
+* 操作するキャラを切り替えるクラス
+*/
+class PlayerChanger {
+private:
+
+	// 今操作しているキャラがＮＰＣだったときのBrain名
+	std::string m_prevBrainName;
+
+	// 今操作しているキャラ
+	const Character* m_nowCharacter_p;
+
+public:
+
+	PlayerChanger(std::vector<CharacterController*> controllers_p, const Character* player_p);
+
+	// 切り替え後のキャラを返す 切り替えできないならnullptr
+	const Character* play(SoundPlayer* soundPlayer_p, std::vector<CharacterController*> controllers_p);
+
+	// 操作キャラを変更
+	void changeCharacter(std::string prevBrainName, const Character* nextCharacter_p);
+
+	inline std::string getPrevBrainName() const { return m_prevBrainName; }
+	inline const Character* getNowPlayer() const { return m_nowCharacter_p; }
+};
+
+
+/*
+* キャラが存在し行動する世界
+*/
 class World {
 private:
 
@@ -73,6 +103,9 @@ private:
 	// エリア移動が禁止されているならtrue
 	bool m_areaLock;
 
+	// 操作キャラの変更が禁止されているならtrue
+	bool m_controlCharacterLock;
+
 	// 描画用のカメラ Worldがデリートする
 	Camera* m_camera;
 
@@ -85,6 +118,9 @@ private:
 
 	// プレイヤー 毎回for文でID検索しない用
 	Character* m_player_p;
+
+	// キャラ切り替え処理
+	PlayerChanger* m_playerChanger;
 
 	// 戦闘のためにキャラを動かすコントローラ Worldがデリートする
 	std::vector<CharacterController*> m_characterControllers;
@@ -122,6 +158,9 @@ private:
 	// ドアに入った時の効果音
 	int m_doorSound;
 
+	// キャラ切り替え時の効果音
+	int m_characterChangeSound;
+
 	// カメラのズームイン・アウトの効果音
 	int m_cameraInSound;
 	int m_cameraOutSound;
@@ -132,6 +171,10 @@ private:
 
 	// ボスがやられた時のエフェクト中
 	int m_bossDeadEffectCnt;
+
+	// 所持金
+	const int MAX_MONEY = 999;
+	int m_money;
 
 public:
 	World();
@@ -173,8 +216,12 @@ public:
 	inline int getCharacterDeadSound() const { return m_characterDeadSound; }
 	inline int getBombSound() const { return m_bombSound; }
 	inline int getDoorSound() const { return m_doorSound; }
+	inline int getCharacterChangeSound() const { return m_characterChangeSound; }
 	inline bool getSkillFlag() const { return m_skillFlag; }
 	inline int getBossDeadEffextCnt() const { return m_bossDeadEffectCnt; }
+	inline int getMoney() const { return m_money; }
+	inline bool getAreaLock() const { return m_areaLock; }
+	inline bool getControlCharacterLock() const { return m_controlCharacterLock; }
 
 	// Drawer用のゲッタ
 	std::vector<const CharacterAction*> getActions() const;
@@ -196,8 +243,10 @@ public:
 	inline void setConversation(Conversation* conversation) { m_conversation_p = conversation; }
 	inline void setMovie(Movie* movie) { m_movie_p = movie; }
 	inline void setAreaLock(bool lock) { m_areaLock = lock; }
+	inline void setControlCharacterLock(bool lock) { m_controlCharacterLock = lock; }
 	inline void setDate(int date) { m_date = date; }
 	inline void setBlindFlag(bool blindFlag) { m_blindFlag = blindFlag; }
+	inline void setMoney(int money) { m_money = money; }
 
 	// 強制的にエリア移動
 	inline void moveArea(int nextArea) { m_brightValue--; m_nextAreaNum = nextArea; m_resetBgmFlag = true; }
@@ -219,6 +268,9 @@ public:
 
 	// プレイヤーのHPをMAXにする
 	void playerHpReset();
+
+	// 今操作しているキャラがハートか
+	std::string getControlCharacterName() const;
 
 	// スキル発動：ハートをFreezeにする
 	void setSkillFlag(bool skillFlag);
@@ -255,6 +307,9 @@ public:
 
 	// データ管理：カメラの位置をリセット
 	void cameraPointInit();
+
+	// Battle: 操作キャラの切り替え
+	void changePlayer(const Character* nextPlayer);
 
 	// プレイヤーを特定の座標へ移動
 	void setPlayerPoint(CharacterData* characterData);

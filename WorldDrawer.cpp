@@ -12,6 +12,8 @@
 #include "Define.h"
 #include "DxLib.h"
 #include <queue>
+#include <sstream>
+
 
 using namespace std;
 
@@ -53,6 +55,7 @@ WorldDrawer::WorldDrawer(const World* world) {
 	m_objectDrawer = new ObjectDrawer(nullptr);
 	m_animationDrawer = new AnimationDrawer(nullptr);
 	m_conversationDrawer = new ConversationDrawer(nullptr);
+	m_moneyBoxGraph = LoadGraph("picture/battleMaterial/moneyBox.png");
 	m_hpBarGraph = LoadGraph("picture/battleMaterial/hpBar.png");
 	m_skillBarGraph = LoadGraph("picture/battleMaterial/skillBar.png");
 	m_bossHpBarGraph = LoadGraph("picture/battleMaterial/bossHpBar.png");
@@ -60,6 +63,8 @@ WorldDrawer::WorldDrawer(const World* world) {
 	m_eveningHaikei = LoadGraph("picture/stageMaterial/evening.jpg");
 	m_nightHaikei = LoadGraph("picture/stageMaterial/night.jpg");
 	m_enemyNotice = LoadGraph("picture/battleMaterial/enemyNotice.png");
+	getGameEx(m_exX, m_exY);
+	m_font = CreateFontToHandle(nullptr, (int)(50 * m_exX), 10);
 }
 
 WorldDrawer::~WorldDrawer() {
@@ -67,6 +72,7 @@ WorldDrawer::~WorldDrawer() {
 	delete m_objectDrawer;
 	delete m_animationDrawer;
 	delete m_conversationDrawer;
+	DeleteGraph(m_moneyBoxGraph);
 	DeleteGraph(m_hpBarGraph);
 	DeleteGraph(m_skillBarGraph);
 	DeleteGraph(m_bossHpBarGraph);
@@ -74,6 +80,7 @@ WorldDrawer::~WorldDrawer() {
 	DeleteGraph(m_eveningHaikei);
 	DeleteGraph(m_nightHaikei);
 	DeleteGraph(m_enemyNotice);
+	DeleteFontToHandle(m_font);
 }
 
 
@@ -242,5 +249,12 @@ void WorldDrawer::drawBattleField(const Camera* camera, int bright, bool drawSki
 	if (bossCharacterAction != nullptr) {
 		m_characterDrawer->drawBossHpBar(bX, bY, bWide, bHeight, bossCharacterAction->getCharacter(), m_bossHpBarGraph);
 	}
+
+	// ‚¨‹à
+	DrawExtendGraph((int)(1600 * m_exX), (int)(10 * m_exY), (int)(1900 * m_exX), (int)(80 * m_exY), m_moneyBoxGraph, TRUE);
+	int money = m_world->getMoney();
+	ostringstream oss;
+	oss << "F" << money;
+	DrawStringToHandle((int)(1650 * m_exX), (int)(20 * m_exY), oss.str().c_str(), BLACK, m_font);
 
 }
