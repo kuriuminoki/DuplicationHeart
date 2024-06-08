@@ -469,6 +469,14 @@ void World::playerHpReset() {
 	m_player_p->setSkillGage(m_player_p->SKILL_MAX);
 }
 
+void World::cureHpOfHearts(int value) {
+	for (unsigned int i = 0; i < m_characters.size(); i++) {
+		if (m_player_p->getGroupId() == m_characters[i]->getGroupId()) {
+			m_characters[i]->setHp(m_characters[i]->getHp() + value);
+		}
+	}
+}
+
 // ¡‘€ì‚µ‚Ä‚¢‚éƒLƒƒƒ‰‚Ì–¼‘O‚ðŽæ“¾
 string World::getControlCharacterName() const {
 	return m_playerChanger->getNowPlayer()->getCharacterInfo()->name();

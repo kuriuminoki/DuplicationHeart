@@ -269,6 +269,9 @@ public:
 	// プレイヤーのHPをMAXにする
 	void playerHpReset();
 
+	// ハートたちのＨＰを回復する。
+	void cureHpOfHearts(int value);
+
 	// 今操作しているキャラがハートか
 	std::string getControlCharacterName() const;
 

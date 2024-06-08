@@ -3,6 +3,7 @@
 #include "GraphHandle.h"
 #include "Animation.h"
 #include "AnimationDrawer.h"
+#include "Button.h"
 #include "DrawTool.h"
 #include "Define.h"
 #include "DxLib.h"
@@ -127,6 +128,12 @@ void ConversationDrawer::draw() {
 	if (textFinish && eventFinish) {
 		int dy = (int)(((m_conversation->getCnt() / 3) % 20 - 10) * m_exY);
 		m_conversation->getTextFinishGraph()->draw(GAME_WIDE - EDGE_X - (int)(100 * m_exX), GAME_HEIGHT - EDGE_DOWN - (int)(50 * m_exY) + dy - TEXT_GRAPH_EDGE, m_conversation->getTextFinishGraph()->getEx());
+		const Button* yesButton = m_conversation->getYesButton();
+		const Button* noButton = m_conversation->getNoButton();
+		int mouseX, mouseY;
+		GetMousePoint(&mouseX, &mouseY);
+		if (yesButton != nullptr) { yesButton->draw(mouseX, mouseY); }
+		if (noButton != nullptr) { noButton->draw(mouseX, mouseY); }
 	}
 
 	// クリックエフェクト

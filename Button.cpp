@@ -19,7 +19,7 @@ Button::Button(string tag, int x, int y, int wide, int height, int color, int co
 }
 
 //ボタンの描画 下にラベルの文字列も表示できる
-void Button::draw(int hand_x, int hand_y) {
+void Button::draw(int hand_x, int hand_y) const {
 	if (overlap(hand_x, hand_y)) {
 		DrawBox(m_x - 5, m_y - 5, m_x + m_wide + 5, m_y + m_height + 5, m_color2, TRUE);
 	}
@@ -39,7 +39,7 @@ void Button::changeFlag(bool f, int new_color) {
 }
 
 //ボタンがマウスカーソルと重なっているか
-bool Button::overlap(int hand_x, int hand_y) {
+bool Button::overlap(int hand_x, int hand_y) const {
 	if (!m_flag) {
 		return false;
 	}
