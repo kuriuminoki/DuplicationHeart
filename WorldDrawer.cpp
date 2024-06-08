@@ -55,6 +55,7 @@ WorldDrawer::WorldDrawer(const World* world) {
 	m_objectDrawer = new ObjectDrawer(nullptr);
 	m_animationDrawer = new AnimationDrawer(nullptr);
 	m_conversationDrawer = new ConversationDrawer(nullptr);
+	m_moneyBoxGraph = LoadGraph("picture/battleMaterial/moneyBox.png");
 	m_hpBarGraph = LoadGraph("picture/battleMaterial/hpBar.png");
 	m_skillBarGraph = LoadGraph("picture/battleMaterial/skillBar.png");
 	m_bossHpBarGraph = LoadGraph("picture/battleMaterial/bossHpBar.png");
@@ -71,6 +72,7 @@ WorldDrawer::~WorldDrawer() {
 	delete m_objectDrawer;
 	delete m_animationDrawer;
 	delete m_conversationDrawer;
+	DeleteGraph(m_moneyBoxGraph);
 	DeleteGraph(m_hpBarGraph);
 	DeleteGraph(m_skillBarGraph);
 	DeleteGraph(m_bossHpBarGraph);
@@ -249,9 +251,10 @@ void WorldDrawer::drawBattleField(const Camera* camera, int bright, bool drawSki
 	}
 
 	// ‚¨‹à
+	DrawExtendGraph((int)(1600 * m_exX), (int)(10 * m_exY), (int)(1900 * m_exX), (int)(80 * m_exY), m_moneyBoxGraph, TRUE);
 	int money = m_world->getMoney();
 	ostringstream oss;
 	oss << "F" << money;
-	DrawStringToHandle((int)(1700 * m_exX), (int)(20 * m_exY), oss.str().c_str(), BLACK, m_font);
+	DrawStringToHandle((int)(1650 * m_exX), (int)(20 * m_exY), oss.str().c_str(), BLACK, m_font);
 
 }

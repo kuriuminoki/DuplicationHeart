@@ -45,6 +45,9 @@ private:
 	int m_eveningHaikei;
 	int m_nightHaikei;
 
+	// ‚¨‹à‚Ì•`‰æ˜g
+	int m_moneyBoxGraph;
+
 	// ƒLƒƒƒ‰•`‰æ—p
 	CharacterDrawer* m_characterDrawer;
 

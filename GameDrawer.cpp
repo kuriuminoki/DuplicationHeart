@@ -21,6 +21,9 @@ GameDrawer::GameDrawer(const Game* game) {
 
 	m_skillHandle = CreateFontToHandle(nullptr, (int)(SKILL_SIZE * m_exX), 10);
 
+	m_skillInfoHandle = LoadGraph("picture/battleMaterial/skillInfo.png");
+	m_skillInfoBackHandle = LoadGraph("picture/battleMaterial/skillInfoBack.png");
+
 	m_gameoverHandle = LoadGraph("picture/system/gameover.png");
 
 	m_noticeSaveDataHandle = LoadGraph("picture/system/noticeSaveDone.png");
@@ -35,6 +38,8 @@ GameDrawer::GameDrawer(const Game* game) {
 GameDrawer::~GameDrawer() {
 	delete m_worldDrawer;
 	DeleteFontToHandle(m_skillHandle);
+	DeleteGraph(m_skillInfoHandle);
+	DeleteGraph(m_skillInfoBackHandle);
 	DeleteGraph(m_gameoverHandle);
 	DeleteGraph(m_noticeSaveDataHandle);
 }
@@ -87,6 +92,14 @@ void GameDrawer::draw() {
 			ostringstream oss;
 			int cnt1 = (int)skill->getCnt();
 			int cnt2 = (int)((skill->getCnt() * 10) - cnt1 * 10);
+			int x1 = (int)(850 * m_exX);
+			int y1 = (int)(10 * m_exY);
+			int x2 = (int)(1500 * m_exX);
+			int y2 = (int)(150 * m_exY);
+			int centerX = (x1 + x2) / 2;
+			int dx = (int)((1500 - 850) * (skill->DUPLICATION_TIME - skill->getOriginalCnt()) * m_exX) / skill->DUPLICATION_TIME / 2;
+			DrawExtendGraph(centerX - dx, y1, centerX + dx, y2, m_skillInfoBackHandle, TRUE);
+			DrawExtendGraph(x1, y1, x2, y2, m_skillInfoHandle, TRUE);
 			oss << now + 1 << "/" << num << "F" << cnt1 << "." << cnt2;
 			DrawStringToHandle((int)(900 * m_exX), (int)(30 * m_exY), oss.str().c_str(), BLACK, m_skillHandle);
 		}
