@@ -51,10 +51,10 @@ public:
 	void changeFlag(bool f, int new_color);
 
 	// マウスが重なっているか確認
-	bool overlap(int hand_x, int hand_y);
+	bool overlap(int hand_x, int hand_y) const;
 
 	// 描画
-	void draw(int hand_x, int hand_y);
+	void draw(int hand_x, int hand_y) const;
 };
 
 

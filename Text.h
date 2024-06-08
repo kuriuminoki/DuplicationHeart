@@ -11,6 +11,7 @@ class SoundPlayer;
 class World;
 class GraphHandle;
 class GraphHandles;
+class Button;
 
 
 /*
@@ -132,6 +133,14 @@ private:
 	// ファイルポインタ
 	int m_fp;
 
+	// 条件分岐用
+	bool m_if; // trueならifブロック内を実行中
+	std::vector<std::string> m_marks; // マーク
+	int m_font;
+	Button* m_yesButton;
+	Button* m_noButton;
+	bool m_selectFlag; // 今選択待ち
+
 	// 世界
 	World* m_world_p;
 
@@ -211,10 +220,12 @@ public:
 		return m_eventAnime->getAnime();
 	}
 	inline int getAnimeBright() const { return m_eventAnime->getBright(); }
-	const std::vector<Animation*> getAnimations() const { return m_animations; }
-	const GraphHandle* getTextFinishGraph() const { return m_textFinishGraph; }
-	const EventAnime* getEventAnime() const { return m_eventAnime; }
-	const TextAction getTextAction() const { return m_textAction; }
+	inline const std::vector<Animation*> getAnimations() const { return m_animations; }
+	inline const GraphHandle* getTextFinishGraph() const { return m_textFinishGraph; }
+	inline const EventAnime* getEventAnime() const { return m_eventAnime; }
+	inline const TextAction getTextAction() const { return m_textAction; }
+	inline const Button* getYesButton() const { return m_selectFlag ? m_yesButton : nullptr; }
+	inline const Button* getNoButton() const { return m_selectFlag ? m_noButton : nullptr; }
 
 	// セッタ
 	void setWorld(World* world);
