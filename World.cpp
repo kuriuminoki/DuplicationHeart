@@ -458,14 +458,15 @@ bool World::playerDead() {
 	return m_player_p->getHp() <= 0;
 }
 
-// 今操作しているキャラの名前
-string World::getControlCharacterName() const {
-	return m_playerChanger->getNowPlayer()->getCharacterInfo()->name();
-}
-
 // プレイヤーのHPをMAXにする
 void World::playerHpReset() {
 	m_player_p->setHp(m_player_p->getMaxHp());
+	m_player_p->setSkillGage(m_player_p->SKILL_MAX);
+}
+
+// 今操作しているキャラの名前を取得
+string World::getControlCharacterName() const {
+	return m_playerChanger->getNowPlayer()->getCharacterInfo()->name();
 }
 
 
@@ -699,6 +700,40 @@ void World::setPlayerFollowerPoint() {
 	}
 }
 
+void World::changePlayer(const Character* nextPlayer) {
+	// 変更できるキャラがいない
+	if (nextPlayer == nullptr || nextPlayer->getId() == m_playerChanger->getNowPlayer()->getId()) { 
+		return;
+	}
+
+	// 今操作中のキャラをNPCに変更(Brainを戻す)
+	for (unsigned int i = 0; i < m_characterControllers.size(); i++) {
+		if (m_characterControllers[i]->getAction()->getCharacter()->getId() == m_playerChanger->getNowPlayer()->getId()) {
+			m_characterControllers[i]->setBrain(createBrain(m_playerChanger->getPrevBrainName(), m_camera));
+			m_characterControllers[i]->setActionSound(nullptr);
+			break;
+		}
+	}
+	// 次操作するキャラを修正(BrainをKeyboardにする)
+	for (unsigned int i = 0; i < m_characterControllers.size(); i++) {
+		if (nextPlayer->getId() == m_characterControllers[i]->getAction()->getCharacter()->getId()) {
+			string brainName = m_characterControllers[i]->getBrain()->getBrainName();
+			m_playerChanger->changeCharacter(brainName, nextPlayer);
+			m_characterControllers[i]->setBrain(new KeyboardBrain(m_camera));
+			m_characterControllers[i]->setActionSound(m_soundPlayer_p);
+			break;
+		}
+	}
+	// 追跡対象を操作キャラにする
+	for (unsigned int i = 0; i < m_characterControllers.size(); i++) {
+		if (nextPlayer->getGroupId() == m_characterControllers[i]->getAction()->getCharacter()->getGroupId()) {
+			m_characterControllers[i]->setBrainFollow(nextPlayer);
+		}
+	}
+	// カメラが注目するキャラも変更
+	m_focusId = nextPlayer->getId();
+}
+
 // データ管理：カメラの位置をリセット
 void World::cameraPointInit() {
 	for (unsigned int i = 0; i < m_characters.size(); i++) {
@@ -807,38 +842,6 @@ void World::battle() {
 		changePlayer(m_playerChanger->play(m_soundPlayer_p, m_characterControllers));
 	}
 
-}
-
-void World::changePlayer(const Character* nextPlayer) {
-	// 変更できるキャラがいない
-	if (nextPlayer == nullptr) { return; }
-
-	// 今操作中のキャラをNPCに変更(Brainを戻す)
-	for (unsigned int i = 0; i < m_characterControllers.size(); i++) {
-		if (m_characterControllers[i]->getAction()->getCharacter()->getId() == m_playerChanger->getNowPlayer()->getId()) {
-			m_characterControllers[i]->setBrain(createBrain(m_playerChanger->getPrevBrainName(), m_camera));
-			m_characterControllers[i]->setActionSound(nullptr);
-			break;
-		}
-	}
-	// 次操作するキャラを修正(BrainをKeyboardにする)
-	for (unsigned int i = 0; i < m_characterControllers.size(); i++) {
-		if (nextPlayer->getId() == m_characterControllers[i]->getAction()->getCharacter()->getId()) {
-			string brainName = m_characterControllers[i]->getBrain()->getBrainName();
-			m_playerChanger->changeCharacter(brainName, nextPlayer);
-			m_characterControllers[i]->setBrain(new KeyboardBrain(m_camera));
-			m_characterControllers[i]->setActionSound(m_soundPlayer_p);
-			break;
-		}
-	}
-	// 追跡対象を操作キャラにする
-	for (unsigned int i = 0; i < m_characterControllers.size(); i++) {
-		if (nextPlayer->getGroupId() == m_characterControllers[i]->getAction()->getCharacter()->getGroupId()) {
-			m_characterControllers[i]->setBrainFollow(nextPlayer);
-		}
-	}
-	// カメラが注目するキャラも変更
-	m_focusId = nextPlayer->getId();
 }
 
 //  Battle：カメラの更新

@@ -256,11 +256,11 @@ public:
 	// プレイヤーのHPが0ならtrue
 	bool playerDead();
 
-	// 今操作しているキャラがハートか
-	std::string getControlCharacterName() const;
-
 	// プレイヤーのHPをMAXにする
 	void playerHpReset();
+
+	// 今操作しているキャラがハートか
+	std::string getControlCharacterName() const;
 
 	// スキル発動：ハートをFreezeにする
 	void setSkillFlag(bool skillFlag);
@@ -297,6 +297,9 @@ public:
 
 	// データ管理：カメラの位置をリセット
 	void cameraPointInit();
+
+	// Battle: 操作キャラの切り替え
+	void changePlayer(const Character* nextPlayer);
 
 	// プレイヤーを特定の座標へ移動
 	void setPlayerPoint(CharacterData* characterData);
@@ -335,9 +338,6 @@ private:
 
 	// Battle：キャラの更新（攻撃対象の変更）
 	void updateCharacter();
-
-	// Battle: 操作キャラの切り替え
-	void changePlayer(const Character* nextPlayer);
 
 	// Battle：キャラクターの動き
 	void controlCharacter();

@@ -88,7 +88,7 @@ void GameDrawer::draw() {
 			int cnt1 = (int)skill->getCnt();
 			int cnt2 = (int)((skill->getCnt() * 10) - cnt1 * 10);
 			oss << now + 1 << "/" << num << "F" << cnt1 << "." << cnt2;
-			DrawStringToHandle((int)(700 * m_exX), (int)(50 * m_exY), oss.str().c_str(), BLACK, m_skillHandle);
+			DrawStringToHandle((int)(900 * m_exX), (int)(30 * m_exY), oss.str().c_str(), BLACK, m_skillHandle);
 		}
 	}
 

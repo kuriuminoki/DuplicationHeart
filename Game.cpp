@@ -21,9 +21,9 @@ using namespace std;
 
 
 // どこまで
-const int FINISH_STORY = 21;
+const int FINISH_STORY = 22;
 // エリア0でデバッグするときはtrueにする
-const bool TEST_MODE = true;
+const bool TEST_MODE = false;
 // スキルが発動可能になるストーリー番号
 const int SKILL_USEABLE_STORY = 14;
 
@@ -609,7 +609,7 @@ bool Game::play() {
 	// スキル発動
 	if (controlF() == 1 && skillUsable()) {
 		m_world->setSkillFlag(true);
-		m_skill = new HeartSkill(1, m_world, m_soundPlayer);
+		m_skill = new HeartSkill(m_story->getLoop(), m_world, m_soundPlayer);
 	}
 
 	// これ以上ストーリーを進ませない（テスト用）
@@ -685,6 +685,7 @@ bool Game::play() {
 	}
 	// エリア移動
 	else if (m_world->getBrightValue() == 0 && CheckSoundMem(m_world->getDoorSound()) == 0) {
+		m_world->changePlayer(m_world->getCharacterWithName("ハート"));
 		int fromAreaNum = m_world->getAreaNum();
 		int toAreaNum = m_world->getNextAreaNum();
 		m_gameData->asignedWorld(m_world, false);
