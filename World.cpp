@@ -153,6 +153,7 @@ World::World() {
 	m_cameraMinEx *= m_exX;
 
 	m_areaLock = false;
+	m_controlCharacterLock = false;
 
 	m_date = 0;
 
@@ -227,6 +228,8 @@ World::World(const World* original) :
 	m_playerId = original->getPlayerId();
 	m_date = original->getDate();
 	m_money = original->getMoney();
+	m_areaLock = original->getAreaLock();
+	m_controlCharacterLock = original->getControlCharacterLock();
 
 	// エリアをコピー (コピー元と共有するもの)
 	m_soundPlayer_p = original->getSoundPlayer();
@@ -703,6 +706,12 @@ void World::setPlayerFollowerPoint() {
 }
 
 void World::changePlayer(const Character* nextPlayer) {
+
+	// 禁止されている
+	if (m_controlCharacterLock) {
+		return;
+	}
+
 	// 変更できるキャラがいない
 	if (nextPlayer == nullptr || nextPlayer->getId() == m_playerChanger->getNowPlayer()->getId()) { 
 		return;
@@ -1011,6 +1020,8 @@ void World::controlObject() {
 // Battle：アイテムの動き
 void World::controlItem() {
 
+	if (m_itemVector.size() == 0) { return; }
+	// 今操作しているキャラが当たり判定の対象
 	Character* targetCharacter = nullptr;
 	for (unsigned int i = 0; i < m_characters.size(); i++) {
 		if (m_characters[i]->getId() == m_playerChanger->getNowPlayer()->getId()) { 

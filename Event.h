@@ -243,7 +243,32 @@ public:
 	// プレイ
 	EVENT_RESULT play();
 
+	// ハートのスキル発動が可能かどうか
+	bool skillAble() { return false; }
+
 };
+
+
+// 操作キャラ変更を禁止する
+class LockControlCharacterEvent :
+	public EventElement
+{
+private:
+
+	// 禁止ならtrue
+	bool m_lock;
+
+public:
+	LockControlCharacterEvent(World* world, std::vector<std::string> param);
+
+	// プレイ
+	EVENT_RESULT play();
+
+	// ハートのスキル発動が可能かどうか
+	bool skillAble() { return false; }
+
+};
+
 
 // キャラを無敵にする
 class InvincibleEvent :
@@ -655,6 +680,26 @@ public:
 
 	// ハートのスキル発動が可能かどうか
 	bool skillAble() { return false; }
+};
+
+class ChangeControlCharacterEvent :
+	public EventElement
+{
+private:
+
+	// 変更先のキャラ名
+	std::string m_name;
+
+public:
+
+	ChangeControlCharacterEvent(World* world, std::vector<std::string> param);
+
+	// プレイ
+	EVENT_RESULT play();
+
+	// ハートのスキル発動が可能かどうか
+	bool skillAble() { return false; }
+
 };
 
 // キャラの追加

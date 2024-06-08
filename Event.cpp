@@ -112,6 +112,9 @@ void Event::createElement(vector<string> param, World* world, SoundPlayer* sound
 	if (param0 == "LockArea") {
 		element = new LockAreaEvent(world, param);
 	}
+	else if (param0 == "LockControlCharacter") {
+		element = new LockControlCharacterEvent(world, param);
+	}
 	else if (param0 == "Invincible") {
 		element = new InvincibleEvent(world, param);
 	}
@@ -162,6 +165,9 @@ void Event::createElement(vector<string> param, World* world, SoundPlayer* sound
 	}
 	else if (param0 == "BlindWorld") {
 		element = new BlindWorldEvent(world, param);
+	}
+	else if (param0 == "ChangeControlCharacter") {
+		element = new ChangeControlCharacterEvent(world, param);
 	}
 	else if (param0 == "PushCharacter") {
 		element = new PushCharacterEvent(world, param, m_version);
@@ -320,6 +326,18 @@ LockAreaEvent::LockAreaEvent(World* world, std::vector<std::string> param):
 }
 EVENT_RESULT LockAreaEvent::play() {
 	m_world_p->setAreaLock(m_lock);
+	return EVENT_RESULT::SUCCESS;
+}
+
+
+// 操作キャラ変更を禁止する
+LockControlCharacterEvent::LockControlCharacterEvent(World* world, std::vector<std::string> param) :
+	EventElement(world)
+{
+	m_lock = param[1] == "1" ? true : false;
+}
+EVENT_RESULT LockControlCharacterEvent::play() {
+	m_world_p->setControlCharacterLock(m_lock);
 	return EVENT_RESULT::SUCCESS;
 }
 
@@ -696,6 +714,18 @@ BlindWorldEvent::BlindWorldEvent(World* world, std::vector<std::string> param) :
 }
 EVENT_RESULT BlindWorldEvent::play() {
 	m_world_p->setBlindFlag(m_flag);
+	return EVENT_RESULT::SUCCESS;
+}
+
+
+// 操作キャラの変更
+ChangeControlCharacterEvent::ChangeControlCharacterEvent(World* world, std::vector<std::string> param) :
+	EventElement(world)
+{
+	m_name = param[1];
+}
+EVENT_RESULT ChangeControlCharacterEvent::play() {
+	m_world_p->changePlayer(m_world_p->getCharacterWithName(m_name));
 	return EVENT_RESULT::SUCCESS;
 }
 

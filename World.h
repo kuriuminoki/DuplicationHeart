@@ -103,6 +103,9 @@ private:
 	// エリア移動が禁止されているならtrue
 	bool m_areaLock;
 
+	// 操作キャラの変更が禁止されているならtrue
+	bool m_controlCharacterLock;
+
 	// 描画用のカメラ Worldがデリートする
 	Camera* m_camera;
 
@@ -217,6 +220,8 @@ public:
 	inline bool getSkillFlag() const { return m_skillFlag; }
 	inline int getBossDeadEffextCnt() const { return m_bossDeadEffectCnt; }
 	inline int getMoney() const { return m_money; }
+	inline bool getAreaLock() const { return m_areaLock; }
+	inline bool getControlCharacterLock() const { return m_controlCharacterLock; }
 
 	// Drawer用のゲッタ
 	std::vector<const CharacterAction*> getActions() const;
@@ -238,6 +243,7 @@ public:
 	inline void setConversation(Conversation* conversation) { m_conversation_p = conversation; }
 	inline void setMovie(Movie* movie) { m_movie_p = movie; }
 	inline void setAreaLock(bool lock) { m_areaLock = lock; }
+	inline void setControlCharacterLock(bool lock) { m_controlCharacterLock = lock; }
 	inline void setDate(int date) { m_date = date; }
 	inline void setBlindFlag(bool blindFlag) { m_blindFlag = blindFlag; }
 	inline void setMoney(int money) { m_money = money; }
