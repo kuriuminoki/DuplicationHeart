@@ -328,6 +328,8 @@ private:
 	// aŒ‚UŒ‚‚É‚æ‚éˆÚ“®‘¬“x
 	const int SLASH_MOVE_SPEED = 25;
 
+	bool m_slashNow;
+
 public:
 	static const char* ACTION_NAME;
 	const char* getActionName() const { return this->ACTION_NAME; }
@@ -340,6 +342,7 @@ public:
 
 	int getPreJumpMax() const { return PRE_JUMP_MAX; }
 
+	inline void setSlashNow(bool slashNow) { m_slashNow = slashNow; }
 	void setGrand(bool grand);
 
 	// aŒ‚ŠJn‚Ìˆ—
