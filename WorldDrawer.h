@@ -66,6 +66,9 @@ private:
 	// skillバー
 	int m_skillBarGraph;
 
+	// 仲間のHPバー
+	int m_followHpBarGraph;
+
 	// ボスのHPバー
 	int m_bossHpBarGraph;
 
@@ -77,6 +80,8 @@ private:
 	double m_exX, m_exY;
 
 	int m_font;
+
+	int m_followerNameFont;
 
 public:
 	WorldDrawer(const World* world);

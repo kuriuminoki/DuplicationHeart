@@ -58,6 +58,7 @@ WorldDrawer::WorldDrawer(const World* world) {
 	m_moneyBoxGraph = LoadGraph("picture/battleMaterial/moneyBox.png");
 	m_hpBarGraph = LoadGraph("picture/battleMaterial/hpBar.png");
 	m_skillBarGraph = LoadGraph("picture/battleMaterial/skillBar.png");
+	m_followHpBarGraph = LoadGraph("picture/battleMaterial/followHpBar.png");
 	m_bossHpBarGraph = LoadGraph("picture/battleMaterial/bossHpBar.png");
 	m_noonHaikei = LoadGraph("picture/stageMaterial/noon.jpg");
 	m_eveningHaikei = LoadGraph("picture/stageMaterial/evening.jpg");
@@ -65,6 +66,7 @@ WorldDrawer::WorldDrawer(const World* world) {
 	m_enemyNotice = LoadGraph("picture/battleMaterial/enemyNotice.png");
 	getGameEx(m_exX, m_exY);
 	m_font = CreateFontToHandle(nullptr, (int)(50 * m_exX), 10);
+	m_followerNameFont = CreateFontToHandle(nullptr, (int)(30 * m_exX), 8);
 }
 
 WorldDrawer::~WorldDrawer() {
@@ -75,12 +77,14 @@ WorldDrawer::~WorldDrawer() {
 	DeleteGraph(m_moneyBoxGraph);
 	DeleteGraph(m_hpBarGraph);
 	DeleteGraph(m_skillBarGraph);
+	DeleteGraph(m_followHpBarGraph);
 	DeleteGraph(m_bossHpBarGraph);
 	DeleteGraph(m_noonHaikei);
 	DeleteGraph(m_eveningHaikei);
 	DeleteGraph(m_nightHaikei);
 	DeleteGraph(m_enemyNotice);
 	DeleteFontToHandle(m_font);
+	DeleteFontToHandle(m_followerNameFont);
 }
 
 
@@ -177,6 +181,7 @@ void WorldDrawer::drawBattleField(const Camera* camera, int bright, bool drawSki
 	// 各Actionを描画
 	vector<const CharacterAction*> actions = m_world->getActions();
 	int player = -1;
+	vector<int> followers;
 	const CharacterAction* bossCharacterAction = nullptr;
 	size = actions.size();
 	for (unsigned int i = 0; i < size; i++) {
@@ -198,6 +203,12 @@ void WorldDrawer::drawBattleField(const Camera* camera, int bright, bool drawSki
 			m_characterDrawer->drawCharacter(camera, enemyNotice, bright);
 			// ボスがいるなら保持しておく
 			if (actions[i]->getCharacter()->getBossFlag()) { bossCharacterAction = actions[i]; }
+			// 仲間も保持
+			if (player != -1 && actions[i]->getCharacter()->getGroupId() == actions[player]->getCharacter()->getGroupId()) {
+				if (actions[i]->getCharacter()->getName() != "複製のハート") {
+					followers.push_back(i);
+				}
+			}
 		}
 	}
 	// プレイヤーは手前に描画
@@ -239,6 +250,15 @@ void WorldDrawer::drawBattleField(const Camera* camera, int bright, bool drawSki
 		if (drawSkillBar) {
 			m_characterDrawer->drawPlayerSkillBar(x, y + height + 10, wide, 30, playerCharacter, m_skillBarGraph);
 		}
+	}
+
+	// 仲間の情報
+	const int fX = 30;
+	const int fY = 800;
+	const int fWide = 300;
+	const int fHeight = 80;
+	for (unsigned int i = 0; i < followers.size(); i++) {
+		m_characterDrawer->drawFollowHpBar(fX + (fWide + 20) * i, fY, fWide, fHeight, actions[followers[i]]->getCharacter(), m_followHpBarGraph, m_followerNameFont);
 	}
 
 	// ボスの情報

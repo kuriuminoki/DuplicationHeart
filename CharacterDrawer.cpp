@@ -173,6 +173,26 @@ void CharacterDrawer::drawPlayerSkillBar(int x, int y, int wide, int height, con
 
 }
 
+void CharacterDrawer::drawFollowHpBar(int x, int y, int wide, int height, const Character* player, int hpBarGraph, int font) {
+
+	// 解像度変更に対応
+	x = (int)(x * m_exX);
+	y = (int)(y * m_exY);
+	wide = (int)(wide * m_exX);
+	height = (int)(height * m_exY);
+
+	DrawExtendGraph(x, y, x + wide, y + height, hpBarGraph, TRUE);
+
+	int dx = (int)(20 * m_exX);
+	int dy1 = (int)(50 * m_exY);
+	int dy2 = (int)(10 * m_exY);
+
+	// 体力の描画
+	DrawStringToHandle(x, y, player->getName().c_str(), BLACK, font);
+	drawHpBar(x + dx, y + dy1, x + wide - dx, y + height - dy2, player->getHp(), player->getPrevHp(), player->getMaxHp(), DAMAGE_COLOR, PREV_HP_COLOR, HP_COLOR);
+
+}
+
 void CharacterDrawer::drawBossHpBar(int x, int y, int wide, int height, const Character* player, int hpBarGraph) {
 
 	// 解像度変更に対応

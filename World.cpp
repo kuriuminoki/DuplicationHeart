@@ -698,14 +698,16 @@ void World::setPlayerPoint(CharacterData* characterData) {
 void World::setPlayerFollowerPoint() {
 	// プレイヤーの仲間
 	for (unsigned int i = 0; i < m_characterControllers.size(); i++) {
-		const Character* follow = m_characterControllers[i]->getBrain()->getFollow();
+		const Character* follow = m_characterControllers[i]->getAction()->getCharacter();
 		// 追跡対象がプレイヤーなら
-		if (follow != nullptr && m_playerId == follow->getId()) {
+		if (follow != nullptr && m_player_p->getGroupId() == follow->getGroupId()) {
 			// Controllerに対応するCharacterに変更を加える
 			for (unsigned int j = 0; j < m_characters.size(); j++) {
-				if (m_characterControllers[i]->getAction()->getCharacter()->getId() == m_characters[j]->getId()) {
-					m_characters[j]->setX(m_player_p->getX());
+				if (m_characters[j]->getId() == follow->getId()) {
+					m_characters[j]->setX(m_player_p->getX() + GetRand(50) - 25);
 					m_characters[j]->setY(m_player_p->getY() + m_player_p->getHeight() - m_characters[j]->getHeight());
+					// HP=0なら半分回復して復活
+					if (m_characters[j]->getHp() == 0) { m_characters[j]->setHp(m_characters[j]->getMaxHp() / 2); }
 					break;
 				}
 			}
