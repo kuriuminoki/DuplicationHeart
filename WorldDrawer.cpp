@@ -196,7 +196,7 @@ void WorldDrawer::drawBattleField(const Camera* camera, int bright, bool drawSki
 			m_characterDrawer->setCharacterAction(actions[i]);
 			int enemyNotice = -1, groupId = actions[i]->getCharacter()->getGroupId();
 			// 中立と味方なら通知しない
-			if (groupId != -1 && player != -1 && groupId != actions[player]->getCharacter()->getGroupId()) {
+			if (groupId != -1 && groupId != 0) {
 				enemyNotice = m_enemyNotice;
 			}
 			// カメラを使ってキャラを描画
@@ -204,7 +204,7 @@ void WorldDrawer::drawBattleField(const Camera* camera, int bright, bool drawSki
 			// ボスがいるなら保持しておく
 			if (actions[i]->getCharacter()->getBossFlag()) { bossCharacterAction = actions[i]; }
 			// 仲間も保持
-			if (player != -1 && actions[i]->getCharacter()->getGroupId() == actions[player]->getCharacter()->getGroupId()) {
+			if (groupId == 0) {
 				if (actions[i]->getCharacter()->getName() != "複製のハート") {
 					followers.push_back(i);
 				}
@@ -239,42 +239,44 @@ void WorldDrawer::drawBattleField(const Camera* camera, int bright, bool drawSki
 		m_animationDrawer->drawAnimation(camera);
 	}
 
-	// ハートの情報
-	if (player != -1) {
-		const int x = 30;
-		const int y = 30;
-		const int wide = 700;
-		const int height = 70;
-		const Character* playerCharacter = actions[player]->getCharacter();
-		m_characterDrawer->drawPlayerHpBar(x, y, wide, height, playerCharacter, m_hpBarGraph);
-		if (drawSkillBar) {
-			m_characterDrawer->drawPlayerSkillBar(x, y + height + 10, wide, 30, playerCharacter, m_skillBarGraph);
+	if (m_world->getDispHpInfoFlag()) {
+		// ハートの情報
+		if (player != -1) {
+			const int x = 30;
+			const int y = 30;
+			const int wide = 700;
+			const int height = 70;
+			const Character* playerCharacter = actions[player]->getCharacter();
+			m_characterDrawer->drawPlayerHpBar(x, y, wide, height, playerCharacter, m_hpBarGraph);
+			if (drawSkillBar) {
+				m_characterDrawer->drawPlayerSkillBar(x, y + height + 10, wide, 30, playerCharacter, m_skillBarGraph);
+			}
 		}
-	}
 
-	// 仲間の情報
-	const int fX = 30;
-	const int fY = 800;
-	const int fWide = 300;
-	const int fHeight = 80;
-	for (unsigned int i = 0; i < followers.size(); i++) {
-		m_characterDrawer->drawFollowHpBar(fX + (fWide + 20) * i, fY, fWide, fHeight, actions[followers[i]]->getCharacter(), m_followHpBarGraph, m_followerNameFont);
-	}
+		// 仲間の情報
+		const int fX = 30;
+		const int fY = 800;
+		const int fWide = 300;
+		const int fHeight = 80;
+		for (unsigned int i = 0; i < followers.size(); i++) {
+			m_characterDrawer->drawFollowHpBar(fX + (fWide + 20) * i, fY, fWide, fHeight, actions[followers[i]]->getCharacter(), m_followHpBarGraph, m_followerNameFont);
+		}
 
-	// ボスの情報
-	const int bX = 30;
-	const int bY = 950;
-	const int bWide = 1500;
-	const int bHeight = 80;
-	if (bossCharacterAction != nullptr) {
-		m_characterDrawer->drawBossHpBar(bX, bY, bWide, bHeight, bossCharacterAction->getCharacter(), m_bossHpBarGraph);
-	}
+		// ボスの情報
+		const int bX = 30;
+		const int bY = 950;
+		const int bWide = 1500;
+		const int bHeight = 80;
+		if (bossCharacterAction != nullptr) {
+			m_characterDrawer->drawBossHpBar(bX, bY, bWide, bHeight, bossCharacterAction->getCharacter(), m_bossHpBarGraph);
+		}
 
-	// お金
-	DrawExtendGraph((int)(1600 * m_exX), (int)(10 * m_exY), (int)(1900 * m_exX), (int)(80 * m_exY), m_moneyBoxGraph, TRUE);
-	int money = m_world->getMoney();
-	ostringstream oss;
-	oss << "＄：" << money;
-	DrawStringToHandle((int)(1650 * m_exX), (int)(20 * m_exY), oss.str().c_str(), BLACK, m_font);
+		// お金
+		DrawExtendGraph((int)(1600 * m_exX), (int)(10 * m_exY), (int)(1900 * m_exX), (int)(80 * m_exY), m_moneyBoxGraph, TRUE);
+		int money = m_world->getMoney();
+		ostringstream oss;
+		oss << "＄：" << money;
+		DrawStringToHandle((int)(1650 * m_exX), (int)(20 * m_exY), oss.str().c_str(), BLACK, m_font);
+	}
 
 }

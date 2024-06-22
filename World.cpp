@@ -131,6 +131,8 @@ void penetrationCharacterAndObject(CharacterController* controller, vector<Objec
 World::World() {
 	m_duplicationFlag = false;
 
+	m_dispHpInfoFlag = false;
+
 	m_brightValue = 255;
 
 	m_resetBgmFlag = false;
@@ -814,6 +816,9 @@ CharacterController* World::createControllerWithData(const Character* character,
 *  戦わせる
 */
 void World::battle() {
+
+	m_dispHpInfoFlag = true;
+
 	if (!m_soundPlayer_p->checkBGMplay()) {
 		m_soundPlayer_p->playBGM();
 	}
@@ -1344,6 +1349,9 @@ void World::createBossDeadEffect() {
 
 // 各キャラが目標地点へ移動するだけ 全員到達したらtrueを返す
 bool World::moveGoalCharacter() {
+
+	m_dispHpInfoFlag = false;
+
 	// deleteFlagがtrueのオブジェクトを削除する。
 	deleteObject(m_stageObjects);
 	deleteObject(m_attackObjects);
@@ -1431,7 +1439,6 @@ bool World::dealBrightValue() {
 void World::talk() {
 	moveGoalCharacter();
 	if (m_conversation_p != nullptr) {
-		updateCamera();
 		m_conversation_p->play();
 		// 会話終了
 		if (m_conversation_p->getFinishFlag()) {

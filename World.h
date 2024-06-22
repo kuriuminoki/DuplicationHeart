@@ -58,6 +58,9 @@ public:
 class World {
 private:
 
+	// (Drawer—p) ‚g‚o‚È‚Ç‚Ìî•ñ‚ğ•\¦‚·‚é‚©
+	bool m_dispHpInfoFlag;
+
 	// ‰ğ‘œ“x‚Ì”{—¦
 	double m_exX, m_exY;
 
@@ -186,6 +189,7 @@ public:
 	void debug(int x, int y, int color) const;
 
 	// ƒQƒbƒ^
+	inline bool getDispHpInfoFlag() const { return m_dispHpInfoFlag; }
 	inline int getFocusId() const { return m_focusId; }
 	inline int getPlayerId() const { return m_playerId; }
 	inline int getBrightValue() const { return m_brightValue; }
