@@ -235,6 +235,7 @@ void CharacterController::setGoal(int gx, int gy) {
 
 // 目標地点へ移動するだけ
 bool CharacterController::moveGoal() {
+	if (m_characterAction->getCharacter()->getHp() == 0) { return true; }
 	// 移動 stickなどの入力状態を更新する
 	int rightStick = 0, leftStick = 0, upStick = 0, downStick = 0, jump = 0;
 	bool alreadyGoal = m_brain->moveGoalOrder(rightStick, leftStick, upStick, downStick, jump);

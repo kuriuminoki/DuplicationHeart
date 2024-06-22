@@ -197,6 +197,9 @@ protected:
 	// 移動時間
 	int m_moveCnt;
 
+	// 10フレーム前でのX座標
+	int m_prevX;
+
 	// 移動を諦めるまでの時間
 	const int GIVE_UP_MOVE_CNT = 180;
 
@@ -221,6 +224,7 @@ public:
 	void setGx(int gx) { m_gx = gx; }
 	void setGy(int gy) { m_gy = gy; }
 	void setMoveCnt(int cnt) { m_moveCnt = cnt; }
+	void setPrevX(int prevX) { m_prevX = prevX; }
 	void setTarget(const Character* character) { m_target_p = character; }
 	void setCharacterAction(const CharacterAction* characterAction);
 

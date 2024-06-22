@@ -1362,7 +1362,7 @@ bool World::moveGoalCharacter() {
 
 	// キャラクターの動き
 	bool allCharacterAlreadyGoal = true;
-	size_t size = m_characterControllers.size();
+	const size_t size = m_characterControllers.size();
 	for (unsigned int i = 0; i < size; i++) {
 		CharacterController* controller = m_characterControllers[i];
 
