@@ -78,7 +78,7 @@ protected:
 	int m_boostDone;// 0:none 1:right 2:left
 
 	// やられ状態の時間
-	const int DAMAGE_TIME = 20;
+	const int DAMAGE_TIME = 10;
 
 	// ノックバックなしのキャラならtrue
 	bool m_heavy = false;

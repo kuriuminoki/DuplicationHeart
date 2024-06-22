@@ -1361,6 +1361,7 @@ bool World::dealBrightValue() {
 
 // ‰ï˜b‚³‚¹‚é
 void World::talk() {
+	moveGoalCharacter();
 	if (m_conversation_p != nullptr) {
 		updateCamera();
 		m_conversation_p->play();
