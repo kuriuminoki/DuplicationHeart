@@ -131,6 +131,8 @@ void penetrationCharacterAndObject(CharacterController* controller, vector<Objec
 World::World() {
 	m_duplicationFlag = false;
 
+	m_dispHpInfoFlag = false;
+
 	m_brightValue = 255;
 
 	m_resetBgmFlag = false;
@@ -344,7 +346,7 @@ vector<const CharacterAction*> World::getActions() const {
 	size_t size = m_characterControllers.size();
 	for (unsigned int i = 0; i < size; i++) {
 		// HPが０かつDeadGraphがないなら表示しない
-		if (m_characterControllers[i]->getAction()->getCharacter()->getHp() > 0 || m_characterControllers[i]->getAction()->getCharacter()->haveDeadGraph()) {
+		if (!m_characterControllers[i]->getAction()->getCharacter()->noDispForDead()) {
 			actions.push_back(m_characterControllers[i]->getAction());
 		}
 		else if (m_characterControllers[i]->getAction()->getCharacter()->getBossFlag() && m_bossDeadEffectCnt > 0) {
@@ -814,6 +816,9 @@ CharacterController* World::createControllerWithData(const Character* character,
 *  戦わせる
 */
 void World::battle() {
+
+	m_dispHpInfoFlag = true;
+
 	if (!m_soundPlayer_p->checkBGMplay()) {
 		m_soundPlayer_p->playBGM();
 	}
@@ -971,7 +976,7 @@ void World::controlCharacter() {
 		CharacterController* controller = m_characterControllers[i];
 
 		// HPが0ならスキップ
-		if (controller->getAction()->getCharacter()->getHp() == 0 && !controller->getAction()->getCharacter()->haveDeadGraph()) {
+		if (controller->getAction()->getCharacter()->noDispForDead()) {
 			continue;
 		}
 
@@ -1001,6 +1006,18 @@ void World::controlCharacter() {
 		// 斬撃攻撃
 		Object* slashAttack = controller->slashAttack();
 		if (slashAttack != nullptr) { m_attackObjects.push_back(slashAttack); }
+	}
+
+	// キャラ間の当たり判定
+	atariCharacterAndCharacter();
+
+	for (unsigned int i = 0; i < size; i++) {
+		CharacterController* controller = m_characterControllers[i];
+
+		// HPが0ならスキップ
+		if (controller->getAction()->getCharacter()->noDispForDead()) {
+			continue;
+		}
 
 		// 反映 originalのハートはフリーズ
 		if (!m_duplicationFlag || m_characterControllers[i]->getAction()->getCharacter()->getId() != m_playerId) {
@@ -1080,6 +1097,50 @@ void World::controlItem() {
 	}
 }
 
+// Battle：キャラクター<->キャラクターの当たり判定
+void World::atariCharacterAndCharacter() {
+	static const int SPEED = 3;
+	for (unsigned int i = 0; i < m_characterControllers.size() - 1; i++) {
+		for (unsigned int j = i + 1; j < m_characterControllers.size(); j++) {
+
+			CharacterController* controllerA = m_characterControllers[i];
+			CharacterController* controllerB = m_characterControllers[j];
+
+			if (m_duplicationFlag && controllerA->getAction()->getCharacter()->getId() == m_playerId) {
+				continue;
+			}
+			if (m_duplicationFlag && controllerB->getAction()->getCharacter()->getId() == m_playerId) {
+				continue;
+			}
+			// HPが0ならスキップ
+			if (controllerA->getAction()->getCharacter()->noDispForDead() || controllerA->getAction()->getCharacter()->getBossFlag()) {
+				continue;
+			}
+			if (controllerB->getAction()->getCharacter()->noDispForDead() || controllerB->getAction()->getCharacter()->getBossFlag()) {
+				continue;
+			}
+
+			int ax1 = 0, ay1 = 0, ax2 = 0, ay2 = 0;
+			controllerA->getAction()->getCharacter()->getAtariArea(&ax1, &ay1, &ax2, &ay2);
+
+			int bx1 = 0, by1 = 0, bx2 = 0, by2 = 0;
+			controllerB->getAction()->getCharacter()->getAtariArea(&bx1, &by1, &bx2, &by2);
+
+			if (ax2 > bx1 && ax1 < bx2 && ay2 > by1 && ay1 < by2) {
+				if ((ax1 + ax2) < (bx1 + bx2)) {
+					controllerA->addActionDx(-SPEED);
+					controllerB->addActionDx(SPEED);
+				}
+				else {
+					controllerA->addActionDx(SPEED);
+					controllerB->addActionDx(-SPEED);
+				}
+			}
+
+		}
+	}
+}
+
 //  Battle：キャラクターとオブジェクトの当たり判定
 void World::atariCharacterAndObject(CharacterController* controller, vector<Object*>& objects, bool slope) {
 	// 壁や床オブジェクトの処理 (当たり判定と動き)
@@ -1103,7 +1164,7 @@ void World::atariCharacterAndObject(CharacterController* controller, vector<Obje
 			int panPal = adjustPanSound(x, m_camera->getX());
 			m_soundPlayer_p->pushSoundQueue(soundHandle, panPal);
 			// HP = 0になったとき（やられたとき）
-			if (!character->haveDeadGraph() && character->getHp() == 0) {
+			if (character->noDispForDead()) {
 				if (character->getBossFlag()) {
 					m_bossDeadEffectCnt = 300;
 				}
@@ -1288,6 +1349,9 @@ void World::createBossDeadEffect() {
 
 // 各キャラが目標地点へ移動するだけ 全員到達したらtrueを返す
 bool World::moveGoalCharacter() {
+
+	m_dispHpInfoFlag = false;
+
 	// deleteFlagがtrueのオブジェクトを削除する。
 	deleteObject(m_stageObjects);
 	deleteObject(m_attackObjects);
@@ -1298,12 +1362,12 @@ bool World::moveGoalCharacter() {
 
 	// キャラクターの動き
 	bool allCharacterAlreadyGoal = true;
-	size_t size = m_characterControllers.size();
+	const size_t size = m_characterControllers.size();
 	for (unsigned int i = 0; i < size; i++) {
 		CharacterController* controller = m_characterControllers[i];
 
 		// HPが0ならスキップ
-		if (controller->getAction()->getCharacter()->getHp() == 0 && !controller->getAction()->getCharacter()->haveDeadGraph()) { 
+		if (controller->getAction()->getCharacter()->noDispForDead()) {
 			continue;
 		}
 
@@ -1321,6 +1385,18 @@ bool World::moveGoalCharacter() {
 		if (!m_duplicationFlag || m_characterControllers[i]->getAction()->getCharacter()->getId() != m_playerId) {
 			allCharacterAlreadyGoal &= controller->moveGoal();
 			controller->setPlayerDirection(m_player_p);
+		}
+	}
+
+	// キャラ間の当たり判定
+	atariCharacterAndCharacter();
+
+	for (unsigned int i = 0; i < size; i++) {
+		CharacterController* controller = m_characterControllers[i];
+
+		// HPが0ならスキップ
+		if (controller->getAction()->getCharacter()->noDispForDead()) {
+			continue;
 		}
 
 		// 反映 originalのハートはフリーズ
@@ -1361,8 +1437,8 @@ bool World::dealBrightValue() {
 
 // 会話させる
 void World::talk() {
+	moveGoalCharacter();
 	if (m_conversation_p != nullptr) {
-		updateCamera();
 		m_conversation_p->play();
 		// 会話終了
 		if (m_conversation_p->getFinishFlag()) {

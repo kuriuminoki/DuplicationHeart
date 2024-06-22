@@ -81,6 +81,7 @@ CharacterAction::CharacterAction(Character* character, SoundPlayer* soundPlayer_
 	m_grandRightSlope = false;
 	m_vx = 0;
 	m_vy = 0;
+	m_dx = 0;
 	m_rightLock = false;
 	m_leftLock = false;
 	m_upLock = false;
@@ -201,6 +202,8 @@ void CharacterAction::init() {
 
 	m_cnt++;
 
+	m_dx = 0;
+
 	// スキルゲージの回復
 	if (m_cnt % 30 == 29) {
 		m_character_p->setSkillGage(m_character_p->getSkillGage() + 1);
@@ -263,6 +266,9 @@ void CharacterAction::otherAction() {
 
 void CharacterAction::moveAction() {
 	// 移動
+	if (!m_heavy && ((m_dx < 0 && !m_leftLock) || (m_dx > 0 && !m_rightLock))) {
+		m_character_p->moveRight(m_dx);
+	}
 	if (m_vx > 0) {// 右
 		if (m_rightLock) {
 			stopMoveLeft(); // 左に移動したいのに吹っ飛び等で右へ移動しているとき、いったん左移動への入力をキャンセルさせないとバグる
@@ -1021,43 +1027,20 @@ void FlightAction::otherAction() {
 	}
 }
 void FlightAction::moveAction() {
-	// 移動
-	if (m_vx > 0) {// 右
-		if (m_rightLock) {
-			stopMoveLeft(); // 左に移動したいのに吹っ飛び等で右へ移動しているとき、いったん左移動への入力をキャンセルさせないとバグる
-			m_vx = 0;
-		}
-		else {
-			m_character_p->moveRight(m_vx);
-		}
-	}
-	else if (m_vx < 0) { // 左
-		if (m_leftLock) {
-			stopMoveRight();// 右に移動したいのに吹っ飛び等で左へ移動しているとき、いったん右移動への入力をキャンセルさせないとバグる
-			m_vx = 0;
-		}
-		else {
-			m_character_p->moveLeft(-m_vx);
-		}
-	}
+
+	CharacterAction::moveAction();
+
 	if (m_vy < 0) { // 上
 		if (m_upLock) {
 			stopMoveDown();
-			m_vy = 0;
-		}
-		else {
-			m_character_p->moveUp(-m_vy);
 		}
 	}
 	else if (m_vy > 0) { // 下
 		if (m_downLock) {
 			stopMoveUp();
-			m_vy = 0;
-		}
-		else {
-			m_character_p->moveDown(m_vy);
 		}
 	}
+
 }
 
 void FlightAction::walk(bool right, bool left, bool up, bool down) {

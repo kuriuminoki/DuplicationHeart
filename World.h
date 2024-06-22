@@ -58,6 +58,9 @@ public:
 class World {
 private:
 
+	// (Drawer用) ＨＰなどの情報を表示するか
+	bool m_dispHpInfoFlag;
+
 	// 解像度の倍率
 	double m_exX, m_exY;
 
@@ -186,6 +189,7 @@ public:
 	void debug(int x, int y, int color) const;
 
 	// ゲッタ
+	inline bool getDispHpInfoFlag() const { return m_dispHpInfoFlag; }
 	inline int getFocusId() const { return m_focusId; }
 	inline int getPlayerId() const { return m_playerId; }
 	inline int getBrightValue() const { return m_brightValue; }
@@ -360,6 +364,9 @@ private:
 
 	// Battle：アイテムの動き
 	void controlItem();
+
+	// Battle：キャラクター<->キャラクターの当たり判定
+	void atariCharacterAndCharacter();
 
 	// Battle：キャラクターとオブジェクトの当たり判定 slope=trueならslopeが対象falseならそれ以外
 	void atariCharacterAndObject(CharacterController* controller, std::vector<Object*>& objects, bool slope);

@@ -171,6 +171,7 @@ NormalAI::NormalAI() {
 	m_jumpCnt = 0;
 	m_squatCnt = 0;
 	m_moveCnt = 0;
+	m_prevX = 0;
 }
 
 
@@ -195,6 +196,7 @@ void NormalAI::setParam(NormalAI* brain) {
 	brain->setGx(m_gx);
 	brain->setGy(m_gy);
 	brain->setMoveCnt(m_moveCnt);
+	brain->setPrevX(m_prevX);
 }
 
 void NormalAI::setCharacterAction(const CharacterAction* characterAction) {
@@ -237,10 +239,10 @@ void NormalAI::moveOrder(int& right, int& left, int& up, int& down) {
 	int x = m_characterAction_p->getCharacter()->getCenterX();
 	int y = m_characterAction_p->getCharacter()->getCenterY();
 
-	// (壁につっかえるなどで)移動できてないから諦める
+		// (壁につっかえるなどで)移動できてないから諦める
 	if (m_moveCnt >= GIVE_UP_MOVE_CNT) {
-		m_gx = x;
-		m_gy = y;
+			m_gx = x;
+			m_gy = y;
 	}
 
 	// 目標地点設定
@@ -266,11 +268,11 @@ void NormalAI::moveOrder(int& right, int& left, int& up, int& down) {
 
 // 上下移動するAIが使う
 void NormalAI::moveUpDownOrder(int x, int y, bool& tryFlag) {
-	// (壁につっかえるなどで)移動できてないから諦める
+		// (壁につっかえるなどで)移動できてないから諦める
 	if (m_moveCnt >= GIVE_UP_MOVE_CNT || (m_gy > y && m_characterAction_p->getGrand())) {
-		m_gx = x;
-		m_gy = y;
-		tryFlag = false;
+			m_gx = x;
+			m_gy = y;
+			tryFlag = false;
 	}
 
 	// 壁にぶつかったから上下移動
@@ -491,6 +493,15 @@ bool NormalAI::moveGoalOrder(int& right, int& left, int& up, int& down, int& jum
 	// 現在地
 	int x = m_characterAction_p->getCharacter()->getCenterX();
 	int y = m_characterAction_p->getCharacter()->getY() + m_characterAction_p->getCharacter()->getHeight();
+	// 60フレームごとに座標を確認
+	if (m_moveCnt % 60 == 59) {
+		// (壁につっかえるなどで)移動できてないから諦める
+		if (m_moveCnt >= 60 && abs(m_prevX - x) < 20) {
+			m_gx = x;
+			m_gy = y;
+		}
+		m_prevX = x;
+	}
 	// 目標に到達しているか
 	if (m_gx > x - GX_ERROR && m_gx < x + GX_ERROR && m_gy > y - GY_ERROR && m_gy < y + GY_ERROR) {
 		return true;
@@ -571,10 +582,10 @@ void FollowNormalAI::moveOrder(int& right, int& left, int& up, int& down) {
 	int x = m_characterAction_p->getCharacter()->getCenterX();
 	int y = m_characterAction_p->getCharacter()->getCenterY();
 
-	// (壁につっかえるなどで)移動できてないから諦める
+		// (壁につっかえるなどで)移動できてないから諦める
 	if (m_moveCnt >= GIVE_UP_MOVE_CNT) {
-		m_gx = x;
-		m_gy = y;
+			m_gx = x;
+			m_gy = y;
 	}
 
 	// 目標地点設定用パラメータ
