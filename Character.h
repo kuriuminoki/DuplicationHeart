@@ -395,6 +395,9 @@ public:
 
 	// ‚â‚ç‚ê‰æ‘œ‚ª‚ ‚é‚©
 	bool haveDeadGraph() const;
+
+	// HP‚ª0‚Å‚â‚ç‚ê‰æ‘œ‚ª‚È‚­A‰æ–Ê‚©‚çÁ‚¦‚é‚×‚«‚©
+	inline bool noDispForDead() const { return m_hp == 0 && !haveDeadGraph(); }
 };
 
 

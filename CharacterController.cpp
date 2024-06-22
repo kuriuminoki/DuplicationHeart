@@ -174,6 +174,9 @@ void CharacterController::setActionDownLock(bool lock) {
 void CharacterController::setActionSound(SoundPlayer* soundPlayer) {
 	m_characterAction->setSoundPlayer(soundPlayer);
 }
+void CharacterController::addActionDx(int value) {
+	m_characterAction->setDx(m_characterAction->getDx() + value);
+}
 
 // キャラクターのセッタ
 void CharacterController::setCharacterX(int x) {

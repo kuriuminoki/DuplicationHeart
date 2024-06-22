@@ -92,6 +92,7 @@ public:
 	void setActionUpLock(bool lock);
 	void setActionDownLock(bool lock);
 	void setActionSound(SoundPlayer* soundPlayer);
+	void addActionDx(int value);
 
 	// キャラクターのセッタ
 	void setCharacterX(int x);

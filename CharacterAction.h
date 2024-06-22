@@ -93,6 +93,9 @@ protected:
 	int m_vx;
 	int m_vy;
 
+	// 他のキャラと重なっているため次のフレームで位置をずらす
+	int m_dx;
+
 	// 移動のロック（オブジェクト等で動けない方向はtrue）
 	bool m_rightLock;
 	bool m_leftLock;
@@ -152,6 +155,7 @@ public:
 	inline bool getGrandLeftSlope() const { return m_grandLeftSlope; }
 	inline int getVx() const { return m_vx; }
 	inline int getVy() const { return m_vy; }
+	inline int getDx() const { return m_dx; }
 	inline int getSlashCnt() const { return m_slashCnt; }
 	inline int getBulletCnt() const { return m_bulletCnt; }
 	bool getRightLock() const { return m_rightLock; }
@@ -185,6 +189,7 @@ public:
 	inline void setMoveDown(bool moveDown) { m_moveDown = moveDown; }
 	inline void setVx(int vx) { m_vx = vx; }
 	inline void setVy(int vy) { m_vy = vy; }
+	inline void setDx(int dx) { m_dx = dx; }
 	inline void setBulletCnt(int bulletCnt) { m_bulletCnt = bulletCnt; }
 	inline void setSlashCnt(int slashCnt) { m_slashCnt = slashCnt; }
 	inline void setAttackLeftDirection(bool attackLeftDirection) { m_attackLeftDirection = attackLeftDirection; }

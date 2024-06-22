@@ -361,6 +361,9 @@ private:
 	// Battle：アイテムの動き
 	void controlItem();
 
+	// Battle：キャラクター<->キャラクターの当たり判定
+	void atariCharacterAndCharacter();
+
 	// Battle：キャラクターとオブジェクトの当たり判定 slope=trueならslopeが対象falseならそれ以外
 	void atariCharacterAndObject(CharacterController* controller, std::vector<Object*>& objects, bool slope);
 
