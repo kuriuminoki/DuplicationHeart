@@ -612,7 +612,11 @@ void World::asignCharacterData(const char* name, CharacterData* data, int fromAr
 			if (m_characterControllers[i]->getBrain()->getFollow() != nullptr) {
 				data->setFollowName(m_characterControllers[i]->getBrain()->getFollow()->getName().c_str());
 			}
-			data->setActionName(m_characterControllers[i]->getAction()->getActionName());
+			string actionName = m_characterControllers[i]->getAction()->getActionName();
+			if (m_characterControllers[i]->getAction()->getHeavy()) {
+				actionName += "_x";
+			}
+			data->setActionName(actionName.c_str());
 			data->setSoundFlag(m_characterControllers[i]->getAction()->getSoundPlayer() != nullptr);
 			data->setControllerName(m_characterControllers[i]->getControllerName());
 			break;
