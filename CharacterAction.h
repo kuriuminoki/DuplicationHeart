@@ -153,6 +153,7 @@ public:
 	inline bool getGrand() const { return m_grand; }
 	inline bool getGrandRightSlope() const { return m_grandRightSlope; }
 	inline bool getGrandLeftSlope() const { return m_grandLeftSlope; }
+	inline bool getHeavy() const { return m_heavy; }
 	inline int getVx() const { return m_vx; }
 	inline int getVy() const { return m_vy; }
 	inline int getDx() const { return m_dx; }
