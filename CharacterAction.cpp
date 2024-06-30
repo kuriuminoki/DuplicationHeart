@@ -367,7 +367,10 @@ bool CharacterAction::ableWalk() const {
 }
 
 bool CharacterAction::ableChangeDirection() const {
-	if (m_bulletCnt > 0 || m_slashCnt > 0 || m_moveLeft || m_moveRight || m_moveUp || m_moveDown || m_damageCnt > 0) {
+	if (m_character_p->getHp() == 0
+		|| m_bulletCnt > 0 || m_slashCnt > 0
+		|| m_moveLeft || m_moveRight || m_moveUp || m_moveDown
+		|| m_damageCnt > 0) {
 		return false;
 	}
 	return true;

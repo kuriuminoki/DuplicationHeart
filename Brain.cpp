@@ -563,6 +563,13 @@ const Character* FollowNormalAI::getFollow() const {
 	return m_follow_p;
 }
 
+// ’ÇÕ‘ÎÛ‚ğƒZƒbƒg
+void FollowNormalAI::setFollow(const Character* character) {
+	m_follow_p = character;
+	m_gx = m_characterAction_p->getCharacter()->getX();
+	m_gy = m_characterAction_p->getCharacter()->getY();
+}
+
 bool FollowNormalAI::checkAlreadyFollow() {
 	// ’ÇÕ‘ÎÛ‚ª‚¢‚È‚¢
 	if (m_follow_p == nullptr) { return true; }

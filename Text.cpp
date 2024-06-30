@@ -29,7 +29,7 @@ EventAnime::EventAnime(const char* filePath, int sum, int speed) {
 
 	// 画像ロード
 	string path = "picture/event/";
-	m_handles = new GraphHandles((path + filePath).c_str(), sum, ex);
+	m_handles = new GraphHandles((path + filePath).c_str(), sum, ex, 0, true);
 
 	// アニメのスピード
 	m_speed = speed == -1 ? m_speed : speed;
@@ -41,6 +41,10 @@ EventAnime::EventAnime(const char* filePath, int sum, int speed) {
 	m_toDark = false;
 
 	m_finishFlag = false;
+
+	m_heavyFlag = false;
+	m_lightFlag = false;
+	m_alpha = 255;
 }
 
 EventAnime::~EventAnime() {
@@ -50,6 +54,7 @@ EventAnime::~EventAnime() {
 
 // アニメイベントが終わったか
 bool EventAnime::getFinishAnimeEvent() const {
+	if (m_heavyFlag || m_lightFlag) { return false; }
 	if (m_bright > 0 && m_toDark) { return false; }
 	if (m_bright < 255 && !m_toDark) { return false; }
 	return m_finishFlag;
@@ -57,6 +62,22 @@ bool EventAnime::getFinishAnimeEvent() const {
 
 // falseの間は操作不可
 void EventAnime::play() {
+	if (m_heavyFlag) {
+		m_alpha += 3;
+		if (m_alpha >= 255) { 
+			m_heavyFlag = false;
+			m_alpha = 255;
+		}
+		return;
+	}
+	if (m_lightFlag) {
+		m_alpha -= 3;
+		if (m_alpha <= 0) { 
+			m_lightFlag = false;
+			m_alpha = 0;
+		}
+		return;
+	}
 	if (m_bright < 255 && !m_toDark) { m_bright++; return; }
 	else if (m_bright > 0 && m_toDark) { m_bright--; return; }
 	m_animation->count();
@@ -364,7 +385,12 @@ void Conversation::loadNextBlock() {
 		m_finishCnt++;
 		return;
 	}
-	if (str == "@eventStart" || str == "@eventPic" || str == "@eventToDark" || str == "@eventToClear") {
+	if (str == "@eventStart" || 
+		str == "@eventPic" || 
+		str == "@eventToDark" || 
+		str == "@eventToClear" ||
+		str == "@eventToHeavy" ||
+		str == "@eventToLight") {
 		// 挿絵の始まり
 		if (m_eventAnime != nullptr) { delete m_eventAnime; }
 		FileRead_gets(buff, size, m_fp);
@@ -390,6 +416,14 @@ void Conversation::loadNextBlock() {
 		else if (str == "@eventToClear") {
 			m_eventAnime->setFinishFlag(true);
 			m_eventAnime->setBright(0);
+		}
+		else if (str == "@eventToHeavy") {
+			m_eventAnime->setFinishFlag(true);
+			m_eventAnime->setHeavyTrue();
+		}
+		else if (str == "@eventToLight") {
+			m_eventAnime->setFinishFlag(true);
+			m_eventAnime->setLightTrue();
 		}
 	}
 	else if (str == "@eventEnd") {
