@@ -286,7 +286,7 @@ public:
 	const Character* getFollow() const;
 
 	// 追跡対象をセット
-	void setFollow(const Character* character) { m_follow_p = character; }
+	void setFollow(const Character* character);
 
 	// 移動の目標地点設定
 	void moveOrder(int& right, int& left, int& up, int& down);

@@ -714,6 +714,8 @@ void World::setPlayerFollowerPoint() {
 					m_characters[j]->setY(m_player_p->getY() + m_player_p->getHeight() - m_characters[j]->getHeight());
 					// HP=0‚È‚ç”¼•ª‰ñ•œ‚µ‚Ä•œŠˆ
 					if (m_characters[j]->getHp() == 0) { m_characters[j]->setHp(m_characters[j]->getMaxHp() / 2); }
+					// gx, gy‚ðXV‚·‚é‚½‚ß
+					m_characterControllers[i]->setBrainFollow(m_player_p);
 					break;
 				}
 			}
@@ -780,6 +782,9 @@ void World::asignedCharacter(Character* character, CharacterData* data, bool cha
 	if (data->id() != -1) {
 		// ‚±‚ÌƒQ[ƒ€‚Å‰“oê‚¶‚á‚È‚¢
 		character->setHp(data->hp());
+		if (data->hp() == -1) { // -1‚ÍÅ‘åHP‚ð•\‚·
+			character->setHp(character->getMaxHp());
+		}
 		character->setSkillGage(data->skillGage());
 	}
 	character->setInvincible(data->invincible());

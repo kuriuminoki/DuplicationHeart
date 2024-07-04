@@ -36,6 +36,10 @@ private:
 
 	bool m_finishFlag;
 
+	bool m_heavyFlag;
+	bool m_lightFlag;
+	int m_alpha;
+
 public:
 
 	EventAnime(const char* filePath, int sum, int speed = -1);
@@ -46,11 +50,14 @@ public:
 	inline const bool getToDark() const { return m_toDark; }
 	inline const int getBright() const { return m_bright; }
 	inline const Animation* getAnime() const { return m_animation; }
+	inline const int getAlpha() const { return m_alpha; }
 
 	// セッタ
 	inline void setToDark(bool toDark) { m_toDark = toDark; }
 	inline void setBright(int bright) { m_bright = bright; }
 	inline void setFinishFlag(bool flag) { m_finishFlag = flag; }
+	inline void setHeavyTrue() { m_heavyFlag = true; m_alpha = 0; }
+	inline void setLightTrue() { m_lightFlag = true; m_alpha = 255; }
 
 	// アニメイベントが終わったか
 	bool getFinishAnimeEvent() const;
@@ -220,6 +227,7 @@ public:
 		return m_eventAnime->getAnime();
 	}
 	inline int getAnimeBright() const { return m_eventAnime->getBright(); }
+	inline int getAnimeAlpha() const { return m_eventAnime->getAlpha(); }
 	inline const std::vector<Animation*> getAnimations() const { return m_animations; }
 	inline const GraphHandle* getTextFinishGraph() const { return m_textFinishGraph; }
 	inline const EventAnime* getEventAnime() const { return m_eventAnime; }

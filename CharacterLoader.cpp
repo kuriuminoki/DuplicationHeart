@@ -48,6 +48,13 @@ pair<vector<Character*>, vector<CharacterController*> > CharacterLoader::getChar
 		// キャラを作成
 		Character* character = createCharacter(name.c_str(), 100, x, y, groupId);
 
+		// HP設定（指定されている場合のみ）
+		if (m_characters[areaNum][i].find("hp") != m_characters[areaNum][i].end()) {
+			string s = m_characters[areaNum][i]["hp"];
+			if (s == "0") { character->setHp(0); }
+			else if (s == "max") { character->setHp(character->getMaxHp()); }
+		}
+
 		// カメラをセット
 		if (cameraFlag && character != nullptr) {
 			camera_p->setPoint(character->getCenterX(), character->getCenterY());
@@ -98,6 +105,11 @@ void CharacterLoader::saveCharacterData(CharacterData* characterData) {
 				characterData->setActionName(characters[i]["action"].c_str());
 				characterData->setBrainName(characters[i]["brain"].c_str());
 				characterData->setControllerName(characters[i]["controller"].c_str());
+				if (characters[i].find("hp") != characters[i].end()) {
+					string s = characters[i]["hp"];
+					if (s == "0") { characterData->setHp(0); }
+					else if (s == "max") { characterData->setHp(-1); }
+				}
 				return;
 			}
 		}
