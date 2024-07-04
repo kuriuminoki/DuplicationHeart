@@ -682,6 +682,7 @@ EVENT_RESULT PlayerDeadEvent::play() {
 	m_world_p->battle();
 	// 対象のキャラのHPをチェックする
 	if (m_world_p->getAreaNum() == m_areaNum && m_world_p->playerDead() && m_world_p->getBrightValue() == 0) {
+		m_world_p->changePlayer(m_world_p->getCharacterWithId(m_world_p->getPlayerId()));
 		return EVENT_RESULT::SUCCESS;
 	}
 	return EVENT_RESULT::NOW;
