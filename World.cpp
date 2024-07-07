@@ -444,6 +444,22 @@ void World::addCharacter(CharacterLoader* characterLoader) {
 	m_characterControllers.insert(m_characterControllers.end(), p.second.begin(), p.second.end());
 }
 
+// ループによるキャラclear
+void World::clearCharacter() {
+	for (int i = (int)m_characterControllers.size() - 1; i >= 0; i--) {
+		if (m_characterControllers[i]->getAction()->getCharacter()->getName() != "ハート") {
+			delete m_characterControllers[i];
+			m_characterControllers.pop_back();
+		}
+	}
+	for (int i = (int)m_characters.size() - 1; i >= 0; i--) {
+		if (m_characters[i]->getName() != "ハート") {
+			delete m_characters[i];
+			m_characters.pop_back();
+		}
+	}
+}
+
 // ストーリーによるキャラの性能変化
 void World::changeCharacterVersion(int version) {
 	for (unsigned int i = 0; i < m_characters.size(); i++) {
