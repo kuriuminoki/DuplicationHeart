@@ -261,6 +261,9 @@ public:
 	// ストーリーによるキャラ追加
 	void addCharacter(CharacterLoader* characterLoader);
 
+	// ループによるキャラclear
+	void clearCharacter();
+
 	// ストーリーによるキャラの性能変化
 	void changeCharacterVersion(int version);
 
