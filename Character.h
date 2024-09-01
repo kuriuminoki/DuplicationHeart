@@ -383,7 +383,7 @@ public:
 	void moveDown(int d);
 
 	// ËŒ‚UŒ‚‚ğ‚·‚é(ƒLƒƒƒ‰‚²‚Æ‚Éˆá‚¤)
-	virtual Object* bulletAttack(int gx, int gy, SoundPlayer* soundPlayer) { return nullptr; }
+	virtual Object* bulletAttack(int cnt, int gx, int gy, SoundPlayer* soundPlayer) { return nullptr; }
 
 	// aŒ‚UŒ‚‚ğ‚·‚é(ƒLƒƒƒ‰‚²‚Æ‚Éˆá‚¤) ¶‚ğŒü‚¢‚Ä‚¢‚é‚©A¡‰½ƒJƒEƒ“ƒg‚©
 	virtual Object* slashAttack(bool leftDirection, int cnt, bool grand, SoundPlayer* soundPlayer) { return nullptr; }
@@ -443,8 +443,14 @@ public:
 	// ƒWƒƒƒ“ƒv‘O‰æ‘œ‚ğƒZƒbƒg
 	void switchPreJump(int cnt = 0);
 
+	// —§‚¿aŒ‚‰æ‘œ‚ğƒZƒbƒg
+	void switchSlash(int cnt = 0);
+
+	// —§‚¿ËŒ‚‰æ‘œ‚ğƒZƒbƒg
+	void switchBullet(int cnt = 0);
+
 	// ËŒ‚UŒ‚‚ğ‚·‚é
-	Object* bulletAttack(int gx, int gy, SoundPlayer* soundPlayer);
+	Object* bulletAttack(int cnt, int gx, int gy, SoundPlayer* soundPlayer);
 
 	// aŒ‚UŒ‚‚ğ‚·‚é
 	Object* slashAttack(bool leftDirection, int cnt, bool grand, SoundPlayer* soundPlayer);
@@ -465,7 +471,7 @@ public:
 	Character* createCopy();
 
 	// ËŒ‚UŒ‚‚ğ‚·‚é
-	Object* bulletAttack(int gx, int gy, SoundPlayer* soundPlayer);
+	Object* bulletAttack(int cnt, int gx, int gy, SoundPlayer* soundPlayer);
 
 	// aŒ‚UŒ‚‚ğ‚·‚é
 	Object* slashAttack(bool leftDirection, int cnt, bool grand, SoundPlayer* soundPlayer);
@@ -486,7 +492,7 @@ public:
 	Character* createCopy();
 
 	// ËŒ‚UŒ‚‚ğ‚·‚é
-	Object* bulletAttack(int gx, int gy, SoundPlayer* soundPlayer);
+	Object* bulletAttack(int cnt, int gx, int gy, SoundPlayer* soundPlayer);
 
 	// aŒ‚UŒ‚‚ğ‚·‚é
 	Object* slashAttack(bool leftDirection, int cnt, bool grand, SoundPlayer* soundPlayer);
@@ -510,7 +516,7 @@ public:
 	void switchPreJump(int cnt = 0);
 
 	// ËŒ‚UŒ‚‚ğ‚·‚é
-	Object* bulletAttack(int gx, int gy, SoundPlayer* soundPlayer){ return nullptr; }
+	Object* bulletAttack(int cnt, int gx, int gy, SoundPlayer* soundPlayer){ return nullptr; }
 
 	// aŒ‚UŒ‚‚ğ‚·‚é
 	Object* slashAttack(bool leftDirection, int cnt, bool grand, SoundPlayer* soundPlayer);
@@ -549,7 +555,7 @@ public:
 	Character* createCopy();
 
 	// ËŒ‚UŒ‚‚ğ‚·‚é
-	Object* bulletAttack(int gx, int gy, SoundPlayer* soundPlayer);
+	Object* bulletAttack(int cnt, int gx, int gy, SoundPlayer* soundPlayer);
 
 };
 
@@ -586,7 +592,7 @@ public:
 	Character* createCopy();
 
 	// ËŒ‚UŒ‚‚ğ‚·‚é
-	Object* bulletAttack(int gx, int gy, SoundPlayer* soundPlayer) { return nullptr; }
+	Object* bulletAttack(int cnt, int gx, int gy, SoundPlayer* soundPlayer) { return nullptr; }
 };
 
 
@@ -604,7 +610,7 @@ public:
 	Character* createCopy();
 
 	// ËŒ‚UŒ‚‚ğ‚·‚é
-	Object* bulletAttack(int gx, int gy, SoundPlayer* soundPlayer);
+	Object* bulletAttack(int cnt, int gx, int gy, SoundPlayer* soundPlayer);
 };
 
 
@@ -625,7 +631,7 @@ public:
 	void switchInit(int cnt);
 
 	// ËŒ‚UŒ‚‚ğ‚·‚é
-	Object* bulletAttack(int gx, int gy, SoundPlayer* soundPlayer);
+	Object* bulletAttack(int cnt, int gx, int gy, SoundPlayer* soundPlayer);
 
 	// aŒ‚UŒ‚‚ğ‚·‚é
 	Object* slashAttack(bool leftDirection, int cnt, bool grand, SoundPlayer* soundPlayer) { return nullptr; }

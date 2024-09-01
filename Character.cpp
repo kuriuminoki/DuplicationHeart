@@ -495,9 +495,24 @@ void Heart::switchPreJump(int cnt) {
 	m_graphHandle->switchPreJump(index);
 }
 
-// ŽËŒ‚UŒ‚‚ð‚·‚é
-Object* Heart::bulletAttack(int gx, int gy, SoundPlayer* soundPlayer) {
+// —§‚¿ŽaŒ‚‰æ‘œ‚ðƒZƒbƒg
+void Heart::switchSlash(int cnt) {
+	if (m_graphHandle->getSlashHandle() == nullptr) { return; }
+	int index = (getSlashCountSum() + getSlashInterval() - cnt) / 3;
+	m_graphHandle->switchSlash(index);
+}
 
+// —§‚¿ŽËŒ‚‰æ‘œ‚ðƒZƒbƒg
+void Heart::switchBullet(int cnt) {
+	if (m_graphHandle->getBulletHandle() == nullptr) { return; }
+	int flame = getBulletRapid() / m_graphHandle->getStandBulletHandle()->getGraphHandles()->getSize();
+	int index = (getBulletRapid() - cnt) / flame;
+	m_graphHandle->switchBullet(index);
+}
+
+// ŽËŒ‚UŒ‚‚ð‚·‚é
+Object* Heart::bulletAttack(int cnt, int gx, int gy, SoundPlayer* soundPlayer) {
+	if (cnt != getBulletRapid()) { return nullptr; }
 	// ’e‚Ìì¬
 	BulletObject* attackObject;
 	if (m_graphHandle->getBulletHandle() != nullptr) {
@@ -598,7 +613,8 @@ Character* Siesta::createCopy() {
 }
 
 // ŽËŒ‚UŒ‚‚ð‚·‚é
-Object* Siesta::bulletAttack(int gx, int gy, SoundPlayer* soundPlayer) {
+Object* Siesta::bulletAttack(int cnt, int gx, int gy, SoundPlayer* soundPlayer) {
+	if (cnt != getBulletRapid() / 2) { return nullptr; }
 	ParabolaBullet *attackObject = new ParabolaBullet(getCenterX(), getCenterY(), m_graphHandle->getBulletHandle()->getGraphHandles()->getGraphHandle(), gx, gy, m_attackInfo);
 	// Ž©–Å–hŽ~
 	attackObject->setCharacterId(m_id);
@@ -690,7 +706,8 @@ Character* Hierarchy::createCopy() {
 }
 
 // ŽËŒ‚UŒ‚‚ð‚·‚é
-Object* Hierarchy::bulletAttack(int gx, int gy, SoundPlayer* soundPlayer) {
+Object* Hierarchy::bulletAttack(int cnt, int gx, int gy, SoundPlayer* soundPlayer) {
+	if (cnt != getBulletRapid()) { return nullptr; }
 	//gx = GetRand(600) - 300 + getCenterX();
 	//gy = getCenterY() - GetRand(300);
 	BulletObject* attackObject = new BulletObject(getCenterX(), getCenterY(), m_graphHandle->getBulletHandle()->getGraphHandles()->getGraphHandle(), gx, gy, m_attackInfo);
@@ -842,7 +859,8 @@ Character* Koharu::createCopy() {
 }
 
 // ŽËŒ‚UŒ‚‚ð‚·‚é
-Object* Koharu::bulletAttack(int gx, int gy, SoundPlayer* soundPlayer) {
+Object* Koharu::bulletAttack(int cnt, int gx, int gy, SoundPlayer* soundPlayer) {
+	if (cnt != getBulletRapid()) { return nullptr; }
 	// ƒoƒY[ƒJ‚ÌeŒû‚©‚ço‚é‚æ‚¤‚ÉŒ©‚¹‚é
 	gy = getY() + getHeight() - 160;
 	BulletObject* attackObject = new BulletObject(getCenterX(), gy, m_graphHandle->getBulletHandle()->getGraphHandles()->getGraphHandle(), gx, gy, m_attackInfo);
@@ -922,7 +940,8 @@ Character* ParabolaOnly::createCopy() {
 }
 
 // ŽËŒ‚UŒ‚‚ð‚·‚é
-Object* ParabolaOnly::bulletAttack(int gx, int gy, SoundPlayer* soundPlayer) {
+Object* ParabolaOnly::bulletAttack(int cnt, int gx, int gy, SoundPlayer* soundPlayer) {
+	if (cnt != getBulletRapid()) { return nullptr; }
 	ParabolaBullet* attackObject = new ParabolaBullet(getCenterX(), getCenterY(), m_bulletColor, gx, gy, m_attackInfo);
 	// Ž©–Å–hŽ~
 	attackObject->setCharacterId(m_id);
@@ -969,7 +988,8 @@ void Sun::switchInit(int cnt) {
 	m_graphHandle->switchInit(index);
 }
 
-Object* Sun::bulletAttack(int gx, int gy, SoundPlayer* soundPlayer) {
+Object* Sun::bulletAttack(int cnt, int gx, int gy, SoundPlayer* soundPlayer) {
+	if (cnt != getBulletRapid()) { return nullptr; }
 	int x = getCenterX() + GetRand(400) - 200;
 	int y = getCenterY() + GetRand(400) - 200;
 	ParabolaBullet* attackObject = new ParabolaBullet(x, y, m_graphHandle->getBulletHandle()->getGraphHandles()->getGraphHandle(), gx, gy, m_attackInfo);
