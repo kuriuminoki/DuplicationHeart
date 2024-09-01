@@ -628,7 +628,7 @@ void StickAction::switchHandle() {
 				m_character_p->switchAirSlash();
 			}
 			else if (m_bulletCnt > 0) {
-				m_character_p->switchAirBullet();
+				m_character_p->switchAirBullet(m_bulletCnt);
 			}
 			else if (m_boostCnt > 0) {
 				m_character_p->switchBoost();
@@ -646,7 +646,7 @@ void StickAction::switchHandle() {
 					m_character_p->switchAirSlash();
 				}
 				else if (m_bulletCnt > 0) {
-					m_character_p->switchAirBullet();
+					m_character_p->switchAirBullet(m_bulletCnt);
 				}
 				else {
 					m_character_p->switchBoost();
