@@ -510,6 +510,21 @@ void Heart::switchBullet(int cnt) {
 	m_graphHandle->switchBullet(index);
 }
 
+// 空中斬撃画像をセット
+void Heart::switchAirSlash(int cnt) {
+	if (m_graphHandle->getAirSlashHandle() == nullptr) { return; }
+	int index = (getSlashCountSum() + getSlashInterval() - cnt) / 3;
+	m_graphHandle->switchAirSlash(index);
+}
+
+// 空中射撃画像をセット
+void Heart::switchAirBullet(int cnt) {
+	if (m_graphHandle->getAirBulletHandle() == nullptr) { return; }
+	int flame = getBulletRapid() / m_graphHandle->getAirBulletHandle()->getGraphHandles()->getSize();
+	int index = (getBulletRapid() - cnt) / flame;
+	m_graphHandle->switchAirBullet(index);
+}
+
 // 射撃攻撃をする
 Object* Heart::bulletAttack(int cnt, int gx, int gy, SoundPlayer* soundPlayer) {
 	if (cnt != getBulletRapid()) { return nullptr; }
