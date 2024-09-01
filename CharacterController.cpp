@@ -412,7 +412,7 @@ Object* NormalController::bulletAttack() {
 	}
 
 	// ‰“‹——£UŒ‚‚Ì–½—ß‚ª‚³‚ê‚Ä‚¢‚é‚È‚ç
-	if (order > 0) {
+	if (order > 0 || m_characterAction->getBulletCnt() > 0) {
 		// –Ú•W‚ÉŒü‚©‚Á‚ÄŽËŒ‚
 		return m_characterAction->bulletAttack(targetX, targetY);
 	}

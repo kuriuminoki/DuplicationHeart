@@ -567,7 +567,7 @@ void StickAction::switchHandle() {
 		switch (m_state) {
 		case CHARACTER_STATE::STAND: //—§‚¿ó‘Ô
 			if (m_slashCnt > 0) {
-				m_character_p->switchSlash();
+				m_character_p->switchSlash(m_slashCnt);
 			}
 			else if (m_landCnt > 0) {
 				m_character_p->switchLand();
@@ -577,7 +577,7 @@ void StickAction::switchHandle() {
 					m_character_p->switchRunBullet(m_runCnt);
 				}
 				else {
-					m_character_p->switchBullet();
+					m_character_p->switchBullet(m_bulletCnt);
 				}
 			}
 			else if (m_runCnt != -1) {
@@ -601,14 +601,14 @@ void StickAction::switchHandle() {
 		case CHARACTER_STATE::DAMAGE:
 			if (m_boostCnt > 0) {
 				if (m_slashCnt > 0) {
-					m_character_p->switchSlash();
+					m_character_p->switchSlash(m_slashCnt);
 				}
 				else if (m_bulletCnt > 0) {
 					if (m_runCnt != -1) {
 						m_character_p->switchRunBullet(m_runCnt);
 					}
 					else {
-						m_character_p->switchBullet();
+						m_character_p->switchBullet(m_bulletCnt);
 					}
 				}
 				else {
@@ -802,10 +802,9 @@ Object* StickAction::bulletAttack(int gx, int gy) {
 			m_character_p->setLeftDirection(m_character_p->getCenterX() > gx);
 		}
 		startBullet();
-		// UŒ‚‚ð•Ô‚·
-		return m_character_p->bulletAttack(gx, gy, m_soundPlayer_p);
 	}
-	return nullptr;
+	// UŒ‚‚ð•Ô‚·
+	return m_character_p->bulletAttack(m_bulletCnt, gx, gy, m_soundPlayer_p);
 }
 
 // ŽaŒ‚UŒ‚
@@ -1149,10 +1148,9 @@ Object* FlightAction::bulletAttack(int gx, int gy) {
 			m_character_p->setLeftDirection(m_character_p->getCenterX() > gx);
 		}
 		startBullet();
-		// UŒ‚‚ð•Ô‚·
-		return m_character_p->bulletAttack(gx, gy, m_soundPlayer_p);
 	}
-	return nullptr;
+	// UŒ‚‚ð•Ô‚·
+	return m_character_p->bulletAttack(m_bulletCnt, gx, gy, m_soundPlayer_p);
 }
 
 // ŽaŒ‚UŒ‚
@@ -1221,10 +1219,9 @@ Object* KoharuAction::bulletAttack(int gx, int gy) {
 			m_character_p->setLeftDirection(m_character_p->getCenterX() > gx);
 		}
 		startBullet();
-		// UŒ‚‚ð•Ô‚·
-		return m_character_p->bulletAttack(gx, gy, m_soundPlayer_p);
 	}
-	return nullptr;
+	// UŒ‚‚ð•Ô‚·
+	return m_character_p->bulletAttack(m_bulletCnt, gx, gy, m_soundPlayer_p);
 }
 
 void KoharuAction::startBullet() {
