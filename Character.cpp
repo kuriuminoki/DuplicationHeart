@@ -497,14 +497,14 @@ void Heart::switchPreJump(int cnt) {
 
 // 立ち斬撃画像をセット
 void Heart::switchSlash(int cnt) {
-	if (m_graphHandle->getSlashHandle() == nullptr) { return; }
+	if (m_graphHandle->getStandSlashHandle() == nullptr) { return; }
 	int index = (getSlashCountSum() + getSlashInterval() - cnt) / 3;
 	m_graphHandle->switchSlash(index);
 }
 
 // 立ち射撃画像をセット
 void Heart::switchBullet(int cnt) {
-	if (m_graphHandle->getBulletHandle() == nullptr) { return; }
+	if (m_graphHandle->getStandBulletHandle() == nullptr) { return; }
 	int flame = getBulletRapid() / m_graphHandle->getStandBulletHandle()->getGraphHandles()->getSize();
 	int index = (getBulletRapid() - cnt) / flame;
 	m_graphHandle->switchBullet(index);

@@ -459,7 +459,10 @@ void CharacterGraphHandle::setAtari() {
 // ‰æ‘œ‚ðƒZƒbƒg‚·‚é ‘¶Ý‚µ‚È‚¢‚È‚ç‚»‚Ì‚Ü‚Ü
 void CharacterGraphHandle::setGraph(GraphHandlesWithAtari* graphHandles, int index) {
 	if (graphHandles == nullptr) { return; }
-	if (index >= graphHandles->getGraphHandles()->getSize() || index < 0) { return; }
+	if (index >= graphHandles->getGraphHandles()->getSize()) { 
+		index = graphHandles->getGraphHandles()->getSize() - 1;
+	}
+	if (index < 0) { index = 0; }
 	m_dispGraphHandle_p = graphHandles;
 	m_dispGraphIndex = index;
 	setGraphSize();
