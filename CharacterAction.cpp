@@ -589,7 +589,7 @@ void StickAction::switchHandle() {
 			break;
 		case CHARACTER_STATE::SQUAT:
 			if (m_bulletCnt > 0) {
-				m_character_p->switchSquatBullet();
+				m_character_p->switchSquatBullet(m_bulletCnt);
 			}
 			else {
 				m_character_p->switchSquat();
@@ -625,7 +625,7 @@ void StickAction::switchHandle() {
 		switch (m_state) {
 		case CHARACTER_STATE::STAND: //—§‚¿ó‘Ô(‚È‚É‚à‚È‚µ‚Ìó‘Ô)
 			if (m_slashCnt > 0) {
-				m_character_p->switchAirSlash();
+				m_character_p->switchAirSlash(m_slashCnt);
 			}
 			else if (m_bulletCnt > 0) {
 				m_character_p->switchAirBullet(m_bulletCnt);

@@ -499,6 +499,9 @@ void Heart::switchPreJump(int cnt) {
 void Heart::switchSlash(int cnt) {
 	if (m_graphHandle->getStandSlashHandle() == nullptr) { return; }
 	int index = (getSlashCountSum() + getSlashInterval() - cnt) / 3;
+	if (cnt > 6) {
+		index = min(m_graphHandle->getStandSlashHandle()->getGraphHandles()->getSize() - 2, index);
+	}
 	m_graphHandle->switchSlash(index);
 }
 
@@ -514,6 +517,9 @@ void Heart::switchBullet(int cnt) {
 void Heart::switchAirSlash(int cnt) {
 	if (m_graphHandle->getAirSlashHandle() == nullptr) { return; }
 	int index = (getSlashCountSum() + getSlashInterval() - cnt) / 3;
+	if (cnt > 6) {
+		index = min(m_graphHandle->getAirSlashHandle()->getGraphHandles()->getSize() - 2, index);
+	}
 	m_graphHandle->switchAirSlash(index);
 }
 
@@ -523,6 +529,14 @@ void Heart::switchAirBullet(int cnt) {
 	int flame = getBulletRapid() / m_graphHandle->getAirBulletHandle()->getGraphHandles()->getSize();
 	int index = (getBulletRapid() - cnt) / flame;
 	m_graphHandle->switchAirBullet(index);
+}
+
+// ‚µ‚á‚ª‚İËŒ‚‰æ‘œ‚ğƒZƒbƒg
+void Heart::switchSquatBullet(int cnt) {
+	if (m_graphHandle->getSquatBulletHandle() == nullptr) { return; }
+	int flame = getBulletRapid() / m_graphHandle->getSquatBulletHandle()->getGraphHandles()->getSize();
+	int index = (getBulletRapid() - cnt) / flame;
+	m_graphHandle->switchSquatBullet(index);
 }
 
 // ËŒ‚UŒ‚‚ğ‚·‚é

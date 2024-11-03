@@ -455,11 +455,15 @@ public:
 	// 空中斬撃画像をセット
 	void switchAirSlash(int cnt = 0);
 
+	// しゃがみ射撃画像をセット
+	void switchSquatBullet(int cnt = 0);
+
 	// 射撃攻撃をする
 	Object* bulletAttack(int cnt, int gx, int gy, SoundPlayer* soundPlayer);
 
 	// 斬撃攻撃をする
 	Object* slashAttack(bool leftDirection, int cnt, bool grand, SoundPlayer* soundPlayer);
+
 };
 
 
