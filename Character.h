@@ -191,6 +191,8 @@ public:
 
 	const int SKILL_MAX = 100;
 
+	const int DEFAULT_ANIME_SPEED = 3;
+
 protected:
 	static int characterId;
 
@@ -231,6 +233,9 @@ protected:
 
 	// ボスならtrue
 	bool m_bossFlag;
+
+	// 描画用
+	int m_drawCnt;
 
 	// キャラの情報
 	CharacterInfo* m_characterInfo;
@@ -434,6 +439,12 @@ public:
 	void debug(int x, int y, int color) const;
 
 	// 画像変更関数のオーバーライド
+	// 立ち画像をセット
+	void switchStand(int cnt = 0);
+
+	// しゃがみ画像をセット
+	void switchSquat(int cnt = 0);
+
 	// 走り画像をセット
 	void switchRun(int cnt = 0);
 
@@ -458,6 +469,9 @@ public:
 	// しゃがみ射撃画像をセット
 	void switchSquatBullet(int cnt = 0);
 
+	// やられ画像をセット
+	void switchDead(int cnt = 0);
+
 	// 射撃攻撃をする
 	Object* bulletAttack(int cnt, int gx, int gy, SoundPlayer* soundPlayer);
 
@@ -479,6 +493,12 @@ public:
 	Siesta(const char* name, int hp, int x, int y, int groupId, AttackInfo* attackInfo);
 
 	Character* createCopy();
+
+	// 立ち射撃画像をセット
+	void switchBullet(int cnt = 0);
+
+	// しゃがみ射撃画像をセット
+	void switchSquatBullet(int cnt = 0);
 
 	// 射撃攻撃をする
 	Object* bulletAttack(int cnt, int gx, int gy, SoundPlayer* soundPlayer);
@@ -522,6 +542,8 @@ public:
 
 	Character* createCopy();
 
+	// 立ち斬撃画像をセット
+	void switchSlash(int cnt = 0);
 	// ジャンプ前画像をセット
 	void switchPreJump(int cnt = 0);
 
@@ -545,6 +567,17 @@ public:
 	Troy(const char* name, int hp, int x, int y, int groupId, AttackInfo* attackInfo);
 
 	Character* createCopy();
+
+	// 走り画像をセット
+	void switchRun(int cnt = 0);
+	// 走り射撃画像をセット
+	void switchRunBullet(int cnt = 0);
+	// 上昇画像をセット
+	void switchJump(int cnt = 0);
+	// 降下画像をセット
+	void switchDown(int cnt = 0);
+	// 空中射撃画像をセット
+	void switchAirBullet(int cnt = 0);
 
 	// 斬撃攻撃をする
 	Object* slashAttack(bool leftDirection, int cnt, bool grand, SoundPlayer* soundPlayer);
@@ -583,6 +616,9 @@ public:
 
 	Character* createCopy();
 
+	// 上昇画像をセット
+	void switchJump(int cnt = 0);
+
 	// 斬撃攻撃をする(キャラごとに違う)
 	Object* slashAttack(bool leftDirection, int cnt, bool grand, SoundPlayer* soundPlayer) { return nullptr; }
 };
@@ -600,6 +636,11 @@ public:
 	SlashOnly(const char* name, int hp, int x, int y, int groupId, AttackInfo* attackInfo);
 
 	Character* createCopy();
+
+	// 上昇画像をセット
+	void switchJump(int cnt = 0);
+	// 降下画像をセット
+	void switchDown(int cnt = 0);
 
 	// 射撃攻撃をする
 	Object* bulletAttack(int cnt, int gx, int gy, SoundPlayer* soundPlayer) { return nullptr; }
