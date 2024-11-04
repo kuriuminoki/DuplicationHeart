@@ -37,7 +37,7 @@ Character* createCharacter(const char* characterName, int hp, int x, int y, int 
 	else if (name == "コハル") {
 		character = new Koharu(name.c_str(), hp, x, y, groupId);
 	}
-	else if (name == "棒人間" || name == "クロ人間") {
+	else if (name == "棒人間" || name == "クロ人間" || name == "ソッリーソ") {
 		character = new SlashOnly(name.c_str(), hp, x, y, groupId);
 	}
 	else if (name == "緑人間" || name == "フェーレース") {
@@ -230,6 +230,8 @@ Character::Character(int hp, int x, int y, int groupId) {
 	m_leftDirection = true;
 	m_freeze = false;
 	m_bossFlag = false;
+	
+	m_drawCnt = 0;
 
 	m_characterInfo = nullptr;
 	m_attackInfo = nullptr;
@@ -471,6 +473,18 @@ Character* Heart::createCopy() {
 	return res;
 }
 
+// 立ち画像をセット
+void Heart::switchStand(int cnt) {
+	m_drawCnt++;
+	m_graphHandle->switchStand(m_drawCnt / DEFAULT_ANIME_SPEED % 2);
+}
+
+// しゃがみ画像をセット
+void Heart::switchSquat(int cnt) {
+	m_drawCnt++;
+	m_graphHandle->switchSquat(m_drawCnt / DEFAULT_ANIME_SPEED % 2);
+}
+
 // 走り画像をセット
 void Heart::switchRun(int cnt) { 
 	if (m_graphHandle->getRunHandle() == nullptr) { return; }
@@ -508,9 +522,8 @@ void Heart::switchSlash(int cnt) {
 // 立ち射撃画像をセット
 void Heart::switchBullet(int cnt) {
 	if (m_graphHandle->getStandBulletHandle() == nullptr) { return; }
-	int flame = getBulletRapid() / m_graphHandle->getStandBulletHandle()->getGraphHandles()->getSize();
-	int index = (getBulletRapid() - cnt) / flame;
-	m_graphHandle->switchBullet(index);
+	m_drawCnt++;
+	m_graphHandle->switchBullet(m_drawCnt / DEFAULT_ANIME_SPEED % 2);
 }
 
 // 空中斬撃画像をセット
@@ -533,10 +546,18 @@ void Heart::switchAirBullet(int cnt) {
 
 // しゃがみ射撃画像をセット
 void Heart::switchSquatBullet(int cnt) {
-	if (m_graphHandle->getSquatBulletHandle() == nullptr) { return; }
-	int flame = getBulletRapid() / m_graphHandle->getSquatBulletHandle()->getGraphHandles()->getSize();
-	int index = (getBulletRapid() - cnt) / flame;
-	m_graphHandle->switchSquatBullet(index);
+	if (m_graphHandle->getSquatBulletHandle() == nullptr) {
+		switchBullet(cnt);
+		return;
+	}
+	m_drawCnt++;
+	m_graphHandle->switchSquatBullet(m_drawCnt / DEFAULT_ANIME_SPEED % 2);
+}
+
+// やられ画像をセット
+void Heart::switchDead(int cnt) {
+	m_drawCnt++;
+	m_graphHandle->switchDead(m_drawCnt / DEFAULT_ANIME_SPEED % 2);
 }
 
 // 射撃攻撃をする
@@ -639,6 +660,22 @@ Character* Siesta::createCopy() {
 	Character* res = new Siesta(m_characterInfo->name().c_str(), m_hp, m_x, m_y, m_groupId, m_attackInfo);
 	setParam(res);
 	return res;
+}
+
+// 立ち射撃画像をセット
+void Siesta::switchBullet(int cnt) {
+	if (m_graphHandle->getStandBulletHandle() == nullptr) { return; }
+	int flame = getBulletRapid() / m_graphHandle->getStandBulletHandle()->getGraphHandles()->getSize();
+	int index = (getBulletRapid() - cnt) / flame;
+	m_graphHandle->switchBullet(index);
+}
+
+// しゃがみ射撃画像をセット
+void Siesta::switchSquatBullet(int cnt) {
+	if (m_graphHandle->getSquatBulletHandle() == nullptr) { return; }
+	int flame = getBulletRapid() / m_graphHandle->getSquatBulletHandle()->getGraphHandles()->getSize();
+	int index = (getBulletRapid() - cnt) / flame;
+	m_graphHandle->switchSquatBullet(index);
 }
 
 // 射撃攻撃をする
@@ -779,6 +816,12 @@ Character* Valkyria::createCopy() {
 	return res;
 }
 
+// 立ち斬撃画像をセット
+void Valkyria::switchSlash(int cnt) {
+	m_drawCnt++;
+	m_graphHandle->switchSlash(m_drawCnt / DEFAULT_ANIME_SPEED % 2);
+}
+
 // ジャンプ前画像をセット
 void Valkyria::switchPreJump(int cnt) {
 	if (m_graphHandle->getPreJumpHandle() == nullptr) { return; }
@@ -861,6 +904,32 @@ Character* Troy::createCopy() {
 	return res;
 }
 
+// 走り画像をセット
+void Troy::switchRun(int cnt) {
+	m_drawCnt++;
+	m_graphHandle->switchRun(m_drawCnt / DEFAULT_ANIME_SPEED % 2);
+}
+// 走り射撃画像をセット
+void Troy::switchRunBullet(int cnt) {
+	m_drawCnt++;
+	m_graphHandle->switchRunBullet(m_drawCnt / DEFAULT_ANIME_SPEED % 2);
+}
+// 上昇画像をセット
+void Troy::switchJump(int cnt) {
+	m_drawCnt++;
+	m_graphHandle->switchJump(m_drawCnt / DEFAULT_ANIME_SPEED % 2);
+}
+// 降下画像をセット
+void Troy::switchDown(int cnt) {
+	m_drawCnt++;
+	m_graphHandle->switchDown(m_drawCnt / DEFAULT_ANIME_SPEED % 2);
+}
+// 空中射撃画像をセット
+void Troy::switchAirBullet(int cnt) {
+	m_drawCnt++;
+	m_graphHandle->switchAirBullet(m_drawCnt / DEFAULT_ANIME_SPEED % 2);
+}
+
 // 斬撃攻撃をする
 Object* Troy::slashAttack(bool leftDirection, int cnt, bool grand, SoundPlayer* soundPlayer) {
 	return nullptr;
@@ -927,6 +996,12 @@ Character* BulletOnly::createCopy() {
 	return res;
 }
 
+// 上昇画像をセット
+void BulletOnly::switchJump(int cnt) {
+	m_drawCnt++;
+	m_graphHandle->switchJump(m_drawCnt / DEFAULT_ANIME_SPEED % 2);
+}
+
 /*
 * 普通の斬撃のみをするキャラ
 */
@@ -945,6 +1020,18 @@ Character* SlashOnly::createCopy() {
 	Character* res = new SlashOnly(m_characterInfo->name().c_str(), m_hp, m_x, m_y, m_groupId, m_attackInfo);
 	setParam(res);
 	return res;
+}
+
+// 上昇画像をセット
+void SlashOnly::switchJump(int cnt) {
+	m_drawCnt++;
+	m_graphHandle->switchJump(m_drawCnt / DEFAULT_ANIME_SPEED % 2);
+}
+
+// 降下画像をセット
+void SlashOnly::switchDown(int cnt) {
+	m_drawCnt++;
+	m_graphHandle->switchDown(m_drawCnt / DEFAULT_ANIME_SPEED % 2);
 }
 
 

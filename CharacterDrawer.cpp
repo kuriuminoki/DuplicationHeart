@@ -84,15 +84,15 @@ void CharacterDrawer::drawCharacter(const Camera* const camera, int enemyNoticeH
 		return;
 	}
 
-	// 描画 ダメージ状態なら点滅
+	// 描画 ダメージ状態なら点滅 y+1して宙に浮いて見えないようにする
 	if (!m_characterAction->ableDamage() && ++m_cnt / 2 % 2 == 1) {
 		int dark = max(0, bright - 100);
 		SetDrawBright(dark, dark, dark);
-		graphHandle->draw(x, y, ex);
+		graphHandle->draw(x, y + 1, ex);
 		SetDrawBright(bright, bright, bright);
 	}
 	else {
-		graphHandle->draw(x, y, ex);
+		graphHandle->draw(x, y + 1, ex);
 	}
 
 	if (character->getDispHpCnt() > 0 && character->getName() != "ハート" && !character->getBossFlag()) {
