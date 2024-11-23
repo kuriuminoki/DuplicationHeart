@@ -1025,12 +1025,12 @@ void World::controlCharacter() {
 		}
 
 		// ŽËŒ‚UŒ‚
-		Object* bulletAttack = controller->bulletAttack();
-		if (bulletAttack != nullptr) { m_attackObjects.push_back(bulletAttack); }
+		vector<Object*>* bulletAttack = controller->bulletAttack();
+		if (bulletAttack != nullptr) { m_attackObjects.insert(m_attackObjects.end(), bulletAttack->begin(), bulletAttack->end()); }
 
 		// ŽaŒ‚UŒ‚
-		Object* slashAttack = controller->slashAttack();
-		if (slashAttack != nullptr) { m_attackObjects.push_back(slashAttack); }
+		vector<Object*>* slashAttack = controller->slashAttack();
+		if (slashAttack != nullptr) { m_attackObjects.insert(m_attackObjects.end(), slashAttack->begin(), slashAttack->end()); }
 	}
 
 	// ƒLƒƒƒ‰ŠÔ‚Ì“–‚½‚è”»’è

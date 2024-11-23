@@ -788,7 +788,7 @@ void StickAction::jump(int cnt) {
 }
 
 // éÀåÇçUåÇ
-Object* StickAction::bulletAttack(int gx, int gy) {
+vector<Object*>* StickAction::bulletAttack(int gx, int gy) {
 	if (damageFlag() && m_boostCnt == 0) {
 		finishBullet();
 		return nullptr;
@@ -808,7 +808,7 @@ Object* StickAction::bulletAttack(int gx, int gy) {
 }
 
 // éaåÇçUåÇ
-Object* StickAction::slashAttack(int gx, int gy) {
+vector<Object*>* StickAction::slashAttack(int gx, int gy) {
 	if (damageFlag() && m_boostCnt == 0) {
 		if (m_slashCnt > 0) { finishSlash(); }
 		return nullptr;
@@ -1134,7 +1134,7 @@ void FlightAction::setBoost(bool leftDirection) {
 }
 
 // éÀåÇçUåÇ
-Object* FlightAction::bulletAttack(int gx, int gy) {
+vector<Object*>* FlightAction::bulletAttack(int gx, int gy) {
 	if (damageFlag() && m_boostCnt == 0) {
 		finishBullet();
 		return nullptr;
@@ -1154,7 +1154,7 @@ Object* FlightAction::bulletAttack(int gx, int gy) {
 }
 
 // éaåÇçUåÇ
-Object* FlightAction::slashAttack(int gx, int gy) {
+vector<Object*>* FlightAction::slashAttack(int gx, int gy) {
 	if (damageFlag() && m_boostCnt == 0) {
 		if (m_slashCnt > 0) { finishSlash(); }
 		return nullptr;
@@ -1195,7 +1195,7 @@ CharacterAction* KoharuAction::createCopy(vector<Character*> characters) {
 }
 
 // éÀåÇçUåÇ
-Object* KoharuAction::bulletAttack(int gx, int gy) {
+vector<Object*>* KoharuAction::bulletAttack(int gx, int gy) {
 	if (damageFlag() && m_boostCnt == 0) {
 		finishBullet();
 		return nullptr;

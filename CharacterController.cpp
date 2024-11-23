@@ -376,7 +376,7 @@ void NormalController::control() {
 	m_characterAction->setSquat(squat);
 }
 
-Object* NormalController::bulletAttack() {
+vector<Object*>* NormalController::bulletAttack() {
 
 	if (m_characterAction->getCharacter()->getHp() == 0) {
 		return nullptr;
@@ -419,7 +419,7 @@ Object* NormalController::bulletAttack() {
 	return nullptr;
 }
 
-Object* NormalController::slashAttack() {
+vector<Object*>* NormalController::slashAttack() {
 
 	if (m_characterAction->getCharacter()->getHp() == 0) {
 		return nullptr;

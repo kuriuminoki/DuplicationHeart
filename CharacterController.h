@@ -121,10 +121,10 @@ public:
 	virtual void control() = 0;
 
 	// ËŒ‚UŒ‚
-	virtual Object* bulletAttack() = 0;
+	virtual std::vector<Object*>* bulletAttack() = 0;
 
 	// aŒ‚UŒ‚
-	virtual Object* slashAttack() = 0;
+	virtual std::vector<Object*>* slashAttack() = 0;
 
 	// ƒ_ƒ[ƒW
 	virtual void damage(int vx, int vy, int damageValue) = 0;
@@ -166,10 +166,10 @@ public:
 	void control();
 
 	// ËŒ‚UŒ‚
-	Object* bulletAttack();
+	std::vector<Object*>* bulletAttack();
 
 	// aŒ‚UŒ‚
-	Object* slashAttack();
+	std::vector<Object*>* slashAttack();
 
 	// ƒ_ƒ\ƒW
 	void damage(int vx, int vy, int damageValue);

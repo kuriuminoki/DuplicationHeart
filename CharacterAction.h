@@ -226,10 +226,10 @@ public:
 	virtual void jump(int rate) = 0;
 
 	// 射撃攻撃
-	virtual Object* bulletAttack(int gx, int gy) = 0;
+	virtual std::vector<Object*>* bulletAttack(int gx, int gy) = 0;
 
 	// 斬撃攻撃
-	virtual Object* slashAttack(int gx, int gy) = 0;
+	virtual std::vector<Object*>* slashAttack(int gx, int gy) = 0;
 
 	// ダメージ 必要に応じてオーバーライド
 	virtual void damage(int vx, int vy, int damageValue);
@@ -314,10 +314,10 @@ public:
 	void jump(int cnt);
 
 	// 射撃攻撃
-	Object* bulletAttack(int gx, int gy);
+	std::vector<Object*>* bulletAttack(int gx, int gy);
 
 	// 斬撃攻撃
-	Object* slashAttack(int gx, int gy);
+	std::vector<Object*>* slashAttack(int gx, int gy);
 };
 
 
@@ -398,10 +398,10 @@ public:
 	void setBoost(bool leftDirection);
 
 	// 射撃攻撃
-	Object* bulletAttack(int gx, int gy);
+	std::vector<Object*>* bulletAttack(int gx, int gy);
 
 	// 斬撃攻撃
-	Object* slashAttack(int gx, int gy);
+	std::vector<Object*>* slashAttack(int gx, int gy);
 
 };
 
@@ -429,7 +429,7 @@ public:
 	void debug(int x, int y, int color) const;
 
 	// 射撃攻撃
-	Object* bulletAttack(int gx, int gy);
+	std::vector<Object*>* bulletAttack(int gx, int gy);
 
 	void startBullet();
 
@@ -475,10 +475,10 @@ public:
 	void jump(int rate) { }
 
 	// 射撃攻撃
-	Object* bulletAttack(int gx, int gy) { return nullptr; }
+	std::vector<Object*>* bulletAttack(int gx, int gy) { return nullptr; }
 
 	// 斬撃攻撃
-	Object* slashAttack(int gx, int gy) { return nullptr; }
+	std::vector<Object*>* slashAttack(int gx, int gy) { return nullptr; }
 
 	// ダメージ 必要に応じてオーバーライド
 	void damage(int vx, int vy, int damageValue) { }

@@ -475,13 +475,13 @@ Character* Heart::createCopy() {
 
 // —§‚¿‰æ‘œ‚ğƒZƒbƒg
 void Heart::switchStand(int cnt) {
-	m_drawCnt++;
+	countDrawCnt();
 	m_graphHandle->switchStand(m_drawCnt / DEFAULT_ANIME_SPEED % 2);
 }
 
 // ‚µ‚á‚ª‚İ‰æ‘œ‚ğƒZƒbƒg
 void Heart::switchSquat(int cnt) {
-	m_drawCnt++;
+	countDrawCnt();
 	m_graphHandle->switchSquat(m_drawCnt / DEFAULT_ANIME_SPEED % 2);
 }
 
@@ -522,7 +522,7 @@ void Heart::switchSlash(int cnt) {
 // —§‚¿ËŒ‚‰æ‘œ‚ğƒZƒbƒg
 void Heart::switchBullet(int cnt) {
 	if (m_graphHandle->getStandBulletHandle() == nullptr) { return; }
-	m_drawCnt++;
+	countDrawCnt();
 	m_graphHandle->switchBullet(m_drawCnt / DEFAULT_ANIME_SPEED % 2);
 }
 
@@ -550,18 +550,18 @@ void Heart::switchSquatBullet(int cnt) {
 		switchBullet(cnt);
 		return;
 	}
-	m_drawCnt++;
+	countDrawCnt();
 	m_graphHandle->switchSquatBullet(m_drawCnt / DEFAULT_ANIME_SPEED % 2);
 }
 
 // ‚â‚ç‚ê‰æ‘œ‚ğƒZƒbƒg
 void Heart::switchDead(int cnt) {
-	m_drawCnt++;
+	countDrawCnt();
 	m_graphHandle->switchDead(m_drawCnt / DEFAULT_ANIME_SPEED % 2);
 }
 
 // ËŒ‚UŒ‚‚ğ‚·‚é
-Object* Heart::bulletAttack(int cnt, int gx, int gy, SoundPlayer* soundPlayer) {
+vector<Object*>* Heart::bulletAttack(int cnt, int gx, int gy, SoundPlayer* soundPlayer) {
 	if (cnt != getBulletRapid()) { return nullptr; }
 	// ’e‚Ìì¬
 	BulletObject* attackObject;
@@ -581,11 +581,11 @@ Object* Heart::bulletAttack(int cnt, int gx, int gy, SoundPlayer* soundPlayer) {
 			adjustPanSound(getCenterX(),
 				soundPlayer->getCameraX()));
 	}
-	return attackObject;
+	return new std::vector<Object*>{ attackObject };
 }
 
 // aŒ‚UŒ‚‚ğ‚·‚é
-Object* Heart::slashAttack(bool leftDirection, int cnt, bool grand, SoundPlayer* soundPlayer) {
+vector<Object*>* Heart::slashAttack(bool leftDirection, int cnt, bool grand, SoundPlayer* soundPlayer) {
 	// UŒ‚”ÍˆÍ‚ğŒˆ’è
 	int centerX = getCenterX();
 	int height = m_attackInfo->slashLenY() / 2;
@@ -638,7 +638,10 @@ Object* Heart::slashAttack(bool leftDirection, int cnt, bool grand, SoundPlayer*
 		// ƒ`[ƒ€ƒLƒ‹–h~
 		attackObject->setGroupId(m_groupId);
 	}
-	return attackObject;
+	else {
+		return nullptr;
+	}
+	return new std::vector<Object*>{ attackObject };
 }
 
 
@@ -679,7 +682,7 @@ void Siesta::switchSquatBullet(int cnt) {
 }
 
 // ËŒ‚UŒ‚‚ğ‚·‚é
-Object* Siesta::bulletAttack(int cnt, int gx, int gy, SoundPlayer* soundPlayer) {
+vector<Object*>* Siesta::bulletAttack(int cnt, int gx, int gy, SoundPlayer* soundPlayer) {
 	if (cnt != getBulletRapid() / 2) { return nullptr; }
 	ParabolaBullet *attackObject = new ParabolaBullet(getCenterX(), getCenterY(), m_graphHandle->getBulletHandle()->getGraphHandles()->getGraphHandle(), gx, gy, m_attackInfo);
 	// ©–Å–h~
@@ -692,11 +695,11 @@ Object* Siesta::bulletAttack(int cnt, int gx, int gy, SoundPlayer* soundPlayer) 
 			adjustPanSound(getCenterX(),
 				soundPlayer->getCameraX()));
 	}
-	return attackObject;
+	return new std::vector<Object*>{ attackObject };
 }
 
 // aŒ‚UŒ‚‚ğ‚·‚é
-Object* Siesta::slashAttack(bool leftDirection, int cnt, bool grand, SoundPlayer* soundPlayer) {
+vector<Object*>* Siesta::slashAttack(bool leftDirection, int cnt, bool grand, SoundPlayer* soundPlayer) {
 	// UŒ‚”ÍˆÍ‚ğŒˆ’è
 	int centerX = getCenterX();
 	int height = getHeight();
@@ -747,7 +750,10 @@ Object* Siesta::slashAttack(bool leftDirection, int cnt, bool grand, SoundPlayer
 		// ƒ`[ƒ€ƒLƒ‹–h~
 		attackObject->setGroupId(m_groupId);
 	}
-	return attackObject;
+	else {
+		return nullptr;
+	}
+	return new std::vector<Object*>{ attackObject };
 }
 
 
@@ -772,7 +778,7 @@ Character* Hierarchy::createCopy() {
 }
 
 // ËŒ‚UŒ‚‚ğ‚·‚é
-Object* Hierarchy::bulletAttack(int cnt, int gx, int gy, SoundPlayer* soundPlayer) {
+vector<Object*>* Hierarchy::bulletAttack(int cnt, int gx, int gy, SoundPlayer* soundPlayer) {
 	if (cnt != getBulletRapid()) { return nullptr; }
 	//gx = GetRand(600) - 300 + getCenterX();
 	//gy = getCenterY() - GetRand(300);
@@ -787,11 +793,11 @@ Object* Hierarchy::bulletAttack(int cnt, int gx, int gy, SoundPlayer* soundPlaye
 			adjustPanSound(getCenterX(),
 				soundPlayer->getCameraX()));
 	}
-	return attackObject;
+	return new std::vector<Object*>{ attackObject };
 }
 
 // aŒ‚UŒ‚‚ğ‚·‚é
-Object* Hierarchy::slashAttack(bool leftDirection, int cnt, bool grand, SoundPlayer* soundPlayer) {
+vector<Object*>* Hierarchy::slashAttack(bool leftDirection, int cnt, bool grand, SoundPlayer* soundPlayer) {
 	return nullptr;
 }
 
@@ -818,7 +824,7 @@ Character* Valkyria::createCopy() {
 
 // —§‚¿aŒ‚‰æ‘œ‚ğƒZƒbƒg
 void Valkyria::switchSlash(int cnt) {
-	m_drawCnt++;
+	countDrawCnt();
 	m_graphHandle->switchSlash(m_drawCnt / DEFAULT_ANIME_SPEED % 2);
 }
 
@@ -833,7 +839,7 @@ void Valkyria::switchPreJump(int cnt) {
 }
 
 // aŒ‚UŒ‚‚ğ‚·‚é
-Object* Valkyria::slashAttack(bool leftDirection, int cnt, bool grand, SoundPlayer* soundPlayer) {
+vector<Object*>* Valkyria::slashAttack(bool leftDirection, int cnt, bool grand, SoundPlayer* soundPlayer) {
 	// UŒ‚”ÍˆÍ‚ğŒˆ’è
 	int attackWide, attackHeight;
 	GetGraphSize(m_graphHandle->getStandSlashHandle()->getGraphHandles()->getHandle(0), &attackWide, &attackHeight);
@@ -880,7 +886,10 @@ Object* Valkyria::slashAttack(bool leftDirection, int cnt, bool grand, SoundPlay
 		// ƒ`[ƒ€ƒLƒ‹–h~
 		attackObject->setGroupId(m_groupId);
 	}
-	return attackObject;
+	else {
+		return nullptr;
+	}
+	return new std::vector<Object*>{ attackObject };
 }
 
 
@@ -906,32 +915,32 @@ Character* Troy::createCopy() {
 
 // ‘–‚è‰æ‘œ‚ğƒZƒbƒg
 void Troy::switchRun(int cnt) {
-	m_drawCnt++;
+	countDrawCnt();
 	m_graphHandle->switchRun(m_drawCnt / DEFAULT_ANIME_SPEED % 2);
 }
 // ‘–‚èËŒ‚‰æ‘œ‚ğƒZƒbƒg
 void Troy::switchRunBullet(int cnt) {
-	m_drawCnt++;
+	countDrawCnt();
 	m_graphHandle->switchRunBullet(m_drawCnt / DEFAULT_ANIME_SPEED % 2);
 }
 // ã¸‰æ‘œ‚ğƒZƒbƒg
 void Troy::switchJump(int cnt) {
-	m_drawCnt++;
+	countDrawCnt();
 	m_graphHandle->switchJump(m_drawCnt / DEFAULT_ANIME_SPEED % 2);
 }
 // ~‰º‰æ‘œ‚ğƒZƒbƒg
 void Troy::switchDown(int cnt) {
-	m_drawCnt++;
+	countDrawCnt();
 	m_graphHandle->switchDown(m_drawCnt / DEFAULT_ANIME_SPEED % 2);
 }
 // ‹ó’†ËŒ‚‰æ‘œ‚ğƒZƒbƒg
 void Troy::switchAirBullet(int cnt) {
-	m_drawCnt++;
+	countDrawCnt();
 	m_graphHandle->switchAirBullet(m_drawCnt / DEFAULT_ANIME_SPEED % 2);
 }
 
 // aŒ‚UŒ‚‚ğ‚·‚é
-Object* Troy::slashAttack(bool leftDirection, int cnt, bool grand, SoundPlayer* soundPlayer) {
+vector<Object*>* Troy::slashAttack(bool leftDirection, int cnt, bool grand, SoundPlayer* soundPlayer) {
 	return nullptr;
 }
 
@@ -957,7 +966,7 @@ Character* Koharu::createCopy() {
 }
 
 // ËŒ‚UŒ‚‚ğ‚·‚é
-Object* Koharu::bulletAttack(int cnt, int gx, int gy, SoundPlayer* soundPlayer) {
+vector<Object*>* Koharu::bulletAttack(int cnt, int gx, int gy, SoundPlayer* soundPlayer) {
 	if (cnt != getBulletRapid()) { return nullptr; }
 	// ƒoƒY[ƒJ‚ÌeŒû‚©‚ço‚é‚æ‚¤‚ÉŒ©‚¹‚é
 	gy = getY() + getHeight() - 160;
@@ -972,7 +981,7 @@ Object* Koharu::bulletAttack(int cnt, int gx, int gy, SoundPlayer* soundPlayer) 
 			adjustPanSound(getCenterX(),
 				soundPlayer->getCameraX()));
 	}
-	return attackObject;
+	return new std::vector<Object*>{ attackObject };
 }
 
 
@@ -998,7 +1007,7 @@ Character* BulletOnly::createCopy() {
 
 // ã¸‰æ‘œ‚ğƒZƒbƒg
 void BulletOnly::switchJump(int cnt) {
-	m_drawCnt++;
+	countDrawCnt();
 	m_graphHandle->switchJump(m_drawCnt / DEFAULT_ANIME_SPEED % 2);
 }
 
@@ -1024,13 +1033,13 @@ Character* SlashOnly::createCopy() {
 
 // ã¸‰æ‘œ‚ğƒZƒbƒg
 void SlashOnly::switchJump(int cnt) {
-	m_drawCnt++;
+	countDrawCnt();
 	m_graphHandle->switchJump(m_drawCnt / DEFAULT_ANIME_SPEED % 2);
 }
 
 // ~‰º‰æ‘œ‚ğƒZƒbƒg
 void SlashOnly::switchDown(int cnt) {
-	m_drawCnt++;
+	countDrawCnt();
 	m_graphHandle->switchDown(m_drawCnt / DEFAULT_ANIME_SPEED % 2);
 }
 
@@ -1056,7 +1065,7 @@ Character* ParabolaOnly::createCopy() {
 }
 
 // ËŒ‚UŒ‚‚ğ‚·‚é
-Object* ParabolaOnly::bulletAttack(int cnt, int gx, int gy, SoundPlayer* soundPlayer) {
+vector<Object*>* ParabolaOnly::bulletAttack(int cnt, int gx, int gy, SoundPlayer* soundPlayer) {
 	if (cnt != getBulletRapid()) { return nullptr; }
 	ParabolaBullet* attackObject = new ParabolaBullet(getCenterX(), getCenterY(), m_bulletColor, gx, gy, m_attackInfo);
 	// ©–Å–h~
@@ -1069,7 +1078,7 @@ Object* ParabolaOnly::bulletAttack(int cnt, int gx, int gy, SoundPlayer* soundPl
 			adjustPanSound(getCenterX(),
 				soundPlayer->getCameraX()));
 	}
-	return attackObject;
+	return new std::vector<Object*>{ attackObject };
 }
 
 
@@ -1104,7 +1113,7 @@ void Sun::switchInit(int cnt) {
 	m_graphHandle->switchInit(index);
 }
 
-Object* Sun::bulletAttack(int cnt, int gx, int gy, SoundPlayer* soundPlayer) {
+vector<Object*>* Sun::bulletAttack(int cnt, int gx, int gy, SoundPlayer* soundPlayer) {
 	if (cnt != getBulletRapid()) { return nullptr; }
 	int x = getCenterX() + GetRand(400) - 200;
 	int y = getCenterY() + GetRand(400) - 200;
@@ -1119,5 +1128,5 @@ Object* Sun::bulletAttack(int cnt, int gx, int gy, SoundPlayer* soundPlayer) {
 			adjustPanSound(getCenterX(),
 				soundPlayer->getCameraX()));
 	}
-	return attackObject;
+	return new std::vector<Object*>{ attackObject };
 }
