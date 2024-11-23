@@ -44,7 +44,7 @@ void debugObjects(int x, int y, int color, std::vector<Object*> objects) {
 void World::debug(int x, int y, int color) const {
 	DrawFormatString(x, y, color, "**World**");
 	DrawFormatString(x, y + DRAW_FORMAT_STRING_SIZE, color, "areaNum=%d, CharacterSum=%d, ControllerSum=%d, cameraEx=%f", m_areaNum, m_characters.size(), m_characterControllers.size(), m_camera->getEx());
-	DrawFormatString(x, y + DRAW_FORMAT_STRING_SIZE * 2, color, "itemSum=%d, animeSum=%d", m_itemVector.size(), m_animations.size());
+	DrawFormatString(x, y + DRAW_FORMAT_STRING_SIZE * 2, color, "itemSum=%d, animeSum=%d, attackObjects=%d", m_itemVector.size(), m_animations.size(), m_attackObjects.size());
 	if (m_itemVector.size() > 0) {
 		DrawFormatString(x, y + DRAW_FORMAT_STRING_SIZE * 3, color, "itemY=%d", m_itemVector[0]->getY());
 	}

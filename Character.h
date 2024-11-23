@@ -4,6 +4,7 @@
 
 #include<string>
 #include<map>
+#include<vector>
 
 class Object;
 class GraphHandle;
@@ -188,6 +189,9 @@ private:
 */
 class Character {
 public:
+
+	// ƒLƒƒƒ‰‚ğ—h‚ç‚µ‚Ä•`‰æ‚·‚é‚È‚çtrue
+	const bool SHAKING_FLAG = false;
 
 	const int SKILL_MAX = 100;
 
@@ -388,10 +392,10 @@ public:
 	void moveDown(int d);
 
 	// ËŒ‚UŒ‚‚ğ‚·‚é(ƒLƒƒƒ‰‚²‚Æ‚Éˆá‚¤)
-	virtual Object* bulletAttack(int cnt, int gx, int gy, SoundPlayer* soundPlayer) { return nullptr; }
+	virtual std::vector<Object*>* bulletAttack(int cnt, int gx, int gy, SoundPlayer* soundPlayer) { return nullptr; }
 
 	// aŒ‚UŒ‚‚ğ‚·‚é(ƒLƒƒƒ‰‚²‚Æ‚Éˆá‚¤) ¶‚ğŒü‚¢‚Ä‚¢‚é‚©A¡‰½ƒJƒEƒ“ƒg‚©
-	virtual Object* slashAttack(bool leftDirection, int cnt, bool grand, SoundPlayer* soundPlayer) { return nullptr; }
+	virtual std::vector<Object*>* slashAttack(bool leftDirection, int cnt, bool grand, SoundPlayer* soundPlayer) { return nullptr; }
 
 	// ËŒ‚UŒ‚‚ğ‚Á‚Ä‚¢‚é‚©
 	bool haveBulletAttack() const { return m_attackInfo->bulletDamage() != 0; }
@@ -403,6 +407,9 @@ public:
 
 	// HP‚ª0‚Å‚â‚ç‚ê‰æ‘œ‚ª‚È‚­A‰æ–Ê‚©‚çÁ‚¦‚é‚×‚«‚©
 	inline bool noDispForDead() const { return m_hp == 0 && !haveDeadGraph(); }
+
+protected:
+	void countDrawCnt(){ if (SHAKING_FLAG) { m_drawCnt++; } }
 };
 
 
@@ -473,10 +480,10 @@ public:
 	void switchDead(int cnt = 0);
 
 	// ËŒ‚UŒ‚‚ğ‚·‚é
-	Object* bulletAttack(int cnt, int gx, int gy, SoundPlayer* soundPlayer);
+	std::vector<Object*>* bulletAttack(int cnt, int gx, int gy, SoundPlayer* soundPlayer);
 
 	// aŒ‚UŒ‚‚ğ‚·‚é
-	Object* slashAttack(bool leftDirection, int cnt, bool grand, SoundPlayer* soundPlayer);
+	std::vector<Object*>* slashAttack(bool leftDirection, int cnt, bool grand, SoundPlayer* soundPlayer);
 
 };
 
@@ -501,10 +508,10 @@ public:
 	void switchSquatBullet(int cnt = 0);
 
 	// ËŒ‚UŒ‚‚ğ‚·‚é
-	Object* bulletAttack(int cnt, int gx, int gy, SoundPlayer* soundPlayer);
+	std::vector<Object*>* bulletAttack(int cnt, int gx, int gy, SoundPlayer* soundPlayer);
 
 	// aŒ‚UŒ‚‚ğ‚·‚é
-	Object* slashAttack(bool leftDirection, int cnt, bool grand, SoundPlayer* soundPlayer);
+	std::vector<Object*>* slashAttack(bool leftDirection, int cnt, bool grand, SoundPlayer* soundPlayer);
 };
 
 
@@ -522,10 +529,10 @@ public:
 	Character* createCopy();
 
 	// ËŒ‚UŒ‚‚ğ‚·‚é
-	Object* bulletAttack(int cnt, int gx, int gy, SoundPlayer* soundPlayer);
+	std::vector<Object*>* bulletAttack(int cnt, int gx, int gy, SoundPlayer* soundPlayer);
 
 	// aŒ‚UŒ‚‚ğ‚·‚é
-	Object* slashAttack(bool leftDirection, int cnt, bool grand, SoundPlayer* soundPlayer);
+	std::vector<Object*>* slashAttack(bool leftDirection, int cnt, bool grand, SoundPlayer* soundPlayer);
 };
 
 
@@ -548,10 +555,10 @@ public:
 	void switchPreJump(int cnt = 0);
 
 	// ËŒ‚UŒ‚‚ğ‚·‚é
-	Object* bulletAttack(int cnt, int gx, int gy, SoundPlayer* soundPlayer){ return nullptr; }
+	std::vector<Object*>* bulletAttack(int cnt, int gx, int gy, SoundPlayer* soundPlayer){ return nullptr; }
 
 	// aŒ‚UŒ‚‚ğ‚·‚é
-	Object* slashAttack(bool leftDirection, int cnt, bool grand, SoundPlayer* soundPlayer);
+	std::vector<Object*>* slashAttack(bool leftDirection, int cnt, bool grand, SoundPlayer* soundPlayer);
 };
 
 
@@ -580,7 +587,7 @@ public:
 	void switchAirBullet(int cnt = 0);
 
 	// aŒ‚UŒ‚‚ğ‚·‚é
-	Object* slashAttack(bool leftDirection, int cnt, bool grand, SoundPlayer* soundPlayer);
+	std::vector<Object*>* slashAttack(bool leftDirection, int cnt, bool grand, SoundPlayer* soundPlayer);
 };
 
 
@@ -598,7 +605,7 @@ public:
 	Character* createCopy();
 
 	// ËŒ‚UŒ‚‚ğ‚·‚é
-	Object* bulletAttack(int cnt, int gx, int gy, SoundPlayer* soundPlayer);
+	std::vector<Object*>* bulletAttack(int cnt, int gx, int gy, SoundPlayer* soundPlayer);
 
 };
 
@@ -620,7 +627,7 @@ public:
 	void switchJump(int cnt = 0);
 
 	// aŒ‚UŒ‚‚ğ‚·‚é(ƒLƒƒƒ‰‚²‚Æ‚Éˆá‚¤)
-	Object* slashAttack(bool leftDirection, int cnt, bool grand, SoundPlayer* soundPlayer) { return nullptr; }
+	std::vector<Object*>* slashAttack(bool leftDirection, int cnt, bool grand, SoundPlayer* soundPlayer) { return nullptr; }
 };
 
 
@@ -643,7 +650,7 @@ public:
 	void switchDown(int cnt = 0);
 
 	// ËŒ‚UŒ‚‚ğ‚·‚é
-	Object* bulletAttack(int cnt, int gx, int gy, SoundPlayer* soundPlayer) { return nullptr; }
+	std::vector<Object*>* bulletAttack(int cnt, int gx, int gy, SoundPlayer* soundPlayer) { return nullptr; }
 };
 
 
@@ -661,7 +668,7 @@ public:
 	Character* createCopy();
 
 	// ËŒ‚UŒ‚‚ğ‚·‚é
-	Object* bulletAttack(int cnt, int gx, int gy, SoundPlayer* soundPlayer);
+	std::vector<Object*>* bulletAttack(int cnt, int gx, int gy, SoundPlayer* soundPlayer);
 };
 
 
@@ -682,12 +689,33 @@ public:
 	void switchInit(int cnt);
 
 	// ËŒ‚UŒ‚‚ğ‚·‚é
-	Object* bulletAttack(int cnt, int gx, int gy, SoundPlayer* soundPlayer);
+	std::vector<Object*>* bulletAttack(int cnt, int gx, int gy, SoundPlayer* soundPlayer);
 
 	// aŒ‚UŒ‚‚ğ‚·‚é
-	Object* slashAttack(bool leftDirection, int cnt, bool grand, SoundPlayer* soundPlayer) { return nullptr; }
+	std::vector<Object*>* slashAttack(bool leftDirection, int cnt, bool grand, SoundPlayer* soundPlayer) { return nullptr; }
 
 };
+
+
+/*
+* Boss2: ƒA[ƒJƒCƒu
+*/
+//class Archive :
+//	public Heart
+//{
+//public:
+//	// ƒRƒ“ƒXƒgƒ‰ƒNƒ^
+//	Archive(const char* name, int hp, int x, int y, int groupId);
+//	Archive(const char* name, int hp, int x, int y, int groupId, AttackInfo* attackInfo);
+//
+//	Character* createCopy();
+//
+//	// ËŒ‚UŒ‚‚ğ‚·‚é
+//	std::vector<Object*>* bulletAttack(int cnt, int gx, int gy, SoundPlayer* soundPlayer);
+//
+//	// aŒ‚UŒ‚‚ğ‚·‚é
+//	std::vector<Object*>* slashAttack(bool leftDirection, int cnt, bool grand, SoundPlayer* soundPlayer) { return nullptr; }
+//};
 
 
 #endif
