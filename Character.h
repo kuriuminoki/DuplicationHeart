@@ -200,6 +200,8 @@ public:
 protected:
 	static int characterId;
 
+	AttackInfo* m_slidingInfo;
+
 	bool m_duplicationFlag;
 
 	// ID
@@ -371,6 +373,10 @@ public:
 	virtual void switchDamage(int cnt = 0);
 	// ブースト画像をセット
 	virtual void switchBoost(int cnt = 0);
+	// ステップ画像をセット
+	virtual void switchStep(int cnt = 0);
+	// スライディング画像をセット
+	virtual void switchSliding(int cnt = 0);
 	// 空中射撃画像をセット
 	virtual void switchAirBullet(int cnt = 0);
 	// 空中斬撃画像をセット
@@ -397,12 +403,17 @@ public:
 	// 斬撃攻撃をする(キャラごとに違う) 左を向いているか、今何カウントか
 	virtual std::vector<Object*>* slashAttack(bool leftDirection, int cnt, bool grand, SoundPlayer* soundPlayer) { return nullptr; }
 
+	// スライディング攻撃
+	std::vector<Object*>* slidingAttack(int sound, SoundPlayer* soundPlayer);
+
 	// 射撃攻撃を持っているか
 	bool haveBulletAttack() const { return m_attackInfo->bulletDamage() != 0; }
 	// 斬撃攻撃を持っているか
 	bool haveSlashAttack() const { return m_attackInfo->slashDamage() != 0; }
 
-	// やられ画像があるか
+	// 特定の画像があるか
+	bool haveStepGraph() const;
+	bool haveSlidingGraph() const;
 	bool haveDeadGraph() const;
 
 	// HPが0でやられ画像がなく、画面から消えるべきか

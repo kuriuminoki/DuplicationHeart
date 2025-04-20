@@ -93,6 +93,10 @@ CharacterAction::CharacterAction(Character* character, SoundPlayer* soundPlayer_
 	m_landCnt = 0;
 	m_boostCnt = 0;
 	m_boostDone = 0;
+	m_stepCnt = 0;
+	m_stepDone = 0;
+	m_slidingCnt = 0;
+	m_slidingDone = 0;
 	m_damageCnt = 0;
 	m_heavy = false;
 }
@@ -130,6 +134,10 @@ void CharacterAction::setParam(CharacterAction* action) {
 	action->setLandCnt(m_landCnt);
 	action->setBoostCnt(m_boostCnt);
 	action->setBoostDone(m_boostDone);
+	action->setStepCnt(m_stepCnt);
+	action->setStepDone(m_stepDone);
+	action->setSlidingCnt(m_slidingCnt);
+	action->setSlidingDone(m_slidingDone);
 	action->setDamageCnt(m_damageCnt);
 	action->setHeavy(m_heavy);
 }
@@ -182,7 +190,63 @@ void CharacterAction::finishBoost() {
 	else if (m_boostDone == 2) {
 		m_vx += BOOST_SPEED;
 	}
-	m_boostDone = false;
+	m_boostDone = 0;
+}
+
+void CharacterAction::setStep(bool leftDirection) {
+	if (!m_character_p->haveSlidingGraph()) { return; }
+	if (m_state != CHARACTER_STATE::SQUAT || m_stepDone != 0 || m_slidingCnt > 0) { return; }
+	m_stepCnt = STEP_TIME;
+	if (leftDirection && !m_leftLock) {
+		m_vx -= STEP_SPEED;
+		m_stepDone = 2;
+		m_character_p->setLeftDirection(false);
+	}
+	else if(!m_rightLock) {
+		m_vx += STEP_SPEED;
+		m_stepDone = 1;
+		m_character_p->setLeftDirection(true);
+	}
+	finishBullet();
+}
+void CharacterAction::finishStep() {
+	if (m_stepCnt > STEP_STOP_TIME) {
+		if (m_stepDone == 1) {
+			m_vx -= STEP_SPEED;
+		}
+		else if (m_stepDone == 2) {
+			m_vx += STEP_SPEED;
+		}
+	}
+	m_stepCnt = 0;
+	m_stepDone = 0;
+}
+
+void CharacterAction::setSliding(bool leftDirection) {
+	if (!m_character_p->haveStepGraph()) { return; }
+	if (m_state != CHARACTER_STATE::SQUAT || m_slidingDone != 0 || m_stepCnt > 0) { return; }
+	m_slidingCnt = SLIDING_SPEED;
+	if (leftDirection) {
+		m_vx -= SLIDING_SPEED;
+		m_slidingDone = 2;
+		m_character_p->setLeftDirection(true);
+	}
+	else {
+		m_vx += SLIDING_SPEED;
+		m_slidingDone = 1;
+		m_character_p->setLeftDirection(false);
+	}
+	finishBullet();
+}
+void CharacterAction::finishSliding() {
+	m_slidingCnt = 0;
+	if (m_slidingDone == 1) {
+		m_vx -= m_slidingCnt;
+	}
+	else if (m_slidingDone == 2) {
+		m_vx += m_slidingCnt;
+	}
+	m_slidingDone = 0;
 }
 
 // キャラクターのセッタ
@@ -262,6 +326,28 @@ void CharacterAction::otherAction() {
 	// アニメーション用のカウント
 	if (m_landCnt > 0) { m_landCnt--; }
 	if (m_boostCnt > 0) { m_boostCnt--; }
+	if (m_stepCnt > 0) { 
+		m_stepCnt--;
+		if (m_stepCnt == STEP_STOP_TIME) {
+			if (m_stepDone == 1) {
+				m_vx -= STEP_SPEED;
+			}
+			else if (m_stepDone == 2) {
+				m_vx += STEP_SPEED;
+			}
+		}
+		if (m_stepCnt == 0) {
+			finishStep();
+		}
+	}
+	if (m_slidingCnt > 0) {
+		m_slidingCnt--;
+		if (m_slidingDone == 1) { m_vx--; }
+		if (m_slidingDone == 2) { m_vx++; }
+		if (m_slidingCnt == 0) {
+			finishSliding();
+		}
+	}
 }
 
 void CharacterAction::moveAction() {
@@ -338,6 +424,7 @@ void CharacterAction::damage(int vx, int vy, int damageValue) {
 	// HP減少
 	m_character_p->damageHp(damageValue);
 	m_boostCnt = 0;
+	finishSliding();
 }
 
 void CharacterAction::startBullet() {
@@ -357,11 +444,11 @@ void CharacterAction::finishSlash() {
 }
 
 bool CharacterAction::ableDamage() const {
-	return !(m_state == CHARACTER_STATE::DAMAGE || m_damageCnt > 0 || m_boostCnt > max(0, BOOST_TIME - 10));
+	return !(m_state == CHARACTER_STATE::DAMAGE || m_damageCnt > 0 || m_boostCnt > max(0, BOOST_TIME - 10) || m_stepCnt > STEP_STOP_TIME);
 }
 
 bool CharacterAction::ableAttack() const {
-	return !(m_bulletCnt > 0 || m_slashCnt > 0);
+	return !(m_bulletCnt > 0 || m_slashCnt > 0 || m_slidingCnt > 0 || m_stepCnt > STEP_STOP_TIME);
 }
 
 bool CharacterAction::ableWalk() const {
@@ -401,7 +488,7 @@ void CharacterAction::setGrand(bool grand) {
 
 void CharacterAction::setSquat(bool squat) {
 	if (m_state != CHARACTER_STATE::DAMAGE && m_state != CHARACTER_STATE::PREJUMP && m_state != CHARACTER_STATE::INIT) {
-		if (squat && m_grand && m_slashCnt == 0) {
+		if ((squat && m_grand && m_slashCnt == 0) || (m_stepCnt > 0 || m_slidingCnt > 0)) {
 			// しゃがめる状態なのでしゃがむ
 			m_state = CHARACTER_STATE::SQUAT;
 		}
@@ -439,6 +526,14 @@ void CharacterAction::stopMoveLeft() {
 	if (m_boostDone == 2) {
 		finishBoost();
 	}
+	if (m_leftLock) {
+		if (m_stepDone == 2) {
+			finishStep();
+		}
+		if (m_slidingDone == 2) {
+			finishSliding();
+		}
+	}
 }
 void CharacterAction::stopMoveRight() {
 	// 右へ歩くのをやめる
@@ -448,6 +543,14 @@ void CharacterAction::stopMoveRight() {
 	}
 	if (m_boostDone == 1) {
 		finishBoost();
+	}
+	if (m_rightLock) {
+		if (m_stepDone == 1) {
+			finishStep();
+		}
+		if (m_slidingDone == 1) {
+			finishSliding();
+		}
 	}
 }
 void CharacterAction::stopMoveUp() {
@@ -600,6 +703,12 @@ void StickAction::switchHandle() {
 			if (m_bulletCnt > 0) {
 				m_character_p->switchSquatBullet(m_bulletCnt);
 			}
+			else if (m_stepCnt > 0) {
+				m_character_p->switchStep(m_stepCnt);
+			}
+			else if (m_slidingCnt > 0) {
+				m_character_p->switchSliding(m_slidingCnt);
+			}
 			else {
 				m_character_p->switchSquat();
 			}
@@ -608,7 +717,7 @@ void StickAction::switchHandle() {
 			m_character_p->switchPreJump(m_preJumpCnt);
 			break;
 		case CHARACTER_STATE::DAMAGE:
-			if (m_boostCnt > 0) {
+			if (m_boostCnt > 0) { 
 				if (m_slashCnt > 0) {
 					m_character_p->switchSlash(m_slashCnt);
 				}
@@ -723,10 +832,10 @@ void StickAction::walk(bool right, bool left) {
 void StickAction::move(bool right, bool left, bool up, bool down) {
 	if ((m_state == CHARACTER_STATE::STAND || m_state == CHARACTER_STATE::SQUAT) && m_grand && m_slashCnt == 0 && m_bulletCnt == 0) {
 		// 移動方向へ向く
-		if(left && !right){
+		if(left && !right && m_stepCnt == 0 && m_slidingCnt == 0){
 			m_character_p->setLeftDirection(true);
 		}
-		if (right && !left) {
+		if (right && !left && m_stepCnt == 0 && m_slidingCnt == 0) {
 			m_character_p->setLeftDirection(false);
 		}
 	}
@@ -838,6 +947,15 @@ vector<Object*>* StickAction::slashAttack(int gx, int gy) {
 	}
 	// 攻撃のタイミングじゃないならnullptrが返る
 	return m_character_p->slashAttack(m_attackLeftDirection, m_slashCnt, m_grand, m_soundPlayer_p);
+}
+
+// スライディング攻撃
+vector<Object*>* StickAction::slidingAttack() {
+	if (m_slidingCnt == 0) {
+		return nullptr;
+	}
+	// 攻撃のタイミングじゃないならnullptrが返る
+	return m_character_p->slidingAttack(m_slidingCnt == SLIDING_SPEED, m_soundPlayer_p);
 }
 
 
@@ -1035,6 +1153,12 @@ void FlightAction::otherAction() {
 		if (m_boostCnt == 0) {
 			finishBoost();
 		}
+	}
+	if (m_stepCnt > 0) { m_stepCnt--; }
+	if (m_slidingCnt > 0) {
+		m_slidingCnt--;
+		if (m_slidingDone == 1) { m_vx--; }
+		if (m_slidingDone == 2) { m_vx++; }
 	}
 }
 void FlightAction::moveAction() {
