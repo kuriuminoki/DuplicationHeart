@@ -108,6 +108,9 @@ protected:
 	// 斬撃用カウント
 	int m_slashCnt;
 
+	// ジャンプ用カウント
+	int m_jumpCnt;
+
 	// 攻撃する方向
 	bool m_attackLeftDirection;
 
@@ -183,7 +186,7 @@ public:
 	inline void setGrandRightSlope(bool grand) { m_grandRightSlope = grand; }
 	inline void setGrandLeftSlope(bool grand) { m_grandLeftSlope = grand; }
 	inline void setRunCnt(int runCnt) { m_runCnt = runCnt; }
-	inline void setJumpCnt(int preJumpCnt) { m_preJumpCnt = preJumpCnt; }
+	inline void setPreJumpCnt(int preJumpCnt) { m_preJumpCnt = preJumpCnt; }
 	inline void setMoveRight(bool moveRight) { m_moveRight = moveRight; }
 	inline void setMoveLeft(bool moveLeft) { m_moveLeft = moveLeft; }
 	inline void setMoveUp(bool moveUp) { m_moveUp = moveUp; }
@@ -193,6 +196,7 @@ public:
 	inline void setDx(int dx) { m_dx = dx; }
 	inline void setBulletCnt(int bulletCnt) { m_bulletCnt = bulletCnt; }
 	inline void setSlashCnt(int slashCnt) { m_slashCnt = slashCnt; }
+	inline void setJumpCnt(int jumpCnt) { m_jumpCnt = jumpCnt; }
 	inline void setAttackLeftDirection(bool attackLeftDirection) { m_attackLeftDirection = attackLeftDirection; }
 	inline void setLandCnt(int landCnt) { m_landCnt = landCnt; }
 	inline void setBoostCnt(int boostCnt) { m_boostCnt = boostCnt; }
@@ -442,6 +446,9 @@ public:
 };
 
 
+/*
+* 行動開始前のBoss
+*/
 class BossFreezeAction :
 	public CharacterAction
 {
@@ -551,6 +558,36 @@ protected:
 	// 状態に応じて画像セット
 	void switchHandle();
 
+};
+
+
+/*
+* Boss2: アーカイブ
+*/
+class ArchiveAction :
+	public StickAction
+{
+private:
+
+	// 最初のHP表示アニメ用
+	bool m_initCompFlag;
+
+	// 初期体力
+	int m_initHp;
+
+public:
+	static const char* ACTION_NAME;
+	const char* getActionName() const { return this->ACTION_NAME; }
+
+	ArchiveAction(Character* character, SoundPlayer* soundPlayer_p, bool duplicationFlag);
+
+	CharacterAction* createCopy(std::vector<Character*> characters);
+
+	// セッタ
+	inline void setInitCompFlag(bool initCompFlag) { m_initCompFlag = initCompFlag; }
+	inline void setInitHp(int initHp) { m_initHp = initHp; }
+
+	void action();
 };
 
 
