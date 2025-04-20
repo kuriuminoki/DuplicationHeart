@@ -89,9 +89,10 @@ protected:
 	bool m_moveUp;
 	bool m_moveDown;
 
-	// 加速度
-	int m_vx;
-	int m_vy;
+	// 速度
+	int m_vx; // キャラの横移動の速度（トータル）
+	int m_vy; // キャラの縦移動の速度（トータル）
+	int m_runVx; // Controllerによる横移動の速度（走りなど。ダメージによる吹っ飛びは除く）
 
 	// 他のキャラと重なっているため次のフレームで位置をずらす
 	int m_dx;
@@ -154,7 +155,7 @@ public:
 	inline bool getGrandRightSlope() const { return m_grandRightSlope; }
 	inline bool getGrandLeftSlope() const { return m_grandLeftSlope; }
 	inline bool getHeavy() const { return m_heavy; }
-	inline int getVx() const { return m_vx; }
+	inline int getVx() const { return m_vx + m_runVx; }
 	inline int getVy() const { return m_vy; }
 	inline int getDx() const { return m_dx; }
 	inline int getSlashCnt() const { return m_slashCnt; }
@@ -190,6 +191,7 @@ public:
 	inline void setMoveDown(bool moveDown) { m_moveDown = moveDown; }
 	inline void setVx(int vx) { m_vx = vx; }
 	inline void setVy(int vy) { m_vy = vy; }
+	inline void setRunVx(int run_vx) { m_runVx = run_vx; }
 	inline void setDx(int dx) { m_dx = dx; }
 	inline void setBulletCnt(int bulletCnt) { m_bulletCnt = bulletCnt; }
 	inline void setSlashCnt(int slashCnt) { m_slashCnt = slashCnt; }

@@ -81,6 +81,7 @@ CharacterAction::CharacterAction(Character* character, SoundPlayer* soundPlayer_
 	m_grandRightSlope = false;
 	m_vx = 0;
 	m_vy = 0;
+	m_runVx = 0;
 	m_dx = 0;
 	m_rightLock = false;
 	m_leftLock = false;
@@ -118,6 +119,7 @@ void CharacterAction::setParam(CharacterAction* action) {
 	action->setMoveDown(m_moveDown);
 	action->setVx(m_vx);
 	action->setVy(m_vy);
+	action->setRunVx(m_runVx);
 	action->setRightLock(m_rightLock);
 	action->setLeftLock(m_leftLock);
 	action->setUpLock(m_upLock);
@@ -228,8 +230,6 @@ void CharacterAction::init() {
 
 	// キャラのバージョンが変化した場合
 	if (m_characterVersion != m_character_p->getVersion()) {
-		if (m_moveLeft) { m_vx += m_characterMoveSpeed; m_vx -= m_character_p->getMoveSpeed(); }
-		if (m_moveRight) { m_vx -= m_characterMoveSpeed; m_vx += m_character_p->getMoveSpeed(); }
 		if (m_moveUp) { m_vy += m_characterMoveSpeed; m_vy -= m_character_p->getMoveSpeed(); }
 		if (m_moveDown) { m_vy -= m_characterMoveSpeed; m_vy += m_character_p->getMoveSpeed(); }
 		m_characterVersion = m_character_p->getVersion();
@@ -269,22 +269,24 @@ void CharacterAction::moveAction() {
 	if (!m_heavy && ((m_dx < 0 && !m_leftLock) || (m_dx > 0 && !m_rightLock))) {
 		m_character_p->moveRight(m_dx);
 	}
-	if (m_vx > 0) {// 右
+	if (m_vx + m_runVx > 0) {// 右
 		if (m_rightLock) {
 			stopMoveLeft(); // 左に移動したいのに吹っ飛び等で右へ移動しているとき、いったん左移動への入力をキャンセルさせないとバグる
 			m_vx = 0;
+			m_runVx = 0;
 		}
 		else {
-			m_character_p->moveRight(m_vx);
+			m_character_p->moveRight(m_vx + m_runVx);
 		}
 	}
-	else if (m_vx < 0) { // 左
+	else if (m_vx + m_runVx < 0) { // 左
 		if (m_leftLock) {
 			stopMoveRight();// 右に移動したいのに吹っ飛び等で左へ移動しているとき、いったん右移動への入力をキャンセルさせないとバグる
 			m_vx = 0;
+			m_runVx = 0;
 		}
 		else {
-			m_character_p->moveLeft(-m_vx);
+			m_character_p->moveLeft(-m_vx - m_runVx);
 		}
 	}
 	if (m_vy < 0) { // 上
@@ -413,29 +415,24 @@ void CharacterAction::setSquat(bool squat) {
 void CharacterAction::startMoveLeft() {
 	// 左へ歩き始める
 	m_moveLeft = true;
-	m_vx -= m_character_p->getMoveSpeed();
 }
 void CharacterAction::startMoveRight() {
 	// 右へ歩き始める
 	m_moveRight = true;
-	m_vx += m_character_p->getMoveSpeed();
 }
 void CharacterAction::startMoveUp() {
 	// 上へ歩き始める
 	m_moveUp = true;
-	m_vy -= m_character_p->getMoveSpeed();
 }
 void CharacterAction::startMoveDown() {
 	// 下へ歩き始める
 	m_moveDown = true;
-	m_vy += m_character_p->getMoveSpeed();
 }
 
 // 歩くのをやめる
 void CharacterAction::stopMoveLeft() {
 	// 左へ歩くのをやめる
 	if (m_moveLeft) {
-		m_vx += m_character_p->getMoveSpeed();
 		m_moveLeft = false;
 		m_runCnt = -1;
 	}
@@ -446,7 +443,6 @@ void CharacterAction::stopMoveLeft() {
 void CharacterAction::stopMoveRight() {
 	// 右へ歩くのをやめる
 	if (m_moveRight) {
-		m_vx -= m_character_p->getMoveSpeed();
 		m_moveRight = false;
 		m_runCnt = -1;
 	}
@@ -547,6 +543,19 @@ void StickAction::action() {
 	if (!m_grand) {
 		// 重力
 		m_vy += G;
+	}
+	// 走りによる速度変化
+	if (m_moveLeft) {
+		m_runVx = max(m_runVx - 1, -m_character_p->getMoveSpeed());
+	}
+	else if (m_runVx < 0) {
+		m_runVx += 1;
+	}
+	if (m_moveRight) {
+		m_runVx = min(m_runVx + 1, m_character_p->getMoveSpeed());
+	}
+	else if (m_runVx > 0) {
+		m_runVx -= 1;
 	}
 	CharacterAction::action();
 }
