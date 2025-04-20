@@ -102,7 +102,7 @@ void FollowNormalAI::debug(int x, int y, int color) const {
 // Actionクラスのデバッグ
 void CharacterAction::debugAction(int x, int y, int color) const {
 	DrawFormatString(x, y, color, "**CharacterAction**");
-	DrawFormatString(x, y + DRAW_FORMAT_STRING_SIZE, color, "state=%d, grand=%d(%d%d), (vx,vy)=(%d,%d), slope=(%d,%d)", (int)m_state, m_grand, m_grandLeftSlope, m_grandRightSlope, m_vx, m_vy, m_grandLeftSlope, m_grandRightSlope);
+	DrawFormatString(x, y + DRAW_FORMAT_STRING_SIZE, color, "state=%d, grand=%d(%d%d), (vx,vy)=(%d + %d,%d), slope=(%d,%d)", (int)m_state, m_grand, m_grandLeftSlope, m_grandRightSlope, m_vx, m_runVx, m_vy, m_grandLeftSlope, m_grandRightSlope);
 	DrawFormatString(x, y + DRAW_FORMAT_STRING_SIZE * 2, color, "制限中：(←, →, ↑, ↓)=(%d,%d,%d,%d)", m_leftLock, m_rightLock, m_upLock, m_downLock);
 	DrawFormatString(x, y + DRAW_FORMAT_STRING_SIZE * 3, color, "移動中：(←, →, ↑, ↓)=(%d,%d,%d,%d)", m_moveLeft, m_moveRight, m_moveUp, m_moveDown);
 	m_character_p->debug(x + DRAW_FORMAT_STRING_SIZE, y + DRAW_FORMAT_STRING_SIZE * 4, color);
