@@ -395,6 +395,8 @@ CharacterGraphHandle::CharacterGraphHandle(const char* characterName, double dra
 	loadCharacterGraph(dir, characterName, m_boostHandles, "boost", data, m_ex, &atariReader);
 	loadCharacterGraph(dir, characterName, m_airBulletHandles, "airBullet", data, m_ex, &atariReader);
 	loadCharacterGraph(dir, characterName, m_airSlashHandles, "airSlash", data, m_ex, &atariReader);
+	loadCharacterGraph(dir, characterName, m_stepHandles, "step", data, m_ex, &atariReader);
+	loadCharacterGraph(dir, characterName, m_slidingHandles, "sliding", data, m_ex, &atariReader);
 	loadCharacterGraph(dir, characterName, m_closeHandles, "close", data, m_ex, &atariReader);
 	loadCharacterGraph(dir, characterName, m_deadHandles, "dead", data, m_ex, &atariReader);
 	loadCharacterGraph(dir, characterName, m_initHandles, "init", data, m_ex, &atariReader);
@@ -422,6 +424,8 @@ CharacterGraphHandle::~CharacterGraphHandle() {
 	if (m_boostHandles != nullptr) { delete m_boostHandles; }
 	if (m_airBulletHandles != nullptr) { delete m_airBulletHandles; }
 	if (m_airSlashHandles != nullptr) { delete m_airSlashHandles; }
+	if (m_stepHandles != nullptr) { delete m_stepHandles; }
+	if (m_slidingHandles != nullptr) { delete m_slidingHandles; }
 	if (m_closeHandles != nullptr) { delete m_closeHandles; }
 	if (m_deadHandles != nullptr) { delete m_deadHandles; }
 	if (m_initHandles != nullptr) { delete m_initHandles; }
@@ -538,6 +542,14 @@ void CharacterGraphHandle::switchAirBullet(int index){
 // 空中斬撃画像をセット
 void CharacterGraphHandle::switchAirSlash(int index){
 	setGraph(m_airSlashHandles, index);
+}
+// ステップ画像をセット
+void CharacterGraphHandle::switchStep(int index) {
+	setGraph(m_stepHandles, index);
+}
+// スライディング画像をセット
+void CharacterGraphHandle::switchSliding(int index) {
+	setGraph(m_slidingHandles, index);
 }
 // 瞬き画像をセット
 void CharacterGraphHandle::switchClose(int index) {

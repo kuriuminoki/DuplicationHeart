@@ -208,10 +208,11 @@ void AttackInfo::setParam(map<string, string>& data) {
 */
 int Character::characterId;
 
+
 Character::Character() :
 	Character(100, 0, 0, 0)
 {
-
+	
 }
 
 Character::Character(int hp, int x, int y, int groupId) {
@@ -379,6 +380,25 @@ void Character::moveDown(int d) {
 	m_y += d;
 }
 
+vector<Object*>* Character::slidingAttack(int sound, SoundPlayer* soundPlayer) {
+	int x1, y1, x2, y2;
+	getAtariArea(&x1, &y1, &x2, &y2);
+	SlashObject* attackObject = new SlashObject(x1, y1, x2, y2, nullptr, 1, m_slidingInfo);
+	// 効果音
+	if (sound && soundPlayer != nullptr) {
+		soundPlayer->pushSoundQueue(m_slidingInfo->slashStartSoundHandle(),
+			adjustPanSound(getCenterX(),
+				soundPlayer->getCameraX()));
+	}
+	return new std::vector<Object*>{ attackObject };
+}
+
+bool Character::haveStepGraph() const {
+	return !(m_graphHandle->getStepHandle() == nullptr);
+}
+bool Character::haveSlidingGraph() const {
+	return !(m_graphHandle->getSlidingHandle() == nullptr);
+}
 bool Character::haveDeadGraph() const {
 	return !(m_graphHandle->getDeadHandle() == nullptr);
 }
@@ -409,6 +429,10 @@ void Character::switchPreJump(int cnt) { m_graphHandle->switchPreJump(); }
 void Character::switchDamage(int cnt) { m_graphHandle->switchDamage(); }
 // ブースト画像をセット
 void Character::switchBoost(int cnt) { m_graphHandle->switchBoost(); }
+// ステップ画像をセット
+void Character::switchStep(int cnt) { m_graphHandle->switchStep(); }
+// スライディング画像をセット
+void Character::switchSliding(int cnt) { m_graphHandle->switchSliding(); }
 // 空中射撃画像をセット
 void Character::switchAirBullet(int cnt) { m_graphHandle->switchAirBullet(); }
 // 空中斬撃画像をセット
@@ -442,6 +466,8 @@ Heart::Heart(const char* name, int hp, int x, int y, int groupId) :
 
 	m_bulletColor = WHITE;
 
+	if (haveSlidingGraph()) { m_slidingInfo = new AttackInfo("スライディング", m_characterInfo->handleEx()); }
+
 	// とりあえず立ち画像でスタート
 	switchStand();
 	m_y -= getHeight();
@@ -463,11 +489,13 @@ Heart::Heart(const char* name, int hp, int x, int y, int groupId, AttackInfo* at
 
 	m_bulletColor = WHITE;
 
+	if(haveSlidingGraph()){ m_slidingInfo = new AttackInfo("スライディング", m_characterInfo->handleEx()); }
+
 }
 
 // デストラクタ
 Heart::~Heart() {
-
+	delete m_slidingInfo;
 }
 
 Character* Heart::createCopy() {
