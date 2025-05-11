@@ -105,6 +105,7 @@ protected:
 	int m_vx; // キャラの横移動の速度（トータル）
 	int m_vy; // キャラの縦移動の速度（トータル）
 	int m_runVx; // Controllerによる横移動の速度（走りなど。ダメージによる吹っ飛びは除く）
+	int m_runVy;
 
 	// 他のキャラと重なっているため次のフレームで位置をずらす
 	int m_dx;
@@ -168,7 +169,7 @@ public:
 	inline bool getGrandLeftSlope() const { return m_grandLeftSlope; }
 	inline bool getHeavy() const { return m_heavy; }
 	inline int getVx() const { return m_vx + m_runVx; }
-	inline int getVy() const { return m_vy; }
+	inline int getVy() const { return m_vy + m_runVy; }
 	inline int getDx() const { return m_dx; }
 	inline int getSlashCnt() const { return m_slashCnt; }
 	inline int getBulletCnt() const { return m_bulletCnt; }
@@ -209,6 +210,7 @@ public:
 	inline void setVx(int vx) { m_vx = vx; }
 	inline void setVy(int vy) { m_vy = vy; }
 	inline void setRunVx(int run_vx) { m_runVx = run_vx; }
+	inline void setRunVy(int run_vy) { m_runVy = run_vy; }
 	inline void setDx(int dx) { m_dx = dx; }
 	inline void setBulletCnt(int bulletCnt) { m_bulletCnt = bulletCnt; }
 	inline void setSlashCnt(int slashCnt) { m_slashCnt = slashCnt; }
@@ -228,7 +230,7 @@ public:
 	inline bool damageFlag() const { return m_state == CHARACTER_STATE::DAMAGE; }
 
 	// squat==trueならしゃがむ、falseなら立つ
-	void setSquat(bool squat);
+	virtual void setSquat(bool squat);
 
 	// キャラクターのセッタ
 	void setCharacterX(int x);
@@ -401,7 +403,6 @@ protected:
 
 	void damageAction();
 	void otherAction();
-	void moveAction();
 
 	// キャラの画像を状態(state)に応じて変更
 	void switchHandle();
@@ -417,6 +418,10 @@ public:
 	CharacterAction* createCopy(std::vector<Character*> characters);
 
 	void debug(int x, int y, int color) const;
+
+	void setSquat(bool squat) {}
+
+	void action();
 
 	// 移動 引数は４方向分
 	void move(bool right, bool left, bool up, bool down);

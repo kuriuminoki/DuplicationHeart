@@ -124,6 +124,7 @@ void CharacterAction::setParam(CharacterAction* action) {
 	action->setVx(m_vx);
 	action->setVy(m_vy);
 	action->setRunVx(m_runVx);
+	action->setRunVy(m_runVy);
 	action->setRightLock(m_rightLock);
 	action->setLeftLock(m_leftLock);
 	action->setUpLock(m_upLock);
@@ -375,20 +376,24 @@ void CharacterAction::moveAction() {
 			m_character_p->moveLeft(-m_vx - m_runVx);
 		}
 	}
-	if (m_vy < 0) { // 上
+	if (m_vy + m_runVy < 0) { // 上
 		if (m_upLock) {
+			stopMoveDown();
 			m_vy = 0;
+			m_runVy = 0;
 		}
 		else {
-			m_character_p->moveUp(-m_vy);
+			m_character_p->moveUp(-m_vy - m_runVy);
 		}
 	}
-	else if (m_vy > 0) { // 下
+	else if (m_vy + m_runVy > 0) { // 下
 		if (m_downLock) {
+			stopMoveUp();
 			m_vy = 0;
+			m_runVy = 0;
 		}
 		else {
-			m_character_p->moveDown(m_vy);
+			m_character_p->moveDown(m_vy + m_runVy);
 		}
 	}
 }
@@ -467,7 +472,7 @@ bool CharacterAction::ableChangeDirection() const {
 
 // 着地
 void CharacterAction::setGrand(bool grand) {
-	if (m_vy > 0) { // 着地モーションになる
+	if (m_vy + m_runVy > 0) { // 着地モーションになる
 		m_landCnt = LAND_TIME;
 		finishSlash();
 		// 効果音
@@ -556,7 +561,6 @@ void CharacterAction::stopMoveRight() {
 void CharacterAction::stopMoveUp() {
 	// 上へ歩くのをやめる
 	if (m_moveUp) {
-		m_vy += m_character_p->getMoveSpeed();
 		m_moveUp = false;
 		m_runCnt = -1;
 	}
@@ -564,7 +568,6 @@ void CharacterAction::stopMoveUp() {
 void CharacterAction::stopMoveDown() {
 	// 下へ歩くのをやめる
 	if (m_moveDown) {
-		m_vy -= m_character_p->getMoveSpeed();
 		m_moveDown = false;
 		m_runCnt = -1;
 	}
@@ -1075,14 +1078,19 @@ void FlightAction::switchHandle() {
 	if (m_grand) { // 地面にいるとき
 		switch (m_state) {
 		case CHARACTER_STATE::STAND: //立ち状態
-			if (m_runCnt != -1) {
-				m_character_p->switchRun(m_runCnt);
+			if (m_bulletCnt > 0) {
+				if (m_runCnt != -1) {
+					m_character_p->switchRunBullet(m_runCnt);
+				}
+				else {
+					m_character_p->switchAirBullet();
+				}
 			}
 			else if (m_slashCnt > 0) {
 				m_character_p->switchAirSlash();
 			}
-			else if (m_bulletCnt > 0) {
-				m_character_p->switchAirBullet();
+			else if (m_runCnt != -1) {
+				m_character_p->switchRun(m_runCnt);
 			}
 			else {
 				m_character_p->switchStand();
@@ -1161,22 +1169,6 @@ void FlightAction::otherAction() {
 		if (m_slidingDone == 2) { m_vx++; }
 	}
 }
-void FlightAction::moveAction() {
-
-	CharacterAction::moveAction();
-
-	if (m_vy < 0) { // 上
-		if (m_upLock) {
-			stopMoveDown();
-		}
-	}
-	else if (m_vy > 0) { // 下
-		if (m_downLock) {
-			stopMoveUp();
-		}
-	}
-
-}
 
 void FlightAction::walk(bool right, bool left, bool up, bool down) {
 	// 右へ歩くのをやめる
@@ -1224,6 +1216,35 @@ void FlightAction::walk(bool right, bool left, bool up, bool down) {
 	if (m_moveLeft || m_moveRight) {
 		m_runCnt++;
 	}
+}
+
+void FlightAction::action() {
+	// 走りによる速度変化
+	if (m_moveLeft) {
+		m_runVx = max(m_runVx - 1, -m_character_p->getMoveSpeed());
+	}
+	else if (m_runVx < 0) {
+		m_runVx += 1;
+	}
+	if (m_moveRight) {
+		m_runVx = min(m_runVx + 1, m_character_p->getMoveSpeed());
+	}
+	else if (m_runVx > 0) {
+		m_runVx -= 1;
+	}
+	if (m_moveUp) {
+		m_runVy = max(m_runVy - 1, -m_character_p->getMoveSpeed());
+	}
+	else if (m_runVy < 0) {
+		m_runVy += 1;
+	}
+	if (m_moveDown) {
+		m_runVy = min(m_runVy + 1, m_character_p->getMoveSpeed());
+	}
+	else if (m_runVy > 0) {
+		m_runVy -= 1;
+	}
+	CharacterAction::action();
 }
 
 // 移動 引数は４方向分
