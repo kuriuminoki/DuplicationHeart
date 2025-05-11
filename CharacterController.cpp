@@ -374,6 +374,11 @@ void NormalController::control() {
 		squat = m_brain->squatOrder();
 	}
 	m_characterAction->setSquat(squat);
+
+	// ステップ
+	if (downStick > 0 && (leftStick == 1 || rightStick == 1)) {
+		m_characterAction->setStep(leftStick == 1);
+	}
 }
 
 vector<Object*>* NormalController::bulletAttack() {
@@ -452,6 +457,14 @@ vector<Object*>* NormalController::slashAttack() {
 	}
 	else {
 		order = m_brain->slashOrder();
+	}
+
+	// スライディング
+	if (order == 1) {
+		m_characterAction->setSliding(m_characterAction->getCharacter()->getCenterX() > targetX);
+	}
+	if (m_characterAction->getSlidingDone() != 0) {
+		return m_characterAction->slidingAttack();
 	}
 
 	// 近距離攻撃の命令がされたか、した後で今が攻撃タイミングなら

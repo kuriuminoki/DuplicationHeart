@@ -760,7 +760,7 @@ GraphHandle* ParabolaBullet::getHandle() const {
 }
 
 
-SlashObject::SlashObject(int x1, int y1, int x2, int y2, GraphHandle* handle, int slashCountSum, AttackInfo* attackInfo) :
+SlashObject::SlashObject(int x1, int y1, int x2, int y2, GraphHandle* handle, int slashCountSum, const AttackInfo* attackInfo) :
 	Object(x1, y1, x2, y2, attackInfo->slashHp())
 {
 	// 必要なら後からセッタで設定
