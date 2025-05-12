@@ -1265,7 +1265,7 @@ void World::atariStageAndAttack() {
 		int y = m_attackObjects[i]->getCenterY();
 		for (unsigned int j = 0; j < m_stageObjects.size(); j++) {
 			// 攻撃が壁床に当たっているか判定
-			if (m_stageObjects[j]->atariObject(m_attackObjects[i])) {
+			if (m_stageObjects[j]->atariFromObject(m_attackObjects[i])) {
 				// エフェクト作成
 				Animation* atariAnimation = m_attackObjects[i]->createAnimation(x, y, 3);
 				if (atariAnimation != nullptr) {
@@ -1297,14 +1297,15 @@ void World::atariStageAndAttack() {
 //  Battle：攻撃<->攻撃の当たり判定
 void World::atariAttackAndAttack() {
 	if (m_attackObjects.size() == 0) { return; }
-	for (unsigned int i = 0; i < m_attackObjects.size() - 1; i++) {
+	for (unsigned int i = 0; i < m_attackObjects.size(); i++) {
 		int x = m_attackObjects[i]->getCenterX();
 		int y = m_attackObjects[i]->getCenterY();
-		for (unsigned int j = i + 1; j < m_attackObjects.size(); j++) {
-			// 攻撃が壁床に当たっているか判定
-			if (m_attackObjects[j]->atariObject(m_attackObjects[i])) {
+		for (unsigned int j = 0; j < m_attackObjects.size(); j++) {
+			if (i == j) { continue; }
+			// 攻撃が他の攻撃に当たっているか判定
+			if (m_attackObjects[j]->atariToObject(m_attackObjects[i])) {
 				// エフェクト作成
-				Animation* atariAnimation = m_attackObjects[j]->createAnimation(x, y, 3);
+				Animation* atariAnimation = m_attackObjects[i]->createAnimation(x, y, 3);
 				if (atariAnimation != nullptr) {
 					m_animations.push_back(atariAnimation);
 				}

@@ -23,7 +23,7 @@ using namespace std;
 // どこまで
 const int FINISH_STORY = 31;
 // エリア0でデバッグするときはtrueにする
-const bool TEST_MODE = true;
+const bool TEST_MODE = false;
 // スキルが発動可能になるストーリー番号
 const int SKILL_USEABLE_STORY = 14;
 
