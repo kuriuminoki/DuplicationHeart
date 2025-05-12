@@ -774,7 +774,7 @@ void ValkiriaAI::moveOrder(int& right, int& left, int& up, int& down) {
 		return;
 	}
 	int x = m_characterAction_p->getCharacter()->getCenterX();
-	if (m_target_p != nullptr && m_target_p->getHp() > 0) {
+	if (m_follow_p != nullptr && m_target_p != nullptr && m_target_p->getHp() > 0) {
 		// 戦闘中の敵が近くにいるならハートとの距離をある程度気にせずtargetを追跡
 		if (abs(m_follow_p->getCenterX() - x) < FOLLOW_X_ERROR * 2 && abs(m_target_p->getCenterX() - x) < SLASH_REACH) {
 			NormalAI::moveOrder(right, left, up, down);

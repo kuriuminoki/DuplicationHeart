@@ -1583,6 +1583,7 @@ ArchiveAction::ArchiveAction(Character* character, SoundPlayer* soundPlayer_p, b
 		m_character_p->setHp(min(1, m_initHp));
 	}
 	m_jumpCnt = 0;
+	m_slashVx = 0;
 }
 
 CharacterAction* ArchiveAction::createCopy(vector<Character*> characters) {
@@ -1594,6 +1595,7 @@ CharacterAction* ArchiveAction::createCopy(vector<Character*> characters) {
 			setParam(res);
 			res->setInitCompFlag(m_initCompFlag);
 			res->setInitHp(m_initHp);
+			res->setSlashVx(m_slashVx);
 			break;
 		}
 	}
@@ -1613,10 +1615,54 @@ void ArchiveAction::action() {
 		}
 	}
 	else {
+		if (m_slashVx > 0) {
+			m_slashVx -= 2;
+			if (m_attackLeftDirection) {
+				if (!m_leftLock) {
+					m_vx += 2;
+				}
+			}
+			else {
+				if (!m_rightLock) {
+					m_vx -= 2;
+				}
+			}
+		}
 		StickAction::action();
 		m_landCnt = 0;
 		if (m_state == CHARACTER_STATE::PREJUMP) {
 			m_state = CHARACTER_STATE::STAND;
 		}
 	}
+}
+
+void ArchiveAction::startSlash() {
+	if (m_attackLeftDirection) {
+		if (!m_leftLock) {
+			m_vx -= SLASH_MOVE_SPEED;
+		}
+	}
+	else {
+		if (!m_rightLock) {
+			m_vx += SLASH_MOVE_SPEED;
+		}
+	}
+	m_slashVx = SLASH_MOVE_SPEED;
+}
+
+void ArchiveAction::finishSlash() {
+	CharacterAction::finishSlash();
+	if (m_slashVx > 0) {
+		if (m_attackLeftDirection && !m_leftLock) {
+			m_vx += m_slashVx;
+		}
+		else if (!m_rightLock) {
+			m_vx -= m_slashVx;
+		}
+	}
+	m_slashVx = 0;
+}
+
+bool ArchiveAction::ableDamage() const {
+	return StickAction::ableDamage() && m_initCompFlag;
 }

@@ -279,7 +279,7 @@ public:
 	virtual void finishSlash();
 
 	// ¡–³“GŽžŠÔ‚¶‚á‚È‚¢
-	bool ableDamage() const;
+	virtual bool ableDamage() const;
 
 	// ¡UŒ‚‰Â”\ó‘Ô
 	virtual bool ableAttack() const;
@@ -612,6 +612,11 @@ private:
 	// ‰Šú‘Ì—Í
 	int m_initHp;
 
+	// ŽaŒ‚UŒ‚‚É‚æ‚éˆÚ“®‘¬“x
+	const int SLASH_MOVE_SPEED = 80;
+
+	int m_slashVx;
+
 public:
 	static const char* ACTION_NAME;
 	const char* getActionName() const { return this->ACTION_NAME; }
@@ -623,8 +628,14 @@ public:
 	// ƒZƒbƒ^
 	inline void setInitCompFlag(bool initCompFlag) { m_initCompFlag = initCompFlag; }
 	inline void setInitHp(int initHp) { m_initHp = initHp; }
+	inline void setSlashVx(int slashVx) { m_slashVx = slashVx; }
 
 	void action();
+
+	void startSlash();
+	void finishSlash();
+
+	bool ableDamage() const;
 };
 
 

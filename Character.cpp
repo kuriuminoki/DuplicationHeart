@@ -1199,47 +1199,50 @@ void Archive::switchSlash(int cnt) {
 
 // 斬撃攻撃をする
 vector<Object*>* Archive::slashAttack(bool leftDirection, int cnt, bool grand, SoundPlayer* soundPlayer) {
-	
+
 	if (!grand) { return nullptr; }
-	
+
 	// 攻撃範囲を決定
 	int centerX = getCenterX();
-	int height = m_attackInfo->slashLenY() / 2;
-	int centerY = getCenterY();
+	int height = m_attackInfo->slashLenY() / 2 / 2;
+	int centerY = getCenterY() - 10;
 	int x2 = centerX;
 	if (leftDirection) { // 左向きに攻撃
-		x2 -= m_attackInfo->slashLenX();
+		centerX += 200;
+		x2 -= m_attackInfo->slashLenX() * 3 / 2;
 	}
 	else { // 右向きに攻撃
-		x2 += m_attackInfo->slashLenX();
+		centerX -= 200;
+		x2 += m_attackInfo->slashLenX() * 3 / 2;
 	}
 
 	// 攻撃の画像と持続時間(cntを考慮して決定)
 	cnt -= m_attackInfo->slashInterval();
 	int index = 0;
-	int slashCountSum = m_attackInfo->slashCountSum() / 3 + 1; // エフェクト画像一枚当たりの表示時間
+	int slashCountSum = m_attackInfo->slashCountSum() / 15 + 1; // エフェクト画像一枚当たりの表示時間
 	SlashObject* attackObject = nullptr;
 	GraphHandlesWithAtari* slashHandles = m_graphHandle->getSlashHandle();
 	// 攻撃の方向
 	slashHandles->getGraphHandles()->setReverseX(m_leftDirection);
 	// cntが攻撃のタイミングならオブジェクト生成
-	if (cnt == m_attackInfo->slashCountSum()) {
+	int n = m_attackInfo->slashCountSum() / 15;
+	if (cnt == 9 * n || cnt == 8 * n || cnt == 7 * n) {
 		index = 0;
 		attackObject = new SlashObject(centerX, centerY - height, x2, centerY + height,
 			slashHandles->getGraphHandles()->getGraphHandle(index), slashCountSum, m_attackInfo);
 		// 効果音
-		if (soundPlayer != nullptr) {
+		if (soundPlayer != nullptr && cnt == 9 * n) {
 			soundPlayer->pushSoundQueue(m_attackInfo->slashStartSoundHandle(),
 				adjustPanSound(getCenterX(),
 					soundPlayer->getCameraX()));
 		}
 	}
-	else if (cnt == m_attackInfo->slashCountSum() * 2 / 3) {
+	else if (cnt == 6 * n || cnt == 5 * n || cnt == 4 * n) {
 		index = 1;
 		attackObject = new SlashObject(centerX, centerY - height, x2, centerY + height,
 			slashHandles->getGraphHandles()->getGraphHandle(index), slashCountSum, m_attackInfo);
 	}
-	else if (cnt == m_attackInfo->slashCountSum() / 3) {
+	else if (cnt == 3 * n || cnt == 2 * n || cnt == n) {
 		index = 2;
 		attackObject = new SlashObject(centerX, centerY - height, x2, centerY + height,
 			slashHandles->getGraphHandles()->getGraphHandle(index), slashCountSum, m_attackInfo);
