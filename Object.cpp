@@ -273,8 +273,6 @@ void BoxObject::penetration(CharacterController* characterController) {
 
 // 攻撃オブジェクトとの当たり判定
 bool BoxObject::atariFromObject(Object* object) {
-	// 破壊不能オブジェクト
-	// if (!object->getAbleDelete()) { return false; }
 	// 当たっているなら
 	if (m_x2 > object->getX1() && m_x1 < object->getX2() && m_y2 > object->getY1() && m_y1 < object->getY2()) {
 		if (object->getAbleDelete()) {
@@ -577,8 +575,6 @@ void TriangleObject::penetration(CharacterController* characterController) {
 
 // 他オブジェクトとの当たり判定
 bool TriangleObject::atariFromObject(Object* object) {
-	// 破壊不能オブジェクト
-	// if (!object->getAbleDelete()) { return false; }
 	// 斜辺を考慮して当たり判定を計算
 	int y = object->getY1();
 	if (m_leftDown) {
