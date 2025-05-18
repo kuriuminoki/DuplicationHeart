@@ -390,6 +390,10 @@ vector<Object*>* Character::slidingAttack(int sound, SoundPlayer* soundPlayer) {
 			adjustPanSound(getCenterX(),
 				soundPlayer->getCameraX()));
 	}
+	// Ž©–Å–hŽ~
+	attackObject->setCharacterId(m_id);
+	// ƒ`[ƒ€ƒLƒ‹–hŽ~
+	attackObject->setGroupId(m_groupId);
 	return new std::vector<Object*>{ attackObject };
 }
 
