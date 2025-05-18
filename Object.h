@@ -2,6 +2,7 @@
 #define OBJECT_H_INCLUDED
 
 #include <string>
+#include <vector>
 
 class Character;
 class CharacterController;
@@ -16,6 +17,13 @@ class Animation;
 */
 class Object {
 protected:
+	// id
+	static int objectId;
+
+	int m_id;
+
+	std::vector<int> m_atariIdList;
+
 	// 左上の座標
 	int m_x1, m_y1;
 
@@ -56,6 +64,7 @@ public:
 	virtual void debug(int x, int y, int color) const = 0;
 
 	// ゲッタ
+	inline int getId() const { return m_id; }
 	inline bool getDeleteFlag() const { return m_deleteFlag; }
 	inline bool getAbleDelete() const { return m_hp != -1 ? true : false; }
 	inline int getX1() const { return m_x1; }
@@ -73,6 +82,8 @@ public:
 
 
 	// セッタ
+	inline void setId(int id) { m_id = id; }
+	inline void setAtariIdList(std::vector<int>& list) { for (unsigned int i = 0; i < list.size(); i++) { m_atariIdList.push_back(list[i]); } }
 	inline void setDeleteFlag(bool deleteFlag) { m_deleteFlag = deleteFlag; }
 	void setX1(int x1) { m_x1 = x1; }
 	void setY1(int y1) { m_y1 = y1; }
@@ -92,7 +103,7 @@ public:
 	virtual int getY(int x) const { return m_y1; }
 
 	// HPを減らす
-	void decreaseHp(int damageValue);
+	bool decreaseHp(int damageValue, int id);
 
 	// IDのゲッタ
 	virtual inline int getCharacterId() const { return -1; }
@@ -132,8 +143,11 @@ public:
 	// キャラがオブジェクトに入り込んでいるときの処理
 	virtual void penetration(CharacterController* characterController) {};
 
-	// 攻撃オブジェクトとの当たり判定
-	virtual bool atariObject(Object* object) { return false; }
+	// 他オブジェクトからの当たり判定
+	virtual bool atariFromObject(Object* object) { return false; }
+
+	// 他オブジェクトに対する当たり判定
+	virtual bool atariToObject(Object* object) { return false; }
 
 	// 動くオブジェクト用 毎フレーム行う
 	virtual void action() {};
@@ -182,7 +196,7 @@ public:
 	void penetration(CharacterController* characterController);
 
 	// 攻撃オブジェクトとの当たり判定
-	bool atariObject(Object* object);
+	bool atariFromObject(Object* object);
 
 	// 動くオブジェクト用 毎フレーム行う
 	void action();
@@ -234,7 +248,7 @@ public:
 	void penetration(CharacterController* characterController);
 
 	// 攻撃オブジェクトとの当たり判定
-	bool atariObject(Object* object);
+	bool atariFromObject(Object* object);
 
 	// 動くオブジェクト用 毎フレーム行う
 	void action();
@@ -321,7 +335,7 @@ public:
 	bool atari(CharacterController* characterController);
 
 	// 攻撃オブジェクトとの当たり判定
-	bool atariObject(Object* object);
+	bool atariToObject(Object* object);
 
 	// 動くオブジェクト用 毎フレーム行う
 	void action();
@@ -423,7 +437,7 @@ public:
 	bool atari(CharacterController* characterController);
 
 	// 攻撃オブジェクトとの当たり判定
-	bool atariObject(Object* object);
+	bool atariToObject(Object* object);
 
 	// 動くオブジェクト用 毎フレーム行う
 	void action();
@@ -485,7 +499,7 @@ public:
 	bool atari(CharacterController* characterController);
 
 	// 攻撃オブジェクトとの当たり判定
-	bool atariObject(Object* object);
+	bool atariToObject(Object* object);
 
 	// 動くオブジェクト用 毎フレーム行う
 	void action();

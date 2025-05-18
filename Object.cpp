@@ -16,6 +16,8 @@ using namespace std;
 const double OBJECT_DEFAULT_SIZE = 0.3;
 
 
+int Object::objectId;
+
 Object::Object() :
 	Object(0, 0, 0, 0, -1)
 {
@@ -23,6 +25,9 @@ Object::Object() :
 }
 
 Object::Object(int x1, int y1, int x2, int y2, int hp) {
+	objectId++;
+	m_id = objectId;
+
 	m_x1 = x1;
 	m_y1 = y1;
 	m_x2 = x2;
@@ -44,6 +49,8 @@ Object::Object(int x1, int y1, int x2, int y2, int hp) {
 }
 
 void Object::setParam(Object* object) {
+	object->setId(m_id);
+	object->setAtariIdList(m_atariIdList);
 	object->setX1(m_x1);
 	object->setY1(m_y1);
 	object->setX2(m_x2);
@@ -56,10 +63,20 @@ void Object::setParam(Object* object) {
 }
 
 // HPを減らす
-void Object::decreaseHp(int damageValue) {
+bool Object::decreaseHp(int damageValue, int id) {
+	if (!getAbleDelete()) { return false; }
+	for (unsigned int i = 0; i < m_atariIdList.size(); i++) {
+		if (m_atariIdList[i] == id) { 
+			return false;
+		}
+	}
+	m_atariIdList.push_back(id);
 	m_hp = max(0, m_hp - damageValue);
-	if (m_hp == 0) { setDeleteFlag(true); }
+	if (m_hp == 0) { 
+		setDeleteFlag(true);
+	}
 	m_damageCnt = DAMAGE_CNT_SUM;
+	return true;
 }
 
 // 単純に四角の落下物と衝突しているか
@@ -257,17 +274,14 @@ void BoxObject::penetration(CharacterController* characterController) {
 }
 
 // 攻撃オブジェクトとの当たり判定
-bool BoxObject::atariObject(Object* object) {
-	// 破壊不能オブジェクト
-	if (!object->getAbleDelete()) { return false; }
+bool BoxObject::atariFromObject(Object* object) {
 	// 当たっているなら
 	if (m_x2 > object->getX1() && m_x1 < object->getX2() && m_y2 > object->getY1() && m_y1 < object->getY2()) {
-		object->setDeleteFlag(true);
-		// 自分の体力を減らす
-		if (getAbleDelete()) {
-			decreaseHp(object->getDamage());
-			return true;
+		if (object->getAbleDelete()) {
+			object->setDeleteFlag(true);
 		}
+		// 自分の体力を減らす
+		return decreaseHp(object->getDamage(), object->getId());
 	}
 	return false;
 }
@@ -562,9 +576,7 @@ void TriangleObject::penetration(CharacterController* characterController) {
 }
 
 // 他オブジェクトとの当たり判定
-bool TriangleObject::atariObject(Object* object) {
-	// 破壊不能オブジェクト
-	if (!object->getAbleDelete()) { return false; }
+bool TriangleObject::atariFromObject(Object* object) {
 	// 斜辺を考慮して当たり判定を計算
 	int y = object->getY1();
 	if (m_leftDown) {
@@ -575,12 +587,11 @@ bool TriangleObject::atariObject(Object* object) {
 	}
 	// 当たっているなら
 	if (m_x2 > object->getX1() && m_x1 < object->getX2() && m_y2 > object->getY1() && y < object->getY2()) {
-		object->setDeleteFlag(true);
-		// 自分の体力を減らす
-		if (getAbleDelete()) {
-			decreaseHp(object->getDamage());
-			return true;
+		if (object->getAbleDelete()) {
+			object->setDeleteFlag(true);
 		}
+		// 自分の体力を減らす
+		return decreaseHp(object->getDamage(), object->getId());
 	}
 	return false;
 }
@@ -683,17 +694,15 @@ bool BulletObject::atari(CharacterController* characterController) {
 	return false;
 }
 
-// 他攻撃オブジェクトとの当たり判定
-bool BulletObject::atariObject(Object* object) {
+// 他オブジェクトに対する当たり判定
+bool BulletObject::atariToObject(Object* object) {
 	// どちらかが破壊不能オブジェクト
-	if (!object->getAbleDelete() || !getAbleDelete() || m_groupId == object->getGroupId()) { 
+	if (m_groupId == object->getGroupId()) { 
 		return false;
 	}
 	// 当たっているなら
 	if (m_x2 > object->getX1() && m_x1 < object->getX2() && m_y2 > object->getY1() && m_y1 < object->getY2()) {
-		object->decreaseHp(m_damage);
-		decreaseHp(object->getDamage());
-		return true;
+		return object->decreaseHp(m_damage, m_id);
 	}
 	return false;
 }
@@ -854,17 +863,15 @@ bool SlashObject::atari(CharacterController* characterController) {
 	return false;
 }
 
-// 他攻撃オブジェクトとの当たり判定
-bool SlashObject::atariObject(Object* object) {
-	// どちらかが破壊不能オブジェクト
-	if (!object->getAbleDelete() || !getAbleDelete() || m_groupId == object->getGroupId()) {
+// 他オブジェクトに対する当たり判定
+bool SlashObject::atariToObject(Object* object) {
+	// 味方の攻撃
+	if (m_groupId == object->getGroupId()) {
 		return false;
 	}
 	// 当たっているなら
 	if (m_x2 > object->getX1() && m_x1 < object->getX2() && m_y2 > object->getY1() && m_y1 < object->getY2()) {
-		object->decreaseHp(m_damage);
-		decreaseHp(object->getDamage());
-		return true;
+		return object->decreaseHp(m_damage, m_id);
 	}
 	return false;
 }
@@ -948,20 +955,18 @@ bool BombObject::atari(CharacterController* characterController) {
 	return false;
 }
 
-// 他攻撃オブジェクトとの当たり判定
-bool BombObject::atariObject(Object* object) {
+// 他オブジェクトに対する当たり判定
+bool BombObject::atariToObject(Object* object) {
 	// まだ判定なし
 	if (!ableDamage()) { return false; }
 	// どちらかが破壊不能オブジェクト
-	if (!object->getAbleDelete() || !getAbleDelete() || m_groupId == object->getGroupId()) {
+	if (m_groupId == object->getGroupId()) {
 		return false;
 	}
 	// 当たっているなら
 	if (m_x2 > object->getX1() && m_x1 < object->getX2() && m_y2 > object->getY1() && m_y1 < object->getY2()) {
 		int damage = (int)(m_damage * calcDamageRate(min(abs(m_x - object->getX1()), abs(m_x - object->getX2())), min(abs(m_y - object->getY1()), abs(m_y - object->getY2()))));
-		object->decreaseHp(damage);
-		decreaseHp(object->getDamage());
-		return true;
+		return object->decreaseHp(damage, m_id);
 	}
 	return false;
 }
