@@ -72,7 +72,9 @@ bool Object::decreaseHp(int damageValue, int id) {
 	}
 	m_atariIdList.push_back(id);
 	m_hp = max(0, m_hp - damageValue);
-	if (m_hp == 0) { setDeleteFlag(true); }
+	if (m_hp == 0) { 
+		setDeleteFlag(true);
+	}
 	m_damageCnt = DAMAGE_CNT_SUM;
 	return true;
 }
@@ -863,7 +865,7 @@ bool SlashObject::atari(CharacterController* characterController) {
 
 // 他オブジェクトに対する当たり判定
 bool SlashObject::atariToObject(Object* object) {
-	// どちらかが破壊不能オブジェクトもしくは味方の攻撃
+	// 味方の攻撃
 	if (m_groupId == object->getGroupId()) {
 		return false;
 	}

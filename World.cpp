@@ -1303,14 +1303,14 @@ void World::atariAttackAndAttack() {
 		for (unsigned int j = 0; j < m_attackObjects.size(); j++) {
 			if (i == j) { continue; }
 			// 攻撃が他の攻撃に当たっているか判定
-			if (m_attackObjects[j]->atariToObject(m_attackObjects[i])) {
+			if (m_attackObjects[j]->atariToObject(m_attackObjects[i]) && (m_attackObjects[i]->getDeleteFlag() || !m_attackObjects[i]->getAbleDelete())) {
 				// エフェクト作成
 				Animation* atariAnimation = m_attackObjects[i]->createAnimation(x, y, 3);
 				if (atariAnimation != nullptr) {
 					m_animations.push_back(atariAnimation);
 				}
-				createBomb(x, y, m_attackObjects[i]);
-				int soundHandle = m_attackObjects[i]->getSoundHandle();
+				createBomb(x, y, m_attackObjects[j]);
+				int soundHandle = m_attackObjects[j]->getSoundHandle();
 				int panPal = adjustPanSound(x, m_camera->getX());
 				m_soundPlayer_p->pushSoundQueue(soundHandle, panPal);
 			}
