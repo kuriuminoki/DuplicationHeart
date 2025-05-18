@@ -137,6 +137,12 @@ public:
 
 	// 目標地点へ移動するだけ
 	bool moveGoal();
+
+	// キャラのストップ時間を消費
+	void consumeStopCnt();
+
+	// キャラをストップ
+	void stopCharacter(int cnt);
 };
 
 

@@ -102,6 +102,10 @@ void deleteObject(vector<Object*>& objects) {
 void actionObject(vector<Object*>& objects) {
 	// 壁や床オブジェクトの処理 (当たり判定と動き)
 	for (unsigned int i = 0; i < objects.size(); i++) {
+		if (objects[i]->getStopCnt() > 0 && objects[i]->getStopCnt() != 30) {
+			objects[i]->setStopCnt(objects[i]->getStopCnt() - 1);
+			continue;
+		}
 		// オブジェクトの動き
 		objects[i]->action();
 		// deleteFlagがtrueなら削除する
@@ -1000,6 +1004,11 @@ void World::controlCharacter() {
 	for (unsigned int i = 0; i < size; i++) {
 		CharacterController* controller = m_characterControllers[i];
 
+		// 斬撃が当たった時のヒットストップ
+		if(controller->getAction()->getCharacter()->getStopCnt() > 0 && controller->getAction()->getCharacter()->getStopCnt() != SLASH_STOP_CNT){
+			continue;
+		}
+
 		// HPが0ならスキップ
 		if (controller->getAction()->getCharacter()->noDispForDead()) {
 			continue;
@@ -1038,6 +1047,15 @@ void World::controlCharacter() {
 
 	for (unsigned int i = 0; i < size; i++) {
 		CharacterController* controller = m_characterControllers[i];
+
+		// 斬撃が当たった時のヒットストップ
+		if (controller->getAction()->getCharacter()->getStopCnt() > 0) {
+			controller->consumeStopCnt();
+			// 1フレーム目はcontinueしない（斬撃が二十で発生しないため）
+			if (controller->getAction()->getCharacter()->getStopCnt() != SLASH_STOP_CNT - 1) {
+				continue;
+			}
+		}
 
 		// HPが0ならスキップ
 		if (controller->getAction()->getCharacter()->noDispForDead()) {
@@ -1188,6 +1206,18 @@ void World::atariCharacterAndObject(CharacterController* controller, vector<Obje
 			int soundHandle = objects[i]->getSoundHandle();
 			int panPal = adjustPanSound(x, m_camera->getX());
 			m_soundPlayer_p->pushSoundQueue(soundHandle, panPal);
+
+			// 斬撃が当たった時のヒットストップ
+			if (objects[i]->getStopCharacterId() != -1) {
+				for (unsigned int j = 0; j < m_characterControllers.size(); j++) {
+					if (objects[i]->getStopCharacterId() == m_characterControllers[j]->getAction()->getCharacter()->getId()) {
+						m_characterControllers[j]->stopCharacter(SLASH_STOP_CNT);
+						controller->stopCharacter(SLASH_STOP_CNT);
+						break;
+					}
+				}
+			}
+
 			// HP = 0になったとき（やられたとき）
 			if (character->noDispForDead()) {
 				if (character->getBossFlag()) {
