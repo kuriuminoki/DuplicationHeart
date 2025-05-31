@@ -174,6 +174,9 @@ void CharacterController::setActionDownLock(bool lock) {
 void CharacterController::setActionSound(SoundPlayer* soundPlayer) {
 	m_characterAction->setSoundPlayer(soundPlayer);
 }
+void CharacterController::addActionDx(int value) {
+	m_characterAction->setDx(m_characterAction->getDx() + value);
+}
 
 // キャラクターのセッタ
 void CharacterController::setCharacterX(int x) {
@@ -232,6 +235,7 @@ void CharacterController::setGoal(int gx, int gy) {
 
 // 目標地点へ移動するだけ
 bool CharacterController::moveGoal() {
+	if (m_characterAction->getCharacter()->getHp() == 0) { return true; }
 	// 移動 stickなどの入力状態を更新する
 	int rightStick = 0, leftStick = 0, upStick = 0, downStick = 0, jump = 0;
 	bool alreadyGoal = m_brain->moveGoalOrder(rightStick, leftStick, upStick, downStick, jump);
@@ -240,6 +244,14 @@ bool CharacterController::moveGoal() {
 	// ジャンプ
 	m_characterAction->jump(jump);
 	return alreadyGoal;
+}
+
+void CharacterController::consumeStopCnt() {
+	m_characterAction->consumeStopCnt();
+}
+
+void CharacterController::stopCharacter(int cnt) {
+	m_characterAction->stopCharacter(cnt);
 }
 
 
@@ -370,9 +382,14 @@ void NormalController::control() {
 		squat = m_brain->squatOrder();
 	}
 	m_characterAction->setSquat(squat);
+
+	// ステップ
+	if (downStick > 0 && (leftStick == 1 || rightStick == 1)) {
+		m_characterAction->setStep(leftStick == 1);
+	}
 }
 
-Object* NormalController::bulletAttack() {
+vector<Object*>* NormalController::bulletAttack() {
 
 	if (m_characterAction->getCharacter()->getHp() == 0) {
 		return nullptr;
@@ -408,14 +425,14 @@ Object* NormalController::bulletAttack() {
 	}
 
 	// 遠距離攻撃の命令がされているなら
-	if (order > 0) {
+	if (order > 0 || m_characterAction->getBulletCnt() > 0) {
 		// 目標に向かって射撃
 		return m_characterAction->bulletAttack(targetX, targetY);
 	}
 	return nullptr;
 }
 
-Object* NormalController::slashAttack() {
+vector<Object*>* NormalController::slashAttack() {
 
 	if (m_characterAction->getCharacter()->getHp() == 0) {
 		return nullptr;
@@ -448,6 +465,14 @@ Object* NormalController::slashAttack() {
 	}
 	else {
 		order = m_brain->slashOrder();
+	}
+
+	// スライディング
+	if (order == 1) {
+		m_characterAction->setSliding(m_characterAction->getCharacter()->getCenterX() > targetX);
+	}
+	if (m_characterAction->getSlidingDone() != 0) {
+		return m_characterAction->slidingAttack();
 	}
 
 	// 近距離攻撃の命令がされたか、した後で今が攻撃タイミングなら

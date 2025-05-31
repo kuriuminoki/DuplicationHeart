@@ -92,6 +92,7 @@ public:
 	void setActionUpLock(bool lock);
 	void setActionDownLock(bool lock);
 	void setActionSound(SoundPlayer* soundPlayer);
+	void addActionDx(int value);
 
 	// キャラクターのセッタ
 	void setCharacterX(int x);
@@ -120,10 +121,10 @@ public:
 	virtual void control() = 0;
 
 	// 射撃攻撃
-	virtual Object* bulletAttack() = 0;
+	virtual std::vector<Object*>* bulletAttack() = 0;
 
 	// 斬撃攻撃
-	virtual Object* slashAttack() = 0;
+	virtual std::vector<Object*>* slashAttack() = 0;
 
 	// ダメージ
 	virtual void damage(int vx, int vy, int damageValue) = 0;
@@ -136,6 +137,12 @@ public:
 
 	// 目標地点へ移動するだけ
 	bool moveGoal();
+
+	// キャラのストップ時間を消費
+	void consumeStopCnt();
+
+	// キャラをストップ
+	void stopCharacter(int cnt);
 };
 
 
@@ -165,10 +172,10 @@ public:
 	void control();
 
 	// 射撃攻撃
-	Object* bulletAttack();
+	std::vector<Object*>* bulletAttack();
 
 	// 斬撃攻撃
-	Object* slashAttack();
+	std::vector<Object*>* slashAttack();
 
 	// ダメ―ジ
 	void damage(int vx, int vy, int damageValue);

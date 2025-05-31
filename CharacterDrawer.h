@@ -47,6 +47,7 @@ public:
 
 	void drawPlayerHpBar(int x, int y, int wide, int height, const Character* player, int hpBarGraph);
 	void drawPlayerSkillBar(int x, int y, int wide, int height, const Character* player, int hpBarGraph);
+	void drawFollowHpBar(int x, int y, int wide, int height, const Character* player, int hpBarGraph, int font);
 	void drawBossHpBar(int x, int y, int wide, int height, const Character* player, int hpBarGraph);
 
 };

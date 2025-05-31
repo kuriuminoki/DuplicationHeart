@@ -102,6 +102,10 @@ void deleteObject(vector<Object*>& objects) {
 void actionObject(vector<Object*>& objects) {
 	// 壁や床オブジェクトの処理 (当たり判定と動き)
 	for (unsigned int i = 0; i < objects.size(); i++) {
+		if (objects[i]->getStopCnt() > 0 && objects[i]->getStopCnt() != 30) {
+			objects[i]->setStopCnt(objects[i]->getStopCnt() - 1);
+			continue;
+		}
 		// オブジェクトの動き
 		objects[i]->action();
 		// deleteFlagがtrueなら削除する
@@ -130,6 +134,8 @@ void penetrationCharacterAndObject(CharacterController* controller, vector<Objec
 */
 World::World() {
 	m_duplicationFlag = false;
+
+	m_dispHpInfoFlag = false;
 
 	m_brightValue = 255;
 
@@ -344,7 +350,7 @@ vector<const CharacterAction*> World::getActions() const {
 	size_t size = m_characterControllers.size();
 	for (unsigned int i = 0; i < size; i++) {
 		// HPが０かつDeadGraphがないなら表示しない
-		if (m_characterControllers[i]->getAction()->getCharacter()->getHp() > 0 || m_characterControllers[i]->getAction()->getCharacter()->haveDeadGraph()) {
+		if (!m_characterControllers[i]->getAction()->getCharacter()->noDispForDead()) {
 			actions.push_back(m_characterControllers[i]->getAction());
 		}
 		else if (m_characterControllers[i]->getAction()->getCharacter()->getBossFlag() && m_bossDeadEffectCnt > 0) {
@@ -440,6 +446,22 @@ void World::addCharacter(CharacterLoader* characterLoader) {
 	m_characters.insert(m_characters.end(), p.first.begin(), p.first.end());
 	// コントローラ
 	m_characterControllers.insert(m_characterControllers.end(), p.second.begin(), p.second.end());
+}
+
+// ループによるキャラclear
+void World::clearCharacter() {
+	for (int i = (int)m_characterControllers.size() - 1; i >= 0; i--) {
+		if (m_characterControllers[i]->getAction()->getCharacter()->getName() != "ハート") {
+			delete m_characterControllers[i];
+			m_characterControllers.pop_back();
+		}
+	}
+	for (int i = (int)m_characters.size() - 1; i >= 0; i--) {
+		if (m_characters[i]->getName() != "ハート") {
+			delete m_characters[i];
+			m_characters.pop_back();
+		}
+	}
 }
 
 // ストーリーによるキャラの性能変化
@@ -610,7 +632,11 @@ void World::asignCharacterData(const char* name, CharacterData* data, int fromAr
 			if (m_characterControllers[i]->getBrain()->getFollow() != nullptr) {
 				data->setFollowName(m_characterControllers[i]->getBrain()->getFollow()->getName().c_str());
 			}
-			data->setActionName(m_characterControllers[i]->getAction()->getActionName());
+			string actionName = m_characterControllers[i]->getAction()->getActionName();
+			if (m_characterControllers[i]->getAction()->getHeavy()) {
+				actionName += "_x";
+			}
+			data->setActionName(actionName.c_str());
 			data->setSoundFlag(m_characterControllers[i]->getAction()->getSoundPlayer() != nullptr);
 			data->setControllerName(m_characterControllers[i]->getControllerName());
 			break;
@@ -698,14 +724,18 @@ void World::setPlayerPoint(CharacterData* characterData) {
 void World::setPlayerFollowerPoint() {
 	// プレイヤーの仲間
 	for (unsigned int i = 0; i < m_characterControllers.size(); i++) {
-		const Character* follow = m_characterControllers[i]->getBrain()->getFollow();
+		const Character* follow = m_characterControllers[i]->getAction()->getCharacter();
 		// 追跡対象がプレイヤーなら
-		if (follow != nullptr && m_playerId == follow->getId()) {
+		if (follow != nullptr && m_player_p->getGroupId() == follow->getGroupId()) {
 			// Controllerに対応するCharacterに変更を加える
 			for (unsigned int j = 0; j < m_characters.size(); j++) {
-				if (m_characterControllers[i]->getAction()->getCharacter()->getId() == m_characters[j]->getId()) {
-					m_characters[j]->setX(m_player_p->getX());
+				if (m_characters[j]->getId() == follow->getId()) {
+					m_characters[j]->setX(m_player_p->getX() + GetRand(50) - 25);
 					m_characters[j]->setY(m_player_p->getY() + m_player_p->getHeight() - m_characters[j]->getHeight());
+					// HP=0なら半分回復して復活
+					if (m_characters[j]->getHp() == 0) { m_characters[j]->setHp(m_characters[j]->getMaxHp() / 2); }
+					// gx, gyを更新するため
+					m_characterControllers[i]->setBrainFollow(m_player_p);
 					break;
 				}
 			}
@@ -760,7 +790,7 @@ void World::changePlayer(const Character* nextPlayer) {
 void World::cameraPointInit() {
 	for (unsigned int i = 0; i < m_characters.size(); i++) {
 		if (m_characters[i]->getId() == m_focusId) {
-			m_camera->setPoint(m_characters[i]->getCenterX(), m_characters[i]->getCenterY());
+			m_camera->setPoint(m_characters[i]->getCenterX(), m_characters[i]->getAtariCenterY() - m_characters[i]->getHeight() / 3);
 			break;
 		}
 	}
@@ -772,6 +802,9 @@ void World::asignedCharacter(Character* character, CharacterData* data, bool cha
 	if (data->id() != -1) {
 		// このゲームで初登場じゃない
 		character->setHp(data->hp());
+		if (data->hp() == -1) { // -1は最大HPを表す
+			character->setHp(character->getMaxHp());
+		}
 		character->setSkillGage(data->skillGage());
 	}
 	character->setInvincible(data->invincible());
@@ -812,6 +845,9 @@ CharacterController* World::createControllerWithData(const Character* character,
 *  戦わせる
 */
 void World::battle() {
+
+	m_dispHpInfoFlag = true;
+
 	if (!m_soundPlayer_p->checkBGMplay()) {
 		m_soundPlayer_p->playBGM();
 	}
@@ -880,7 +916,10 @@ void World::updateCamera() {
 	for (unsigned int i = 0; i < size; i++) {
 		// 今フォーカスしているキャラの座標に合わせる
 		if (m_focusId == m_characters[i]->getId()) {
-			m_camera->setGPoint(m_characters[i]->getAtariCenterX(), m_characters[i]->getAtariCenterY());
+			int gy = m_characters[i]->getAtariCenterY() - m_characters[i]->getHeight() / 3;
+			m_camera->setGPoint(m_characters[i]->getAtariCenterX(), gy);
+			int dy = abs(m_camera->getY() - gy);
+			max_dy = max(max_dy, dy * dy / 100);
 		}
 		// フォーカスしているキャラ以外なら距離を調べる
 		else if (m_characters[i]->getHp() > 0) {
@@ -968,8 +1007,13 @@ void World::controlCharacter() {
 	for (unsigned int i = 0; i < size; i++) {
 		CharacterController* controller = m_characterControllers[i];
 
+		// 斬撃が当たった時のヒットストップ
+		if(controller->getAction()->getCharacter()->getStopCnt() > 0 && controller->getAction()->getCharacter()->getStopCnt() != SLASH_STOP_CNT){
+			continue;
+		}
+
 		// HPが0ならスキップ
-		if (controller->getAction()->getCharacter()->getHp() == 0 && !controller->getAction()->getCharacter()->haveDeadGraph()) {
+		if (controller->getAction()->getCharacter()->noDispForDead()) {
 			continue;
 		}
 
@@ -993,12 +1037,33 @@ void World::controlCharacter() {
 		}
 
 		// 射撃攻撃
-		Object* bulletAttack = controller->bulletAttack();
-		if (bulletAttack != nullptr) { m_attackObjects.push_back(bulletAttack); }
+		vector<Object*>* bulletAttack = controller->bulletAttack();
+		if (bulletAttack != nullptr) { m_attackObjects.insert(m_attackObjects.end(), bulletAttack->begin(), bulletAttack->end()); }
 
 		// 斬撃攻撃
-		Object* slashAttack = controller->slashAttack();
-		if (slashAttack != nullptr) { m_attackObjects.push_back(slashAttack); }
+		vector<Object*>* slashAttack = controller->slashAttack();
+		if (slashAttack != nullptr) { m_attackObjects.insert(m_attackObjects.end(), slashAttack->begin(), slashAttack->end()); }
+	}
+
+	// キャラ間の当たり判定
+	atariCharacterAndCharacter();
+
+	for (unsigned int i = 0; i < size; i++) {
+		CharacterController* controller = m_characterControllers[i];
+
+		// 斬撃が当たった時のヒットストップ
+		if (controller->getAction()->getCharacter()->getStopCnt() > 0) {
+			controller->consumeStopCnt();
+			// 1フレーム目はcontinueしない（斬撃が二十で発生しないため）
+			if (controller->getAction()->getCharacter()->getStopCnt() != SLASH_STOP_CNT - 1) {
+				continue;
+			}
+		}
+
+		// HPが0ならスキップ
+		if (controller->getAction()->getCharacter()->noDispForDead()) {
+			continue;
+		}
 
 		// 反映 originalのハートはフリーズ
 		if (!m_duplicationFlag || m_characterControllers[i]->getAction()->getCharacter()->getId() != m_playerId) {
@@ -1078,6 +1143,50 @@ void World::controlItem() {
 	}
 }
 
+// Battle：キャラクター<->キャラクターの当たり判定
+void World::atariCharacterAndCharacter() {
+	static const int SPEED = 3;
+	for (unsigned int i = 0; i < m_characterControllers.size() - 1; i++) {
+		for (unsigned int j = i + 1; j < m_characterControllers.size(); j++) {
+
+			CharacterController* controllerA = m_characterControllers[i];
+			CharacterController* controllerB = m_characterControllers[j];
+
+			if (m_duplicationFlag && controllerA->getAction()->getCharacter()->getId() == m_playerId) {
+				continue;
+			}
+			if (m_duplicationFlag && controllerB->getAction()->getCharacter()->getId() == m_playerId) {
+				continue;
+			}
+			// HPが0ならスキップ
+			if (controllerA->getAction()->getCharacter()->noDispForDead() || controllerA->getAction()->getCharacter()->getBossFlag()) {
+				continue;
+			}
+			if (controllerB->getAction()->getCharacter()->noDispForDead() || controllerB->getAction()->getCharacter()->getBossFlag()) {
+				continue;
+			}
+
+			int ax1 = 0, ay1 = 0, ax2 = 0, ay2 = 0;
+			controllerA->getAction()->getCharacter()->getAtariArea(&ax1, &ay1, &ax2, &ay2);
+
+			int bx1 = 0, by1 = 0, bx2 = 0, by2 = 0;
+			controllerB->getAction()->getCharacter()->getAtariArea(&bx1, &by1, &bx2, &by2);
+
+			if (ax2 > bx1 && ax1 < bx2 && ay2 > by1 && ay1 < by2) {
+				if ((ax1 + ax2) < (bx1 + bx2)) {
+					controllerA->addActionDx(-SPEED);
+					controllerB->addActionDx(SPEED);
+				}
+				else {
+					controllerA->addActionDx(SPEED);
+					controllerB->addActionDx(-SPEED);
+				}
+			}
+
+		}
+	}
+}
+
 //  Battle：キャラクターとオブジェクトの当たり判定
 void World::atariCharacterAndObject(CharacterController* controller, vector<Object*>& objects, bool slope) {
 	// 壁や床オブジェクトの処理 (当たり判定と動き)
@@ -1100,8 +1209,20 @@ void World::atariCharacterAndObject(CharacterController* controller, vector<Obje
 			int soundHandle = objects[i]->getSoundHandle();
 			int panPal = adjustPanSound(x, m_camera->getX());
 			m_soundPlayer_p->pushSoundQueue(soundHandle, panPal);
+
+			// 斬撃が当たった時のヒットストップ
+			if (objects[i]->getStopCharacterId() != -1) {
+				for (unsigned int j = 0; j < m_characterControllers.size(); j++) {
+					if (objects[i]->getStopCharacterId() == m_characterControllers[j]->getAction()->getCharacter()->getId()) {
+						m_characterControllers[j]->stopCharacter(SLASH_STOP_CNT);
+						controller->stopCharacter(SLASH_STOP_CNT);
+						break;
+					}
+				}
+			}
+
 			// HP = 0になったとき（やられたとき）
-			if (!character->haveDeadGraph() && character->getHp() == 0) {
+			if (character->noDispForDead()) {
 				if (character->getBossFlag()) {
 					m_bossDeadEffectCnt = 300;
 				}
@@ -1177,7 +1298,7 @@ void World::atariStageAndAttack() {
 		int y = m_attackObjects[i]->getCenterY();
 		for (unsigned int j = 0; j < m_stageObjects.size(); j++) {
 			// 攻撃が壁床に当たっているか判定
-			if (m_stageObjects[j]->atariObject(m_attackObjects[i])) {
+			if (m_stageObjects[j]->atariFromObject(m_attackObjects[i])) {
 				// エフェクト作成
 				Animation* atariAnimation = m_attackObjects[i]->createAnimation(x, y, 3);
 				if (atariAnimation != nullptr) {
@@ -1209,19 +1330,20 @@ void World::atariStageAndAttack() {
 //  Battle：攻撃<->攻撃の当たり判定
 void World::atariAttackAndAttack() {
 	if (m_attackObjects.size() == 0) { return; }
-	for (unsigned int i = 0; i < m_attackObjects.size() - 1; i++) {
+	for (unsigned int i = 0; i < m_attackObjects.size(); i++) {
 		int x = m_attackObjects[i]->getCenterX();
 		int y = m_attackObjects[i]->getCenterY();
-		for (unsigned int j = i + 1; j < m_attackObjects.size(); j++) {
-			// 攻撃が壁床に当たっているか判定
-			if (m_attackObjects[j]->atariObject(m_attackObjects[i])) {
+		for (unsigned int j = 0; j < m_attackObjects.size(); j++) {
+			if (i == j) { continue; }
+			// 攻撃が他の攻撃に当たっているか判定
+			if (m_attackObjects[j]->atariToObject(m_attackObjects[i]) && (m_attackObjects[i]->getDeleteFlag() || !m_attackObjects[i]->getAbleDelete())) {
 				// エフェクト作成
-				Animation* atariAnimation = m_attackObjects[j]->createAnimation(x, y, 3);
+				Animation* atariAnimation = m_attackObjects[i]->createAnimation(x, y, 3);
 				if (atariAnimation != nullptr) {
 					m_animations.push_back(atariAnimation);
 				}
-				createBomb(x, y, m_attackObjects[i]);
-				int soundHandle = m_attackObjects[i]->getSoundHandle();
+				createBomb(x, y, m_attackObjects[j]);
+				int soundHandle = m_attackObjects[j]->getSoundHandle();
 				int panPal = adjustPanSound(x, m_camera->getX());
 				m_soundPlayer_p->pushSoundQueue(soundHandle, panPal);
 			}
@@ -1286,6 +1408,9 @@ void World::createBossDeadEffect() {
 
 // 各キャラが目標地点へ移動するだけ 全員到達したらtrueを返す
 bool World::moveGoalCharacter() {
+
+	m_dispHpInfoFlag = false;
+
 	// deleteFlagがtrueのオブジェクトを削除する。
 	deleteObject(m_stageObjects);
 	deleteObject(m_attackObjects);
@@ -1296,12 +1421,12 @@ bool World::moveGoalCharacter() {
 
 	// キャラクターの動き
 	bool allCharacterAlreadyGoal = true;
-	size_t size = m_characterControllers.size();
+	const size_t size = m_characterControllers.size();
 	for (unsigned int i = 0; i < size; i++) {
 		CharacterController* controller = m_characterControllers[i];
 
 		// HPが0ならスキップ
-		if (controller->getAction()->getCharacter()->getHp() == 0 && !controller->getAction()->getCharacter()->haveDeadGraph()) { 
+		if (controller->getAction()->getCharacter()->noDispForDead()) {
 			continue;
 		}
 
@@ -1319,6 +1444,18 @@ bool World::moveGoalCharacter() {
 		if (!m_duplicationFlag || m_characterControllers[i]->getAction()->getCharacter()->getId() != m_playerId) {
 			allCharacterAlreadyGoal &= controller->moveGoal();
 			controller->setPlayerDirection(m_player_p);
+		}
+	}
+
+	// キャラ間の当たり判定
+	atariCharacterAndCharacter();
+
+	for (unsigned int i = 0; i < size; i++) {
+		CharacterController* controller = m_characterControllers[i];
+
+		// HPが0ならスキップ
+		if (controller->getAction()->getCharacter()->noDispForDead()) {
+			continue;
 		}
 
 		// 反映 originalのハートはフリーズ
@@ -1359,8 +1496,8 @@ bool World::dealBrightValue() {
 
 // 会話させる
 void World::talk() {
+	moveGoalCharacter();
 	if (m_conversation_p != nullptr) {
-		updateCamera();
 		m_conversation_p->play();
 		// 会話終了
 		if (m_conversation_p->getFinishFlag()) {

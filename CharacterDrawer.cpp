@@ -84,15 +84,15 @@ void CharacterDrawer::drawCharacter(const Camera* const camera, int enemyNoticeH
 		return;
 	}
 
-	// 描画 ダメージ状態なら点滅
+	// 描画 ダメージ状態なら点滅 y+1して宙に浮いて見えないようにする
 	if (!m_characterAction->ableDamage() && ++m_cnt / 2 % 2 == 1) {
 		int dark = max(0, bright - 100);
 		SetDrawBright(dark, dark, dark);
-		graphHandle->draw(x, y, ex);
+		graphHandle->draw(x, y + 1, ex);
 		SetDrawBright(bright, bright, bright);
 	}
 	else {
-		graphHandle->draw(x, y, ex);
+		graphHandle->draw(x, y + 1, ex);
 	}
 
 	if (character->getDispHpCnt() > 0 && character->getName() != "ハート" && !character->getBossFlag()) {
@@ -170,6 +170,26 @@ void CharacterDrawer::drawPlayerSkillBar(int x, int y, int wide, int height, con
 	else {
 		drawHpBar(x + dx1, y + dy1, x + wide - dx2, y + height - dy2, player->getSkillGage(), player->getSkillGage(), player->getMaxSkillGage(), WHITE, DARK_ORANGE, DARK_ORANGE);
 	}
+
+}
+
+void CharacterDrawer::drawFollowHpBar(int x, int y, int wide, int height, const Character* player, int hpBarGraph, int font) {
+
+	// 解像度変更に対応
+	x = (int)(x * m_exX);
+	y = (int)(y * m_exY);
+	wide = (int)(wide * m_exX);
+	height = (int)(height * m_exY);
+
+	DrawExtendGraph(x, y, x + wide, y + height, hpBarGraph, TRUE);
+
+	int dx = (int)(20 * m_exX);
+	int dy1 = (int)(50 * m_exY);
+	int dy2 = (int)(10 * m_exY);
+
+	// 体力の描画
+	DrawStringToHandle(x, y, player->getName().c_str(), BLACK, font);
+	drawHpBar(x + dx, y + dy1, x + wide - dx, y + height - dy2, player->getHp(), player->getPrevHp(), player->getMaxHp(), DAMAGE_COLOR, PREV_HP_COLOR, HP_COLOR);
 
 }
 

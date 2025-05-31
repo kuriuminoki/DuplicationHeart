@@ -4,6 +4,7 @@
 
 #include<string>
 #include<map>
+#include<vector>
 
 class Object;
 class GraphHandle;
@@ -189,10 +190,17 @@ private:
 class Character {
 public:
 
+	// キャラを揺らして描画するならtrue
+	const bool SHAKING_FLAG = false;
+
 	const int SKILL_MAX = 100;
+
+	const int DEFAULT_ANIME_SPEED = 3;
 
 protected:
 	static int characterId;
+
+	AttackInfo* m_slidingInfo;
 
 	bool m_duplicationFlag;
 
@@ -232,6 +240,9 @@ protected:
 	// ボスならtrue
 	bool m_bossFlag;
 
+	// 描画用
+	int m_drawCnt;
+
 	// キャラの情報
 	CharacterInfo* m_characterInfo;
 
@@ -246,6 +257,9 @@ protected:
 
 	// 獲得したお金 Worldに渡したら0にする
 	int m_money;
+
+	// フリーズ中ならその残り時間を保持
+	int m_stopCnt;
 
 public:
 	// コンストラクタ
@@ -280,6 +294,7 @@ public:
 	inline AttackInfo* getAttackInfo() const { return m_attackInfo; }
 	inline CharacterInfo* getCharacterInfo() const { return m_characterInfo; }
 	inline int getMoney() const { return m_money; }
+	inline int getStopCnt() const { return m_stopCnt; }
 
 	// セッタ
 	inline void setHp(int hp) { m_hp = (hp > m_characterInfo->maxHp()) ? m_characterInfo->maxHp() : hp; m_prevHp = m_hp; }
@@ -297,6 +312,7 @@ public:
 	inline void setGroupId(int id) { m_groupId = id; }
 	inline void setFreeze(bool freeze) { m_freeze = freeze; }
 	inline void setBossFlag(bool bossFlag) { m_bossFlag = bossFlag; }
+	inline void setStopCnt(int stopCnt) { m_stopCnt = stopCnt; }
 	// キャラの向き変更は、画像の反転も行う
 	void setLeftDirection(bool leftDirection);
 	inline void setDuplicationFlag(bool flag) { m_duplicationFlag = flag; }
@@ -362,6 +378,10 @@ public:
 	virtual void switchDamage(int cnt = 0);
 	// ブースト画像をセット
 	virtual void switchBoost(int cnt = 0);
+	// ステップ画像をセット
+	virtual void switchStep(int cnt = 0);
+	// スライディング画像をセット
+	virtual void switchSliding(int cnt = 0);
 	// 空中射撃画像をセット
 	virtual void switchAirBullet(int cnt = 0);
 	// 空中斬撃画像をセット
@@ -383,18 +403,29 @@ public:
 	void moveDown(int d);
 
 	// 射撃攻撃をする(キャラごとに違う)
-	virtual Object* bulletAttack(int gx, int gy, SoundPlayer* soundPlayer) { return nullptr; }
+	virtual std::vector<Object*>* bulletAttack(int cnt, int gx, int gy, SoundPlayer* soundPlayer) { return nullptr; }
 
 	// 斬撃攻撃をする(キャラごとに違う) 左を向いているか、今何カウントか
-	virtual Object* slashAttack(bool leftDirection, int cnt, bool grand, SoundPlayer* soundPlayer) { return nullptr; }
+	virtual std::vector<Object*>* slashAttack(bool leftDirection, int cnt, bool grand, SoundPlayer* soundPlayer) { return nullptr; }
+
+	// スライディング攻撃
+	std::vector<Object*>* slidingAttack(int sound, SoundPlayer* soundPlayer);
 
 	// 射撃攻撃を持っているか
 	bool haveBulletAttack() const { return m_attackInfo->bulletDamage() != 0; }
 	// 斬撃攻撃を持っているか
 	bool haveSlashAttack() const { return m_attackInfo->slashDamage() != 0; }
 
-	// やられ画像があるか
+	// 特定の画像があるか
+	bool haveStepGraph() const;
+	bool haveSlidingGraph() const;
 	bool haveDeadGraph() const;
+
+	// HPが0でやられ画像がなく、画面から消えるべきか
+	inline bool noDispForDead() const { return m_hp == 0 && !haveDeadGraph(); }
+
+protected:
+	void countDrawCnt(){ if (SHAKING_FLAG) { m_drawCnt++; } }
 };
 
 
@@ -431,6 +462,12 @@ public:
 	void debug(int x, int y, int color) const;
 
 	// 画像変更関数のオーバーライド
+	// 立ち画像をセット
+	void switchStand(int cnt = 0);
+
+	// しゃがみ画像をセット
+	void switchSquat(int cnt = 0);
+
 	// 走り画像をセット
 	void switchRun(int cnt = 0);
 
@@ -440,11 +477,30 @@ public:
 	// ジャンプ前画像をセット
 	void switchPreJump(int cnt = 0);
 
+	// 立ち斬撃画像をセット
+	void switchSlash(int cnt = 0);
+
+	// 立ち射撃画像をセット
+	void switchBullet(int cnt = 0);
+
+	// 空中射撃画像をセット
+	void switchAirBullet(int cnt = 0);
+
+	// 空中斬撃画像をセット
+	void switchAirSlash(int cnt = 0);
+
+	// しゃがみ射撃画像をセット
+	void switchSquatBullet(int cnt = 0);
+
+	// やられ画像をセット
+	void switchDead(int cnt = 0);
+
 	// 射撃攻撃をする
-	Object* bulletAttack(int gx, int gy, SoundPlayer* soundPlayer);
+	std::vector<Object*>* bulletAttack(int cnt, int gx, int gy, SoundPlayer* soundPlayer);
 
 	// 斬撃攻撃をする
-	Object* slashAttack(bool leftDirection, int cnt, bool grand, SoundPlayer* soundPlayer);
+	std::vector<Object*>* slashAttack(bool leftDirection, int cnt, bool grand, SoundPlayer* soundPlayer);
+
 };
 
 
@@ -461,11 +517,17 @@ public:
 
 	Character* createCopy();
 
+	// 立ち射撃画像をセット
+	void switchBullet(int cnt = 0);
+
+	// しゃがみ射撃画像をセット
+	void switchSquatBullet(int cnt = 0);
+
 	// 射撃攻撃をする
-	Object* bulletAttack(int gx, int gy, SoundPlayer* soundPlayer);
+	std::vector<Object*>* bulletAttack(int cnt, int gx, int gy, SoundPlayer* soundPlayer);
 
 	// 斬撃攻撃をする
-	Object* slashAttack(bool leftDirection, int cnt, bool grand, SoundPlayer* soundPlayer);
+	std::vector<Object*>* slashAttack(bool leftDirection, int cnt, bool grand, SoundPlayer* soundPlayer);
 };
 
 
@@ -483,10 +545,10 @@ public:
 	Character* createCopy();
 
 	// 射撃攻撃をする
-	Object* bulletAttack(int gx, int gy, SoundPlayer* soundPlayer);
+	std::vector<Object*>* bulletAttack(int cnt, int gx, int gy, SoundPlayer* soundPlayer);
 
 	// 斬撃攻撃をする
-	Object* slashAttack(bool leftDirection, int cnt, bool grand, SoundPlayer* soundPlayer);
+	std::vector<Object*>* slashAttack(bool leftDirection, int cnt, bool grand, SoundPlayer* soundPlayer);
 };
 
 
@@ -503,14 +565,16 @@ public:
 
 	Character* createCopy();
 
+	// 立ち斬撃画像をセット
+	void switchSlash(int cnt = 0);
 	// ジャンプ前画像をセット
 	void switchPreJump(int cnt = 0);
 
 	// 射撃攻撃をする
-	Object* bulletAttack(int gx, int gy, SoundPlayer* soundPlayer){ return nullptr; }
+	std::vector<Object*>* bulletAttack(int cnt, int gx, int gy, SoundPlayer* soundPlayer){ return nullptr; }
 
 	// 斬撃攻撃をする
-	Object* slashAttack(bool leftDirection, int cnt, bool grand, SoundPlayer* soundPlayer);
+	std::vector<Object*>* slashAttack(bool leftDirection, int cnt, bool grand, SoundPlayer* soundPlayer);
 };
 
 
@@ -527,8 +591,19 @@ public:
 
 	Character* createCopy();
 
+	// 走り画像をセット
+	void switchRun(int cnt = 0);
+	// 走り射撃画像をセット
+	void switchRunBullet(int cnt = 0);
+	// 上昇画像をセット
+	void switchJump(int cnt = 0);
+	// 降下画像をセット
+	void switchDown(int cnt = 0);
+	// 空中射撃画像をセット
+	void switchAirBullet(int cnt = 0);
+
 	// 斬撃攻撃をする
-	Object* slashAttack(bool leftDirection, int cnt, bool grand, SoundPlayer* soundPlayer);
+	std::vector<Object*>* slashAttack(bool leftDirection, int cnt, bool grand, SoundPlayer* soundPlayer);
 };
 
 
@@ -546,7 +621,7 @@ public:
 	Character* createCopy();
 
 	// 射撃攻撃をする
-	Object* bulletAttack(int gx, int gy, SoundPlayer* soundPlayer);
+	std::vector<Object*>* bulletAttack(int cnt, int gx, int gy, SoundPlayer* soundPlayer);
 
 };
 
@@ -564,8 +639,11 @@ public:
 
 	Character* createCopy();
 
+	// 上昇画像をセット
+	void switchJump(int cnt = 0);
+
 	// 斬撃攻撃をする(キャラごとに違う)
-	Object* slashAttack(bool leftDirection, int cnt, bool grand, SoundPlayer* soundPlayer) { return nullptr; }
+	std::vector<Object*>* slashAttack(bool leftDirection, int cnt, bool grand, SoundPlayer* soundPlayer) { return nullptr; }
 };
 
 
@@ -582,8 +660,13 @@ public:
 
 	Character* createCopy();
 
+	// 上昇画像をセット
+	void switchJump(int cnt = 0);
+	// 降下画像をセット
+	void switchDown(int cnt = 0);
+
 	// 射撃攻撃をする
-	Object* bulletAttack(int gx, int gy, SoundPlayer* soundPlayer) { return nullptr; }
+	std::vector<Object*>* bulletAttack(int cnt, int gx, int gy, SoundPlayer* soundPlayer) { return nullptr; }
 };
 
 
@@ -601,7 +684,7 @@ public:
 	Character* createCopy();
 
 	// 射撃攻撃をする
-	Object* bulletAttack(int gx, int gy, SoundPlayer* soundPlayer);
+	std::vector<Object*>* bulletAttack(int cnt, int gx, int gy, SoundPlayer* soundPlayer);
 };
 
 
@@ -622,12 +705,33 @@ public:
 	void switchInit(int cnt);
 
 	// 射撃攻撃をする
-	Object* bulletAttack(int gx, int gy, SoundPlayer* soundPlayer);
+	std::vector<Object*>* bulletAttack(int cnt, int gx, int gy, SoundPlayer* soundPlayer);
 
 	// 斬撃攻撃をする
-	Object* slashAttack(bool leftDirection, int cnt, bool grand, SoundPlayer* soundPlayer) { return nullptr; }
+	std::vector<Object*>* slashAttack(bool leftDirection, int cnt, bool grand, SoundPlayer* soundPlayer) { return nullptr; }
 
 };
+
+
+/*
+* Boss2: アーカイブ
+*/
+//class Archive :
+//	public Heart
+//{
+//public:
+//	// コンストラクタ
+//	Archive(const char* name, int hp, int x, int y, int groupId);
+//	Archive(const char* name, int hp, int x, int y, int groupId, AttackInfo* attackInfo);
+//
+//	Character* createCopy();
+//
+//	// 射撃攻撃をする
+//	std::vector<Object*>* bulletAttack(int cnt, int gx, int gy, SoundPlayer* soundPlayer);
+//
+//	// 斬撃攻撃をする
+//	std::vector<Object*>* slashAttack(bool leftDirection, int cnt, bool grand, SoundPlayer* soundPlayer) { return nullptr; }
+//};
 
 
 #endif

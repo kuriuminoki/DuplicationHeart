@@ -73,12 +73,24 @@ protected:
 
 	// ブーストアニメの残り時間 または受け身状態
 	int m_boostCnt;
+	int m_boostDone;// 0:none 1:right 2:left
 	const int BOOST_TIME = 30;
 	const int BOOST_SPEED = 6;
-	int m_boostDone;// 0:none 1:right 2:left
+
+	// ステップ
+	int m_stepCnt;
+	int m_stepDone;// 0:none 1:right 2:left
+	const int STEP_STOP_TIME = 10;
+	const int STEP_TIME = 20;
+	const int STEP_SPEED = 30;
+
+	// スライディング
+	int m_slidingCnt;
+	int m_slidingDone;// 0:none 1:right 2:left
+	const int SLIDING_SPEED = 30;
 
 	// やられ状態の時間
-	const int DAMAGE_TIME = 20;
+	const int DAMAGE_TIME = 10;
 
 	// ノックバックなしのキャラならtrue
 	bool m_heavy = false;
@@ -89,9 +101,14 @@ protected:
 	bool m_moveUp;
 	bool m_moveDown;
 
-	// 加速度
-	int m_vx;
-	int m_vy;
+	// 速度
+	int m_vx; // キャラの横移動の速度（トータル）
+	int m_vy; // キャラの縦移動の速度（トータル）
+	int m_runVx; // Controllerによる横移動の速度（走りなど。ダメージによる吹っ飛びは除く）
+	int m_runVy;
+
+	// 他のキャラと重なっているため次のフレームで位置をずらす
+	int m_dx;
 
 	// 移動のロック（オブジェクト等で動けない方向はtrue）
 	bool m_rightLock;
@@ -150,10 +167,13 @@ public:
 	inline bool getGrand() const { return m_grand; }
 	inline bool getGrandRightSlope() const { return m_grandRightSlope; }
 	inline bool getGrandLeftSlope() const { return m_grandLeftSlope; }
-	inline int getVx() const { return m_vx; }
-	inline int getVy() const { return m_vy; }
+	inline bool getHeavy() const { return m_heavy; }
+	inline int getVx() const { return m_vx + m_runVx; }
+	inline int getVy() const { return m_vy + m_runVy; }
+	inline int getDx() const { return m_dx; }
 	inline int getSlashCnt() const { return m_slashCnt; }
 	inline int getBulletCnt() const { return m_bulletCnt; }
+	inline int getSlidingDone() const { return m_slidingDone; }
 	bool getRightLock() const { return m_rightLock; }
 	bool getLeftLock() const { return m_leftLock; }
 	bool getUpLock() const { return m_upLock; }
@@ -175,6 +195,10 @@ public:
 	void setDownLock(bool lock);
 	virtual void setBoost(bool leftDirection);
 	void finishBoost();
+	void setStep(bool leftDirection);
+	void finishStep();
+	void setSliding(bool leftDirection);
+	void finishSliding();
 	inline void setGrandRightSlope(bool grand) { m_grandRightSlope = grand; }
 	inline void setGrandLeftSlope(bool grand) { m_grandLeftSlope = grand; }
 	inline void setRunCnt(int runCnt) { m_runCnt = runCnt; }
@@ -185,12 +209,19 @@ public:
 	inline void setMoveDown(bool moveDown) { m_moveDown = moveDown; }
 	inline void setVx(int vx) { m_vx = vx; }
 	inline void setVy(int vy) { m_vy = vy; }
+	inline void setRunVx(int run_vx) { m_runVx = run_vx; }
+	inline void setRunVy(int run_vy) { m_runVy = run_vy; }
+	inline void setDx(int dx) { m_dx = dx; }
 	inline void setBulletCnt(int bulletCnt) { m_bulletCnt = bulletCnt; }
 	inline void setSlashCnt(int slashCnt) { m_slashCnt = slashCnt; }
 	inline void setAttackLeftDirection(bool attackLeftDirection) { m_attackLeftDirection = attackLeftDirection; }
 	inline void setLandCnt(int landCnt) { m_landCnt = landCnt; }
 	inline void setBoostCnt(int boostCnt) { m_boostCnt = boostCnt; }
 	inline void setBoostDone(int boostDone) { m_boostDone = boostDone; }
+	inline void setStepCnt(int stepCnt) { m_stepCnt = stepCnt; }
+	inline void setStepDone(int stepDone) { m_stepDone = stepDone; }
+	inline void setSlidingCnt(int slidingCnt) { m_slidingCnt = slidingCnt; }
+	inline void setSlidingDone(int slidingDone) { m_slidingDone = slidingDone; }
 	inline void setDamageCnt(int damageCnt) { m_damageCnt = damageCnt; }
 	inline void setHeavy(bool heavy) { m_heavy = heavy; }
 	inline void setSoundPlayer(SoundPlayer* soundPlayer) { m_soundPlayer_p = soundPlayer; }
@@ -199,7 +230,7 @@ public:
 	inline bool damageFlag() const { return m_state == CHARACTER_STATE::DAMAGE; }
 
 	// squat==trueならしゃがむ、falseなら立つ
-	void setSquat(bool squat);
+	virtual void setSquat(bool squat);
 
 	// キャラクターのセッタ
 	void setCharacterX(int x);
@@ -220,10 +251,13 @@ public:
 	virtual void jump(int rate) = 0;
 
 	// 射撃攻撃
-	virtual Object* bulletAttack(int gx, int gy) = 0;
+	virtual std::vector<Object*>* bulletAttack(int gx, int gy) = 0;
 
 	// 斬撃攻撃
-	virtual Object* slashAttack(int gx, int gy) = 0;
+	virtual std::vector<Object*>* slashAttack(int gx, int gy) = 0;
+
+	// スライディング攻撃
+	virtual std::vector<Object*>* slidingAttack() { return nullptr; }
 
 	// ダメージ 必要に応じてオーバーライド
 	virtual void damage(int vx, int vy, int damageValue);
@@ -263,6 +297,12 @@ public:
 	void stopMoveRight();
 	void stopMoveUp();
 	void stopMoveDown();
+
+	// キャラのストップ時間を消費
+	void consumeStopCnt();
+
+	// キャラをストップ
+	void stopCharacter(int cnt);
 
 };
 
@@ -308,10 +348,13 @@ public:
 	void jump(int cnt);
 
 	// 射撃攻撃
-	Object* bulletAttack(int gx, int gy);
+	std::vector<Object*>* bulletAttack(int gx, int gy);
 
 	// 斬撃攻撃
-	Object* slashAttack(int gx, int gy);
+	std::vector<Object*>* slashAttack(int gx, int gy);
+
+	// スライディング攻撃
+	std::vector<Object*>* slidingAttack();
 };
 
 
@@ -366,7 +409,6 @@ protected:
 
 	void damageAction();
 	void otherAction();
-	void moveAction();
 
 	// キャラの画像を状態(state)に応じて変更
 	void switchHandle();
@@ -383,6 +425,10 @@ public:
 
 	void debug(int x, int y, int color) const;
 
+	void setSquat(bool squat) {}
+
+	void action();
+
 	// 移動 引数は４方向分
 	void move(bool right, bool left, bool up, bool down);
 
@@ -392,10 +438,10 @@ public:
 	void setBoost(bool leftDirection);
 
 	// 射撃攻撃
-	Object* bulletAttack(int gx, int gy);
+	std::vector<Object*>* bulletAttack(int gx, int gy);
 
 	// 斬撃攻撃
-	Object* slashAttack(int gx, int gy);
+	std::vector<Object*>* slashAttack(int gx, int gy);
 
 };
 
@@ -423,7 +469,7 @@ public:
 	void debug(int x, int y, int color) const;
 
 	// 射撃攻撃
-	Object* bulletAttack(int gx, int gy);
+	std::vector<Object*>* bulletAttack(int gx, int gy);
 
 	void startBullet();
 
@@ -469,10 +515,10 @@ public:
 	void jump(int rate) { }
 
 	// 射撃攻撃
-	Object* bulletAttack(int gx, int gy) { return nullptr; }
+	std::vector<Object*>* bulletAttack(int gx, int gy) { return nullptr; }
 
 	// 斬撃攻撃
-	Object* slashAttack(int gx, int gy) { return nullptr; }
+	std::vector<Object*>* slashAttack(int gx, int gy) { return nullptr; }
 
 	// ダメージ 必要に応じてオーバーライド
 	void damage(int vx, int vy, int damageValue) { }

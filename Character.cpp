@@ -37,7 +37,7 @@ Character* createCharacter(const char* characterName, int hp, int x, int y, int 
 	else if (name == "コハル") {
 		character = new Koharu(name.c_str(), hp, x, y, groupId);
 	}
-	else if (name == "棒人間" || name == "クロ人間") {
+	else if (name == "棒人間" || name == "クロ人間" || name == "ソッリーソ") {
 		character = new SlashOnly(name.c_str(), hp, x, y, groupId);
 	}
 	else if (name == "緑人間" || name == "フェーレース") {
@@ -205,10 +205,11 @@ void AttackInfo::setParam(map<string, string>& data) {
 */
 int Character::characterId;
 
+
 Character::Character() :
 	Character(100, 0, 0, 0)
 {
-
+	
 }
 
 Character::Character(int hp, int x, int y, int groupId) {
@@ -230,12 +231,16 @@ Character::Character(int hp, int x, int y, int groupId) {
 	m_leftDirection = true;
 	m_freeze = false;
 	m_bossFlag = false;
+	
+	m_drawCnt = 0;
 
 	m_characterInfo = nullptr;
 	m_attackInfo = nullptr;
 	m_graphHandle = nullptr;
 	m_faceHandle = nullptr;
 	m_duplicationFlag = false;
+
+	m_stopCnt = 0;
 }
 
 Character::~Character() {
@@ -267,6 +272,7 @@ void Character::setParam(Character* character) {
 	character->setSkillGage(m_skillGage);
 	character->setInvincible(m_invincible);
 	character->setBossFlag(m_bossFlag);
+	character->setStopCnt(m_stopCnt);
 	character->getCharacterGraphHandle()->setGraph(m_graphHandle->getDispGraphHandle(), m_graphHandle->getDispGraphIndex());
 }
 
@@ -374,6 +380,25 @@ void Character::moveDown(int d) {
 	m_y += d;
 }
 
+vector<Object*>* Character::slidingAttack(int sound, SoundPlayer* soundPlayer) {
+	int x1, y1, x2, y2;
+	getAtariArea(&x1, &y1, &x2, &y2);
+	SlashObject* attackObject = new SlashObject(x1, y1, x2, y2, nullptr, 1, m_slidingInfo);
+	// 効果音
+	if (sound && soundPlayer != nullptr) {
+		soundPlayer->pushSoundQueue(m_slidingInfo->slashStartSoundHandle(),
+			adjustPanSound(getCenterX(),
+				soundPlayer->getCameraX()));
+	}
+	return new std::vector<Object*>{ attackObject };
+}
+
+bool Character::haveStepGraph() const {
+	return !(m_graphHandle->getStepHandle() == nullptr);
+}
+bool Character::haveSlidingGraph() const {
+	return !(m_graphHandle->getSlidingHandle() == nullptr);
+}
 bool Character::haveDeadGraph() const {
 	return !(m_graphHandle->getDeadHandle() == nullptr);
 }
@@ -404,6 +429,10 @@ void Character::switchPreJump(int cnt) { m_graphHandle->switchPreJump(); }
 void Character::switchDamage(int cnt) { m_graphHandle->switchDamage(); }
 // ブースト画像をセット
 void Character::switchBoost(int cnt) { m_graphHandle->switchBoost(); }
+// ステップ画像をセット
+void Character::switchStep(int cnt) { m_graphHandle->switchStep(); }
+// スライディング画像をセット
+void Character::switchSliding(int cnt) { m_graphHandle->switchSliding(); }
 // 空中射撃画像をセット
 void Character::switchAirBullet(int cnt) { m_graphHandle->switchAirBullet(); }
 // 空中斬撃画像をセット
@@ -437,6 +466,8 @@ Heart::Heart(const char* name, int hp, int x, int y, int groupId) :
 
 	m_bulletColor = WHITE;
 
+	if (haveSlidingGraph()) { m_slidingInfo = new AttackInfo("スライディング", m_characterInfo->handleEx()); }
+
 	// とりあえず立ち画像でスタート
 	switchStand();
 	m_y -= getHeight();
@@ -458,17 +489,31 @@ Heart::Heart(const char* name, int hp, int x, int y, int groupId, AttackInfo* at
 
 	m_bulletColor = WHITE;
 
+	if(haveSlidingGraph()){ m_slidingInfo = new AttackInfo("スライディング", m_characterInfo->handleEx()); }
+
 }
 
 // デストラクタ
 Heart::~Heart() {
-
+	delete m_slidingInfo;
 }
 
 Character* Heart::createCopy() {
 	Character* res = new Heart(m_characterInfo->name().c_str(), m_hp, m_x, m_y, m_groupId, m_attackInfo);
 	setParam(res);
 	return res;
+}
+
+// 立ち画像をセット
+void Heart::switchStand(int cnt) {
+	countDrawCnt();
+	m_graphHandle->switchStand(m_drawCnt / DEFAULT_ANIME_SPEED % 2);
+}
+
+// しゃがみ画像をセット
+void Heart::switchSquat(int cnt) {
+	countDrawCnt();
+	m_graphHandle->switchSquat(m_drawCnt / DEFAULT_ANIME_SPEED % 2);
 }
 
 // 走り画像をセット
@@ -495,9 +540,60 @@ void Heart::switchPreJump(int cnt) {
 	m_graphHandle->switchPreJump(index);
 }
 
-// 射撃攻撃をする
-Object* Heart::bulletAttack(int gx, int gy, SoundPlayer* soundPlayer) {
+// 立ち斬撃画像をセット
+void Heart::switchSlash(int cnt) {
+	if (m_graphHandle->getStandSlashHandle() == nullptr) { return; }
+	int index = (getSlashCountSum() + getSlashInterval() - cnt) / 3;
+	if (cnt > 6) {
+		index = min(m_graphHandle->getStandSlashHandle()->getGraphHandles()->getSize() - 2, index);
+	}
+	m_graphHandle->switchSlash(index);
+}
 
+// 立ち射撃画像をセット
+void Heart::switchBullet(int cnt) {
+	if (m_graphHandle->getStandBulletHandle() == nullptr) { return; }
+	countDrawCnt();
+	m_graphHandle->switchBullet(m_drawCnt / DEFAULT_ANIME_SPEED % 2);
+}
+
+// 空中斬撃画像をセット
+void Heart::switchAirSlash(int cnt) {
+	if (m_graphHandle->getAirSlashHandle() == nullptr) { return; }
+	int index = (getSlashCountSum() + getSlashInterval() - cnt) / 3;
+	if (cnt > 6) {
+		index = min(m_graphHandle->getAirSlashHandle()->getGraphHandles()->getSize() - 2, index);
+	}
+	m_graphHandle->switchAirSlash(index);
+}
+
+// 空中射撃画像をセット
+void Heart::switchAirBullet(int cnt) {
+	if (m_graphHandle->getAirBulletHandle() == nullptr) { return; }
+	int flame = getBulletRapid() / m_graphHandle->getAirBulletHandle()->getGraphHandles()->getSize();
+	int index = (getBulletRapid() - cnt) / flame;
+	m_graphHandle->switchAirBullet(index);
+}
+
+// しゃがみ射撃画像をセット
+void Heart::switchSquatBullet(int cnt) {
+	if (m_graphHandle->getSquatBulletHandle() == nullptr) {
+		switchBullet(cnt);
+		return;
+	}
+	countDrawCnt();
+	m_graphHandle->switchSquatBullet(m_drawCnt / DEFAULT_ANIME_SPEED % 2);
+}
+
+// やられ画像をセット
+void Heart::switchDead(int cnt) {
+	countDrawCnt();
+	m_graphHandle->switchDead(m_drawCnt / DEFAULT_ANIME_SPEED % 2);
+}
+
+// 射撃攻撃をする
+vector<Object*>* Heart::bulletAttack(int cnt, int gx, int gy, SoundPlayer* soundPlayer) {
+	if (cnt != getBulletRapid()) { return nullptr; }
 	// 弾の作成
 	BulletObject* attackObject;
 	if (m_graphHandle->getBulletHandle() != nullptr) {
@@ -516,11 +612,11 @@ Object* Heart::bulletAttack(int gx, int gy, SoundPlayer* soundPlayer) {
 			adjustPanSound(getCenterX(),
 				soundPlayer->getCameraX()));
 	}
-	return attackObject;
+	return new std::vector<Object*>{ attackObject };
 }
 
 // 斬撃攻撃をする
-Object* Heart::slashAttack(bool leftDirection, int cnt, bool grand, SoundPlayer* soundPlayer) {
+vector<Object*>* Heart::slashAttack(bool leftDirection, int cnt, bool grand, SoundPlayer* soundPlayer) {
 	// 攻撃範囲を決定
 	int centerX = getCenterX();
 	int height = m_attackInfo->slashLenY() / 2;
@@ -573,7 +669,10 @@ Object* Heart::slashAttack(bool leftDirection, int cnt, bool grand, SoundPlayer*
 		// チームキル防止
 		attackObject->setGroupId(m_groupId);
 	}
-	return attackObject;
+	else {
+		return nullptr;
+	}
+	return new std::vector<Object*>{ attackObject };
 }
 
 
@@ -597,8 +696,25 @@ Character* Siesta::createCopy() {
 	return res;
 }
 
+// 立ち射撃画像をセット
+void Siesta::switchBullet(int cnt) {
+	if (m_graphHandle->getStandBulletHandle() == nullptr) { return; }
+	int flame = getBulletRapid() / m_graphHandle->getStandBulletHandle()->getGraphHandles()->getSize();
+	int index = (getBulletRapid() - cnt) / flame;
+	m_graphHandle->switchBullet(index);
+}
+
+// しゃがみ射撃画像をセット
+void Siesta::switchSquatBullet(int cnt) {
+	if (m_graphHandle->getSquatBulletHandle() == nullptr) { return; }
+	int flame = getBulletRapid() / m_graphHandle->getSquatBulletHandle()->getGraphHandles()->getSize();
+	int index = (getBulletRapid() - cnt) / flame;
+	m_graphHandle->switchSquatBullet(index);
+}
+
 // 射撃攻撃をする
-Object* Siesta::bulletAttack(int gx, int gy, SoundPlayer* soundPlayer) {
+vector<Object*>* Siesta::bulletAttack(int cnt, int gx, int gy, SoundPlayer* soundPlayer) {
+	if (cnt != getBulletRapid() / 2) { return nullptr; }
 	ParabolaBullet *attackObject = new ParabolaBullet(getCenterX(), getCenterY(), m_graphHandle->getBulletHandle()->getGraphHandles()->getGraphHandle(), gx, gy, m_attackInfo);
 	// 自滅防止
 	attackObject->setCharacterId(m_id);
@@ -610,11 +726,11 @@ Object* Siesta::bulletAttack(int gx, int gy, SoundPlayer* soundPlayer) {
 			adjustPanSound(getCenterX(),
 				soundPlayer->getCameraX()));
 	}
-	return attackObject;
+	return new std::vector<Object*>{ attackObject };
 }
 
 // 斬撃攻撃をする
-Object* Siesta::slashAttack(bool leftDirection, int cnt, bool grand, SoundPlayer* soundPlayer) {
+vector<Object*>* Siesta::slashAttack(bool leftDirection, int cnt, bool grand, SoundPlayer* soundPlayer) {
 	// 攻撃範囲を決定
 	int centerX = getCenterX();
 	int height = getHeight();
@@ -665,7 +781,10 @@ Object* Siesta::slashAttack(bool leftDirection, int cnt, bool grand, SoundPlayer
 		// チームキル防止
 		attackObject->setGroupId(m_groupId);
 	}
-	return attackObject;
+	else {
+		return nullptr;
+	}
+	return new std::vector<Object*>{ attackObject };
 }
 
 
@@ -690,7 +809,8 @@ Character* Hierarchy::createCopy() {
 }
 
 // 射撃攻撃をする
-Object* Hierarchy::bulletAttack(int gx, int gy, SoundPlayer* soundPlayer) {
+vector<Object*>* Hierarchy::bulletAttack(int cnt, int gx, int gy, SoundPlayer* soundPlayer) {
+	if (cnt != getBulletRapid()) { return nullptr; }
 	//gx = GetRand(600) - 300 + getCenterX();
 	//gy = getCenterY() - GetRand(300);
 	BulletObject* attackObject = new BulletObject(getCenterX(), getCenterY(), m_graphHandle->getBulletHandle()->getGraphHandles()->getGraphHandle(), gx, gy, m_attackInfo);
@@ -704,11 +824,11 @@ Object* Hierarchy::bulletAttack(int gx, int gy, SoundPlayer* soundPlayer) {
 			adjustPanSound(getCenterX(),
 				soundPlayer->getCameraX()));
 	}
-	return attackObject;
+	return new std::vector<Object*>{ attackObject };
 }
 
 // 斬撃攻撃をする
-Object* Hierarchy::slashAttack(bool leftDirection, int cnt, bool grand, SoundPlayer* soundPlayer) {
+vector<Object*>* Hierarchy::slashAttack(bool leftDirection, int cnt, bool grand, SoundPlayer* soundPlayer) {
 	return nullptr;
 }
 
@@ -733,6 +853,12 @@ Character* Valkyria::createCopy() {
 	return res;
 }
 
+// 立ち斬撃画像をセット
+void Valkyria::switchSlash(int cnt) {
+	countDrawCnt();
+	m_graphHandle->switchSlash(m_drawCnt / DEFAULT_ANIME_SPEED % 2);
+}
+
 // ジャンプ前画像をセット
 void Valkyria::switchPreJump(int cnt) {
 	if (m_graphHandle->getPreJumpHandle() == nullptr) { return; }
@@ -744,7 +870,7 @@ void Valkyria::switchPreJump(int cnt) {
 }
 
 // 斬撃攻撃をする
-Object* Valkyria::slashAttack(bool leftDirection, int cnt, bool grand, SoundPlayer* soundPlayer) {
+vector<Object*>* Valkyria::slashAttack(bool leftDirection, int cnt, bool grand, SoundPlayer* soundPlayer) {
 	// 攻撃範囲を決定
 	int attackWide, attackHeight;
 	GetGraphSize(m_graphHandle->getStandSlashHandle()->getGraphHandles()->getHandle(0), &attackWide, &attackHeight);
@@ -791,7 +917,10 @@ Object* Valkyria::slashAttack(bool leftDirection, int cnt, bool grand, SoundPlay
 		// チームキル防止
 		attackObject->setGroupId(m_groupId);
 	}
-	return attackObject;
+	else {
+		return nullptr;
+	}
+	return new std::vector<Object*>{ attackObject };
 }
 
 
@@ -815,8 +944,34 @@ Character* Troy::createCopy() {
 	return res;
 }
 
+// 走り画像をセット
+void Troy::switchRun(int cnt) {
+	countDrawCnt();
+	m_graphHandle->switchRun(m_drawCnt / DEFAULT_ANIME_SPEED % 2);
+}
+// 走り射撃画像をセット
+void Troy::switchRunBullet(int cnt) {
+	countDrawCnt();
+	m_graphHandle->switchRunBullet(m_drawCnt / DEFAULT_ANIME_SPEED % 2);
+}
+// 上昇画像をセット
+void Troy::switchJump(int cnt) {
+	countDrawCnt();
+	m_graphHandle->switchJump(m_drawCnt / DEFAULT_ANIME_SPEED % 2);
+}
+// 降下画像をセット
+void Troy::switchDown(int cnt) {
+	countDrawCnt();
+	m_graphHandle->switchDown(m_drawCnt / DEFAULT_ANIME_SPEED % 2);
+}
+// 空中射撃画像をセット
+void Troy::switchAirBullet(int cnt) {
+	countDrawCnt();
+	m_graphHandle->switchAirBullet(m_drawCnt / DEFAULT_ANIME_SPEED % 2);
+}
+
 // 斬撃攻撃をする
-Object* Troy::slashAttack(bool leftDirection, int cnt, bool grand, SoundPlayer* soundPlayer) {
+vector<Object*>* Troy::slashAttack(bool leftDirection, int cnt, bool grand, SoundPlayer* soundPlayer) {
 	return nullptr;
 }
 
@@ -842,7 +997,8 @@ Character* Koharu::createCopy() {
 }
 
 // 射撃攻撃をする
-Object* Koharu::bulletAttack(int gx, int gy, SoundPlayer* soundPlayer) {
+vector<Object*>* Koharu::bulletAttack(int cnt, int gx, int gy, SoundPlayer* soundPlayer) {
+	if (cnt != getBulletRapid()) { return nullptr; }
 	// バズーカの銃口から出るように見せる
 	gy = getY() + getHeight() - 160;
 	BulletObject* attackObject = new BulletObject(getCenterX(), gy, m_graphHandle->getBulletHandle()->getGraphHandles()->getGraphHandle(), gx, gy, m_attackInfo);
@@ -856,7 +1012,7 @@ Object* Koharu::bulletAttack(int gx, int gy, SoundPlayer* soundPlayer) {
 			adjustPanSound(getCenterX(),
 				soundPlayer->getCameraX()));
 	}
-	return attackObject;
+	return new std::vector<Object*>{ attackObject };
 }
 
 
@@ -880,6 +1036,12 @@ Character* BulletOnly::createCopy() {
 	return res;
 }
 
+// 上昇画像をセット
+void BulletOnly::switchJump(int cnt) {
+	countDrawCnt();
+	m_graphHandle->switchJump(m_drawCnt / DEFAULT_ANIME_SPEED % 2);
+}
+
 /*
 * 普通の斬撃のみをするキャラ
 */
@@ -898,6 +1060,18 @@ Character* SlashOnly::createCopy() {
 	Character* res = new SlashOnly(m_characterInfo->name().c_str(), m_hp, m_x, m_y, m_groupId, m_attackInfo);
 	setParam(res);
 	return res;
+}
+
+// 上昇画像をセット
+void SlashOnly::switchJump(int cnt) {
+	countDrawCnt();
+	m_graphHandle->switchJump(m_drawCnt / DEFAULT_ANIME_SPEED % 2);
+}
+
+// 降下画像をセット
+void SlashOnly::switchDown(int cnt) {
+	countDrawCnt();
+	m_graphHandle->switchDown(m_drawCnt / DEFAULT_ANIME_SPEED % 2);
 }
 
 
@@ -922,7 +1096,8 @@ Character* ParabolaOnly::createCopy() {
 }
 
 // 射撃攻撃をする
-Object* ParabolaOnly::bulletAttack(int gx, int gy, SoundPlayer* soundPlayer) {
+vector<Object*>* ParabolaOnly::bulletAttack(int cnt, int gx, int gy, SoundPlayer* soundPlayer) {
+	if (cnt != getBulletRapid()) { return nullptr; }
 	ParabolaBullet* attackObject = new ParabolaBullet(getCenterX(), getCenterY(), m_bulletColor, gx, gy, m_attackInfo);
 	// 自滅防止
 	attackObject->setCharacterId(m_id);
@@ -934,7 +1109,7 @@ Object* ParabolaOnly::bulletAttack(int gx, int gy, SoundPlayer* soundPlayer) {
 			adjustPanSound(getCenterX(),
 				soundPlayer->getCameraX()));
 	}
-	return attackObject;
+	return new std::vector<Object*>{ attackObject };
 }
 
 
@@ -969,7 +1144,8 @@ void Sun::switchInit(int cnt) {
 	m_graphHandle->switchInit(index);
 }
 
-Object* Sun::bulletAttack(int gx, int gy, SoundPlayer* soundPlayer) {
+vector<Object*>* Sun::bulletAttack(int cnt, int gx, int gy, SoundPlayer* soundPlayer) {
+	if (cnt != getBulletRapid()) { return nullptr; }
 	int x = getCenterX() + GetRand(400) - 200;
 	int y = getCenterY() + GetRand(400) - 200;
 	ParabolaBullet* attackObject = new ParabolaBullet(x, y, m_graphHandle->getBulletHandle()->getGraphHandles()->getGraphHandle(), gx, gy, m_attackInfo);
@@ -983,5 +1159,5 @@ Object* Sun::bulletAttack(int gx, int gy, SoundPlayer* soundPlayer) {
 			adjustPanSound(getCenterX(),
 				soundPlayer->getCameraX()));
 	}
-	return attackObject;
+	return new std::vector<Object*>{ attackObject };
 }

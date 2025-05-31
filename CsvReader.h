@@ -40,6 +40,10 @@ public:
 };
 
 
+/*
+* DOMAIN対応版
+* TODO: CsvReaderを使いまわしてリファクタリング
+*/
 class CsvReader2 {
 private:
 	/*

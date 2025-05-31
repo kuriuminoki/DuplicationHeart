@@ -21,7 +21,7 @@ using namespace std;
 
 
 // どこまで
-const int FINISH_STORY = 22;
+const int FINISH_STORY = 31;
 // エリア0でデバッグするときはtrueにする
 const bool TEST_MODE = false;
 // スキルが発動可能になるストーリー番号
@@ -635,6 +635,7 @@ bool Game::play() {
 		// 世界のやり直しが起きる場合ドアやキャラのデータを初期化
 		if (m_story->getResetWorld()) {
 			m_gameData->resetWorld();
+			m_world->clearCharacter();
 			m_gameData->asignWorld(m_world, true);
 			m_soundPlayer->stopBGM();
 		}

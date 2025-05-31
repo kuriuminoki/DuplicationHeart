@@ -244,6 +244,12 @@ private:
 	// 空中斬撃画像
 	GraphHandlesWithAtari* m_airSlashHandles;
 
+	// ステップ
+	GraphHandlesWithAtari* m_stepHandles;
+
+	// スライディング
+	GraphHandlesWithAtari* m_slidingHandles;
+
 	// 瞬き画像
 	GraphHandlesWithAtari* m_closeHandles;
 
@@ -292,6 +298,8 @@ public:
 	inline GraphHandlesWithAtari* getBoostHandle() { return m_boostHandles; }
 	inline GraphHandlesWithAtari* getAirBulletHandle() { return m_airBulletHandles; }
 	inline GraphHandlesWithAtari* getAirSlashHandle() { return m_airSlashHandles; }
+	inline GraphHandlesWithAtari* getStepHandle() { return m_stepHandles; }
+	inline GraphHandlesWithAtari* getSlidingHandle() { return m_slidingHandles; }
 	inline GraphHandlesWithAtari* getCloseHandle() { return m_closeHandles; }
 	inline GraphHandlesWithAtari* getDeadHandle() { return m_deadHandles; }
 	inline GraphHandlesWithAtari* getInitHandle() { return m_initHandles; }
@@ -336,6 +344,10 @@ public:
 	void switchAirBullet(int index = 0);
 	// 空中斬撃画像をセット
 	void switchAirSlash(int index = 0);
+	// ステップ画像をセット
+	void switchStep(int index = 0);
+	// スライディング画像をセット
+	void switchSliding(int index = 0);
 	// 瞬き画像をセット
 	void switchClose(int index = 0);
 	// やられ画像をセット

@@ -747,8 +747,10 @@ OpMovieMp4::OpMovieMp4(SoundPlayer* soundPlayer_p) :
 	Movie(soundPlayer_p)
 {
 	m_mp4 = LoadGraph("picture/movie/DuplicationHeartOp.mp4");
-	int volume = (int)(1000 * m_soundPlayer_p->getVolume() / 100.0);
-	SetMovieVolumeToGraph(9000, m_mp4);
+	double rate = 10 * m_soundPlayer_p->getVolume() / 100.0;
+	rate = log10(rate);
+	int volume = (int)(rate * 3000);
+	SetMovieVolumeToGraph(7000 + volume, m_mp4);
 	PlayMovieToGraph(m_mp4);
 }
 OpMovieMp4::~OpMovieMp4() {

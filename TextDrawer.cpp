@@ -62,11 +62,14 @@ void ConversationDrawer::draw() {
 	// アニメ
 	const Animation* anime = m_conversation->getAnime();
 	if (anime != nullptr) {
-		DrawBox(0, 0, GAME_WIDE, GAME_HEIGHT, BLACK, TRUE);
 		int bright = m_conversation->getAnimeBright();
 		SetDrawBright(bright, bright, bright);
+		int alpha = m_conversation->getAnimeAlpha();
+		SetDrawBlendMode(DX_BLENDMODE_ALPHA, alpha);
+		if(alpha == 255){ DrawBox(0, 0, GAME_WIDE, GAME_HEIGHT, BLACK, TRUE); }
 		m_animationDrawer->setAnimation(anime);
 		m_animationDrawer->drawAnimation();
+		SetDrawBlendMode(DX_BLENDMODE_NOBLEND, 0 );
 		SetDrawBright(255, 255, 255);
 		if (m_conversation->animePlayNow() && m_conversation->getFinishCnt() == 0) { animeOnly = true; }
 	}
@@ -123,7 +126,7 @@ void ConversationDrawer::draw() {
 	drawSkip(m_conversation->getSkipCnt(), m_exX, m_exY, m_textHandle);
 	
 	// 画面右下のクリック要求アイコン
-	bool textFinish = m_conversation->finishText() && m_conversation->getFinishCnt() == 0 && m_conversation->getStartCnt() == 0 && m_conversation->nextTextAble();
+	bool textFinish = m_conversation->finishText() && m_conversation->getFinishCnt() == 0 && m_conversation->nextTextAble();
 	bool eventFinish = !(m_conversation->animePlayNow()) || (m_conversation->getEventAnime()->getAnime()->getFinishFlag());
 	if (textFinish && eventFinish) {
 		int dy = (int)(((m_conversation->getCnt() / 3) % 20 - 10) * m_exY);

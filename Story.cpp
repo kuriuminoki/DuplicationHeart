@@ -13,8 +13,9 @@ using namespace std;
 
 string getChapterName(int storyNum) {
 	// story○○.csvをロード
+	CsvReader csvReader("data/story/storyMap.csv");
 	ostringstream oss;
-	oss << "data/story/story" << storyNum << ".csv";
+	oss << "data/story/main/" << csvReader.findOne("num", to_string(storyNum).c_str())["fileName"] << ".csv";
 	CsvReader2 csvReader2(oss.str().c_str());
 	string s = csvReader2.getDomainData("NAME:")[0]["name"];
 	return s;
@@ -36,8 +37,9 @@ Story::Story(int storyNum, World* world, SoundPlayer* soundPlayer, EventData* ev
 	m_initDark = false;
 
 	// story○○.csvをロード
+	CsvReader csvReader("data/story/storyMap.csv");
 	ostringstream oss;
-	oss << "data/story/story" << storyNum << ".csv";
+	oss << "data/story/main/" << csvReader.findOne("num", to_string(storyNum).c_str())["fileName"] << ".csv";
 	loadCsvData(oss.str().c_str(), world, soundPlayer);
 
 	// イベントの発火確認
@@ -115,7 +117,7 @@ void Story::loadCsvData(const char* fileName, World* world, SoundPlayer* soundPl
 		m_version = stoi(versionData[0]["num"]);
 		if (m_version > 0 && (bool)stoi(versionData[0]["update"])) {
 			ostringstream oss;
-			oss << "data/story/version" << m_version << ".csv";
+			oss << "data/story/template/version" << m_version << ".csv";
 			loadCsvData(oss.str().c_str(), world, soundPlayer);
 		}
 		m_loop = stoi(versionData[0]["loop"]);
