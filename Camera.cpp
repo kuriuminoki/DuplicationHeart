@@ -42,16 +42,16 @@ Camera::Camera(const Camera* original) {
 // カメラの移動 目標地点が近いほど鈍感になる
 void Camera::move() {
 	if (m_x < m_gx) {
-		m_x += (m_gx - m_x) / 2 + 1;
+		m_x += (m_gx - m_x) / 8 + 1;
 	}
 	if (m_x > m_gx) {
-		m_x -= (m_x - m_gx) / 2 + 1;
+		m_x -= (m_x - m_gx) / 8 + 1;
 	}
 	if (m_y < m_gy) {
-		m_y += (m_gy - m_y) / 2 + 1;
+		m_y += (m_gy - m_y) * (m_gy - m_y) / 5000 + 1;
 	}
 	if (m_y > m_gy) {
-		m_y -= (m_y - m_gy) / 2 + 1;
+		m_y -= (m_y - m_gy) * (m_y - m_gy) / 30000 + 1;
 	}
 }
 
