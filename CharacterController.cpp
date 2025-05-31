@@ -246,6 +246,14 @@ bool CharacterController::moveGoal() {
 	return alreadyGoal;
 }
 
+void CharacterController::consumeStopCnt() {
+	m_characterAction->consumeStopCnt();
+}
+
+void CharacterController::stopCharacter(int cnt) {
+	m_characterAction->stopCharacter(cnt);
+}
+
 
 /*
 * キャラコントロール マウスを使う可能性もあるのでCameraが必要

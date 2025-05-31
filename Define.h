@@ -18,6 +18,8 @@ static int MOUSE_DISP = TRUE;
 extern int GAME_WIDE;
 extern int GAME_HEIGHT;
 
+extern int SLASH_STOP_CNT;
+
 // ‰ð‘œ“x‚Ì”{—¦
 void getGameEx(double& exX, double& exY);
 

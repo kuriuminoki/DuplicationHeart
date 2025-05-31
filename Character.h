@@ -258,6 +258,9 @@ protected:
 	// 獲得したお金 Worldに渡したら0にする
 	int m_money;
 
+	// フリーズ中ならその残り時間を保持
+	int m_stopCnt;
+
 public:
 	// コンストラクタ
 	Character();
@@ -291,6 +294,7 @@ public:
 	inline AttackInfo* getAttackInfo() const { return m_attackInfo; }
 	inline CharacterInfo* getCharacterInfo() const { return m_characterInfo; }
 	inline int getMoney() const { return m_money; }
+	inline int getStopCnt() const { return m_stopCnt; }
 
 	// セッタ
 	inline void setHp(int hp) { m_hp = (hp > m_characterInfo->maxHp()) ? m_characterInfo->maxHp() : hp; m_prevHp = m_hp; }
@@ -308,6 +312,7 @@ public:
 	inline void setGroupId(int id) { m_groupId = id; }
 	inline void setFreeze(bool freeze) { m_freeze = freeze; }
 	inline void setBossFlag(bool bossFlag) { m_bossFlag = bossFlag; }
+	inline void setStopCnt(int stopCnt) { m_stopCnt = stopCnt; }
 	// キャラの向き変更は、画像の反転も行う
 	void setLeftDirection(bool leftDirection);
 	inline void setDuplicationFlag(bool flag) { m_duplicationFlag = flag; }

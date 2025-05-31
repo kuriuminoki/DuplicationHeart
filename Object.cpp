@@ -858,6 +858,7 @@ bool SlashObject::atari(CharacterController* characterController) {
 		else {
 			characterController->damage(m_slashImpactX, -m_slashImpactY, m_damage);
 		}
+		m_stopCnt = SLASH_STOP_CNT;
 		return true;
 	}
 	return false;

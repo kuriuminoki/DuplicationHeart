@@ -108,6 +108,8 @@ public:
 	// IDのゲッタ
 	virtual inline int getCharacterId() const { return -1; }
 	virtual inline int getGroupId() const { return -1; }
+	virtual inline int getStopCharacterId() const { return -1; }
+	virtual inline int getStopCnt() const { return 0; }
 
 	// 攻撃力 攻撃オブジェクト用
 	virtual inline int getDamage() const { return 0; }
@@ -130,6 +132,8 @@ public:
 
 	// テキストをセット
 	virtual inline void setText(const char* text) {  }
+
+	virtual inline void setStopCnt(int stopCnt) {  }
 
 	// オブジェクト描画（画像がないときに使う）
 	virtual void drawObject(int x1, int y1, int x2, int y2) const {};
@@ -402,6 +406,9 @@ private:
 	// 斬撃の吹っ飛び(Y方向の初速)
 	int m_slashImpactY;
 
+	// ストップする残り時間
+	int m_stopCnt;
+
 public:
 	// 座標、画像、生存時間、AttackInfo
 	SlashObject(int x1, int y1, int x2, int y2, GraphHandle* handle, int slashCountSum, const AttackInfo* attackInfo);
@@ -419,6 +426,9 @@ public:
 
 	// ゲッタ
 	inline int getGroupId() const { return m_groupId; }
+	inline int getCharacterId() const { return m_characterId; }
+	inline int getStopCharacterId() const { return m_characterId; }
+	inline int getStopCnt() const { return m_stopCnt; }
 
 	// セッタ
 	inline void setCharacterId(int id) { m_characterId = id; }
@@ -428,6 +438,7 @@ public:
 	inline void setCnt(int cnt) { m_cnt = cnt; }
 	inline void setSlashImpactX(int slashImpactX) { m_slashImpactX = slashImpactX; }
 	inline void setSlashImpactY(int slashImpactY) { m_slashImpactY = slashImpactY; }
+	inline void setStopCnt(int stopCnt) { m_stopCnt = stopCnt; }
 
 	// 攻撃力 攻撃オブジェクト用
 	inline int getDamage() const { return m_damage; }
