@@ -49,7 +49,7 @@ void GameDrawer::draw() {
 	// ゲームオーバー
 	int gameoverCnt = m_game->getGameoverCnt();
 	if (gameoverCnt > 0) {
-		if ((gameoverCnt < 60 && gameoverCnt / 2 % 2 == 0) || gameoverCnt > 60) {
+		if ((gameoverCnt < FPS_N && gameoverCnt / 2 % 2 == 0) || gameoverCnt > FPS_N) {
 			DrawRotaGraph(GAME_WIDE / 2, GAME_HEIGHT / 2, min(m_exX, m_exY) * 0.7, 0.0, m_gameoverHandle, TRUE);
 		}
 

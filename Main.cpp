@@ -11,8 +11,8 @@ static int mStartTime;
 static int mCount;
 static int debug = FALSE;
 static float mFps;
-static const int N = 60;
-static const int FPS = 60;
+static const int N = FPS_N;
+static const int FPS = FPS_N;
 
 bool Update() {
 	if (mCount == 0) {
