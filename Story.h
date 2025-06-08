@@ -8,16 +8,17 @@ class Event;
 class EventData;
 class World;
 class SoundPlayer;
+class Timer;
 class CharacterLoader;
 class ObjectLoader;
-
-
-std::string getChapterName(int storyNum);
 
 
 // ストーリ－
 class Story {
 private:
+
+	// 経過時間（ループの度リセット）
+	Timer* m_timer;
 
 	// 何週目の世界か
 	int m_loop;
@@ -25,8 +26,7 @@ private:
 	// 対象の世界
 	World* m_world_p;
 
-	// ストーリー番号
-	int m_storyNum;
+	SoundPlayer* m_soundPlayer_p;
 
 	// 時間帯
 	int m_date;
@@ -34,20 +34,20 @@ private:
 	// Emote Onlineのversion
 	int m_version;
 
+	// versionアップをGameに知らせる
+	bool m_needWorldUpdate;
+
 	// Storyを画面暗転の状態からスタートならtrue
 	bool m_initDark;
 
-	// 世界のドアデータを全削除
-	bool m_resetWorld;
+	// 世界の寿命が来たらtrue
+	bool m_worldEndFlag;
 
 	// 進行中のイベント
 	Event* m_nowEvent;
 	
 	// クリア必須イベント
-	std::vector<Event*> m_mustEvent;
-	
-	// クリア任意イベント
-	std::vector<Event*> m_subEvent;
+	std::vector<Event*> m_eventList;
 
 	// イベントのクリア状況 Gameクラスからもらう
 	EventData* m_eventData_p;
@@ -59,15 +59,16 @@ private:
 	ObjectLoader* m_objectLoader;
 
 public:
-	Story(int storyNum, World* world, SoundPlayer* soundPlayer, EventData* eventData);
+	Story(int loop, int time, World* world, SoundPlayer* soundPlayer, EventData* eventData, int worldLifespan, int maxVersion);
 	~Story();
 
 	// csvファイルを読み込む
-	void loadCsvData(const char* fileName, World* world, SoundPlayer* soundPlayer);
+	void loadEventCsvData(const char* fileName, World* world, SoundPlayer* soundPlayer);
+	void loadVersionCsvData(const char* fileName, World* world, SoundPlayer* soundPlayer);
 
 	void debug(int x, int y, int color);
 
-	bool play();
+	bool play(int worldLifespan, int maxVersion);
 
 	// イベントの発火確認
 	void checkFire();
@@ -75,11 +76,13 @@ public:
 	// ハートのスキル発動が可能かどうか
 	bool skillAble();
 
+	void updateWorldVersion();
+
 	// ゲッタ
-	inline int getStoryNum() const { return m_storyNum; }
+	inline const Timer* getTimer() const { return m_timer; }
 	inline int getDate() const { return m_date; }
 	inline int getVersion() const { return m_version; }
-	inline bool getResetWorld() const { return m_resetWorld; }
+	inline bool getNeedWorldUpdate() const { return m_needWorldUpdate; }
 	inline bool getInitDark() const { return m_initDark; }
 	inline CharacterLoader* getCharacterLoader() const { return m_characterLoader; }
 	inline ObjectLoader* getObjectLoader() const { return m_objectLoader; }
@@ -89,6 +92,10 @@ public:
 
 	// セッタ
 	void setWorld(World* world);
+	inline void doneWorldUpdate() { m_needWorldUpdate = false; }
+
+	// 今イベント中か
+	bool eventNow() const { return m_nowEvent != nullptr; }
 
 	// 前のセーブポイントへ戻ったことを教えてもらう
 	void doneBackPrevSave();

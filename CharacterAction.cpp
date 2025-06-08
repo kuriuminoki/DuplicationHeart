@@ -1448,7 +1448,7 @@ SunAction::SunAction(Character* character, SoundPlayer* soundPlayer_p, bool dupl
 	FlightAction(character, soundPlayer_p)
 {
 	m_state = CHARACTER_STATE::INIT;
-	m_initCnt = -60;
+	m_initCnt = -FPS_N;
 	m_initHp = m_character_p->getHp();
 	if (!duplicationFlag) {
 		m_character_p->setHp(min(1, m_initHp));

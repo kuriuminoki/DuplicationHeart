@@ -88,8 +88,11 @@ public:
 
 	~WorldDrawer();
 
+	// ゲッタ
+	inline const World* getWorld() const { return m_world; }
+
 	// セッタ
-	void setWorld(World* world) { m_world = world; }
+	inline void setWorld(World* world) { m_world = world; }
 
 	// 描画する
 	void draw(bool drawSkillBar);

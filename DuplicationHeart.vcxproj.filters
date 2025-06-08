@@ -144,6 +144,9 @@
     <ClCompile Include="DrawTool.cpp">
       <Filter>ソース ファイル\ui</Filter>
     </ClCompile>
+    <ClCompile Include="Timer.cpp">
+      <Filter>ソース ファイル\api</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Define.h">
@@ -238,6 +241,9 @@
     </ClInclude>
     <ClInclude Include="DrawTool.h">
       <Filter>ヘッダー ファイル\ui</Filter>
+    </ClInclude>
+    <ClInclude Include="Timer.h">
+      <Filter>ヘッダー ファイル\api</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>
