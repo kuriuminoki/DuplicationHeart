@@ -103,7 +103,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 			Title::TITLE_RESULT result = title->play();
 			title->draw();
 			if (result == Title::START) {
-				game = new Game(title->useSaveFile(), title->startStoryNum());
+				game = new Game(title->useSaveFile(), title->startLoop());
 				gameDrawer = new GameDrawer(game);
 				delete title;
 				gamePlay = true;

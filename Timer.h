@@ -16,6 +16,8 @@ public:
 
 	inline void setTime(int time) { m_time = time; }
 
+	inline void advanceTime() { m_time++; }
+
 	inline void resetTime() { m_time = START_TIME; }
 
 	// •b”‚Å•Ô‚·

@@ -1,5 +1,7 @@
 #include "GameDrawer.h"
 #include "Game.h"
+#include "Story.h"
+#include "Timer.h"
 #include "World.h"
 #include "WorldDrawer.h"
 #include "PausePage.h"
@@ -64,7 +66,17 @@ void GameDrawer::draw() {
 	else {
 		m_worldDrawer->setWorld(m_game->getWorld());
 	}
-	m_worldDrawer->draw(m_game->afterSkillUsableStoryNum());
+	m_worldDrawer->draw(m_game->afterSkillUsableLoop());
+
+	// 経過時間 TODO: 画像にする
+	if (m_worldDrawer->getWorld()->getBrightValue() == 255 && !m_game->getStory()->eventNow()) {
+		int time = m_game->getStory()->getTimer()->getTime();
+		int lifespan = m_game->WORLD_LIFESPAN;
+		int wide = GAME_WIDE / 4;
+		DrawBox(800, 50, 800 + wide, 80, BLACK, TRUE);
+		int p = 800 + (time * wide / lifespan);
+		DrawBox(p - 10, 20, p + 10, 110, WHITE, TRUE);
+	}
 
 	// セーブ完了通知
 	int noticeSaveDone = m_game->getGameData()->getNoticeSaveDone();

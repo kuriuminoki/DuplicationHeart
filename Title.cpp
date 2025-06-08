@@ -35,12 +35,12 @@ SelectSaveData::SelectSaveData() {
 	double exX, exY;
 	getGameEx(exX, exY);
 	m_font = CreateFontToHandle(nullptr, (int)(50 * exX), 3);
-	int maxStoryNum = 0;
+	int maxLoop = 0;
 	for (int i = 0; i < GAME_DATA_SUM; i++) {
 		string text;
 		ostringstream oss;
 		if (m_gameData[i]->getExist()) { 
-			oss << "Chapter" << m_gameData[i]->getStoryNum();
+			oss << m_gameData[i]->getLoop() << "周目";
 			text = oss.str();
 		}
 		else {
@@ -48,20 +48,21 @@ SelectSaveData::SelectSaveData() {
 		}
 		m_dataButton[i] = new Button(text, (int)(100 * exX), (int)(300 * exY + (i * 150 * exY)), (int)(500 * exX), (int)(100 * exY), WHITE, GRAY2, m_font, BLACK);
 		m_dataInitButton[i] = new Button("削除", (int)(650 * exX), (int)(300 * exY + (i * 150 * exY)), (int)(100 * exX), (int)(100 * exY), LIGHT_RED, RED, m_font, BLACK);
-		int latestStoryNum = m_gameData[i]->getLatestStoryNum();
-		maxStoryNum = max(maxStoryNum, latestStoryNum);
-		if (latestStoryNum > 1) {
-			m_startStoryNum[i] = new ControlBar(900, 350 + (i * 150), 1600, 400 + (i * 150), 1, latestStoryNum, latestStoryNum, "チャプター");
+		int latestLoop = m_gameData[i]->getLatestLoop();
+		maxLoop = max(maxLoop, latestLoop);
+		if (latestLoop > 1) {
+			m_startLoop[i] = new ControlBar(900, 350 + (i * 150), 1600, 400 + (i * 150), 1, latestLoop, latestLoop, "周回");
 		}
 		else {
-			m_startStoryNum[i] = nullptr;
+			m_startLoop[i] = nullptr;
 		}
 	}
 
 	// チャプター名を取得
-	for (int i = 0; i < maxStoryNum; i++) {
-		string s = getChapterName(i + 1);
-		m_chapterNames.push_back(s);
+	for (int i = 0; i < maxLoop; i++) {
+		//string s = getChapterName(i + 1);
+		//m_chapterNames.push_back(s);
+		m_chapterNames.push_back("");
 	}
 
 	// 背景
@@ -75,7 +76,7 @@ SelectSaveData::~SelectSaveData() {
 		delete m_gameData[i];
 		delete m_dataButton[i];
 		delete m_dataInitButton[i];
-		delete m_startStoryNum[i];
+		delete m_startLoop[i];
 	}
 	delete m_haikei;
 }
@@ -92,12 +93,12 @@ bool SelectSaveData::saveDataExist() {
 	return false;
 }
 
-int SelectSaveData::getLatestStoryNum() {
-	int maxStoryNum = -1;
+int SelectSaveData::getLatestLoop() {
+	int maxLoop = -1;
 	for (int i = 0; i < GAME_DATA_SUM; i++) {
-		maxStoryNum = max(maxStoryNum, m_gameData[i]->getStoryNum());
+		maxLoop = max(maxLoop, m_gameData[i]->getLoop());
 	}
-	return maxStoryNum;
+	return maxLoop;
 }
 
 // セーブデータ選択画面の処理
@@ -121,8 +122,8 @@ bool SelectSaveData::play(int handX, int handY) {
 					// セーブデータ削除
 					m_gameData[i]->removeSaveData();
 					m_dataButton[i]->setString("New Game");
-					delete m_startStoryNum[i];
-					m_startStoryNum[i] = nullptr;
+					delete m_startLoop[i];
+					m_startLoop[i] = nullptr;
 				}
 				m_initCnt = 0;
 				m_dataInitButton[i]->setColor(LIGHT_RED);
@@ -132,8 +133,8 @@ bool SelectSaveData::play(int handX, int handY) {
 			m_initCnt = 0;
 			m_dataInitButton[i]->setColor(LIGHT_RED);
 		}
-		if (m_startStoryNum[i] != nullptr) {
-			m_startStoryNum[i]->play(handX, handY);
+		if (m_startLoop[i] != nullptr) {
+			m_startLoop[i]->play(handX, handY);
 		}
 	}
 
@@ -149,9 +150,9 @@ void SelectSaveData::draw(int handX, int handY) {
 	for (int i = 0; i < GAME_DATA_SUM; i++) {
 		m_dataButton[i]->draw(handX, handY);
 		m_dataInitButton[i]->draw(handX, handY);
-		if (m_startStoryNum[i] != nullptr) {
-			int n = m_startStoryNum[i]->getNowValue();
-			m_startStoryNum[i]->draw(handX, handY, m_chapterNames[n - 1]);
+		if (m_startLoop[i] != nullptr) {
+			int n = m_startLoop[i]->getNowValue();
+			m_startLoop[i]->draw(handX, handY, m_chapterNames[n - 1]);
 		}
 	}
 
@@ -164,10 +165,10 @@ const char* SelectSaveData::useDirName() {
 }
 
 // 始めるチャプター
-int SelectSaveData::startStoryNum() {
-	if (m_useSaveDataIndex == NOT_DECIDE_DATA || m_startStoryNum[m_useSaveDataIndex] == nullptr) { return -1; }
-	int storyNum = m_startStoryNum[m_useSaveDataIndex]->getNowValue();
-	return storyNum == m_gameData[m_useSaveDataIndex]->getLatestStoryNum() ? -1 : storyNum;
+int SelectSaveData::startLoop() {
+	if (m_useSaveDataIndex == NOT_DECIDE_DATA || m_startLoop[m_useSaveDataIndex] == nullptr) { return -1; }
+	int loop = m_startLoop[m_useSaveDataIndex]->getNowValue();
+	return loop == m_gameData[m_useSaveDataIndex]->getLatestLoop() ? -1 : loop;
 }
 
 // 全セーブデータ共通のデータをセーブ(タイトル画面のオプション用)
@@ -195,9 +196,9 @@ Title::Title() {
 	// セーブデータがあるなら音量セット
 	if (m_selectSaveData->saveDataExist()) { 
 		m_soundPlayer->setVolume(m_selectSaveData->getSoundVolume());
-		int s = m_selectSaveData->getLatestStoryNum();
-		if (s >= 9) {
-			// 初めてOPを見るのは9章なので、それ以降のセーブデータがあるならOP用意
+		int s = m_selectSaveData->getLatestLoop();
+		if (s >= 2) {
+			// 初めてOPを見るのは1周目の最後なので、それ以降のセーブデータがあるならOP用意
 			m_movie = new OpMovieMp4(m_soundPlayer);
 		}
 	}
