@@ -361,7 +361,6 @@ bool GameData::load() {
 	// Read
 	fread(&m_areaNum, sizeof(m_areaNum), 1, intFp);
 	fread(&m_time, sizeof(m_time), 1, intFp);
-	//m_time = 35800;
 	fread(&m_loop, sizeof(m_loop), 1, intFp);
 	fread(&m_latestLoop, sizeof(m_latestLoop), 1, intFp);
 	fread(&m_money, sizeof(m_money), 1, intFp);
