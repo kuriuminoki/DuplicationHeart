@@ -4,6 +4,7 @@
 #include "CsvReader.h"
 #include "World.h"
 #include "Sound.h"
+#include "Timer.h"
 #include "CharacterLoader.h"
 #include "ObjectLoader.h"
 #include <sstream>
@@ -11,48 +12,62 @@
 using namespace std;
 
 
-string getChapterName(int storyNum) {
-	// story○○.csvをロード
-	CsvReader csvReader("data/story/storyMap.csv");
-	ostringstream oss;
-	oss << "data/story/main/" << csvReader.findOne("num", to_string(storyNum).c_str())["fileName"] << ".csv";
-	CsvReader2 csvReader2(oss.str().c_str());
-	string s = csvReader2.getDomainData("NAME:")[0]["name"];
-	return s;
+vector<string> split(string str, char del) {
+	vector<string> result;
+	string subStr;
+
+	for (const char c : str) {
+		if (c == del) {
+			result.push_back(subStr);
+			subStr.clear();
+		}
+		else {
+			subStr += c;
+		}
+	}
+
+	result.push_back(subStr);
+	return result;
 }
 
 
-Story::Story(int storyNum, World* world, SoundPlayer* soundPlayer, EventData* eventData) {
+Story::Story(int loop, int time, World* world, SoundPlayer* soundPlayer, EventData* eventData, int worldLifespan, int maxVersion) {
+	m_worldEndFlag = false;
+	m_timer = new Timer();
+	m_timer->setTime(time);
 	m_world_p = world;
+	m_soundPlayer_p = soundPlayer;
 	m_nowEvent = nullptr;
-	m_storyNum = storyNum;
+	m_loop = loop;
 	m_eventData_p = eventData;
 
-	m_characterLoader = new CharacterLoader;
-	m_objectLoader = new ObjectLoader;
+	m_needWorldUpdate = false;
+	m_characterLoader = nullptr;
+	m_objectLoader = nullptr;
 
-	m_date = 0;
-	m_version = 0;
-	m_resetWorld = false;
 	m_initDark = false;
 
-	// story○○.csvをロード
-	CsvReader csvReader("data/story/storyMap.csv");
+	m_version = 1 + time / (worldLifespan / maxVersion);
+	m_date = time / (worldLifespan / 3); // 朝昼晩の3つ
+	if (time == 0) {
+		updateWorldVersion();
+	}
+	m_world_p->setDate(m_date);
+
+	// eventList.csvをロード
 	ostringstream oss;
-	oss << "data/story/main/" << csvReader.findOne("num", to_string(storyNum).c_str())["fileName"] << ".csv";
-	loadCsvData(oss.str().c_str(), world, soundPlayer);
+	oss << "data/newStory/" << "eventList.csv";
+	loadEventCsvData(oss.str().c_str(), world, m_soundPlayer_p, worldLifespan / maxVersion);
 
 	// イベントの発火確認
 	checkFire();
-	soundPlayer->stopBGM();
+	m_soundPlayer_p->stopBGM();
 }
 
 Story::~Story() {
-	for (unsigned int i = 0; i < m_mustEvent.size(); i++) {
-		delete m_mustEvent[i];
-	}
-	for (unsigned int i = 0; i < m_subEvent.size(); i++) {
-		delete m_subEvent[i];
+	delete m_timer;
+	for (unsigned int i = 0; i < m_eventList.size(); i++) {
+		delete m_eventList[i];
 	}
 	if (m_nowEvent != nullptr) {
 		delete m_nowEvent;
@@ -62,33 +77,52 @@ Story::~Story() {
 }
 
 // csvファイルを読み込む
-void Story::loadCsvData(const char* fileName, World* world, SoundPlayer* soundPlayer) {
-	CsvReader2 csvReader2(fileName);
+void Story::loadEventCsvData(const char* fileName, World* world, SoundPlayer* soundPlayer, int versionTimeSpan) {
+	CsvReader csvReader(fileName);
+	vector<map<string, string> > data = csvReader.getData();
+	for (int i = 0; i < data.size(); i++) {
+		int eventNum = stoi(data[i].find("eventNum")->second);
+		bool repeat = (bool)stoi(data[i].find("repeat")->second);
 
-	// イベント生成
-	vector<map<string, string> > eventData = csvReader2.getDomainData("EVENT:");
-	for (unsigned int i = 0; i < eventData.size(); i++) {
-		int eventNum = stoi(eventData[i]["num"]);
-		bool mustFlag = (bool)stoi(eventData[i]["mustFlag"]);
-		string condition = eventData[i]["condition"];
-		string secondNum = eventData[i]["secondNum"];
-		// conditionがクリア済みならsecondNumのイベントを代わりにセット
-		if (condition != "" && m_eventData_p->checkClearEvent(stoi(eventData[i]["condition"]))) {
-			if (secondNum != "") {
-				// 代わりのイベントをセット
-				eventNum = stoi(eventData[i]["secondNum"]);
-			}
-			else {
-				// 代わりのイベントはない
-				eventNum = -1;
+		// 前のループまでにクリアしている必要があるイベントの確認
+		string preConditions_str = data[i].find("preConditions")->second;
+		vector<string> preConditions = split(preConditions_str, '|');
+		bool checkConditions = true;
+		for (unsigned int j = 0; j < preConditions.size(); j++) {
+			if (preConditions[j] != "" && !m_eventData_p->checkClearEvent(stoi(preConditions[j]), m_loop - 1)) {
+				checkConditions = false;
 			}
 		}
-		if (eventNum != -1) {
-			Event* eventOne = new Event(eventNum, world, soundPlayer, m_version);
-			if (mustFlag) { m_mustEvent.push_back(eventOne); }
-			else { m_subEvent.push_back(eventOne); }
+		if (checkConditions && (repeat || !m_eventData_p->checkClearEvent(eventNum))) {
+			
+			// 時間はバージョン単位で指定する。例えばバージョン1と2のちょうど間を表すなら1.5とcsvファイルに記載する。
+			int startTime = (int)((stod(data[i].find("startTime")->second) - 1) * versionTimeSpan);
+			int endTime = (int)((stod(data[i].find("endTime")->second) - 1) * versionTimeSpan);
+
+			string conditions_str = data[i].find("conditions")->second;
+			vector<string> conditions = split(conditions_str, '|');
+			vector<int> requireEventNum;
+			if (conditions[0] != "") {
+				for (unsigned int i = 0; i < conditions.size(); i++) {
+					// 既に条件を満たしている（クリアしている）イベントはチェックの必要がないためpush_backしない
+					int n = stoi(conditions[i]);
+					if (!m_eventData_p->checkClearEvent(n)) {
+						requireEventNum.push_back(n);
+					}
+				}
+			}
+
+			m_eventList.push_back(new Event(eventNum, startTime, endTime, requireEventNum, world, soundPlayer, m_version));
 		}
 	}
+}
+
+void Story::loadVersionCsvData(const char* fileName, World* world, SoundPlayer* soundPlayer) {
+	delete m_characterLoader;
+	delete m_objectLoader;
+	m_characterLoader = new CharacterLoader;
+	m_objectLoader = new ObjectLoader;
+	CsvReader2 csvReader2(fileName);
 
 	// キャラクターを用意
 	vector<map<string, string> > characterData = csvReader2.getDomainData("CHARACTER:");
@@ -101,43 +135,31 @@ void Story::loadCsvData(const char* fileName, World* world, SoundPlayer* soundPl
 	for (unsigned int i = 0; i < objectData.size(); i++) {
 		m_objectLoader->addObject(objectData[i]);
 	}
-
-	// 時間帯を決定
-	vector<map<string, string> > dateData = csvReader2.getDomainData("DATE:");
-	if (dateData.size() > 0) {
-		m_date = stoi(dateData[0]["num"]);
-	}
-	if (m_date == 0) {
-		m_world_p->setDate(m_date);
-	}
-
-	// 世界のバージョンを取得しロードする 変化ない(updateが0)ならロードしない
-	vector<map<string, string> > versionData = csvReader2.getDomainData("VERSION:");
-	if (versionData.size() > 0) {
-		m_version = stoi(versionData[0]["num"]);
-		if (m_version > 0 && (bool)stoi(versionData[0]["update"])) {
-			ostringstream oss;
-			oss << "data/story/template/version" << m_version << ".csv";
-			loadCsvData(oss.str().c_str(), world, soundPlayer);
-		}
-		m_loop = stoi(versionData[0]["loop"]);
-	}
-
-	// Storyの初期状態
-	vector<map<string, string> > initData = csvReader2.getDomainData("INIT:");
-	if (initData.size() > 0) {
-		m_initDark = (bool)stoi(initData[0]["dark"]);
-		m_resetWorld = (bool)stoi(initData[0]["resetWorld"]);
-	}
 }
 
-bool Story::play() {
+bool Story::play(int worldLifespan, int maxVersion) {
 	m_initDark = false;
 	if (m_nowEvent == nullptr) {
-		// 普通に世界を動かす
+		if (m_timer->getTime() == worldLifespan) {
+			// 世界ループのイベント(9999)をセット
+			m_eventList.push_back(new Event(9999, 0, 99999999, vector<int>(), m_world_p, m_soundPlayer_p, m_version));
+			m_worldEndFlag = true;
+			m_loop++;
+		}
+		m_timer->advanceTime();
 		m_world_p->battle();
-		// イベントの発火確認
 		checkFire();
+		if (m_timer->getTime() % (worldLifespan / maxVersion) == 0) {
+			// 新バージョンをロードし世界を更新
+			if (m_version < maxVersion) {
+				m_version++;
+				updateWorldVersion();
+			}
+		}
+		if (m_timer->getTime() % (worldLifespan / 3) == 0) {
+			m_date = min(2, m_date + 1);
+			m_world_p->setDate(m_date);
+		}
 	}
 	else {
 		// イベント進行中
@@ -145,7 +167,7 @@ bool Story::play() {
 		
 		// イベントクリア
 		if (result == EVENT_RESULT::SUCCESS) {
-			m_eventData_p->setClearEvent(m_nowEvent->getEventNum());
+			m_eventData_p->setClearEvent(m_nowEvent->getEventNum(), m_loop);
 		}
 		// イベント失敗
 		if (result == EVENT_RESULT::FAILURE) {
@@ -155,31 +177,34 @@ bool Story::play() {
 		if (result != EVENT_RESULT::NOW) {
 			delete m_nowEvent;
 			m_nowEvent = nullptr;
+			return true;
 		}
 	}
 
-	// 必須イベント全て終わり
-	if (m_mustEvent.size() == 0 && m_nowEvent == nullptr) { 
-		return true;
-	}
 	return false;
 }
 
 // イベントの発火確認
 void Story::checkFire() {
-	for (unsigned int i = 0; i < m_mustEvent.size(); i++) {
-		if (m_mustEvent[i]->fire()) {
-			m_nowEvent = m_mustEvent[i];
-			m_mustEvent[i] = m_mustEvent.back();
-			m_mustEvent.pop_back();
-			i--;
+	for (unsigned int i = 0; i < m_eventList.size(); i++) {
+		// タイミングの条件確認
+		if (!(m_timer->getTime() >= m_eventList[i]->getStartTime() && m_timer->getTime() < m_eventList[i]->getEndTime())) {
+			continue;
 		}
-	}
-	for (unsigned int i = 0; i < m_subEvent.size(); i++) {
-		if (m_subEvent[i]->fire()) {
-			m_nowEvent = m_subEvent[i];
-			m_subEvent[i] = m_subEvent.back();
-			m_subEvent.pop_back();
+		// 依存イベントの条件確認
+		const vector<int> requireEventNum = m_eventList[i]->getRequireEventNum();
+		bool requireEventComplete = true;
+		for (unsigned int i = 0; i < requireEventNum.size(); i++) {
+			if (!m_eventData_p->checkClearEvent(requireEventNum[i])) {
+				requireEventComplete = false;
+				break;
+			}
+		}
+		// 発火確認
+		if (requireEventComplete && m_eventList[i]->fire()) {
+			m_nowEvent = m_eventList[i];
+			m_eventList[i] = m_eventList.back();
+			m_eventList.pop_back();
 			i--;
 		}
 	}
@@ -193,6 +218,24 @@ bool Story::skillAble() {
 	return m_nowEvent->skillAble();
 }
 
+void Story::updateWorldVersion() {
+	m_needWorldUpdate = true;
+	ostringstream oss;
+	oss << "data/story/template/version" << m_version << ".csv";
+	loadVersionCsvData(oss.str().c_str(), m_world_p, m_soundPlayer_p);
+	for (unsigned int i = 0; i < m_eventList.size(); i++) {
+		m_eventList[i]->setVersion(m_version);
+	}
+	m_world_p->addCharacter(getCharacterLoader());
+	m_world_p->addObject(getObjectLoader());
+}
+
+void Story::loopInit() {
+	m_version = 1;
+	m_timer->setTime(0);
+	m_date = 0;
+}
+
 // セッタ
 void Story::setWorld(World* world) {
 	m_world_p = world;
@@ -201,11 +244,8 @@ void Story::setWorld(World* world) {
 	if (m_nowEvent != nullptr) {
 		m_nowEvent->setWorld(m_world_p);
 	}
-	for (unsigned int i = 0; i < m_mustEvent.size(); i++) {
-		m_mustEvent[i]->setWorld(m_world_p);
-	}
-	for (unsigned int i = 0; i < m_subEvent.size(); i++) {
-		m_subEvent[i]->setWorld(m_world_p);
+	for (unsigned int i = 0; i < m_eventList.size(); i++) {
+		m_eventList[i]->setWorld(m_world_p);
 	}
 }
 

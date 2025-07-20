@@ -43,8 +43,8 @@ private:
 	// 使用するセーブデータのインデックス
 	int m_useSaveDataIndex;
 
-	// 開始するチャプター番号
-	ControlBar* m_startStoryNum[GAME_DATA_SUM];
+	// 開始するループ番号
+	ControlBar* m_startLoop[GAME_DATA_SUM];
 
 	// 背景
 	TitleBackGround* m_haikei;
@@ -63,8 +63,8 @@ public:
 	// セーブデータが1つでも存在するか
 	bool saveDataExist();
 
-	// 最大のStoryNum
-	int getLatestStoryNum();
+	// 最大のLoop
+	int getLatestLoop();
 
 	// セーブデータ選択画面の処理
 	bool play(int handX, int handY);
@@ -75,8 +75,8 @@ public:
 	// 使用するセーブデータのディレクトリ名
 	const char* useDirName();
 
-	// 始めるチャプター 指定がないなら-1
-	int startStoryNum();
+	// 始めるループ 指定がないなら-1
+	int startLoop();
 
 	// 全セーブデータ共通のデータをセーブ(タイトル画面のオプション用)
 	void saveCommon(int soundVolume);
@@ -147,9 +147,9 @@ public:
 		return m_selectSaveData->useDirName();
 	}
 
-	// 始めるチャプター番号 指定がないなら-1
-	inline int startStoryNum() {
-		return m_selectSaveData->startStoryNum();
+	// 始めるループ番号 指定がないなら-1
+	inline int startLoop() {
+		return m_selectSaveData->startLoop();
 	}
 
 };

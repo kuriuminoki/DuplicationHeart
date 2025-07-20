@@ -9,6 +9,7 @@
 #include "Animation.h"
 #include "Define.h"
 #include "Text.h"
+#include "Timer.h"
 #include "Event.h"
 #include "Story.h"
 #include "Brain.h"
@@ -22,7 +23,7 @@
 // Gameクラスのデバッグ
 void Game::debug(int x, int y, int color) const {
 	DrawFormatString(x, y, color, "**GAME**");
-	DrawFormatString(x, y + DRAW_FORMAT_STRING_SIZE, color, "StoryNum=%d, doorSum=%d", m_gameData->getStoryNum(), m_gameData->getDoorSum());
+	DrawFormatString(x, y + DRAW_FORMAT_STRING_SIZE, color, "timer=%d, Loop=%d, doorSum=%d, version=%d", m_story->getTimer()->getTime(), m_gameData->getLoop(), m_gameData->getDoorSum(), m_story->getVersion());
 	//for (int i = 0; i < m_gameData->getDoorSum(); i++) {
 	//	DrawFormatString(x, y + DRAW_FORMAT_STRING_SIZE + ((i + 1) * DRAW_FORMAT_STRING_SIZE), color, "from=%d, to=%d", m_gameData->getFrom(i), m_gameData->getTo(i));
 	//}
@@ -43,7 +44,7 @@ void debugObjects(int x, int y, int color, std::vector<Object*> objects) {
 // Worldクラスのデバッグ
 void World::debug(int x, int y, int color) const {
 	DrawFormatString(x, y, color, "**World**");
-	DrawFormatString(x, y + DRAW_FORMAT_STRING_SIZE, color, "areaNum=%d, CharacterSum=%d, ControllerSum=%d, cameraEx=%f", m_areaNum, m_characters.size(), m_characterControllers.size(), m_camera->getEx());
+	DrawFormatString(x, y + DRAW_FORMAT_STRING_SIZE, color, "date=%d, areaNum=%d, CharacterSum=%d, ControllerSum=%d, cameraEx=%f", m_date, m_areaNum, m_characters.size(), m_characterControllers.size(), m_camera->getEx());
 	DrawFormatString(x, y + DRAW_FORMAT_STRING_SIZE * 2, color, "itemSum=%d, animeSum=%d, attackObjects=%d", m_itemVector.size(), m_animations.size(), m_attackObjects.size());
 	if (m_itemVector.size() > 0) {
 		DrawFormatString(x, y + DRAW_FORMAT_STRING_SIZE * 3, color, "itemY=%d", m_itemVector[0]->getY());
@@ -61,7 +62,7 @@ void World::debug(int x, int y, int color) const {
 */
 void Story::debug(int x, int y, int color) {
 	DrawFormatString(x, y, color, "**Story**");
-	DrawFormatString(x, y + DRAW_FORMAT_STRING_SIZE, color, "MustEventSum=%d", m_mustEvent.size());
+	DrawFormatString(x, y + DRAW_FORMAT_STRING_SIZE, color, "MustEventSum=%d", m_eventList.size());
 }
 
 

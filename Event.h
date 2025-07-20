@@ -84,6 +84,12 @@ private:
 	// イベント番号
 	int m_eventNum;
 
+	int m_startTime;
+	int m_endTime;
+
+	// 前提としてクリアが必要なイベントの番号
+	std::vector<int> m_requireEventNum;
+
 	// イベントの発火条件
 	std::vector<EventFire*> m_eventFire;
 
@@ -103,11 +109,15 @@ private:
 	int m_version;
 
 public:
-	Event(int eventNum, World* world, SoundPlayer* soundPlayer, int version);
+	Event(int eventNum, int startTime, int endTime, std::vector<int> requireEventNum, World* world, SoundPlayer* soundPlayer, int version);
 	~Event();
 
 	// ゲッタ
-	inline int getEventNum() { return m_eventNum; }
+	inline int getEventNum() const { return m_eventNum; }
+	inline int getStartTime() const { return m_startTime; }
+	inline int getEndTime() const { return m_endTime; }
+	inline const std::vector<int> getRequireEventNum() const { return m_requireEventNum; }
+	inline void setVersion(int version) { m_version = version; }
 
 	// 発火
 	bool fire();

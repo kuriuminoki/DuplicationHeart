@@ -1,5 +1,7 @@
 #include "GameDrawer.h"
 #include "Game.h"
+#include "Story.h"
+#include "Timer.h"
 #include "World.h"
 #include "WorldDrawer.h"
 #include "PausePage.h"
@@ -49,7 +51,7 @@ void GameDrawer::draw() {
 	// ゲームオーバー
 	int gameoverCnt = m_game->getGameoverCnt();
 	if (gameoverCnt > 0) {
-		if ((gameoverCnt < 60 && gameoverCnt / 2 % 2 == 0) || gameoverCnt > 60) {
+		if ((gameoverCnt < FPS_N && gameoverCnt / 2 % 2 == 0) || gameoverCnt > FPS_N) {
 			DrawRotaGraph(GAME_WIDE / 2, GAME_HEIGHT / 2, min(m_exX, m_exY) * 0.7, 0.0, m_gameoverHandle, TRUE);
 		}
 
@@ -64,25 +66,7 @@ void GameDrawer::draw() {
 	else {
 		m_worldDrawer->setWorld(m_game->getWorld());
 	}
-	m_worldDrawer->draw(m_game->afterSkillUsableStoryNum());
-
-	// セーブ完了通知
-	int noticeSaveDone = m_game->getGameData()->getNoticeSaveDone();
-	int alpha = 0;
-	if (noticeSaveDone > 0) {
-		if (noticeSaveDone * 3 > m_game->getGameData()->NOTICE_SAVE_DONE_TIME * 2) {
-			alpha = min(255, (m_game->getGameData()->NOTICE_SAVE_DONE_TIME - noticeSaveDone) * 3);
-		}
-		else if (noticeSaveDone * 3 > m_game->getGameData()->NOTICE_SAVE_DONE_TIME ) {
-			alpha = 255;
-		}
-		else {
-			alpha = max(0, noticeSaveDone * 3);
-		}
-		SetDrawBlendMode(DX_BLENDMODE_ALPHA, alpha);
-		DrawRotaGraph(m_noticeX, m_noticeY, min(m_exX, m_exY) * m_noticeEx, 0.0, m_noticeSaveDataHandle, TRUE);
-		SetDrawBlendMode(DX_BLENDMODE_ALPHA, 255);
-	}
+	m_worldDrawer->draw(m_game->afterSkillUsableLoop());
 
 	// スキルの時間等を描画
 	if (skill != nullptr) {
@@ -103,6 +87,35 @@ void GameDrawer::draw() {
 			oss << now + 1 << "/" << num << "：" << cnt1 << "." << cnt2;
 			DrawStringToHandle((int)(900 * m_exX), (int)(30 * m_exY), oss.str().c_str(), BLACK, m_skillHandle);
 		}
+	}
+	// 経過時間 TODO: 画像にする
+	else if (m_worldDrawer->getWorld()->getBrightValue() == 255 && !m_game->getStory()->eventNow()) {
+		int time = m_game->getStory()->getTimer()->getTime();
+		int lifespan = m_game->WORLD_LIFESPAN;
+		int wide = GAME_WIDE / 4;
+		int barWide = (int)(10 * m_exX);
+		int leftX = (int)(850 * m_exX);
+		DrawBox(leftX, (int)(50 * m_exY), leftX + wide, (int)(80 * m_exY), BLACK, TRUE);
+		int p = leftX + (time * wide / lifespan);
+		DrawBox(p - barWide, (int)(20 * m_exY), p + barWide, (int)(110 * m_exY), WHITE, TRUE);
+	}
+
+	// セーブ完了通知
+	int noticeSaveDone = m_game->getGameData()->getNoticeSaveDone();
+	int alpha = 0;
+	if (noticeSaveDone > 0) {
+		if (noticeSaveDone * 3 > m_game->getGameData()->NOTICE_SAVE_DONE_TIME * 2) {
+			alpha = min(255, (m_game->getGameData()->NOTICE_SAVE_DONE_TIME - noticeSaveDone) * 3);
+		}
+		else if (noticeSaveDone * 3 > m_game->getGameData()->NOTICE_SAVE_DONE_TIME) {
+			alpha = 255;
+		}
+		else {
+			alpha = max(0, noticeSaveDone * 3);
+		}
+		SetDrawBlendMode(DX_BLENDMODE_ALPHA, alpha);
+		DrawRotaGraph(m_noticeX, m_noticeY, min(m_exX, m_exY) * m_noticeEx, 0.0, m_noticeSaveDataHandle, TRUE);
+		SetDrawBlendMode(DX_BLENDMODE_ALPHA, 255);
 	}
 
 	// 一時停止画面

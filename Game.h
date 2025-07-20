@@ -153,6 +153,9 @@ private:
 	// クリアしたイベント番号
 	std::vector<int> m_clearEvent;
 
+	// クリアした周
+	std::vector<int> m_clearLoop;
+
 public:
 
 	EventData();
@@ -162,13 +165,16 @@ public:
 	void load(FILE* eventFp);
 
 	// 初期化
-	void init() { m_clearEvent.clear(); }
+	void init() { 
+		m_clearEvent.clear();
+		m_clearLoop.clear();
+	}
 
-	// 特定のイベントをクリアしてるか
-	bool checkClearEvent(int eventNum);
+	// 特定のイベントをクリアしてるか (0 ~ loopまでの周回が対象)
+	bool checkClearEvent(int eventNum, int loop = 100);
 
 	//特定のイベントをクリアした
-	void setClearEvent(int eventNum);
+	void setClearEvent(int eventNum, int loop);
 
 };
 
@@ -176,6 +182,10 @@ public:
 // セーブデータ
 class GameData {
 private:
+	const char* INT_DATA_PATH = "intDataNew.dat";
+	const char* STR_DATA_PATH = "strDataNew.dat";
+	const char* EVENT_DATA_PATH = "eventDataNew.dat";
+
 	// セーブする場所
 	std::string m_saveFilePath;
 
@@ -195,10 +205,12 @@ private:
 	int m_areaNum;
 
 	// 今やっているストーリー
-	int m_storyNum;
+	int m_time;
 
-	// 最新の未クリアストーリー
-	int m_latestStoryNum;
+	int m_loop;
+
+	// 最新の未ループ
+	int m_latestLoop;
 
 	// 音量
 	int m_soundVolume;
@@ -212,7 +224,7 @@ private:
 public:
 	GameData();
 	GameData(const char* saveFilePath);
-	GameData(const char* saveFilePath, int storyNum);
+	GameData(const char* saveFilePath, int loop);
 	~GameData();
 
 	// セーブ完了の通知を表示する時間
@@ -221,8 +233,8 @@ public:
 	// セーブとロード
 	bool save(bool force = false);
 	bool load();
-	bool saveChapter();
-	bool loadChapter(int storyNum);
+	bool saveLoop();
+	bool loadLoop(int loop);
 	// 全セーブデータ共通
 	bool saveCommon(int soundVolume, int gameWide, int gameHeight);
 	bool loadCommon(int* soundVolume, int* gameWide, int* gameHeight);
@@ -230,21 +242,23 @@ public:
 	// ゲッタ
 	inline bool getExist() const { return m_exist; }
 	inline int getAreaNum() const { return m_areaNum; }
-	inline int getStoryNum() const { return m_storyNum; }
+	inline int getTime() const { return m_time; }
+	inline int getLoop() const { return m_loop; }
 	inline int getSoundVolume() const { return m_soundVolume; }
 	inline int getMoney() const { return m_money; }
 	inline const char* getSaveFilePath() const { return m_saveFilePath.c_str(); }
 	inline int getDoorSum() const { return (int)m_doorData.size(); }
 	inline int getFrom(int i) const { return m_doorData[i]->from(); }
 	inline int getTo(int i) const { return m_doorData[i]->to(); }
-	inline int getLatestStoryNum() const { return m_latestStoryNum; }
+	inline int getLatestLoop() const { return m_latestLoop; }
 	inline EventData* getEventData() { return m_eventData; }
 	inline int getNoticeSaveDone() const { return m_noticeSaveDone; }
 	CharacterData* getCharacterData(std::string characterName);
 
 	// セッタ
 	inline void setAreaNum(int areaNum) { m_areaNum = areaNum; }
-	inline void setStoryNum(int storyNum) { m_storyNum = storyNum; }
+	inline void setTime(int time) { m_time = time; }
+	inline void setLoop(int loop) { m_loop = loop; }
 	inline void setSoundVolume(int soundVolume) { m_soundVolume = soundVolume; }
 	inline void setNoticeSaveDone(int noticeSaveDone) { m_noticeSaveDone = noticeSaveDone; }
 
@@ -259,6 +273,8 @@ public:
 
 	// ストーリーが進んだ時にセーブデータを更新する
 	void updateStory(Story* story);
+
+	void updateWorldVersion(Story* story);
 
 	// 世界のやり直し
 	void resetWorld();
@@ -330,6 +346,15 @@ private:
 
 
 class Game {
+public:
+	// 世界が終わるまでの時間 X分 * 60 * FPS 36000だと10min debug時1200とか
+	const int WORLD_LIFESPAN = 36000;
+
+	const int MAX_VERSION = 6;
+
+	// 複製の最大数
+	const int MAX_SKILL = 6;
+
 private:
 
 	GameData* m_gameData;
@@ -359,10 +384,11 @@ private:
 	bool m_rebootFlag;
 
 public:
-	Game(const char* saveFilePath = "savedata/test/", int storyNum = -1);
+	Game(const char* saveFilePath = "savedata/test/", int loop = -1);
 	~Game();
 
 	// ゲッタ
+	Story* const getStory() const { return m_story; }
 	World* getWorld() const { return m_world; }
 	HeartSkill* getSkill() const { return m_skill; }
 	BattleOption* getGamePause() const { return m_battleOption; }
@@ -377,13 +403,13 @@ public:
 	bool play();
 
 	// セーブデータをロード（前のセーブポイントへ戻る）
-	void backPrevSave(int prevStoryNum);
+	void backPrevSave();
 
 	// 描画していいならtrue
 	bool ableDraw();
 
 	// スキル発動できるところまでストーリーが進んでいるか
-	bool afterSkillUsableStoryNum() const;
+	bool afterSkillUsableLoop() const;
 
 private:
 

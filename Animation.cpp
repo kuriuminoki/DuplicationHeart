@@ -129,7 +129,7 @@ void Movie::play() {
 
 	// ZƒL[’·‰Ÿ‚µ‚ÅI—¹
 	if (controlZ() > 0) {
-		if (m_skipCnt++ == 60) {
+		if (m_skipCnt++ == FPS_N) {
 			m_finishFlag = true;
 		}
 	}
