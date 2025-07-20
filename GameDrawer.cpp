@@ -89,13 +89,15 @@ void GameDrawer::draw() {
 		}
 	}
 	// 経過時間 TODO: 画像にする
-	if (m_worldDrawer->getWorld()->getBrightValue() == 255 && !m_game->getStory()->eventNow()) {
+	else if (m_worldDrawer->getWorld()->getBrightValue() == 255 && !m_game->getStory()->eventNow()) {
 		int time = m_game->getStory()->getTimer()->getTime();
 		int lifespan = m_game->WORLD_LIFESPAN;
 		int wide = GAME_WIDE / 4;
-		DrawBox(800, 50, 800 + wide, 80, BLACK, TRUE);
-		int p = 800 + (time * wide / lifespan);
-		DrawBox(p - 10, 20, p + 10, 110, WHITE, TRUE);
+		int barWide = (int)(10 * m_exX);
+		int leftX = (int)(850 * m_exX);
+		DrawBox(leftX, (int)(50 * m_exY), leftX + wide, (int)(80 * m_exY), BLACK, TRUE);
+		int p = leftX + (time * wide / lifespan);
+		DrawBox(p - barWide, (int)(20 * m_exY), p + barWide, (int)(110 * m_exY), WHITE, TRUE);
 	}
 
 	// セーブ完了通知
