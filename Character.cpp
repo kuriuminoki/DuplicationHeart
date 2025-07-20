@@ -363,7 +363,7 @@ void Character::damageHp(int value) {
 	
 	// –³“G‚¶‚á‚È‚¢‚È‚çHPŒ»Û
 	m_hp = max(0, m_hp - value);
-	m_dispHpCnt = 60;
+	m_dispHpCnt = FPS_N;
 }
 
 // ˆÚ“®‚·‚éiÀ•W‚ğ“®‚©‚·j

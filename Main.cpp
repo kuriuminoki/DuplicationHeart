@@ -11,8 +11,8 @@ static int mStartTime;
 static int mCount;
 static int debug = FALSE;
 static float mFps;
-static const int N = 60;
-static const int FPS = 60;
+static const int N = FPS_N;
+static const int FPS = FPS_N;
 
 bool Update() {
 	if (mCount == 0) {
@@ -103,7 +103,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 			Title::TITLE_RESULT result = title->play();
 			title->draw();
 			if (result == Title::START) {
-				game = new Game(title->useSaveFile(), title->startStoryNum());
+				game = new Game(title->useSaveFile(), title->startLoop());
 				gameDrawer = new GameDrawer(game);
 				delete title;
 				gamePlay = true;

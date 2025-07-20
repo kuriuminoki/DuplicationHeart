@@ -8,6 +8,9 @@ static int WINDOW = TRUE;
 // マウスを表示するならFALSE
 static int MOUSE_DISP = TRUE;
 
+// FPS
+#define FPS_N 60
+
 //画面の大きさ
 #define GAME_WIDE_MAX 3840
 #define GAME_HEIGHT_MAX 2160
