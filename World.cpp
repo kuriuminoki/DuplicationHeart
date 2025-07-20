@@ -841,6 +841,12 @@ CharacterController* World::createControllerWithData(const Character* character,
 	return createController(data->controllerName(), brain, action);
 }
 
+void World::playBGM() {
+	if (!m_soundPlayer_p->checkBGMplay()) {
+		m_soundPlayer_p->playBGM();
+	}
+}
+
 /*
 *  í‚í‚¹‚é
 */
@@ -848,9 +854,7 @@ void World::battle() {
 
 	m_dispHpInfoFlag = true;
 
-	if (!m_soundPlayer_p->checkBGMplay()) {
-		m_soundPlayer_p->playBGM();
-	}
+	playBGM();
 	
 	// ‰æ–ÊˆÃ“]ˆ—
 	if (dealBrightValue()) { return; }

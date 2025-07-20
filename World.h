@@ -327,6 +327,9 @@ public:
 	// 仲間をプレイヤーの位置へ移動
 	void setPlayerFollowerPoint();
 
+	// BGMを流す
+	void playBGM();
+
 	// キャラに戦わせる
 	void battle();
 
