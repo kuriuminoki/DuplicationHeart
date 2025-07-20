@@ -58,7 +58,7 @@ SelectSaveData::SelectSaveData() {
 		}
 	}
 
-	// チャプター名を取得
+	// ループ名を取得
 	for (int i = 0; i < maxLoop; i++) {
 		//string s = getChapterName(i + 1);
 		//m_chapterNames.push_back(s);
@@ -164,7 +164,7 @@ const char* SelectSaveData::useDirName() {
 	return m_gameData[m_useSaveDataIndex]->getSaveFilePath();
 }
 
-// 始めるチャプター
+// 始めるループ
 int SelectSaveData::startLoop() {
 	if (m_useSaveDataIndex == NOT_DECIDE_DATA || m_startLoop[m_useSaveDataIndex] == nullptr) { return -1; }
 	int loop = m_startLoop[m_useSaveDataIndex]->getNowValue();

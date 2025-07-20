@@ -167,6 +167,7 @@ EventData::EventData(FILE* eventFp) {
 void EventData::save(FILE* eventFp) {
 	for (unsigned int i = 0; i < m_clearEvent.size(); i++) {
 		fwrite(&m_clearEvent[i], sizeof(int), 1, eventFp);
+		fwrite(&m_clearLoop[i], sizeof(int), 1, eventFp);
 	}
 }
 
@@ -175,22 +176,27 @@ void EventData::load(FILE* eventFp) {
 	while (feof(eventFp) == 0) {
 		int num;
 		fread(&num, sizeof(int), 1, eventFp);
-		setClearEvent(num);
+		int loop;
+		fread(&loop, sizeof(int), 1, eventFp);
+		setClearEvent(num, loop);
 	}
 }
 
 // 特定のイベントをクリアしてるか
-bool EventData::checkClearEvent(int eventNum) {
+bool EventData::checkClearEvent(int eventNum,int loop) {
 	for (unsigned int i = 0; i < m_clearEvent.size(); i++) {
-		if (m_clearEvent[i] == eventNum) { return true; }
+		if (m_clearEvent[i] == eventNum && m_clearLoop[i] <= loop) {
+			return true;
+		}
 	}
 	return false;
 }
 
 //特定のイベントをクリアした
-void EventData::setClearEvent(int eventNum) {
+void EventData::setClearEvent(int eventNum, int loop) {
 	if (!checkClearEvent(eventNum)) {
 		m_clearEvent.push_back(eventNum);
+		m_clearLoop.push_back(loop);
 	}
 }
 
@@ -271,7 +277,7 @@ GameData::GameData(const char* saveFilePath, int loop) :
 	// いったん最新のデータを読み込む
 	m_exist = load();
 	
-	// 古いチャプターのデータを読み込んで上書き
+	// 古いループのデータを読み込んで上書き
 	loadLoop(loop);
 }
 
@@ -294,10 +300,10 @@ CharacterData* GameData::getCharacterData(string characterName) {
 	return nullptr;
 }
 
-// セーブ forceがfalseなら最新のチャプター以外のセーブを拒否する
+// セーブ forceがfalseなら最新のループ以外のセーブを拒否する
 bool GameData::save(bool force) {
 
-	// 今やっているチャプターが最新ならセーブ
+	// 今やっているループが最新ならセーブ
 	if (m_loop == m_latestLoop || force) {
 		FILE* intFp = nullptr, * strFp = nullptr, * eventFp = nullptr;
 
@@ -377,7 +383,7 @@ bool GameData::load() {
 	return true;
 }
 
-// バックアップを取る（チャプター巻き戻し機能用）
+// バックアップを取る（ループ巻き戻し機能用）
 bool GameData::saveLoop() {
 
 	string filePath = m_saveFilePath;
@@ -393,7 +399,7 @@ bool GameData::saveLoop() {
 	return true;
 }
 
-// チャプターを指定してロード、latestLoopだけは変わらない
+// ループを指定してロード、latestLoopだけは変わらない
 bool GameData::loadLoop(int loop) {
 	int latestLoop = m_latestLoop;
 	string filePath = m_saveFilePath;
@@ -507,10 +513,10 @@ void GameData::resetWorld() {
 */
 Game::Game(const char* saveFilePath, int loop) {
 	// データ
-	if (loop == -1) { // チャプター指定なし、最新のチャプター
+	if (loop == -1) { // ループ指定なし、最新のループ
 		m_gameData = new GameData(saveFilePath);
 	}
-	else { // チャプター指定あり
+	else { // ループ指定あり
 		m_gameData = new GameData(saveFilePath, loop);
 	}
 
@@ -551,7 +557,7 @@ Game::Game(const char* saveFilePath, int loop) {
 	// 初期データをセーブ
 	if (!m_gameData->getExist()) {
 		m_gameData->save();
-		// チャプターのバックアップ
+		// ループのバックアップ
 		m_gameData->saveLoop();
 	}
 
@@ -647,6 +653,8 @@ bool Game::play() {
 			m_soundPlayer->stopBGM();
 			// データ更新
 			m_gameData->updateStory(m_story);
+			// ループ直後の状態をバックアップ
+			m_gameData->saveLoop();
 		}
 		else { // イベントクリア
 			m_gameData->updateStory(m_story);
@@ -654,8 +662,6 @@ bool Game::play() {
 		}
 		// セーブ
 		m_gameData->save();
-		// バックアップ
-		m_gameData->saveLoop();
 	}
 	else if (m_skill != nullptr) { // スキル発動中で、最後のループ中
 		if (m_skill->play()) {
@@ -692,6 +698,7 @@ bool Game::play() {
 	}
 	// エリア移動
 	else if (m_world->getBrightValue() == 0 && CheckSoundMem(m_world->getDoorSound()) == 0) {
+		endSkill();
 		m_world->changePlayer(m_world->getCharacterWithName("ハート"));
 		int fromAreaNum = m_world->getAreaNum();
 		int toAreaNum = m_world->getNextAreaNum();

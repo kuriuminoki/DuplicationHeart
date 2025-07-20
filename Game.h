@@ -153,6 +153,9 @@ private:
 	// クリアしたイベント番号
 	std::vector<int> m_clearEvent;
 
+	// クリアした周
+	std::vector<int> m_clearLoop;
+
 public:
 
 	EventData();
@@ -164,11 +167,11 @@ public:
 	// 初期化
 	void init() { m_clearEvent.clear(); }
 
-	// 特定のイベントをクリアしてるか
-	bool checkClearEvent(int eventNum);
+	// 特定のイベントをクリアしてるか (0 ~ loopまでの周回が対象)
+	bool checkClearEvent(int eventNum, int loop = 100);
 
 	//特定のイベントをクリアした
-	void setClearEvent(int eventNum);
+	void setClearEvent(int eventNum, int loop);
 
 };
 

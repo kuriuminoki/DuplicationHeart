@@ -48,7 +48,7 @@ Story::Story(int loop, int time, World* world, SoundPlayer* soundPlayer, EventDa
 	m_initDark = false;
 
 	m_version = 1 + time / (worldLifespan / maxVersion);
-	m_date = time / (worldLifespan / 3);
+	m_date = time / (worldLifespan / 3); // 朝昼晩の3つ
 	if (time == 0) {
 		updateWorldVersion();
 	}
@@ -57,7 +57,7 @@ Story::Story(int loop, int time, World* world, SoundPlayer* soundPlayer, EventDa
 	// eventList.csvをロード
 	ostringstream oss;
 	oss << "data/newStory/" << "eventList.csv";
-	loadEventCsvData(oss.str().c_str(), world, m_soundPlayer_p);
+	loadEventCsvData(oss.str().c_str(), world, m_soundPlayer_p, worldLifespan / maxVersion);
 
 	// イベントの発火確認
 	checkFire();
@@ -77,24 +77,42 @@ Story::~Story() {
 }
 
 // csvファイルを読み込む
-void Story::loadEventCsvData(const char* fileName, World* world, SoundPlayer* soundPlayer) {
+void Story::loadEventCsvData(const char* fileName, World* world, SoundPlayer* soundPlayer, int versionTimeSpan) {
 	CsvReader csvReader(fileName);
 	vector<map<string, string> > data = csvReader.getData();
 	for (int i = 0; i < data.size(); i++) {
 		int eventNum = stoi(data[i].find("eventNum")->second);
 		bool repeat = (bool)stoi(data[i].find("repeat")->second);
-		string conditions_str = data[i].find("conditions")->second;
-		vector<string> conditions = split(conditions_str, '|');
-		int startTime = stoi(data[i].find("startTime")->second);
-		int endTime = stoi(data[i].find("endTime")->second);
+
+		// 前のループまでにクリアしている必要があるイベントの確認
+		string preConditions_str = data[i].find("preConditions")->second;
+		vector<string> preConditions = split(preConditions_str, '|');
 		bool checkConditions = true;
-		for (unsigned int j = 0; j < conditions.size(); j++) {
-			if (conditions[j] != "") {
-				m_eventData_p->checkClearEvent(stoi(conditions[j]));
+		for (unsigned int j = 0; j < preConditions.size(); j++) {
+			if (preConditions[j] != "" && !m_eventData_p->checkClearEvent(stoi(preConditions[j]), m_loop - 1)) {
+				checkConditions = false;
 			}
 		}
 		if (checkConditions && (repeat || !m_eventData_p->checkClearEvent(eventNum))) {
-			m_eventList.push_back(new Event(eventNum, startTime, endTime, world, soundPlayer, m_version));
+			
+			// 時間はバージョン単位で指定する。例えばバージョン1と2のちょうど間を表すなら1.5とcsvファイルに記載する。
+			int startTime = (int)((stod(data[i].find("startTime")->second) - 1) * versionTimeSpan);
+			int endTime = (int)((stod(data[i].find("endTime")->second) - 1) * versionTimeSpan);
+
+			string conditions_str = data[i].find("conditions")->second;
+			vector<string> conditions = split(conditions_str, '|');
+			vector<int> requireEventNum;
+			if (conditions[0] != "") {
+				for (unsigned int i = 0; i < conditions.size(); i++) {
+					// 既に条件を満たしている（クリアしている）イベントはチェックの必要がないためpush_backしない
+					int n = stoi(conditions[i]);
+					if (!m_eventData_p->checkClearEvent(n)) {
+						requireEventNum.push_back(n);
+					}
+				}
+			}
+
+			m_eventList.push_back(new Event(eventNum, startTime, endTime, requireEventNum, world, soundPlayer, m_version));
 		}
 	}
 }
@@ -123,8 +141,8 @@ bool Story::play(int worldLifespan, int maxVersion) {
 	m_initDark = false;
 	if (m_nowEvent == nullptr) {
 		if (m_timer->getTime() == worldLifespan) {
-			// 世界ループのイベントをセット
-			m_eventList.push_back(new Event(9999, 0, 99999999, m_world_p, m_soundPlayer_p, m_version));
+			// 世界ループのイベント(9999)をセット
+			m_eventList.push_back(new Event(9999, 0, 99999999, vector<int>(), m_world_p, m_soundPlayer_p, m_version));
 			m_worldEndFlag = true;
 			m_loop++;
 		}
@@ -149,7 +167,7 @@ bool Story::play(int worldLifespan, int maxVersion) {
 		
 		// イベントクリア
 		if (result == EVENT_RESULT::SUCCESS) {
-			m_eventData_p->setClearEvent(m_nowEvent->getEventNum());
+			m_eventData_p->setClearEvent(m_nowEvent->getEventNum(), m_loop);
 		}
 		// イベント失敗
 		if (result == EVENT_RESULT::FAILURE) {
@@ -169,10 +187,21 @@ bool Story::play(int worldLifespan, int maxVersion) {
 // イベントの発火確認
 void Story::checkFire() {
 	for (unsigned int i = 0; i < m_eventList.size(); i++) {
+		// タイミングの条件確認
 		if (!(m_timer->getTime() >= m_eventList[i]->getStartTime() && m_timer->getTime() < m_eventList[i]->getEndTime())) {
 			continue;
 		}
-		if (m_eventList[i]->fire()) {
+		// 依存イベントの条件確認
+		const vector<int> requireEventNum = m_eventList[i]->getRequireEventNum();
+		bool requireEventComplete = true;
+		for (unsigned int i = 0; i < requireEventNum.size(); i++) {
+			if (!m_eventData_p->checkClearEvent(requireEventNum[i])) {
+				requireEventComplete = false;
+				break;
+			}
+		}
+		// 発火確認
+		if (requireEventComplete && m_eventList[i]->fire()) {
 			m_nowEvent = m_eventList[i];
 			m_eventList[i] = m_eventList.back();
 			m_eventList.pop_back();

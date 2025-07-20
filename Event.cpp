@@ -35,11 +35,12 @@ vector<string> mapParam2vector(map<string, string> paramMap) {
 /*
 * ƒCƒxƒ“ƒg
 */
-Event::Event(int eventNum, int startTime, int endTime, World* world, SoundPlayer* soundPlayer, int version) {
+Event::Event(int eventNum, int startTime, int endTime, vector<int> requireEventNum, World* world, SoundPlayer* soundPlayer, int version) {
 
 	m_eventNum = eventNum;
 	m_startTime = startTime;
 	m_endTime = endTime;
+	m_requireEventNum = requireEventNum;
 	m_nowElement = 0;
 	m_eventElement = nullptr;
 

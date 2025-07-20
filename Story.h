@@ -63,7 +63,7 @@ public:
 	~Story();
 
 	// csvƒtƒ@ƒCƒ‹‚ğ“Ç‚İ‚Ş
-	void loadEventCsvData(const char* fileName, World* world, SoundPlayer* soundPlayer);
+	void loadEventCsvData(const char* fileName, World* world, SoundPlayer* soundPlayer, int versionTimeSpan);
 	void loadVersionCsvData(const char* fileName, World* world, SoundPlayer* soundPlayer);
 
 	void debug(int x, int y, int color);
