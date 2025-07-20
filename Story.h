@@ -78,6 +78,9 @@ public:
 
 	void updateWorldVersion();
 
+	// ループ実行時の初期化（実行直後の1Fの描画のために使う。）
+	void loopInit();
+
 	// ゲッタ
 	inline const Timer* getTimer() const { return m_timer; }
 	inline int getDate() const { return m_date; }

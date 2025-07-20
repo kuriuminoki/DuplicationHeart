@@ -165,7 +165,10 @@ public:
 	void load(FILE* eventFp);
 
 	// 初期化
-	void init() { m_clearEvent.clear(); }
+	void init() { 
+		m_clearEvent.clear();
+		m_clearLoop.clear();
+	}
 
 	// 特定のイベントをクリアしてるか (0 ~ loopまでの周回が対象)
 	bool checkClearEvent(int eventNum, int loop = 100);

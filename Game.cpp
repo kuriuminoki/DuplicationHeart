@@ -165,6 +165,11 @@ EventData::EventData(FILE* eventFp) {
 
 // セーブ
 void EventData::save(FILE* eventFp) {
+	if (m_clearEvent.size() == 0) { 
+		// 空のファイルだとロード時にうまくいかないため0を入れて空にならないようにする。
+		m_clearEvent.push_back(0);
+		m_clearLoop.push_back(0);
+	}
 	for (unsigned int i = 0; i < m_clearEvent.size(); i++) {
 		fwrite(&m_clearEvent[i], sizeof(int), 1, eventFp);
 		fwrite(&m_clearLoop[i], sizeof(int), 1, eventFp);
@@ -336,10 +341,10 @@ bool GameData::save(bool force) {
 		fclose(intFp);
 		fclose(strFp);
 		fclose(eventFp);
-	}
-	// セーブ完了通知 最初だけはしない
-	if (m_time > 1) {
-		m_noticeSaveDone = NOTICE_SAVE_DONE_TIME;
+		// セーブ完了通知 最初だけはしない
+		if (m_time > 1) {
+			m_noticeSaveDone = NOTICE_SAVE_DONE_TIME;
+		}
 	}
 	return true;
 }
@@ -557,7 +562,6 @@ Game::Game(const char* saveFilePath, int loop) {
 	// 初期データをセーブ
 	if (!m_gameData->getExist()) {
 		m_gameData->save();
-		// ループのバックアップ
 		m_gameData->saveLoop();
 	}
 
@@ -651,8 +655,11 @@ bool Game::play() {
 		else { // イベントクリア
 			m_gameData->updateStory(m_story);
 			m_gameData->asignedWorld(m_world, false);
+			if (m_gameData->getLoop() < m_gameData->getLatestLoop()) {
+				m_gameData->saveLoop(); // 過去のデータ(バックアップ)をプレイ中ならそのデータを更新
+			}
 		}
-		// セーブ
+		// セーブ (バックアップは更新されない)
 		m_gameData->save();
 	}
 	else if (m_skill != nullptr) { // スキル発動中で、最後のループ中
@@ -709,6 +716,7 @@ bool Game::play() {
 			m_world->cameraPointInit();
 			m_world->setBlindFlag(false);
 			m_world->clearCharacter();
+			m_story->loopInit();
 			m_gameData->resetWorld();
 			m_gameData->asignWorld(m_world, true);
 			m_soundPlayer->stopBGM();

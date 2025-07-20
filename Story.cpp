@@ -230,6 +230,12 @@ void Story::updateWorldVersion() {
 	m_world_p->addObject(getObjectLoader());
 }
 
+void Story::loopInit() {
+	m_version = 1;
+	m_timer->setTime(0);
+	m_date = 0;
+}
+
 // ƒZƒbƒ^
 void Story::setWorld(World* world) {
 	m_world_p = world;
