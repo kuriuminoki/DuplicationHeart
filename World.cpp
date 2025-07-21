@@ -213,7 +213,7 @@ World::World(int fromAreaNum, int toAreaNum, SoundPlayer* soundPlayer) :
 
 	m_camera->setEx(m_cameraMaxEx);
 
-	m_characterDeadGraph = new GraphHandles("picture/effect/dead", 5, 1.0, 0, true);
+	m_characterDeadGraph = new GraphHandles("picture/effect/dead", 6, 1.0, 0, true);
 	m_characterDamageGraph = new GraphHandles("picture/effect/damage", 1, 0.2, 0, true);
 	m_bombGraph = new GraphHandles("picture/effect/bomb", 9, 1.0, 0, true);
 	m_characterDeadSound = LoadSoundMem("sound/battle/dead.wav");
@@ -1281,14 +1281,6 @@ void World::atariCharacterAndObject(CharacterController* controller, vector<Obje
 					m_camera->setGPoint(character->getCenterX(), character->getCenterY());
 				}
 			}
-		}
-		// deleteFlag‚ªtrue‚È‚çíœ‚·‚é
-		if (objects[i]->getDeleteFlag()) {
-			delete objects[i];
-			// ––”ö‚ğíœ‚·‚é•û‚ª‘¬‚¢
-			objects[i] = objects.back();
-			objects.pop_back();
-			i--;
 		}
 	}
 }
