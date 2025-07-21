@@ -1268,7 +1268,7 @@ void World::atariCharacterAndObject(CharacterController* controller, vector<Obje
 						}
 					}
 				}
-				if (character->haveDeadGraph() || character->getBossFlag() || character->getId() == m_playerId) {
+				if (!m_duplicationFlag && (true || character->haveDeadGraph() || character->getBossFlag() || character->getId() == m_playerId)) {
 					// ƒtƒŠ[ƒY‚³‚¹‚é
 					m_worldFreezeTime = 30;
 					m_camera->setGPoint(character->getCenterX(), character->getCenterY());
