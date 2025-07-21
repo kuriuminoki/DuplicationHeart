@@ -75,6 +75,9 @@ public:
 
 	// カメラを揺らす
 	void shaking();
+
+	// 目標地点までの距離を計算
+	int calcGoalDistance();
 };
 
 

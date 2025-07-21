@@ -667,7 +667,9 @@ bool Game::play() {
 	// セーブ完了通知の処理
 	m_gameData->setNoticeSaveDone(max(0, m_gameData->getNoticeSaveDone() - 1));
 
-	m_soundPlayer->play();
+	if (m_world->getWorldFreezeTime() == 0) {
+		m_soundPlayer->play();
+	}
 
 	// テストは以降を実行しない
 	if (TEST_MODE) { return false; }
@@ -772,7 +774,8 @@ bool Game::skillUsable() {
 				m_world->getBrightValue() == 255 &&
 				m_world->getControlCharacterName() == "ハート" &&
 				m_world->getConversation() == nullptr &&
-				m_world->getObjectConversation() == nullptr)
+				m_world->getObjectConversation() == nullptr &&
+				m_world->getWorldFreezeTime() == 0)
 			{
 				// ハート自身がスキル発動可能な状態か
 				Character* character = m_world->getCharacterWithName("ハート");

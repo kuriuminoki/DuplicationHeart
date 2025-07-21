@@ -2,12 +2,15 @@
 #include "Define.h"
 #include "DxLib.h"
 
+#include <cmath>
+
 
 Camera::Camera() :
 	Camera(0, 0, 1.0, 1)
 {
 
 }
+
 
 Camera::Camera(int x, int y, double ex, int speed) {
 	m_x = x;
@@ -24,6 +27,7 @@ Camera::Camera(int x, int y, double ex, int speed) {
 	m_zoomOutMode = false;
 }
 
+
 Camera::Camera(const Camera* original) {
 	m_x = original->getX();
 	m_y = original->getY();
@@ -38,6 +42,7 @@ Camera::Camera(const Camera* original) {
 	m_shakingTime = original->getShakingTime();
 	m_zoomOutMode = original->getZoomOutMode();
 }
+
 
 // カメラの移動 目標地点が近いほど鈍感になる
 void Camera::move() {
@@ -57,6 +62,7 @@ void Camera::move() {
 	}
 }
 
+
 // カメラで座標と拡大率を調整する
 void Camera::setCamera(int* x, int* y, double* ex) const {
 	// カメラからのずれを計算
@@ -75,6 +81,7 @@ void Camera::setCamera(int* x, int* y, double* ex) const {
 	*ex *= m_ex;
 }
 
+
 void Camera::getMouse(int* x, int* y) const {
 	GetMousePoint(x, y);
 
@@ -87,11 +94,13 @@ void Camera::getMouse(int* x, int* y) const {
 	*y = m_y + dy;
 }
 
+
 // カメラを揺らす
 void Camera::shakingStart(int width, int time) {
 	m_shakingWidth = width;
 	m_shakingTime = time;
 }
+
 
 // カメラを揺らす
 void Camera::shaking() {
@@ -99,4 +108,12 @@ void Camera::shaking() {
 	m_x += GetRand(m_shakingWidth * 2) - m_shakingWidth;
 	m_y += GetRand(m_shakingWidth * 2) - m_shakingWidth;
 	m_shakingTime--;
+}
+
+
+// 目標地点までの距離を計算
+int Camera::calcGoalDistance() {
+	int dx = m_gx - m_x;
+	int dy = m_gy - m_y;
+	return sqrt(dx * dx + dy * dy);
 }

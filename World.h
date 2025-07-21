@@ -58,6 +58,9 @@ public:
 class World {
 private:
 
+	// 世界をフリーズする時間
+	int m_worldFreezeTime;
+
 	// (Drawer用) ＨＰなどの情報を表示するか
 	bool m_dispHpInfoFlag;
 
@@ -189,6 +192,7 @@ public:
 	void debug(int x, int y, int color) const;
 
 	// ゲッタ
+	inline int getWorldFreezeTime() const { return m_worldFreezeTime; }
 	inline bool getDispHpInfoFlag() const { return m_dispHpInfoFlag; }
 	inline int getFocusId() const { return m_focusId; }
 	inline int getPlayerId() const { return m_playerId; }

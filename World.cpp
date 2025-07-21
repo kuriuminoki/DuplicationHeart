@@ -133,6 +133,8 @@ void penetrationCharacterAndObject(CharacterController* controller, vector<Objec
 * コンストラクタ
 */
 World::World() {
+	m_worldFreezeTime = 0;
+
 	m_duplicationFlag = false;
 
 	m_dispHpInfoFlag = false;
@@ -482,7 +484,7 @@ void World::addObject(ObjectLoader* objectLoader) {
 
 // プレイヤーのHPが0ならtrue
 bool World::playerDead() {
-	return m_player_p->getHp() <= 0;
+	return m_player_p->getHp() <= 0 && m_worldFreezeTime == 0;
 }
 
 // プレイヤーのHPをMAXにする
@@ -855,6 +857,17 @@ void World::battle() {
 	m_dispHpInfoFlag = true;
 
 	playBGM();
+
+	// 世界のフリーズ処理
+	if (m_worldFreezeTime > 0) {
+		if (m_camera->calcGoalDistance() < 10) {
+			m_worldFreezeTime--;
+		}
+		else {
+			m_camera->move();
+		}
+		return;
+	}
 	
 	// 画面暗転処理
 	if (dealBrightValue()) { return; }
@@ -908,6 +921,8 @@ void World::battle() {
 
 //  Battle：カメラの更新
 void World::updateCamera() {
+
+	if (m_worldFreezeTime > 0) { return; }
 
 	// カメラを揺らす
 	m_camera->shaking();
@@ -1227,29 +1242,36 @@ void World::atariCharacterAndObject(CharacterController* controller, vector<Obje
 			}
 
 			// HP = 0になったとき（やられたとき）
-			if (character->noDispForDead()) {
-				if (character->getBossFlag()) {
-					m_bossDeadEffectCnt = 300;
-				}
-				else {
-					m_animations.push_back(new Animation(x, y, 3, m_characterDeadGraph));
-					m_camera->shakingStart(20, 20);
-					m_soundPlayer_p->pushSoundQueue(m_characterDeadSound, panPal);
-					if (!m_duplicationFlag && character->getGroupId() != m_player_p->getGroupId() && !character->getBossFlag()) {
-						int r = GetRand(100);
-						// スキル発動中でなければ雑魚キャラは確率でアイテムが落ちる
-						if (r < 20) {
-							m_itemVector.push_back(new CureItem("cure", x, y, 50));
-						}
-						else {
-							for (int i = 0; i < r % 4; i++) {
-								MoneyItem* money = new MoneyItem("money", x, y, 1);
-								money->setVx(GetRand(30) - 15);
-								money->setVy(GetRand(30) - 31);
-								m_itemVector.push_back(money);
+			if (character->getHp() == 0) {
+				if (!character->haveDeadGraph()) {
+					if (character->getBossFlag()) {
+						m_bossDeadEffectCnt = 300; // ボスのやられエフェクトの継続時間
+					}
+					else {
+						m_animations.push_back(new Animation(x, y, 3, m_characterDeadGraph));
+						m_camera->shakingStart(20, 20);
+						m_soundPlayer_p->pushSoundQueue(m_characterDeadSound, panPal);
+						if (!m_duplicationFlag && character->getGroupId() != m_player_p->getGroupId() && !character->getBossFlag()) {
+							int r = GetRand(100);
+							// スキル発動中でなければ雑魚キャラは確率でアイテムが落ちる
+							if (r < 20) {
+								m_itemVector.push_back(new CureItem("cure", x, y, 50));
+							}
+							else {
+								for (int i = 0; i < r % 4; i++) {
+									MoneyItem* money = new MoneyItem("money", x, y, 1);
+									money->setVx(GetRand(30) - 15);
+									money->setVy(GetRand(30) - 31);
+									m_itemVector.push_back(money);
+								}
 							}
 						}
 					}
+				}
+				if (true) {
+					// フリーズさせる
+					m_worldFreezeTime = 30;
+					m_camera->setGPoint(character->getCenterX(), character->getCenterY());
 				}
 			}
 		}
