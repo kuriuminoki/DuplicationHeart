@@ -64,6 +64,9 @@ public:
 	// カメラの動き
 	void move();
 
+	// X, Y方向に同じ感度で移動する
+	void moveNormal();
+
 	// カメラの座標を考慮した描画位置の補正
 	void setCamera(int* x, int* y, double* ex) const;
 

@@ -63,6 +63,23 @@ void Camera::move() {
 }
 
 
+// X, Y方向に同じ感度で移動する
+void Camera::moveNormal() {
+	if (m_x < m_gx) {
+		m_x += (m_gx - m_x) / 8 + 1;
+	}
+	if (m_x > m_gx) {
+		m_x -= (m_x - m_gx) / 8 + 1;
+	}
+	if (m_y < m_gy) {
+		m_y += (m_gy - m_y) / 8 + 1;
+	}
+	if (m_y > m_gy) {
+		m_y -= (m_y - m_gy) / 8 + 1;
+	}
+}
+
+
 // カメラで座標と拡大率を調整する
 void Camera::setCamera(int* x, int* y, double* ex) const {
 	// カメラからのずれを計算
