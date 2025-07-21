@@ -16,7 +16,7 @@ public:
 
 	inline void setTime(int time) { m_time = time; }
 
-	inline void advanceTime() { m_time++; }
+	inline void advanceTime(int speed) { m_time += speed; }
 
 	inline void resetTime() { m_time = START_TIME; }
 

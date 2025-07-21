@@ -25,6 +25,12 @@ private:
 	// ゲームオーバーの画像
 	int m_gameoverHandle;
 
+	// スピードアップモード
+	int m_quickModeHandle;
+	const int QUICK_SIZE = 50;
+	int m_quickModeFontHandle;
+	int m_quickModeCnt = 0;
+
 	// セーブ完了通知の画像
 	int m_noticeSaveDataHandle;
 	int m_noticeX, m_noticeY;

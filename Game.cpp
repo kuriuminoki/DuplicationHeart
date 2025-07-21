@@ -525,6 +525,8 @@ void GameData::resetWorld() {
 */
 Game::Game(const char* saveFilePath, int loop) {
 
+	m_timeSpeed = DEFAULT_TIME_SPEED;
+
 	if (loop == -1) { // ループ指定なし、最新のループ
 		m_gameData = new GameData(saveFilePath);
 	}
@@ -599,8 +601,14 @@ bool Game::play() {
 	// 一時停止
 	if (controlQ() == 1) {
 		if (m_battleOption == nullptr) {
-			m_battleOption = new BattleOption(m_soundPlayer);
-			m_soundPlayer->stopBGM();
+			if (m_timeSpeed == DEFAULT_TIME_SPEED) {
+				m_battleOption = new BattleOption(m_soundPlayer);
+				m_soundPlayer->stopBGM();
+			}
+			else {
+				// 速度アップモード中なら一時停止せずモード解除だけ
+				m_timeSpeed = DEFAULT_TIME_SPEED;
+			}
 		}
 		else {
 			// 音量の変更があるかもしれないのでセーブ
@@ -617,6 +625,13 @@ bool Game::play() {
 			// 音量の変更があるかもしれないのでセーブしタイトルへ戻る
 			m_gameData->saveCommon(m_battleOption->getNewSoundVolume(), GAME_WIDE, GAME_HEIGHT);
 			m_rebootFlag = true;
+		}
+		if (m_battleOption->getQuickFlag()) {
+			// 速度アップモードを開始
+			m_timeSpeed = QUICK_TIME_SPEED;
+			delete m_battleOption;
+			m_battleOption = nullptr;
+			m_soundPlayer->playBGM();
 		}
 		m_soundPlayer->play();
 		return false;
@@ -636,7 +651,7 @@ bool Game::play() {
 		}
 	}
 	// ストーリー進行
-	else if (m_story->play(WORLD_LIFESPAN, MAX_VERSION)) {
+	else if (m_story->play(WORLD_LIFESPAN, MAX_VERSION, m_timeSpeed)) {
 		// 次のループへ移行の場合Storyを作り直す
 		if (m_story->getLoop() > m_gameData->getLoop()) {
 			int nextLoopNum = m_story->getLoop();

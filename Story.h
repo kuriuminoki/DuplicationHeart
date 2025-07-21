@@ -68,7 +68,7 @@ public:
 
 	void debug(int x, int y, int color);
 
-	bool play(int worldLifespan, int maxVersion);
+	bool play(int worldLifespan, int maxVersion, int timeSpeed);
 
 	// イベントの発火確認
 	void checkFire();
