@@ -180,15 +180,21 @@ private:
 	// 1080を基準としたGAME_HEIGHTの倍率
 	double m_exY;
 
-	// ボタンの座標
+	// タイトルへ戻るボタン
 	const int TITLE_X1 = 100;
 	const int TITLE_Y1 = 800;
 	const int TITLE_X2 = 600;
 	const int TITLE_Y2 = 1000;
-
-	// タイトルへ戻るボタン
 	Button* m_titleButton;
 	bool m_titleFlag;
+
+	// 時間を高速で進める機能
+	const int QUICK_X1 = 70;
+	const int QUICK_Y1 = 150;
+	const int QUICK_X2 = 600;
+	const int QUICK_Y2 = 250;
+	Button* m_quickButton;
+	bool m_quickFlag;
 
 	// 操作説明
 	TutorialDisp* m_tutorialDisp;
@@ -202,7 +208,11 @@ public:
 	void draw() const;
 
 	// ゲッタ
-	bool getTitleFlag() { return m_titleFlag; }
+	inline bool getTitleFlag() { return m_titleFlag; }
+	inline bool getQuickFlag() { return m_quickFlag; }
+
+	// セッタ
+	inline bool setQuickFlag(bool quickFlag) { m_quickFlag = quickFlag; }
 };
 
 

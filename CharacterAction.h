@@ -241,6 +241,7 @@ public:
 	void setCharacterY(int y);
 	void setCharacterLeftDirection(bool leftDirection);
 	void setCharacterFreeze(bool freeze);
+	void setDeadFlag(bool deadFlag);
 
 	// 行動前の処理 毎フレーム行う
 	virtual void init();

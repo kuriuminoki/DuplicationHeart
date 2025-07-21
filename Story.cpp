@@ -137,7 +137,7 @@ void Story::loadVersionCsvData(const char* fileName, World* world, SoundPlayer* 
 	}
 }
 
-bool Story::play(int worldLifespan, int maxVersion) {
+bool Story::play(int worldLifespan, int maxVersion, int timeSpeed) {
 	m_initDark = false;
 	if (m_nowEvent == nullptr) {
 		if (m_timer->getTime() == worldLifespan) {
@@ -146,7 +146,7 @@ bool Story::play(int worldLifespan, int maxVersion) {
 			m_worldEndFlag = true;
 			m_loop++;
 		}
-		m_timer->advanceTime();
+		m_timer->advanceTime(timeSpeed);
 		m_world_p->battle();
 		checkFire();
 		if (m_timer->getTime() % (worldLifespan / maxVersion) == 0) {

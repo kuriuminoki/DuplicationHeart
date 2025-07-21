@@ -11,6 +11,9 @@ static int MOUSE_DISP = TRUE;
 // FPS
 #define FPS_N 60
 
+// ‰~Žü—¦
+#define PI 3.14
+
 //‰æ–Ê‚Ì‘å‚«‚³
 #define GAME_WIDE_MAX 3840
 #define GAME_HEIGHT_MAX 2160
@@ -45,5 +48,6 @@ const int BLUE = GetColor(0, 0, 255);
 const int LIGHT_BLUE = GetColor(100, 100, 255);
 const int ORANGE = GetColor(255, 165, 0);
 const int DARK_ORANGE = GetColor(80, 50, 0);
+const int YELLOW = GetColor(255, 255, 0);
 
 #endif

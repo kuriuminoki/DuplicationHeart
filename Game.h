@@ -374,6 +374,11 @@ private:
 	// 一時停止画面
 	BattleOption* m_battleOption;
 
+	// 時間の進む速度
+	int m_timeSpeed;
+	const int DEFAULT_TIME_SPEED = 1;
+	const int QUICK_TIME_SPEED = 10;
+
 	// 一時停止画面音
 	int m_pauseSound;
 
@@ -407,6 +412,8 @@ public:
 
 	// スキル発動できるところまでストーリーが進んでいるか
 	bool afterSkillUsableLoop() const;
+
+	bool quickModeNow() const { return !(m_timeSpeed == DEFAULT_TIME_SPEED); }
 
 private:
 

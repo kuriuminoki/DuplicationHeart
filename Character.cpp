@@ -222,6 +222,8 @@ Character::Character(int hp, int x, int y, int groupId) {
 
 	m_groupId = groupId;
 
+	m_deadFlag = false;
+
 	m_version = 1;
 	m_hp = hp;
 	m_prevHp = m_hp;
@@ -266,6 +268,7 @@ Character::~Character() {
 }
 
 void Character::setParam(Character* character) {
+	character->setDeadFlag(m_deadFlag);
 	character->changeInfoVersion(m_version);
 	character->setY(m_y);
 	character->setId(m_id);

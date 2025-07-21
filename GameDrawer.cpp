@@ -22,11 +22,15 @@ GameDrawer::GameDrawer(const Game* game) {
 	m_worldDrawer = new WorldDrawer(nullptr);
 
 	m_skillHandle = CreateFontToHandle(nullptr, (int)(SKILL_SIZE * m_exX), 10);
+	m_quickModeFontHandle = CreateFontToHandle(nullptr, (int)(QUICK_SIZE * m_exX), 5);
 
 	m_skillInfoHandle = LoadGraph("picture/battleMaterial/skillInfo.png");
 	m_skillInfoBackHandle = LoadGraph("picture/battleMaterial/skillInfoBack.png");
 
 	m_gameoverHandle = LoadGraph("picture/system/gameover.png");
+
+	m_quickModeHandle = LoadGraph("picture/battleMaterial/quickMode.png");
+	m_quickModeCnt = 0;
 
 	m_noticeSaveDataHandle = LoadGraph("picture/system/noticeSaveDone.png");
 	m_noticeEx = 0.7;
@@ -40,9 +44,11 @@ GameDrawer::GameDrawer(const Game* game) {
 GameDrawer::~GameDrawer() {
 	delete m_worldDrawer;
 	DeleteFontToHandle(m_skillHandle);
+	DeleteFontToHandle(m_quickModeFontHandle);
 	DeleteGraph(m_skillInfoHandle);
 	DeleteGraph(m_skillInfoBackHandle);
 	DeleteGraph(m_gameoverHandle);
+	DeleteGraph(m_quickModeHandle);
 	DeleteGraph(m_noticeSaveDataHandle);
 }
 
@@ -98,6 +104,16 @@ void GameDrawer::draw() {
 		DrawBox(leftX, (int)(50 * m_exY), leftX + wide, (int)(80 * m_exY), BLACK, TRUE);
 		int p = leftX + (time * wide / lifespan);
 		DrawBox(p - barWide, (int)(20 * m_exY), p + barWide, (int)(110 * m_exY), WHITE, TRUE);
+	}
+
+	if (m_game->quickModeNow()) {
+		m_quickModeCnt++;
+		double angle = PI / 180 * m_quickModeCnt;
+		DrawRotaGraph(GAME_WIDE / 2, GAME_HEIGHT / 2, min(m_exX, m_exY) * 0.2, angle, m_quickModeHandle, TRUE);
+		DrawStringToHandle((int)(20 * m_exX), GAME_HEIGHT - (int)(70 * m_exY), "Ｑキーでスピードアップを解除", YELLOW, m_quickModeFontHandle);
+	}
+	else {
+		m_quickModeCnt = 0;
 	}
 
 	// セーブ完了通知
