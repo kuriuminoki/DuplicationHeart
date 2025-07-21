@@ -47,8 +47,8 @@ Story::Story(int loop, int time, World* world, SoundPlayer* soundPlayer, EventDa
 
 	m_initDark = false;
 
-	m_version = 1 + time / (worldLifespan / maxVersion);
-	m_date = time / (worldLifespan / 3); // 朝昼晩の3つ
+	m_version = calcVersion(m_timer->getTime(), worldLifespan, maxVersion);
+	m_date = calcDate(m_timer->getTime(), worldLifespan);
 	if (time == 0) {
 		updateWorldVersion();
 	}
@@ -140,7 +140,8 @@ void Story::loadVersionCsvData(const char* fileName, World* world, SoundPlayer* 
 bool Story::play(int worldLifespan, int maxVersion, int timeSpeed) {
 	m_initDark = false;
 	if (m_nowEvent == nullptr) {
-		if (m_timer->getTime() == worldLifespan) {
+		if (m_timer->getTime() >= worldLifespan) {
+			m_timer->setTime(worldLifespan);
 			// 世界ループのイベント(9999)をセット
 			m_eventList.push_back(new Event(9999, 0, 99999999, vector<int>(), m_world_p, m_soundPlayer_p, m_version));
 			m_worldEndFlag = true;
@@ -149,14 +150,16 @@ bool Story::play(int worldLifespan, int maxVersion, int timeSpeed) {
 		m_timer->advanceTime(timeSpeed);
 		m_world_p->battle();
 		checkFire();
-		if (m_timer->getTime() % (worldLifespan / maxVersion) == 0) {
+		int newVersion = calcVersion(m_timer->getTime(), worldLifespan, maxVersion);
+		int newDate = calcDate(m_timer->getTime(), worldLifespan);
+		if (m_version < newVersion) {
 			// 新バージョンをロードし世界を更新
 			if (m_version < maxVersion) {
 				m_version++;
 				updateWorldVersion();
 			}
 		}
-		if (m_timer->getTime() % (worldLifespan / 3) == 0) {
+		if (m_date < newDate) {
 			m_date = min(2, m_date + 1);
 			m_world_p->setDate(m_date);
 		}
@@ -257,4 +260,14 @@ int Story::getBackPrevSave() const {
 // 前のセーブポイントへ戻ったことを教えてもらう
 void Story::doneBackPrevSave() {
 	m_nowEvent->doneBackPrevSave();
+}
+
+
+int Story::calcVersion(int time, int worldLifespan, int maxVersion) {
+	return 1 + time / (worldLifespan / maxVersion);
+}
+
+
+int Story::calcDate(int time, int worldLifespan) {
+	return time / (worldLifespan / 3); // 朝昼晩の3つ
 }

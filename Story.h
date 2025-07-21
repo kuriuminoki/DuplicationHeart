@@ -102,6 +102,11 @@ public:
 
 	// 前のセーブポイントへ戻ったことを教えてもらう
 	void doneBackPrevSave();
+
+private:
+	int calcVersion(int time, int worldLifespan, int maxVersion);
+	int calcDate(int time, int worldLifespan);
+
 };
 
 
