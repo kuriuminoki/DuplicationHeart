@@ -631,7 +631,9 @@ bool Game::play() {
 	// スキル発動中で、操作記録中
 	if (m_skill != nullptr && !m_skill->finishRecordFlag()) {
 		m_skill->battle();
-		m_skill->play();
+		if (m_world->getWorldFreezeTime() == 0) {
+			m_skill->play();
+		}
 	}
 	// ストーリー進行
 	else if (m_story->play(WORLD_LIFESPAN, MAX_VERSION)) {
@@ -655,7 +657,7 @@ bool Game::play() {
 		m_gameData->save();
 	}
 	else if (m_skill != nullptr) { // スキル発動中で、最後のループ中
-		if (m_skill->play()) {
+		if (m_world->getWorldFreezeTime() == 0 && m_skill->play()) {
 			endSkill();
 		}
 	}
@@ -667,7 +669,9 @@ bool Game::play() {
 	// セーブ完了通知の処理
 	m_gameData->setNoticeSaveDone(max(0, m_gameData->getNoticeSaveDone() - 1));
 
-	m_soundPlayer->play();
+	if (m_world->getWorldFreezeTime() == 0) {
+		m_soundPlayer->play();
+	}
 
 	// テストは以降を実行しない
 	if (TEST_MODE) { return false; }
@@ -772,7 +776,8 @@ bool Game::skillUsable() {
 				m_world->getBrightValue() == 255 &&
 				m_world->getControlCharacterName() == "ハート" &&
 				m_world->getConversation() == nullptr &&
-				m_world->getObjectConversation() == nullptr)
+				m_world->getObjectConversation() == nullptr &&
+				m_world->getWorldFreezeTime() == 0)
 			{
 				// ハート自身がスキル発動可能な状態か
 				Character* character = m_world->getCharacterWithName("ハート");
