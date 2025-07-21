@@ -1121,19 +1121,20 @@ void World::controlItem() {
 		}
 		// ‰Šú‰»
 		m_itemVector[i]->init();
+		int vx = m_itemVector[i]->getVx();
+		int vy = m_itemVector[i]->getVy();
 		// •Ç°‚Æ‚Ì“–‚½‚è”»’è
 		for (unsigned int j = 0; j < m_stageObjects.size(); j++) {
 			int x1 = 0, y1 = 0, x2 = 0, y2 = 0;
 			m_itemVector[i]->getPoint(&x1, &y1, &x2, &y2);
-			int vx = m_itemVector[i]->getVx();
-			int vy = m_itemVector[i]->getVy();
 			if (m_stageObjects[j]->atariDropBox(x1, y1, x2, y2, vx, vy)) {
 				m_itemVector[i]->setGrand(true);
 				m_itemVector[i]->setY(m_stageObjects[j]->getY(m_itemVector[i]->getX()));
+				break;
 			}
-			m_itemVector[i]->setVx(vx);
-			m_itemVector[i]->setVy(vy);
 		}
+		m_itemVector[i]->setVx(vx);
+		m_itemVector[i]->setVy(vy);
 		// ƒLƒƒƒ‰‚Æ‚Ì“–‚½‚è”»’è
 		if (targetCharacter != nullptr && m_itemVector[i]->atariCharacter(targetCharacter)) {
 			m_soundPlayer_p->pushSoundQueue(m_itemVector[i]->getSound());
