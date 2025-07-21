@@ -579,6 +579,14 @@ void CharacterAction::stopMoveDown() {
 	}
 }
 
+void CharacterAction::consumeStopCnt() {
+	m_character_p->setStopCnt(max(0, m_character_p->getStopCnt() - 1));
+}
+
+void CharacterAction::stopCharacter(int cnt) {
+	m_character_p->setStopCnt(cnt);
+}
+
 // 画像のサイズ変更による位置調整 (座標は画像の左上であることに注意)
 void CharacterAction::afterChangeGraph(int beforeX1, int afterX1, int beforeY1, int afterY1, int beforeX2, int afterX2, int beforeY2, int afterY2) {
 	int dy = 0;
@@ -1458,7 +1466,7 @@ SunAction::SunAction(Character* character, SoundPlayer* soundPlayer_p, bool dupl
 	FlightAction(character, soundPlayer_p)
 {
 	m_state = CHARACTER_STATE::INIT;
-	m_initCnt = -60;
+	m_initCnt = -FPS_N;
 	m_initHp = m_character_p->getHp();
 	if (!duplicationFlag) {
 		m_character_p->setHp(min(1, m_initHp));

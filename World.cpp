@@ -102,6 +102,10 @@ void deleteObject(vector<Object*>& objects) {
 void actionObject(vector<Object*>& objects) {
 	// 壁や床オブジェクトの処理 (当たり判定と動き)
 	for (unsigned int i = 0; i < objects.size(); i++) {
+		if (objects[i]->getStopCnt() > 0 && objects[i]->getStopCnt() != 30) {
+			objects[i]->setStopCnt(objects[i]->getStopCnt() - 1);
+			continue;
+		}
 		// オブジェクトの動き
 		objects[i]->action();
 		// deleteFlagがtrueなら削除する
@@ -786,7 +790,7 @@ void World::changePlayer(const Character* nextPlayer) {
 void World::cameraPointInit() {
 	for (unsigned int i = 0; i < m_characters.size(); i++) {
 		if (m_characters[i]->getId() == m_focusId) {
-			m_camera->setPoint(m_characters[i]->getCenterX(), m_characters[i]->getCenterY());
+			m_camera->setPoint(m_characters[i]->getCenterX(), m_characters[i]->getAtariCenterY() - m_characters[i]->getHeight() / 3);
 			break;
 		}
 	}
@@ -837,6 +841,12 @@ CharacterController* World::createControllerWithData(const Character* character,
 	return createController(data->controllerName(), brain, action);
 }
 
+void World::playBGM() {
+	if (!m_soundPlayer_p->checkBGMplay()) {
+		m_soundPlayer_p->playBGM();
+	}
+}
+
 /*
 *  戦わせる
 */
@@ -844,9 +854,7 @@ void World::battle() {
 
 	m_dispHpInfoFlag = true;
 
-	if (!m_soundPlayer_p->checkBGMplay()) {
-		m_soundPlayer_p->playBGM();
-	}
+	playBGM();
 	
 	// 画面暗転処理
 	if (dealBrightValue()) { return; }
@@ -912,7 +920,10 @@ void World::updateCamera() {
 	for (unsigned int i = 0; i < size; i++) {
 		// 今フォーカスしているキャラの座標に合わせる
 		if (m_focusId == m_characters[i]->getId()) {
-			m_camera->setGPoint(m_characters[i]->getAtariCenterX(), m_characters[i]->getAtariCenterY());
+			int gy = m_characters[i]->getAtariCenterY() - m_characters[i]->getHeight() / 3;
+			m_camera->setGPoint(m_characters[i]->getAtariCenterX(), gy);
+			int dy = abs(m_camera->getY() - gy);
+			max_dy = max(max_dy, dy * dy / 100);
 		}
 		// フォーカスしているキャラ以外なら距離を調べる
 		else if (m_characters[i]->getHp() > 0) {
@@ -1000,6 +1011,11 @@ void World::controlCharacter() {
 	for (unsigned int i = 0; i < size; i++) {
 		CharacterController* controller = m_characterControllers[i];
 
+		// 斬撃が当たった時のヒットストップ
+		if(controller->getAction()->getCharacter()->getStopCnt() > 0 && controller->getAction()->getCharacter()->getStopCnt() != SLASH_STOP_CNT){
+			continue;
+		}
+
 		// HPが0ならスキップ
 		if (controller->getAction()->getCharacter()->noDispForDead()) {
 			continue;
@@ -1038,6 +1054,15 @@ void World::controlCharacter() {
 
 	for (unsigned int i = 0; i < size; i++) {
 		CharacterController* controller = m_characterControllers[i];
+
+		// 斬撃が当たった時のヒットストップ
+		if (controller->getAction()->getCharacter()->getStopCnt() > 0) {
+			controller->consumeStopCnt();
+			// 1フレーム目はcontinueしない（斬撃が二十で発生しないため）
+			if (controller->getAction()->getCharacter()->getStopCnt() != SLASH_STOP_CNT - 1) {
+				continue;
+			}
+		}
 
 		// HPが0ならスキップ
 		if (controller->getAction()->getCharacter()->noDispForDead()) {
@@ -1096,19 +1121,20 @@ void World::controlItem() {
 		}
 		// 初期化
 		m_itemVector[i]->init();
+		int vx = m_itemVector[i]->getVx();
+		int vy = m_itemVector[i]->getVy();
 		// 壁床との当たり判定
 		for (unsigned int j = 0; j < m_stageObjects.size(); j++) {
 			int x1 = 0, y1 = 0, x2 = 0, y2 = 0;
 			m_itemVector[i]->getPoint(&x1, &y1, &x2, &y2);
-			int vx = m_itemVector[i]->getVx();
-			int vy = m_itemVector[i]->getVy();
 			if (m_stageObjects[j]->atariDropBox(x1, y1, x2, y2, vx, vy)) {
 				m_itemVector[i]->setGrand(true);
 				m_itemVector[i]->setY(m_stageObjects[j]->getY(m_itemVector[i]->getX()));
+				break;
 			}
-			m_itemVector[i]->setVx(vx);
-			m_itemVector[i]->setVy(vy);
 		}
+		m_itemVector[i]->setVx(vx);
+		m_itemVector[i]->setVy(vy);
 		// キャラとの当たり判定
 		if (targetCharacter != nullptr && m_itemVector[i]->atariCharacter(targetCharacter)) {
 			m_soundPlayer_p->pushSoundQueue(m_itemVector[i]->getSound());
@@ -1188,6 +1214,18 @@ void World::atariCharacterAndObject(CharacterController* controller, vector<Obje
 			int soundHandle = objects[i]->getSoundHandle();
 			int panPal = adjustPanSound(x, m_camera->getX());
 			m_soundPlayer_p->pushSoundQueue(soundHandle, panPal);
+
+			// 斬撃が当たった時のヒットストップ
+			if (objects[i]->getStopCharacterId() != -1) {
+				for (unsigned int j = 0; j < m_characterControllers.size(); j++) {
+					if (objects[i]->getStopCharacterId() == m_characterControllers[j]->getAction()->getCharacter()->getId()) {
+						m_characterControllers[j]->stopCharacter(SLASH_STOP_CNT);
+						controller->stopCharacter(SLASH_STOP_CNT);
+						break;
+					}
+				}
+			}
+
 			// HP = 0になったとき（やられたとき）
 			if (character->noDispForDead()) {
 				if (character->getBossFlag()) {
@@ -1265,7 +1303,7 @@ void World::atariStageAndAttack() {
 		int y = m_attackObjects[i]->getCenterY();
 		for (unsigned int j = 0; j < m_stageObjects.size(); j++) {
 			// 攻撃が壁床に当たっているか判定
-			if (m_stageObjects[j]->atariObject(m_attackObjects[i])) {
+			if (m_stageObjects[j]->atariFromObject(m_attackObjects[i])) {
 				// エフェクト作成
 				Animation* atariAnimation = m_attackObjects[i]->createAnimation(x, y, 3);
 				if (atariAnimation != nullptr) {
@@ -1299,19 +1337,20 @@ void World::atariStageAndAttack() {
 //  Battle：攻撃<->攻撃の当たり判定
 void World::atariAttackAndAttack() {
 	if (m_attackObjects.size() == 0) { return; }
-	for (unsigned int i = 0; i < m_attackObjects.size() - 1; i++) {
+	for (unsigned int i = 0; i < m_attackObjects.size(); i++) {
 		int x = m_attackObjects[i]->getCenterX();
 		int y = m_attackObjects[i]->getCenterY();
-		for (unsigned int j = i + 1; j < m_attackObjects.size(); j++) {
-			// 攻撃が壁床に当たっているか判定
-			if (m_attackObjects[j]->atariObject(m_attackObjects[i])) {
+		for (unsigned int j = 0; j < m_attackObjects.size(); j++) {
+			if (i == j) { continue; }
+			// 攻撃が他の攻撃に当たっているか判定
+			if (m_attackObjects[j]->atariToObject(m_attackObjects[i]) && (m_attackObjects[i]->getDeleteFlag() || !m_attackObjects[i]->getAbleDelete())) {
 				// エフェクト作成
-				Animation* atariAnimation = m_attackObjects[j]->createAnimation(x, y, 3);
+				Animation* atariAnimation = m_attackObjects[i]->createAnimation(x, y, 3);
 				if (atariAnimation != nullptr) {
 					m_animations.push_back(atariAnimation);
 				}
-				createBomb(x, y, m_attackObjects[i]);
-				int soundHandle = m_attackObjects[i]->getSoundHandle();
+				createBomb(x, y, m_attackObjects[j]);
+				int soundHandle = m_attackObjects[j]->getSoundHandle();
 				int panPal = adjustPanSound(x, m_camera->getX());
 				m_soundPlayer_p->pushSoundQueue(soundHandle, panPal);
 			}

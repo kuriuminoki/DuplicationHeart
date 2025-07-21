@@ -8,6 +8,9 @@ static int WINDOW = TRUE;
 // マウスを表示するならFALSE
 static int MOUSE_DISP = TRUE;
 
+// FPS
+#define FPS_N 60
+
 //画面の大きさ
 #define GAME_WIDE_MAX 3840
 #define GAME_HEIGHT_MAX 2160
@@ -17,6 +20,8 @@ static int MOUSE_DISP = TRUE;
 #define GAME_HEIGHT_DEFAULT 1080
 extern int GAME_WIDE;
 extern int GAME_HEIGHT;
+
+extern int SLASH_STOP_CNT;
 
 // 解像度の倍率
 void getGameEx(double& exX, double& exY);

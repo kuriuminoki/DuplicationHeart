@@ -242,6 +242,8 @@ Character::Character(int hp, int x, int y, int groupId) {
 	m_graphHandle = nullptr;
 	m_faceHandle = nullptr;
 	m_duplicationFlag = false;
+
+	m_stopCnt = 0;
 }
 
 Character::~Character() {
@@ -273,6 +275,7 @@ void Character::setParam(Character* character) {
 	character->setSkillGage(m_skillGage);
 	character->setInvincible(m_invincible);
 	character->setBossFlag(m_bossFlag);
+	character->setStopCnt(m_stopCnt);
 	character->getCharacterGraphHandle()->setGraph(m_graphHandle->getDispGraphHandle(), m_graphHandle->getDispGraphIndex());
 }
 
@@ -363,7 +366,7 @@ void Character::damageHp(int value) {
 	
 	// –³“G‚¶‚á‚È‚¢‚È‚çHPŒ»Û
 	m_hp = max(0, m_hp - value);
-	m_dispHpCnt = 60;
+	m_dispHpCnt = FPS_N;
 }
 
 // ˆÚ“®‚·‚éiÀ•W‚ğ“®‚©‚·j

@@ -4,6 +4,7 @@
 #include "Camera.h"
 #include "Control.h"
 #include "Object.h"
+#include "Define.h"
 #include "DxLib.h"
 #include <cmath>
 
@@ -493,10 +494,10 @@ bool NormalAI::moveGoalOrder(int& right, int& left, int& up, int& down, int& jum
 	// 現在地
 	int x = m_characterAction_p->getCharacter()->getCenterX();
 	int y = m_characterAction_p->getCharacter()->getY() + m_characterAction_p->getCharacter()->getHeight();
-	// 60フレームごとに座標を確認
-	if (m_moveCnt % 60 == 59) {
+	// 1秒ごとに座標を確認
+	if (m_moveCnt % FPS_N == FPS_N - 1) {
 		// (壁につっかえるなどで)移動できてないから諦める
-		if (m_moveCnt >= 60 && abs(m_prevX - x) < 20) {
+		if (m_moveCnt >= FPS_N && abs(m_prevX - x) < 20) {
 			m_gx = x;
 			m_gy = y;
 		}
