@@ -627,8 +627,10 @@ bool Game::play() {
 			m_rebootFlag = true;
 		}
 		if (m_battleOption->getQuickFlag()) {
-			// 速度アップモードを開始
-			m_timeSpeed = QUICK_TIME_SPEED;
+			if (m_skill == nullptr && !m_story->eventNow()) {
+				// 速度アップモードを開始
+				m_timeSpeed = QUICK_TIME_SPEED;
+			}
 			delete m_battleOption;
 			m_battleOption = nullptr;
 			m_soundPlayer->playBGM();
@@ -639,6 +641,7 @@ bool Game::play() {
 
 	// スキル発動
 	if (controlF() == 1 && skillUsable()) {
+		m_timeSpeed = DEFAULT_TIME_SPEED;
 		m_world->setSkillFlag(true);
 		m_skill = new HeartSkill(min(m_story->getLoop() - 1, MAX_SKILL), m_world, m_soundPlayer);
 	}
@@ -652,6 +655,7 @@ bool Game::play() {
 	}
 	// ストーリー進行
 	else if (m_story->play(WORLD_LIFESPAN, MAX_VERSION, m_timeSpeed)) {
+		m_timeSpeed = DEFAULT_TIME_SPEED;
 		// 次のループへ移行の場合Storyを作り直す
 		if (m_story->getLoop() > m_gameData->getLoop()) {
 			int nextLoopNum = m_story->getLoop();
@@ -675,6 +679,10 @@ bool Game::play() {
 		if (m_world->getWorldFreezeTime() == 0 && m_skill->play()) {
 			endSkill();
 		}
+	}
+
+	if (m_story->eventNow()) {
+		m_timeSpeed = DEFAULT_TIME_SPEED;
 	}
 
 	if (m_story->getNeedWorldUpdate()) {

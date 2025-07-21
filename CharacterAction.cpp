@@ -269,6 +269,9 @@ void CharacterAction::setCharacterLeftDirection(bool leftDirection) {
 void CharacterAction::setCharacterFreeze(bool freeze) {
 	m_character_p->setFreeze(freeze);
 }
+void CharacterAction::setDeadFlag(bool deadFlag) {
+	m_character_p->setDeadFlag(deadFlag);
+}
 
 // 行動前の処理 毎フレーム行う
 void CharacterAction::init() {

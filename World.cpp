@@ -1026,6 +1026,11 @@ void World::controlCharacter() {
 	for (unsigned int i = 0; i < size; i++) {
 		CharacterController* controller = m_characterControllers[i];
 
+		// 前のフレームでＨＰが0になったらdeadFlagをtrueにする
+		if (controller->getAction()->getCharacter()->getHp() == 0) {
+			controller->setCharacterDeadFlag(true);
+		}
+
 		// 斬撃が当たった時のヒットストップ
 		if(controller->getAction()->getCharacter()->getStopCnt() > 0 && controller->getAction()->getCharacter()->getStopCnt() != SLASH_STOP_CNT){
 			continue;
@@ -1086,7 +1091,9 @@ void World::controlCharacter() {
 
 		// 反映 originalのハートはフリーズ
 		if (!m_duplicationFlag || m_characterControllers[i]->getAction()->getCharacter()->getId() != m_playerId) {
-			controller->action();
+			if (m_worldFreezeTime == 0) { 
+				controller->action();
+			}
 		}
 
 		// オブジェクトとの貫通判定
@@ -1268,7 +1275,7 @@ void World::atariCharacterAndObject(CharacterController* controller, vector<Obje
 						}
 					}
 				}
-				if (!m_duplicationFlag && (true || character->haveDeadGraph() || character->getBossFlag() || character->getId() == m_playerId)) {
+				if (!m_duplicationFlag && (character->haveDeadGraph() || character->getBossFlag() || character->getId() == m_playerId)) {
 					// フリーズさせる
 					m_worldFreezeTime = 30;
 					m_camera->setGPoint(character->getCenterX(), character->getCenterY());

@@ -177,6 +177,9 @@ void CharacterController::setActionSound(SoundPlayer* soundPlayer) {
 void CharacterController::addActionDx(int value) {
 	m_characterAction->setDx(m_characterAction->getDx() + value);
 }
+void CharacterController::setCharacterDeadFlag(bool deadFlag) {
+	m_characterAction->setDeadFlag(deadFlag);
+}
 
 // キャラクターのセッタ
 void CharacterController::setCharacterX(int x) {

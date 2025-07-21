@@ -204,6 +204,9 @@ protected:
 
 	bool m_duplicationFlag;
 
+	// やられたらTrue。HP==0になっても画面に非表示にするのは次のフレームからにするため使う
+	bool m_deadFlag;
+
 	// ID
 	int m_id;
 
@@ -275,6 +278,7 @@ public:
 	virtual void debug(int x, int y, int color) const = 0;
 
 	// ゲッタ
+	inline bool getDeadFlag() const { return m_deadFlag; }
 	inline int getId() const { return m_id; }
 	inline int getGroupId() const { return m_groupId; }
 	inline int getVersion() const { return m_version; }
@@ -297,6 +301,7 @@ public:
 	inline int getStopCnt() const { return m_stopCnt; }
 
 	// セッタ
+	inline void setDeadFlag(bool deadFlag) { m_deadFlag = deadFlag; }
 	inline void setHp(int hp) { m_hp = (hp > m_characterInfo->maxHp()) ? m_characterInfo->maxHp() : hp; m_prevHp = m_hp; }
 	inline void setPrevHp(int prevHp) { 
 		m_prevHp = (prevHp < m_hp) ? m_hp : prevHp;
@@ -422,7 +427,7 @@ public:
 	bool haveDeadGraph() const;
 
 	// HPが0でやられ画像がなく、画面から消えるべきか
-	inline bool noDispForDead() const { return m_hp == 0 && !haveDeadGraph(); }
+	inline bool noDispForDead() const { return m_hp == 0 && !haveDeadGraph() && m_deadFlag; }
 
 protected:
 	void countDrawCnt(){ if (SHAKING_FLAG) { m_drawCnt++; } }
