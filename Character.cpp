@@ -49,6 +49,9 @@ Character* createCharacter(const char* characterName, int hp, int x, int y, int 
 	else if (name == "サン") {
 		character = new Sun(name.c_str(), hp, x, y, groupId);
 	}
+	else if (name == "アーカイブ") {
+		character = new Archive(name.c_str(), hp, x, y, groupId);
+	}
 	else {
 		character = new Heart(name.c_str(), hp, x, y, groupId);
 	}
@@ -390,6 +393,10 @@ vector<Object*>* Character::slidingAttack(int sound, SoundPlayer* soundPlayer) {
 			adjustPanSound(getCenterX(),
 				soundPlayer->getCameraX()));
 	}
+	// 自滅防止
+	attackObject->setCharacterId(m_id);
+	// チームキル防止
+	attackObject->setGroupId(m_groupId);
 	return new std::vector<Object*>{ attackObject };
 }
 
@@ -544,7 +551,7 @@ void Heart::switchPreJump(int cnt) {
 void Heart::switchSlash(int cnt) {
 	if (m_graphHandle->getStandSlashHandle() == nullptr) { return; }
 	int index = (getSlashCountSum() + getSlashInterval() - cnt) / 3;
-	if (cnt > 6) {
+	if (cnt > 6) { // 最後の一枚だけは最後の6フレームの間だけ表示
 		index = min(m_graphHandle->getStandSlashHandle()->getGraphHandles()->getSize() - 2, index);
 	}
 	m_graphHandle->switchSlash(index);
@@ -632,7 +639,7 @@ vector<Object*>* Heart::slashAttack(bool leftDirection, int cnt, bool grand, Sou
 	// 攻撃の画像と持続時間(cntを考慮して決定)
 	cnt -= m_attackInfo->slashInterval();
 	int index = 0;
-	int slashCountSum = m_attackInfo->slashCountSum() / 3 + 1;
+	int slashCountSum = m_attackInfo->slashCountSum() / 3 + 1; // エフェクト画像一枚当たりの表示時間
 	SlashObject* attackObject = nullptr;
 	GraphHandlesWithAtari* slashHandles = m_graphHandle->getAirSlashEffectHandle();
 	if (grand || slashHandles == nullptr) {
@@ -1160,4 +1167,102 @@ vector<Object*>* Sun::bulletAttack(int cnt, int gx, int gy, SoundPlayer* soundPl
 				soundPlayer->getCameraX()));
 	}
 	return new std::vector<Object*>{ attackObject };
+}
+
+
+/*
+* Boss1: アーカイブ
+*/
+Archive::Archive(const char* name, int hp, int x, int y, int groupId) :
+	Heart(name, hp, x, y, groupId)
+{
+
+}
+Archive::Archive(const char* name, int hp, int x, int y, int groupId, AttackInfo* attackInfo) :
+	Heart(name, hp, x, y, groupId, attackInfo)
+{
+
+}
+
+Character* Archive::createCopy() {
+	Character* res = new Archive(m_characterInfo->name().c_str(), m_hp, m_x, m_y, m_groupId, m_attackInfo);
+	setParam(res);
+	return res;
+}
+
+// 上昇画像をセット
+void Archive::switchJump(int cnt) { 
+	int size = m_graphHandle->getJumpHandle()->getGraphHandles()->getSize();
+	int index = min(size, cnt / 6);
+	m_graphHandle->switchJump(index); 
+}
+
+// 立ち斬撃画像をセット
+void Archive::switchSlash(int cnt) {
+	if (m_graphHandle->getStandSlashHandle() == nullptr) { return; }
+	int index = (getSlashCountSum() + getSlashInterval() - cnt) / 3;
+	m_graphHandle->switchSlash(index);
+}
+
+// 斬撃攻撃をする
+vector<Object*>* Archive::slashAttack(bool leftDirection, int cnt, bool grand, SoundPlayer* soundPlayer) {
+
+	if (!grand) { return nullptr; }
+
+	// 攻撃範囲を決定
+	int centerX = getCenterX();
+	int height = m_attackInfo->slashLenY() / 2 / 2;
+	int centerY = getCenterY() - 10;
+	int x2 = centerX;
+	if (leftDirection) { // 左向きに攻撃
+		centerX += 200;
+		x2 -= m_attackInfo->slashLenX() * 3 / 2;
+	}
+	else { // 右向きに攻撃
+		centerX -= 200;
+		x2 += m_attackInfo->slashLenX() * 3 / 2;
+	}
+
+	// 攻撃の画像と持続時間(cntを考慮して決定)
+	cnt -= m_attackInfo->slashInterval();
+	int index = 0;
+	int slashCountSum = m_attackInfo->slashCountSum() / 15 + 1; // エフェクト画像一枚当たりの表示時間
+	SlashObject* attackObject = nullptr;
+	GraphHandlesWithAtari* slashHandles = m_graphHandle->getSlashHandle();
+	// 攻撃の方向
+	slashHandles->getGraphHandles()->setReverseX(m_leftDirection);
+	// cntが攻撃のタイミングならオブジェクト生成
+	int n = m_attackInfo->slashCountSum() / 15;
+	if (cnt == 9 * n || cnt == 8 * n || cnt == 7 * n) {
+		index = 0;
+		attackObject = new SlashObject(centerX, centerY - height, x2, centerY + height,
+			slashHandles->getGraphHandles()->getGraphHandle(index), slashCountSum, m_attackInfo);
+		// 効果音
+		if (soundPlayer != nullptr && cnt == 9 * n) {
+			soundPlayer->pushSoundQueue(m_attackInfo->slashStartSoundHandle(),
+				adjustPanSound(getCenterX(),
+					soundPlayer->getCameraX()));
+		}
+	}
+	else if (cnt == 6 * n || cnt == 5 * n || cnt == 4 * n) {
+		index = 1;
+		attackObject = new SlashObject(centerX, centerY - height, x2, centerY + height,
+			slashHandles->getGraphHandles()->getGraphHandle(index), slashCountSum, m_attackInfo);
+	}
+	else if (cnt == 3 * n || cnt == 2 * n || cnt == n) {
+		index = 2;
+		attackObject = new SlashObject(centerX, centerY - height, x2, centerY + height,
+			slashHandles->getGraphHandles()->getGraphHandle(index), slashCountSum, m_attackInfo);
+	}
+	if (attackObject != nullptr) {
+		// 自滅防止
+		attackObject->setCharacterId(m_id);
+		// チームキル防止
+		attackObject->setGroupId(m_groupId);
+	}
+	else {
+		return nullptr;
+	}
+	return new std::vector<Object*>{ attackObject };
+
 }

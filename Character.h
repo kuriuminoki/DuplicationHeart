@@ -716,22 +716,25 @@ public:
 /*
 * Boss2: アーカイブ
 */
-//class Archive :
-//	public Heart
-//{
-//public:
-//	// コンストラクタ
-//	Archive(const char* name, int hp, int x, int y, int groupId);
-//	Archive(const char* name, int hp, int x, int y, int groupId, AttackInfo* attackInfo);
-//
-//	Character* createCopy();
-//
-//	// 射撃攻撃をする
-//	std::vector<Object*>* bulletAttack(int cnt, int gx, int gy, SoundPlayer* soundPlayer);
-//
-//	// 斬撃攻撃をする
-//	std::vector<Object*>* slashAttack(bool leftDirection, int cnt, bool grand, SoundPlayer* soundPlayer) { return nullptr; }
-//};
+class Archive :
+	public Heart
+{
+public:
+	// コンストラクタ
+	Archive(const char* name, int hp, int x, int y, int groupId);
+	Archive(const char* name, int hp, int x, int y, int groupId, AttackInfo* attackInfo);
+
+	Character* createCopy();
+
+	void switchJump(int cnt);
+	void switchSlash(int cnt);
+
+	// 射撃攻撃をする
+	std::vector<Object*>* bulletAttack(int cnt, int gx, int gy, SoundPlayer* soundPlayer) { return nullptr; }
+
+	// 斬撃攻撃をする
+	std::vector<Object*>* slashAttack(bool leftDirection, int cnt, bool grand, SoundPlayer* soundPlayer);
+};
 
 
 #endif

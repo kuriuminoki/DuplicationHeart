@@ -1205,11 +1205,11 @@ void World::atariCharacterAndObject(CharacterController* controller, vector<Obje
 			// エフェクト作成
 			int x = (targetX1 + targetX2) / 2;
 			int y = (targetY1 + targetY2) / 2;
-			Animation* atariAnimation = objects[i]->createAnimation(x, y, 3);
+			Animation* atariAnimation = objects[i]->createAnimation(x, y, 3); // 攻撃がキャラに当たったエフェクト
 			if (atariAnimation != nullptr) {
 				m_animations.push_back(atariAnimation);
 			}
-			createDamageEffect(x, y, GetRand(3) + 1);
+			createDamageEffect(x, y, GetRand(3) + 1); // 丸のエフェクト
 			// 効果音
 			int soundHandle = objects[i]->getSoundHandle();
 			int panPal = adjustPanSound(x, m_camera->getX());
@@ -1309,12 +1309,14 @@ void World::atariStageAndAttack() {
 				if (atariAnimation != nullptr) {
 					m_animations.push_back(atariAnimation);
 				}
+				createDamageEffect(x, y, GetRand(3) + 1); // 丸のエフェクト
 				int soundHandle = m_attackObjects[i]->getSoundHandle();
 				int panPal = adjustPanSound(x, m_camera->getX());
 				m_soundPlayer_p->pushSoundQueue(soundHandle, panPal);
 			}
 			// 壁床のdeleteFlagがtrueなら削除する
 			if (m_stageObjects[j]->getDeleteFlag()) {
+				createDamageEffect(x, y, 10);
 				delete m_stageObjects[j];
 				m_stageObjects[j] = m_stageObjects.back();
 				m_stageObjects.pop_back();
