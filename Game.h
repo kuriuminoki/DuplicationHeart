@@ -338,9 +338,6 @@ private:
 	// 世界のコピーを作る コピーの変更はオリジナルに影響しない
 	World* createDuplicationWorld(const World* world);
 
-	// 操作記録をコピーする
-	void copyRecord(const World* from, World* to);
-
 	void createDuplicationHeart();
 };
 
