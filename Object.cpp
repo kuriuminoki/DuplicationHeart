@@ -81,8 +81,9 @@ bool Object::decreaseHp(int damageValue, int id) {
 
 // 単純に四角の落下物と衝突しているか
 bool Object::atariDropBox(int x1, int y1, int x2, int y2, int& vx, int& vy) {
-	// 上から衝突してきた
-	if (x2 + vx >= m_x1 && x1 + vx <= m_x2 && y2 < m_y1 && y2 + vy >= m_y1) {
+	// 上から衝突してきた (座標がint型で+-1の誤差があるためそれは許容する)
+	if (x2 + vx >= m_x1 && x1 + vx <= m_x2 && y2 - 1 <= m_y1 && y2 + 1 + vy >= m_y1) {
+		vx = 0; vy = 0;
 		return true;
 	}
 	// 左右からの衝突
@@ -96,12 +97,15 @@ bool Object::atariDropBox(int x1, int y1, int x2, int y2, int& vx, int& vy) {
 	}
 	// 下からの衝突
 	if (y1 > y2 && y1 + vy <= y2 && x2 > m_x1 && x1 < m_x2) {
-		vy = 0;
+		vy = 1;
 		return false;
 	}
 	// 埋まっている
 	if (x2 > m_x1 && x1 < m_x2 && y2 > m_y1 && y1 < m_y2) {
-		vx = 0; vy = 0;
+		if ((y1 + y2) < (m_y1 + m_y2)) { vy = -1; }
+		else { vy = 1; }
+		if ((x1 + x2) < (m_x1 + m_x2)) { vx = -1; }
+		else { vx = 1; }
 		return false;
 	}
 	return false;
@@ -490,9 +494,9 @@ bool TriangleObject::atari(CharacterController* characterController) {
 // 単純に四角の落下物と衝突しているか
 bool TriangleObject::atariDropBox(int x1, int y1, int x2, int y2, int& vx, int& vy) {
 	int y = getY((x1 + x2) / 2);
-	// 上から衝突してきた
-	if (x2 + vx >= m_x1 && x1 + vx <= m_x2 && y2 < y && y2 + vy >= y) {
-		return true;
+	// 上から衝突してきた (座標がint型で+-1の誤差があるためそれは許容する)
+	if (x2 + vx >= m_x1 && x1 + vx <= m_x2 && y2 - 1 <= y && y2 + 1 + vy >= y) {
+		vx = 0; vy = 0;
 	}
 	// 左右からの衝突
 	if (x2 <= m_x1 && x2 + vx >= m_x1 && y2 > y && y1 < m_y2) {
@@ -505,12 +509,15 @@ bool TriangleObject::atariDropBox(int x1, int y1, int x2, int y2, int& vx, int& 
 	}
 	// 下からの衝突
 	if (y1 > y2 && y1 + vy <= y2 && x2 > m_x1 && x1 < m_x2) {
-		vy = 0;
+		vy = 1;
 		return false;
 	}
 	// 埋まっている
 	if (x2 > m_x1 && x1 < m_x2 && y2 > y && y1 < m_y2) {
-		vx = 0; vy = 0;
+		if ((y1 + y2) < (m_y1 + m_y2)) { vy = -1; }
+		else { vy = 1; }
+		if ((x1 + x2) < (m_x1 + m_x2)) { vx = -1; }
+		else { vx = 1; }
 		return false;
 	}
 	return false;
