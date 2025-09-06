@@ -867,7 +867,9 @@ void World::battle() {
 
 	m_dispHpInfoFlag = true;
 
-	playBGM();
+	if (!m_skillFlag) {
+		playBGM();
+	}
 
 	// ¢ŠE‚ÌƒtƒŠ[ƒYˆ—
 	if (m_worldFreezeTime > 0) {
