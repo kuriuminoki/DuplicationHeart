@@ -56,7 +56,7 @@ Story::Story(int loop, int time, World* world, SoundPlayer* soundPlayer, EventDa
 
 	// eventList.csvをロード
 	ostringstream oss;
-	oss << "data/newStory/" << "eventList.csv";
+	oss << "data/story/" << "eventList.csv";
 	loadEventCsvData(oss.str().c_str(), world, m_soundPlayer_p, worldLifespan / maxVersion);
 
 	// イベントの発火確認

@@ -197,6 +197,9 @@ public:
 
 	const int DEFAULT_ANIME_SPEED = 3;
 
+	const int DEFAULT_SLASH_ENERGY_TIME = 60;
+	const int DEFAULT_BULLET_ENERGY_TIME = 10;
+
 protected:
 	static int characterId;
 

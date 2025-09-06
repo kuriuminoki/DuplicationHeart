@@ -405,7 +405,7 @@ int NormalAI::slashOrder() {
 		return 0;
 	}
 	// ‰“‹——£‚Ì“G‚É‚ÍaŒ‚‚µ‚È‚¢
-	if (abs(m_target_p->getCenterX() - m_characterAction_p->getCharacter()->getCenterX()) > 500) {
+	if (abs(m_target_p->getCenterX() - m_characterAction_p->getCharacter()->getCenterX()) > 800) {
 		return 0;
 	}
 	// ƒ‰ƒ“ƒ_ƒ€‚ÅaŒ‚

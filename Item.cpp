@@ -19,9 +19,8 @@ Item::Item(const char* itemName, int x, int y) {
 	m_vy = 0;
 	m_grand = false;
 	m_sound = LoadSoundMem(("sound/item/" + m_itemName + ".wav").c_str());
-	m_handles = new GraphHandles(("picture/item/" + m_itemName).c_str(), 1, 0.05, 0.0, true);
-	m_animation = new Animation(m_x, m_y, 10, m_handles);
 	m_deleteFlag = false;
+	m_exRate = 1.0;
 }
 
 // デストラクタ
@@ -38,6 +37,12 @@ void Item::setParam(Item* item) {
 	item->setAnimation(m_animation->createCopy());
 	item->setVx(m_vx);
 	item->setVy(m_vy);
+	item->setExRate(m_exRate);
+}
+
+void Item::loadItemGraph() {
+	m_handles = new GraphHandles(("picture/item/" + m_itemName).c_str(), 1, 0.05 * m_exRate, 0.0, true);
+	m_animation = new Animation(m_x, m_y, 10, m_handles);
 }
 
 void Item::setY(int y) {
@@ -64,6 +69,8 @@ void Item::getGraphSize(int* wide, int* height) const {
 void Item::getPoint(int* x1, int* y1, int* x2, int* y2) {
 	int wide = 0, height = 0;
 	getGraphSize(&wide, &height);
+	wide = (int)(wide * m_exRate);
+	height = (int)(height * m_exRate);
 	*x1 = m_x - (wide / 2);
 	*y1 = m_y - (height / 2);
 	*x2 = *x1 + wide;
@@ -79,7 +86,7 @@ void Item::init() {
 void Item::action() {
 
 	m_cnt++;
-	if (m_cnt > ERASE_CNT) {
+	if (m_cnt > getEraseCnt()) {
 		m_deleteFlag = true;
 	}
 
@@ -91,21 +98,24 @@ void Item::action() {
 	// アニメを動かす
 	m_animation->count();
 
-	if (m_grand) {
-		// 着地してる
-		m_vx = 0;
-		m_vy = 0;
-	}
+	// 重力の影響を受ける
+	if (getEnableGravity()) {
+		if (m_grand) {
+			// 着地してる
+			m_vx = 0;
+			m_vy = 0;
+		}
 
-	// 移動
-	m_x += m_vx;
-	m_y += m_vy;
-	m_animation->setX(m_x);
-	m_animation->setY(m_y);
+		// 移動
+		m_x += m_vx;
+		m_y += m_vy;
+		m_animation->setX(m_x);
+		m_animation->setY(m_y);
 
-	if (!m_grand) {
-		// 重力
-		m_vy += 1;
+		if (!m_grand) {
+			// 重力
+			m_vy += 1;
+		}
 	}
 
 }
@@ -143,6 +153,7 @@ CureItem::CureItem(const char* itemName, int x, int y, int cureValue):
 	Item(itemName, x, y)
 {
 	m_cureValue = cureValue;
+	loadItemGraph();
 }
 
 // スキル発動用
@@ -166,6 +177,7 @@ MoneyItem::MoneyItem(const char* itemName, int x, int y, int moneyValue) :
 	Item(itemName, x, y)
 {
 	m_moneyValue = moneyValue;
+	loadItemGraph();
 }
 
 // スキル発動用
@@ -179,4 +191,36 @@ Item* MoneyItem::createCopy() {
 void MoneyItem::arrangePlayer(Character* player) {
 	// お金獲得
 	player->setMoney(player->getMoney() + m_moneyValue);
+}
+
+
+/*
+* エネルギー獲得アイテム
+*/
+EnergyItem::EnergyItem(const char* itemName, int x, int y, int energyValue, int eraseTime) :
+	Item(itemName, x, y)
+{
+	m_energyValue = energyValue;
+	m_eraseTime = eraseTime;
+	// 獲得量に応じてサイズアップ
+	m_exRate = 1.0 + energyValue / 10;
+	loadItemGraph();
+}
+
+// スキル発動用
+Item* EnergyItem::createCopy() {
+	EnergyItem* item = new EnergyItem(m_itemName.c_str(), m_x, m_y, m_energyValue, m_eraseTime);
+	setParam(item);
+	return item;
+}
+
+void EnergyItem::loadItemGraph() {
+	m_handles = new GraphHandles(("picture/item/" + m_itemName).c_str(), 2, 0.2 * m_exRate, 0.0, true);
+	m_animation = new Animation(m_x, m_y, 3, m_handles);
+}
+
+// プレイヤーに対するアクション
+void EnergyItem::arrangePlayer(Character* player) {
+	// エネルギー獲得
+	player->setSkillGage(player->getSkillGage() + m_energyValue);
 }

@@ -287,7 +287,7 @@ class HeartSkill {
 public:
 
 	// âΩïbä‘Ç©
-	const int DUPLICATION_TIME = 600;
+	const int DUPLICATION_TIME = 300;
 
 private:
 	// ï°êªÇÃêî

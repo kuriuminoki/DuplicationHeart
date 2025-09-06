@@ -265,6 +265,7 @@ World::World(const World* original) :
 		copy = original->getCharacterControllers()[i]->createCopy(m_characters, m_camera);
 		m_characterControllers.push_back(copy);
 	}
+	m_playerChanger = new PlayerChanger(m_characterControllers, m_player_p);
 	for (unsigned int i = 0; i < original->getStageObjects().size(); i++) {
 		Object* copy;
 		copy = original->getStageObjects()[i]->createCopy();
@@ -392,8 +393,8 @@ vector<const Animation*> World::getConstAnimations() const {
 	// アイテム
 	for (unsigned int i = 0; i < m_itemVector.size(); i++) {
 		if (!m_itemVector[i]->getDeleteFlag()) {
-			// 消滅しそうなら点滅
-			if (m_itemVector[i]->getCnt() < m_itemVector[i]->ERASE_CNT * 2 / 3 || m_itemVector[i]->getCnt() / 3 % 2 == 0) {
+			// 消滅しそうなら点滅 ただし重力の影響を受けないアイテムは点滅しない
+			if (!m_itemVector[i]->getEnableGravity() || m_itemVector[i]->getCnt() < m_itemVector[i]->getEraseCnt() * 2 / 3 || m_itemVector[i]->getCnt() / 3 % 2 == 0) {
 				allAnimations.push_back(m_itemVector[i]->getAnimation());
 			}
 		}
@@ -1109,6 +1110,11 @@ void World::controlObject() {
 	// 攻撃当たり判定の動き
 	actionObject(m_attackObjects);
 
+	// エネルギーの放出
+	if (!m_duplicationFlag) {
+		createAttackEnergy();
+	}
+
 	// 壁や床<->攻撃の当たり判定
 	atariStageAndAttack();
 
@@ -1141,22 +1147,24 @@ void World::controlItem() {
 			}
 			continue;
 		}
-		// 初期化
-		m_itemVector[i]->init();
-		int vx = m_itemVector[i]->getVx();
-		int vy = m_itemVector[i]->getVy();
-		// 壁床との当たり判定
-		for (unsigned int j = 0; j < m_stageObjects.size(); j++) {
-			int x1 = 0, y1 = 0, x2 = 0, y2 = 0;
-			m_itemVector[i]->getPoint(&x1, &y1, &x2, &y2);
-			if (m_stageObjects[j]->atariDropBox(x1, y1, x2, y2, vx, vy)) {
-				m_itemVector[i]->setGrand(true);
-				m_itemVector[i]->setY(m_stageObjects[j]->getY(m_itemVector[i]->getX()));
-				break;
+		if (m_itemVector[i]->getEnableGravity()) {
+			// 初期化
+			m_itemVector[i]->init();
+			int vx = m_itemVector[i]->getVx();
+			int vy = m_itemVector[i]->getVy();
+			// 壁床との当たり判定
+			for (unsigned int j = 0; j < m_stageObjects.size(); j++) {
+				int x1 = 0, y1 = 0, x2 = 0, y2 = 0;
+				m_itemVector[i]->getPoint(&x1, &y1, &x2, &y2);
+				if (m_stageObjects[j]->atariDropBox(x1, y1, x2, y2, vx, vy)) {
+					m_itemVector[i]->setGrand(true);
+					m_itemVector[i]->setY(m_stageObjects[j]->getY(m_itemVector[i]->getX()));
+					break;
+				}
 			}
+			m_itemVector[i]->setVx(vx);
+			m_itemVector[i]->setVy(vy);
 		}
-		m_itemVector[i]->setVx(vx);
-		m_itemVector[i]->setVy(vy);
 		// キャラとの当たり判定
 		if (targetCharacter != nullptr && m_itemVector[i]->atariCharacter(targetCharacter)) {
 			m_soundPlayer_p->pushSoundQueue(m_itemVector[i]->getSound());
@@ -1315,6 +1323,19 @@ void World::atariCharacterAndDoor(CharacterController* controller, vector<Object
 		}
 	}
 
+}
+
+// Battle: 攻撃のエネルギー放出
+void World::createAttackEnergy() {
+	for (unsigned int i = 0; i < m_attackObjects.size(); i++) {
+		if (m_attackObjects[i]->getGroupId() == m_player_p->getGroupId()) {
+			continue;
+		}
+		Item* item = m_attackObjects[i]->createAttackEnergy();
+		if (item != nullptr) {
+			m_itemVector.push_back(item);
+		}
+	}
 }
 
 //  Battle：壁や床<->攻撃の当たり判定

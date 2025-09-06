@@ -280,11 +280,6 @@ void CharacterAction::init() {
 
 	m_dx = 0;
 
-	// スキルゲージの回復
-	if (m_cnt % 30 == 29) {
-		m_character_p->setSkillGage(m_character_p->getSkillGage() + 1);
-	}
-
 	// 前のフレームのleftDirectionを保存しておく
 	m_prevLeftDirection = m_character_p->getLeftDirection();
 

@@ -5,6 +5,7 @@
 #include "Define.h"
 #include "GraphHandle.h"
 #include "Animation.h"
+#include "Item.h"
 #include "DxLib.h"
 #include <algorithm>
 #include <cmath>
@@ -608,7 +609,7 @@ void TriangleObject::action() {
 }
 
 
-BulletObject::BulletObject(int x, int y, int color, int gx, int gy, AttackInfo* attackInfo) :
+BulletObject::BulletObject(int x, int y, int color, int gx, int gy, int energyEraseTime, AttackInfo* attackInfo) :
 	Object(x - attackInfo->bulletRx(), y - attackInfo->bulletRx(), x + attackInfo->bulletRx(), y + attackInfo->bulletRy())
 {
 	// 必要なら後からセッタで設定
@@ -641,9 +642,12 @@ BulletObject::BulletObject(int x, int y, int color, int gx, int gy, AttackInfo* 
 	m_soundHandle_p = attackInfo->bulletSoundeHandle();
 
 	m_handle = nullptr;
+
+	m_energyCnt = 0;
+	m_energyEraseTime = energyEraseTime;
 }
 
-BulletObject::BulletObject(int x, int y, int color, int gx, int gy) :
+BulletObject::BulletObject(int x, int y, int color, int gx, int gy, int energyEraseTime) :
 	Object()
 {
 	m_characterId = -1;
@@ -662,10 +666,12 @@ BulletObject::BulletObject(int x, int y, int color, int gx, int gy) :
 	m_effectHandles_p = nullptr;
 	m_soundHandle_p = -1;
 	m_handle = nullptr;
+	m_energyCnt = 0;
+	m_energyEraseTime = energyEraseTime;
 }
 
-BulletObject::BulletObject(int x, int y, GraphHandle* handle, int gx, int gy, AttackInfo* attackInfo):
-	BulletObject(x, y, WHITE, gx, gy, attackInfo)
+BulletObject::BulletObject(int x, int y, GraphHandle* handle, int gx, int gy, int energyEraseTime, AttackInfo* attackInfo):
+	BulletObject(x, y, WHITE, gx, gy, energyEraseTime, attackInfo)
 {
 	m_handle = handle;
 }
@@ -727,6 +733,14 @@ void BulletObject::action() {
 	}
 }
 
+Item* BulletObject::createAttackEnergy() {
+	m_energyCnt++;
+	if (m_energyEraseTime > 0 && m_energyCnt % 15 == 0) {
+		return new EnergyItem("energy", (m_x1 + m_x2) / 2, (m_y1 + m_y2) / 2, m_damage, m_energyEraseTime);
+	}
+	return nullptr;
+}
+
 // 画像ハンドルを返す
 GraphHandle* BulletObject::getHandle() const {
 	if (m_handle == nullptr) { return nullptr; }
@@ -736,13 +750,13 @@ GraphHandle* BulletObject::getHandle() const {
 }
 
 
-ParabolaBullet::ParabolaBullet(int x, int y, int color, int gx, int gy, AttackInfo* attackInfo):
-	BulletObject(x, y, color, gx, gy, attackInfo)
+ParabolaBullet::ParabolaBullet(int x, int y, int color, int gx, int gy, int energyEraseTime, AttackInfo* attackInfo):
+	BulletObject(x, y, color, gx, gy, energyEraseTime, attackInfo)
 {
 
 }
-ParabolaBullet::ParabolaBullet(int x, int y, GraphHandle* handle, int gx, int gy, AttackInfo* attackInfo):
-	BulletObject(x, y, handle, gx, gy, attackInfo)
+ParabolaBullet::ParabolaBullet(int x, int y, GraphHandle* handle, int gx, int gy, int energyEraseTime, AttackInfo* attackInfo):
+	BulletObject(x, y, handle, gx, gy, energyEraseTime, attackInfo)
 {
 	// 攻撃範囲に合わせて画像の拡大率を設定
 	int attackSize = max(attackInfo->bulletRx(), attackInfo->bulletRy());
@@ -751,8 +765,8 @@ ParabolaBullet::ParabolaBullet(int x, int y, GraphHandle* handle, int gx, int gy
 	int graphSize = min(graphX, graphY);
 	m_handle->setEx((double)attackSize / (double)graphSize);
 }
-ParabolaBullet::ParabolaBullet(int x, int y, GraphHandle* handle, int gx, int gy) :
-	BulletObject(x, y, -1, gx, gy)
+ParabolaBullet::ParabolaBullet(int x, int y, GraphHandle* handle, int gx, int gy, int energyEraseTime) :
+	BulletObject(x, y, -1, gx, gy, energyEraseTime)
 {
 	m_handle = handle;
 }
@@ -776,7 +790,7 @@ GraphHandle* ParabolaBullet::getHandle() const {
 }
 
 
-SlashObject::SlashObject(int x1, int y1, int x2, int y2, GraphHandle* handle, int slashCountSum, const AttackInfo* attackInfo) :
+SlashObject::SlashObject(int x1, int y1, int x2, int y2, GraphHandle* handle, int slashCountSum, int energyEraseTime, const AttackInfo* attackInfo) :
 	Object(x1, y1, x2, y2, attackInfo->slashHp())
 {
 	// 必要なら後からセッタで設定
@@ -807,9 +821,11 @@ SlashObject::SlashObject(int x1, int y1, int x2, int y2, GraphHandle* handle, in
 
 	// サウンド
 	m_soundHandle_p = attackInfo->slashSoundHandle();
+
+	m_energyEraseTime = energyEraseTime;
 }
 
-SlashObject::SlashObject(int x1, int y1, int x2, int y2, GraphHandle* handle, int slashCountSum) :
+SlashObject::SlashObject(int x1, int y1, int x2, int y2, GraphHandle* handle, int slashCountSum, int energyEraseTime) :
 	Object(x1, y1, x2, y2, 0)
 {
 	m_characterId = -1;
@@ -822,17 +838,18 @@ SlashObject::SlashObject(int x1, int y1, int x2, int y2, GraphHandle* handle, in
 	m_slashImpactY = 0;
 	m_effectHandles_p = nullptr;
 	m_soundHandle_p = -1;
+	m_energyEraseTime = energyEraseTime;
 }
 
 // 大きさを指定しない場合。画像からサイズ取得。生存時間、AttackInfo
-SlashObject::SlashObject(int x, int y, GraphHandle* handle, int slashCountSum, AttackInfo* attackInfo) {
+SlashObject::SlashObject(int x, int y, GraphHandle* handle, int slashCountSum, int energyEraseTime, AttackInfo* attackInfo) {
 	int x2 = 0;
 	int y2 = 0;
 	GetGraphSize(handle->getHandle(), &x2, &y2);
 	x2 += x;
 	y2 = y;
 	m_hp = attackInfo->slashHp();
-	SlashObject(x, y, x2, y2, handle, slashCountSum, attackInfo);
+	SlashObject(x, y, x2, y2, handle, slashCountSum, energyEraseTime, attackInfo);
 }
 
 // キャラとの当たり判定
@@ -895,6 +912,12 @@ void SlashObject::action() {
 	}
 }
 
+Item* SlashObject::createAttackEnergy() {
+	if (m_energyEraseTime > 0 && m_cnt == m_slashCountSum - 1) {
+		return new EnergyItem("energy", (m_x1 + m_x2) / 2, (m_y1 + m_y2) / 2, m_damage, m_energyEraseTime);
+	}
+	return nullptr;
+}
 
 BombObject::BombObject(int x, int y, int dx, int dy, int damage, Animation* bombAnimation) :
 	Object(x - dx / 2, y - dy / 2, x + dx / 2, y + dy / 2, -1)
@@ -1076,9 +1099,10 @@ Object* TriangleObject::createCopy() {
 	return res;
 }
 Object* BulletObject::createCopy() {
-	BulletObject* res = new BulletObject(m_x1, m_y1, m_color, m_gx, m_gy);
+	BulletObject* res = new BulletObject(m_x1, m_y1, m_color, m_gx, m_gy, m_energyEraseTime);
 	setParam(res);
 	setBulletParam(res);
+	setEnergyCnt(m_energyCnt);
 	return res;
 }
 void BulletObject::setBulletParam(BulletObject* object) {
@@ -1099,14 +1123,14 @@ void BulletObject::setBulletParam(BulletObject* object) {
 	
 }
 Object* ParabolaBullet::createCopy() {
-	ParabolaBullet* res = new ParabolaBullet(m_x1, m_y1, m_handle, m_gx, m_gy);
+	ParabolaBullet* res = new ParabolaBullet(m_x1, m_y1, m_handle, m_gx, m_gy, m_energyEraseTime);
 	setParam(res);
 	setBulletParam(res);
 	res->setGraphHandle(m_handle);
 	return res;
 }
 Object* SlashObject::createCopy() {
-	SlashObject* res = new SlashObject(m_x1, m_y1, m_x2, m_y2, m_handle, m_slashCountSum);
+	SlashObject* res = new SlashObject(m_x1, m_y1, m_x2, m_y2, m_handle, m_slashCountSum, m_energyEraseTime);
 	setParam(res);
 	setSlashParam(res);
 	return res;
