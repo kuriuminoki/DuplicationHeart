@@ -389,7 +389,7 @@ void Character::moveDown(int d) {
 vector<Object*>* Character::slidingAttack(int sound, SoundPlayer* soundPlayer) {
 	int x1, y1, x2, y2;
 	getAtariArea(&x1, &y1, &x2, &y2);
-	SlashObject* attackObject = new SlashObject(x1, y1, x2, y2, nullptr, 1, m_slidingInfo);
+	SlashObject* attackObject = new SlashObject(x1, y1, x2, y2, nullptr, 1, DEFAULT_SLASH_ENERGY_TIME, m_slidingInfo);
 	// Œø‰Ê‰¹
 	if (sound && soundPlayer != nullptr) {
 		soundPlayer->pushSoundQueue(m_slidingInfo->slashStartSoundHandle(),
@@ -607,10 +607,14 @@ vector<Object*>* Heart::bulletAttack(int cnt, int gx, int gy, SoundPlayer* sound
 	// ’e‚Ìì¬
 	BulletObject* attackObject;
 	if (m_graphHandle->getBulletHandle() != nullptr) {
-		attackObject = new BulletObject(getCenterX(), getCenterY(), m_graphHandle->getBulletHandle()->getGraphHandles()->getGraphHandle(), gx, gy, m_attackInfo);
+		attackObject = new BulletObject(
+			getCenterX(), getCenterY(), m_graphHandle->getBulletHandle()->getGraphHandles()->getGraphHandle(),
+			gx, gy, DEFAULT_BULLET_ENERGY_TIME, m_attackInfo);
 	}
 	else {
-		attackObject = new BulletObject(getCenterX(), getCenterY(), m_bulletColor, gx, gy, m_attackInfo);
+		attackObject = new BulletObject(
+			getCenterX(), getCenterY(), m_bulletColor, gx, gy,
+			DEFAULT_BULLET_ENERGY_TIME, m_attackInfo);
 	}
 	// ©–Å–h~
 	attackObject->setCharacterId(m_id);
@@ -655,7 +659,7 @@ vector<Object*>* Heart::slashAttack(bool leftDirection, int cnt, bool grand, Sou
 	if (cnt == m_attackInfo->slashCountSum()) {
 		index = 0;
 		attackObject = new SlashObject(centerX, centerY - height, x2, centerY + height,
-			slashHandles->getGraphHandles()->getGraphHandle(index), slashCountSum, m_attackInfo);
+			slashHandles->getGraphHandles()->getGraphHandle(index), slashCountSum, 0, m_attackInfo);
 		// Œø‰Ê‰¹
 		if (soundPlayer != nullptr) {
 			soundPlayer->pushSoundQueue(m_attackInfo->slashStartSoundHandle(),
@@ -666,12 +670,12 @@ vector<Object*>* Heart::slashAttack(bool leftDirection, int cnt, bool grand, Sou
 	else if (cnt == m_attackInfo->slashCountSum() * 2 / 3) {
 		index = 1;
 		attackObject = new SlashObject(centerX, centerY - height, x2, centerY + height,
-			slashHandles->getGraphHandles()->getGraphHandle(index), slashCountSum, m_attackInfo);
+			slashHandles->getGraphHandles()->getGraphHandle(index), slashCountSum, 0, m_attackInfo);
 	}
 	else if (cnt == m_attackInfo->slashCountSum() / 3) {
 		index = 2;
 		attackObject = new SlashObject(centerX, centerY - height, x2, centerY + height,
-			slashHandles->getGraphHandles()->getGraphHandle(index), slashCountSum, m_attackInfo);
+			slashHandles->getGraphHandles()->getGraphHandle(index), slashCountSum, DEFAULT_SLASH_ENERGY_TIME, m_attackInfo);
 	}
 	if (attackObject != nullptr) {
 		// ©–Å–h~
@@ -725,7 +729,9 @@ void Siesta::switchSquatBullet(int cnt) {
 // ËŒ‚UŒ‚‚ğ‚·‚é
 vector<Object*>* Siesta::bulletAttack(int cnt, int gx, int gy, SoundPlayer* soundPlayer) {
 	if (cnt != getBulletRapid() / 2) { return nullptr; }
-	ParabolaBullet *attackObject = new ParabolaBullet(getCenterX(), getCenterY(), m_graphHandle->getBulletHandle()->getGraphHandles()->getGraphHandle(), gx, gy, m_attackInfo);
+	ParabolaBullet *attackObject = new ParabolaBullet(
+		getCenterX(), getCenterY(), m_graphHandle->getBulletHandle()->getGraphHandles()->getGraphHandle(),
+		gx, gy, DEFAULT_BULLET_ENERGY_TIME, m_attackInfo);
 	// ©–Å–h~
 	attackObject->setCharacterId(m_id);
 	// ƒ`[ƒ€ƒLƒ‹–h~
@@ -767,7 +773,7 @@ vector<Object*>* Siesta::slashAttack(bool leftDirection, int cnt, bool grand, So
 	if (cnt == m_attackInfo->slashCountSum()) {
 		index = 0;
 		attackObject = new SlashObject(x1, m_y, x2, m_y + height,
-			slashHandles->getGraphHandle(index), slashCountSum, m_attackInfo);
+			slashHandles->getGraphHandle(index), slashCountSum, 0, m_attackInfo);
 		// Œø‰Ê‰¹
 		if (soundPlayer != nullptr) {
 			soundPlayer->pushSoundQueue(m_attackInfo->slashStartSoundHandle(),
@@ -778,12 +784,12 @@ vector<Object*>* Siesta::slashAttack(bool leftDirection, int cnt, bool grand, So
 	else if (cnt == m_attackInfo->slashCountSum() * 2 / 3) {
 		index = 1;
 		attackObject = new SlashObject(x1, m_y, x2, m_y + height,
-			slashHandles->getGraphHandle(index), slashCountSum, m_attackInfo);
+			slashHandles->getGraphHandle(index), slashCountSum, 0, m_attackInfo);
 	}
 	else if (cnt == m_attackInfo->slashCountSum() / 3) {
 		index = 2;
 		attackObject = new SlashObject(x1, m_y, x2, m_y + height,
-			slashHandles->getGraphHandle(index), slashCountSum, m_attackInfo);
+			slashHandles->getGraphHandle(index), slashCountSum, DEFAULT_SLASH_ENERGY_TIME, m_attackInfo);
 	}
 	if (attackObject != nullptr) {
 		// ©–Å–h~
@@ -821,9 +827,9 @@ Character* Hierarchy::createCopy() {
 // ËŒ‚UŒ‚‚ğ‚·‚é
 vector<Object*>* Hierarchy::bulletAttack(int cnt, int gx, int gy, SoundPlayer* soundPlayer) {
 	if (cnt != getBulletRapid()) { return nullptr; }
-	//gx = GetRand(600) - 300 + getCenterX();
-	//gy = getCenterY() - GetRand(300);
-	BulletObject* attackObject = new BulletObject(getCenterX(), getCenterY(), m_graphHandle->getBulletHandle()->getGraphHandles()->getGraphHandle(), gx, gy, m_attackInfo);
+	BulletObject* attackObject = new BulletObject(
+		getCenterX(), getCenterY(), m_graphHandle->getBulletHandle()->getGraphHandles()->getGraphHandle(),
+		gx, gy, DEFAULT_BULLET_ENERGY_TIME, m_attackInfo);
 	// ©–Å–h~
 	attackObject->setCharacterId(m_id);
 	// ƒ`[ƒ€ƒLƒ‹–h~
@@ -903,7 +909,7 @@ vector<Object*>* Valkyria::slashAttack(bool leftDirection, int cnt, bool grand, 
 	if (cnt == m_attackInfo->slashCountSum() - 1) {
 		index = 0 % slashHandles->getSize();
 		attackObject = new SlashObject(x1, m_y, x2, m_y + height,
-			slashHandles->getGraphHandle(index), m_attackInfo->slashCountSum() - 12, m_attackInfo);
+			slashHandles->getGraphHandle(index), m_attackInfo->slashCountSum() - 12, DEFAULT_SLASH_ENERGY_TIME, m_attackInfo);
 		// Œø‰Ê‰¹
 		if (soundPlayer != nullptr) {
 			soundPlayer->pushSoundQueue(m_attackInfo->slashStartSoundHandle(),
@@ -914,12 +920,12 @@ vector<Object*>* Valkyria::slashAttack(bool leftDirection, int cnt, bool grand, 
 	else if (cnt == m_attackInfo->slashCountSum() * 2 / 3) {
 		index = 1 % slashHandles->getSize();
 		attackObject = new SlashObject(x1, m_y, x2, m_y + height,
-			slashHandles->getGraphHandle(index), m_attackInfo->slashCountSum() - slashCountSum - 6, m_attackInfo);
+			slashHandles->getGraphHandle(index), m_attackInfo->slashCountSum() - slashCountSum - 6, DEFAULT_SLASH_ENERGY_TIME, m_attackInfo);
 	}
 	else if (cnt == m_attackInfo->slashCountSum() / 3) {
 		index = 2 % slashHandles->getSize();
 		attackObject = new SlashObject(x1, m_y, x2, m_y + height,
-			slashHandles->getGraphHandle(index), m_attackInfo->slashCountSum() - 2 * slashCountSum, m_attackInfo);
+			slashHandles->getGraphHandle(index), m_attackInfo->slashCountSum() - 2 * slashCountSum, DEFAULT_SLASH_ENERGY_TIME, m_attackInfo);
 	}
 	if (attackObject != nullptr) {
 		// ©–Å–h~
@@ -1011,7 +1017,9 @@ vector<Object*>* Koharu::bulletAttack(int cnt, int gx, int gy, SoundPlayer* soun
 	if (cnt != getBulletRapid()) { return nullptr; }
 	// ƒoƒY[ƒJ‚ÌeŒû‚©‚ço‚é‚æ‚¤‚ÉŒ©‚¹‚é
 	gy = getY() + getHeight() - 160;
-	BulletObject* attackObject = new BulletObject(getCenterX(), gy, m_graphHandle->getBulletHandle()->getGraphHandles()->getGraphHandle(), gx, gy, m_attackInfo);
+	BulletObject* attackObject = new BulletObject(
+		getCenterX(), gy, m_graphHandle->getBulletHandle()->getGraphHandles()->getGraphHandle(),
+		gx, gy, DEFAULT_BULLET_ENERGY_TIME, m_attackInfo);
 	// ©–Å–h~
 	attackObject->setCharacterId(m_id);
 	// ƒ`[ƒ€ƒLƒ‹–h~
@@ -1108,7 +1116,9 @@ Character* ParabolaOnly::createCopy() {
 // ËŒ‚UŒ‚‚ğ‚·‚é
 vector<Object*>* ParabolaOnly::bulletAttack(int cnt, int gx, int gy, SoundPlayer* soundPlayer) {
 	if (cnt != getBulletRapid()) { return nullptr; }
-	ParabolaBullet* attackObject = new ParabolaBullet(getCenterX(), getCenterY(), m_bulletColor, gx, gy, m_attackInfo);
+	ParabolaBullet* attackObject = new ParabolaBullet(
+		getCenterX(), getCenterY(), m_bulletColor,
+		gx, gy, DEFAULT_BULLET_ENERGY_TIME, m_attackInfo);
 	// ©–Å–h~
 	attackObject->setCharacterId(m_id);
 	// ƒ`[ƒ€ƒLƒ‹–h~
@@ -1158,7 +1168,9 @@ vector<Object*>* Sun::bulletAttack(int cnt, int gx, int gy, SoundPlayer* soundPl
 	if (cnt != getBulletRapid()) { return nullptr; }
 	int x = getCenterX() + GetRand(400) - 200;
 	int y = getCenterY() + GetRand(400) - 200;
-	ParabolaBullet* attackObject = new ParabolaBullet(x, y, m_graphHandle->getBulletHandle()->getGraphHandles()->getGraphHandle(), gx, gy, m_attackInfo);
+	ParabolaBullet* attackObject = new ParabolaBullet(
+		x, y, m_graphHandle->getBulletHandle()->getGraphHandles()->getGraphHandle(),
+		gx, gy, DEFAULT_BULLET_ENERGY_TIME, m_attackInfo);
 	// ©–Å–h~
 	attackObject->setCharacterId(m_id);
 	// ƒ`[ƒ€ƒLƒ‹–h~
@@ -1239,7 +1251,7 @@ vector<Object*>* Archive::slashAttack(bool leftDirection, int cnt, bool grand, S
 	if (cnt == 9 * n || cnt == 8 * n || cnt == 7 * n) {
 		index = 0;
 		attackObject = new SlashObject(centerX, centerY - height, x2, centerY + height,
-			slashHandles->getGraphHandles()->getGraphHandle(index), slashCountSum, m_attackInfo);
+			slashHandles->getGraphHandles()->getGraphHandle(index), slashCountSum, DEFAULT_SLASH_ENERGY_TIME, m_attackInfo);
 		// Œø‰Ê‰¹
 		if (soundPlayer != nullptr && cnt == 9 * n) {
 			soundPlayer->pushSoundQueue(m_attackInfo->slashStartSoundHandle(),
@@ -1250,12 +1262,12 @@ vector<Object*>* Archive::slashAttack(bool leftDirection, int cnt, bool grand, S
 	else if (cnt == 6 * n || cnt == 5 * n || cnt == 4 * n) {
 		index = 1;
 		attackObject = new SlashObject(centerX, centerY - height, x2, centerY + height,
-			slashHandles->getGraphHandles()->getGraphHandle(index), slashCountSum, m_attackInfo);
+			slashHandles->getGraphHandles()->getGraphHandle(index), slashCountSum, DEFAULT_SLASH_ENERGY_TIME, m_attackInfo);
 	}
 	else if (cnt == 3 * n || cnt == 2 * n || cnt == n) {
 		index = 2;
 		attackObject = new SlashObject(centerX, centerY - height, x2, centerY + height,
-			slashHandles->getGraphHandles()->getGraphHandle(index), slashCountSum, m_attackInfo);
+			slashHandles->getGraphHandles()->getGraphHandle(index), slashCountSum, DEFAULT_SLASH_ENERGY_TIME, m_attackInfo);
 	}
 	if (attackObject != nullptr) {
 		// ©–Å–h~

@@ -10,6 +10,7 @@ class AttackInfo;
 class GraphHandle;
 class GraphHandles;
 class Animation;
+class Item;
 
 
 /*
@@ -136,7 +137,7 @@ public:
 	virtual inline void setStopCnt(int stopCnt) {  }
 
 	// オブジェクト描画（画像がないときに使う）
-	virtual void drawObject(int x1, int y1, int x2, int y2) const {};
+	virtual void drawObject(int x1, int y1, int x2, int y2) const {}
 
 	// キャラとの当たり判定
 	virtual bool atari(CharacterController* characterController) = 0;
@@ -145,7 +146,7 @@ public:
 	virtual bool atariDropBox(int x1, int y1, int x2, int y2, int& vx, int& vy);
 
 	// キャラがオブジェクトに入り込んでいるときの処理
-	virtual void penetration(CharacterController* characterController) {};
+	virtual void penetration(CharacterController* characterController) {}
 
 	// 他オブジェクトからの当たり判定
 	virtual bool atariFromObject(Object* object) { return false; }
@@ -154,10 +155,13 @@ public:
 	virtual bool atariToObject(Object* object) { return false; }
 
 	// 動くオブジェクト用 毎フレーム行う
-	virtual void action() {};
+	virtual void action() {}
+
+	// 攻撃オブジェクト用 エネルギー放出
+	virtual Item* createAttackEnergy() { return nullptr; }
 
 	// アニメーション作成
-	virtual Animation* createAnimation(int x, int y, int flameCnt) { return nullptr; };
+	virtual Animation* createAnimation(int x, int y, int flameCnt) { return nullptr; }
 };
 
 
@@ -295,11 +299,16 @@ protected:
 	// ダメージ
 	int m_damage;
 
+	// エネルギー放出用のカウント
+	int m_energyCnt;
+	// エネルギーが残る時間。 0以下なら放出しない
+	int m_energyEraseTime;
+
 public:
 	// x, y, gx, gyは弾の中心座標
-	BulletObject(int x, int y, int color, int gx, int gy, AttackInfo* attackInfo);
-	BulletObject(int x, int y, int color, int gx, int gy);
-	BulletObject(int x, int y, GraphHandle* handle, int gx, int gy, AttackInfo* attackInfo);
+	BulletObject(int x, int y, int color, int gx, int gy, int energyEraseTime, AttackInfo* attackInfo);
+	BulletObject(int x, int y, int color, int gx, int gy, int energyEraseTime);
+	BulletObject(int x, int y, GraphHandle* handle, int gx, int gy, int energyEraseTime, AttackInfo* attackInfo);
 
 	Object* createCopy();
 	void setBulletParam(BulletObject* obejct);
@@ -330,6 +339,7 @@ public:
 	inline void setGy(int gy) { m_gy = gy; }
 	inline void setD(int d) { m_d = d; }
 	inline void setDamage(int damage) { m_damage = damage; }
+	inline void setEnergyCnt(int energyCnt) { m_energyCnt = energyCnt; }
 
 	// 攻撃力 攻撃オブジェクト用
 	inline int getDamage() const { return m_damage; }
@@ -344,6 +354,9 @@ public:
 	// 動くオブジェクト用 毎フレーム行う
 	void action();
 
+	// 攻撃オブジェクト用 エネルギー放出
+	Item* createAttackEnergy();
+
 	// アニメーション作成
 	Animation* createAnimation(int x, int y, int flameCnt);
 };
@@ -357,9 +370,9 @@ class ParabolaBullet :
 public:
 	static const int G = 2;
 
-	ParabolaBullet(int x, int y, int color, int gx, int gy, AttackInfo* attackInfo);
-	ParabolaBullet(int x, int y, GraphHandle* handle, int gx, int gy, AttackInfo* attackInfo);
-	ParabolaBullet(int x, int y, GraphHandle* handle, int gx, int gy);
+	ParabolaBullet(int x, int y, int color, int gx, int gy, int energyEraseTime, AttackInfo* attackInfo);
+	ParabolaBullet(int x, int y, GraphHandle* handle, int gx, int gy, int energyEraseTime, AttackInfo* attackInfo);
+	ParabolaBullet(int x, int y, GraphHandle* handle, int gx, int gy, int energyEraseTime);
 
 	Object* createCopy();
 
@@ -409,14 +422,17 @@ private:
 	// ストップする残り時間
 	int m_stopCnt;
 
+	// エネルギーが残る時間。 0以下なら放出しない
+	int m_energyEraseTime;
+
 public:
 	// 座標、画像、生存時間、AttackInfo
-	SlashObject(int x1, int y1, int x2, int y2, GraphHandle* handle, int slashCountSum, const AttackInfo* attackInfo);
+	SlashObject(int x1, int y1, int x2, int y2, GraphHandle* handle, int slashCountSum, int energyEraseTime, const AttackInfo* attackInfo);
 
-	SlashObject(int x1, int y1, int x2, int y2, GraphHandle* handle, int slashCountSum);
+	SlashObject(int x1, int y1, int x2, int y2, GraphHandle* handle, int slashCountSum, int energyEraseTime);
 
 	// 大きさを指定しない場合。画像からサイズ取得。生存時間、AttackInfo
-	SlashObject(int x, int y, GraphHandle* handle, int slashCountSum, AttackInfo* attackInfo);
+	SlashObject(int x, int y, GraphHandle* handle, int slashCountSum, int energyEraseTime, AttackInfo* attackInfo);
 
 	Object* createCopy();
 
@@ -452,6 +468,9 @@ public:
 
 	// 動くオブジェクト用 毎フレーム行う
 	void action();
+
+	// 攻撃オブジェクト用 エネルギー放出
+	Item* createAttackEnergy();
 
 	// アニメーション作成
 	Animation* createAnimation(int x, int y, int flameCnt);

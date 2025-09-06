@@ -14,8 +14,12 @@ class GraphHandles;
 * アイテム
 */
 class Item {
-protected:
+private:
 
+	// アイテムが消えるまでの時間
+	const int ERASE_CNT = 600;
+
+protected:
 	int m_cnt;
 
 	// 座標
@@ -42,10 +46,12 @@ protected:
 	// 取得済み
 	bool m_deleteFlag;
 
-public:
+	// サイズの倍率
+	double m_exRate;
 
-	// アイテムが消えるまでの時間
-	const int ERASE_CNT = 600;
+	virtual void loadItemGraph();
+
+public:
 
 	// コンストラクタ
 	Item(const char* itemName, int x, int y);
@@ -69,6 +75,9 @@ public:
 	inline bool getGrand() const { return m_grand; }
 	inline int getSound() const { return m_sound; }
 	inline const Animation* getAnimation() const { return m_animation; }
+	double getExRate() const { m_exRate; }
+	virtual int getEraseCnt() const { return ERASE_CNT; }
+	virtual bool getEnableGravity() const { return true; }
 	
 	// 取得済みかつ効果音が再生中じゃないなら削除してもらう
 	bool getDeleteFlag() const;
@@ -80,6 +89,7 @@ public:
 	inline void setVx(int vx) { m_vx = vx; }
 	inline void setVy(int vy) { m_vy = vy; }
 	inline void setAnimation(Animation* animation) { delete m_animation; m_animation = animation; }
+	inline void setExRate(double exRate) { m_exRate = exRate; }
 
 	// アイテムの大きさ
 	void getGraphSize(int* wide, int* height) const;
@@ -149,6 +159,39 @@ public:
 
 	// プレイヤーに対するアクション
 	void arrangePlayer(Character* player);
+
+};
+
+
+/*
+* エネルギーアイテム
+*/
+class EnergyItem :
+	public Item
+{
+private:
+
+	// アイテムが消えるまでの時間
+	int m_eraseTime;
+
+	// HPの回復量
+	int m_energyValue;
+
+public:
+
+	void loadItemGraph();
+
+	// コンストラクタ
+	EnergyItem(const char* itemName, int x, int y, int energyValue, int eraseTime);
+
+	// スキル発動用
+	Item* createCopy();
+
+	// プレイヤーに対するアクション
+	void arrangePlayer(Character* player);
+
+	int getEraseCnt() const { return m_eraseTime; }
+	bool getEnableGravity() const { return false; }
 
 };
 

@@ -384,6 +384,9 @@ private:
 	// Battle：キャラクターと扉の当たり判定
 	void atariCharacterAndDoor(CharacterController* controller, std::vector<Object*>& objects);
 
+	// Battle: 攻撃のエネルギー放出
+	void createAttackEnergy();
+
 	// Battle：壁や床<->攻撃の当たり判定
 	void atariStageAndAttack();
 
