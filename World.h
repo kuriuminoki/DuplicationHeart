@@ -149,6 +149,9 @@ private:
 	// キャラがやられた時のエフェクト画像
 	GraphHandles* m_characterDeadGraph;
 
+	// スキル終了時複製が消えるエフェクト画像
+	GraphHandles* m_skillFinishGraph;
+
 	// キャラがダメージ受けた時のエフェクト画像
 	GraphHandles* m_characterDamageGraph;
 
@@ -219,6 +222,7 @@ public:
 	inline double getCameraMaxEx() const { return m_cameraMaxEx; }
 	inline double getCameraMinEx() const { return m_cameraMinEx; }
 	inline GraphHandles* getCharacterDeadGraph() const { return m_characterDeadGraph; }
+	inline GraphHandles* getSkillFinishGraph() const { return m_skillFinishGraph; }
 	inline GraphHandles* getCharacterDamageGraph() const { return m_characterDamageGraph; }
 	inline GraphHandles* getBombGraph() const { return m_bombGraph; }
 	inline int getCharacterDeadSound() const { return m_characterDeadSound; }

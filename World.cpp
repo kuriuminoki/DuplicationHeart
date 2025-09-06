@@ -214,6 +214,7 @@ World::World(int fromAreaNum, int toAreaNum, SoundPlayer* soundPlayer) :
 	m_camera->setEx(m_cameraMaxEx);
 
 	m_characterDeadGraph = new GraphHandles("picture/effect/dead", 6, 1.0, 0, true);
+	m_skillFinishGraph = new GraphHandles("picture/effect/skillFinish", 6, 1.0, 0, true);
 	m_characterDamageGraph = new GraphHandles("picture/effect/damage", 1, 0.2, 0, true);
 	m_bombGraph = new GraphHandles("picture/effect/bomb", 9, 1.0, 0, true);
 	m_characterDeadSound = LoadSoundMem("sound/battle/dead.wav");
@@ -242,6 +243,7 @@ World::World(const World* original) :
 	// エリアをコピー (コピー元と共有するもの)
 	m_soundPlayer_p = original->getSoundPlayer();
 	m_characterDeadGraph = original->getCharacterDeadGraph();
+	m_skillFinishGraph = original->getSkillFinishGraph();
 	m_characterDamageGraph = original->getCharacterDamageGraph();
 	m_bombGraph = original->getBombGraph();
 	m_characterDeadSound = original->getCharacterDeadSound();
@@ -332,6 +334,7 @@ World::~World() {
 	if (!m_duplicationFlag) {
 		DeleteGraph(m_backGroundGraph);
 		delete m_characterDeadGraph;
+		delete m_skillFinishGraph;
 		delete m_characterDamageGraph;
 		delete m_bombGraph;
 		DeleteSoundMem(m_characterDeadSound);
@@ -531,6 +534,13 @@ void World::popCharacterController(int id) {
 			continue;
 		}
 		if (m_characterControllers[i]->getAction()->getCharacter()->getId() == id) {
+			const Character* character = m_characterControllers[i]->getAction()->getCharacter();
+			int targetX1 = 0, targetY1 = 0, targetX2 = 0, targetY2 = 0;
+			character->getAtariArea(&targetX1, &targetY1, &targetX2, &targetY2);
+			// エフェクト作成
+			int x = (targetX1 + targetX2) / 2;
+			int y = (targetY1 + targetY2) / 2;
+			m_animations.push_back(new Animation(x, y, 3, m_skillFinishGraph));
 			delete m_characterControllers[i];
 			m_characterControllers[i] = m_characterControllers.back();
 			m_characterControllers.pop_back();
