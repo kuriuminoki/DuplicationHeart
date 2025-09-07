@@ -103,7 +103,7 @@ void GameDrawer::draw() {
 			DrawStringToHandle((int)(900 * m_exX), (int)(30 * m_exY), oss.str().c_str(), BLACK, m_skillHandle);
 		}
 	}
-	// Œo‰ßŽžŠÔ TODO: ‰æ‘œ‚É‚·‚é
+	// Œo‰ßŽžŠÔ
 	else if (m_worldDrawer->getWorld()->getBrightValue() == 255 && !m_game->getStory()->eventNow()) {
 		int date = m_game->getStory()->getDate();
 		int barHandle = m_timeBarNoonHandle;
