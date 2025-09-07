@@ -1,5 +1,6 @@
 #include "Animation.h"
 #include "AnimationDrawer.h"
+#include "Character.h"
 #include "Control.h"
 #include "GraphHandle.h"
 #include "Sound.h"
@@ -15,20 +16,22 @@ using namespace std;
 /*
 * アニメーションのクラス
 */
-Animation::Animation(int x, int y, int flameCnt, GraphHandles* graphHandles) {
+Animation::Animation(int x, int y, int frameCnt, GraphHandles* graphHandles) {
 	m_x = x;
 	m_y = y;
 	m_vx = 0;
 	m_vy = 0;
 	m_movable = false;
 	m_handles_p = graphHandles;
-	m_flameCnt = flameCnt;
+	m_frameCnt = frameCnt;
 	m_loopFlag = false;
+	m_character_p = nullptr;
+	m_characterId = -1;
 	init();
 }
 
 Animation* Animation::createCopy() {
-	Animation* res = new Animation(m_x, m_y, m_flameCnt, m_handles_p);
+	Animation* res = new Animation(m_x, m_y, m_frameCnt, m_handles_p);
 	res->setVx(m_vx);
 	res->setVy(m_vy);
 	res->setMovable(m_movable);
@@ -38,24 +41,33 @@ Animation* Animation::createCopy() {
 	return res;
 }
 
+void Animation::setCharacter(Character* character) {
+	m_character_p = character;
+	m_characterId = m_character_p->getId();
+}
+
 // 初期化
 void Animation::init() {
 	m_cnt = 0;
-	m_finishCnt = m_flameCnt * m_handles_p->getSize();
+	m_finishCnt = m_frameCnt * m_handles_p->getSize();
 	m_finishFlag = false;
 }
 
 // アニメーションの切り替え
-void Animation::changeGraph(GraphHandles* nextGraph, int flameCnt) {
+void Animation::changeGraph(GraphHandles* nextGraph, int frameCnt) {
 	m_handles_p = nextGraph;
-	if (flameCnt > 0) { m_flameCnt = flameCnt; }
+	if (frameCnt > 0) { m_frameCnt = frameCnt; }
 	init();
 }
 
 
 // カウント
 void Animation::count() { 
-	if (m_movable) {
+	if (m_character_p != nullptr) {
+		m_x = m_character_p->getCenterX();
+		m_y = m_character_p->getCenterY();
+	}
+	else if (m_movable) {
 		m_x += m_vx;
 		m_y += m_vy;
 	}
@@ -74,7 +86,7 @@ void Animation::count() {
 
 // 描画用
 GraphHandle* Animation::getHandle() const {
-	return m_handles_p->getGraphHandle((m_cnt - 1) / m_flameCnt);
+	return m_handles_p->getGraphHandle((m_cnt - 1) / m_frameCnt);
 }
 
 
@@ -93,8 +105,8 @@ Movie::Movie(SoundPlayer* soundPlayer_p) {
 	m_bgmPath = "";
 	m_originalBgmPath = m_soundPlayer_p->getBgmName();
 
-	m_flameWide = (GAME_WIDE - (int)(GAME_WIDE_DEFAULT * m_ex)) / 2;
-	m_flameHeight = (GAME_HEIGHT - (int)(GAME_HEIGHT_DEFAULT * m_ex)) / 2;
+	m_frameWide = (GAME_WIDE - (int)(GAME_WIDE_DEFAULT * m_ex)) / 2;
+	m_frameHeight = (GAME_HEIGHT - (int)(GAME_HEIGHT_DEFAULT * m_ex)) / 2;
 
 	// フォントデータ
 	m_textHandle = CreateFontToHandle(nullptr, (int)(TEXT_SIZE * m_exX), 3);
@@ -143,14 +155,14 @@ void Movie::draw() {
 	}
 }
 
-void Movie::drawFlame() {
-	if (m_flameWide > 0) {
-		DrawBox(0, 0, m_flameWide + 1, GAME_HEIGHT, BLACK, TRUE);
-		DrawBox(GAME_WIDE - m_flameWide - 1, 0, GAME_WIDE, GAME_HEIGHT, BLACK, TRUE);
+void Movie::drawframe() {
+	if (m_frameWide > 0) {
+		DrawBox(0, 0, m_frameWide + 1, GAME_HEIGHT, BLACK, TRUE);
+		DrawBox(GAME_WIDE - m_frameWide - 1, 0, GAME_WIDE, GAME_HEIGHT, BLACK, TRUE);
 	}
-	if (m_flameHeight > 0) {
-		DrawBox(0, 0, GAME_WIDE, m_flameHeight + 1, BLACK, TRUE);
-		DrawBox(0, GAME_HEIGHT - m_flameHeight - 1, GAME_WIDE, GAME_HEIGHT, BLACK, TRUE);
+	if (m_frameHeight > 0) {
+		DrawBox(0, 0, GAME_WIDE, m_frameHeight + 1, BLACK, TRUE);
+		DrawBox(0, GAME_HEIGHT - m_frameHeight - 1, GAME_WIDE, GAME_HEIGHT, BLACK, TRUE);
 	}
 
 	// デバッグ用
@@ -191,14 +203,14 @@ void PartOneCharacter::draw() {
 
 
 void OpMovie::pushPartOneCharacter(int index, bool front, GraphHandle* character) {
-	int y = GAME_HEIGHT * 5 / 6 - m_flameHeight / 2;
+	int y = GAME_HEIGHT * 5 / 6 - m_frameHeight / 2;
 	int vx = -8;
 	double ex = m_ex;
 	int wide = (int)(800 * m_ex);
 	int x = 0;
 	if (!front) { // 後ろのキャラ
 		double backEx = 0.3;
-		y = GAME_HEIGHT/ 5 + m_flameHeight / 2;
+		y = GAME_HEIGHT/ 5 + m_frameHeight / 2;
 		vx = (int)(5 * m_ex);
 		ex *= backEx;
 		wide = (int)(400 * m_ex);
@@ -334,7 +346,7 @@ OpMovie::OpMovie(SoundPlayer* soundPlayer_p):
 	// サビ
 	m_orange = new GraphHandles((path + "sabi/" + "orange").c_str(), 3, m_ex, 0, true);
 	m_duplications = new GraphHandles((path + "sabi/" + "duplication").c_str(), 16, m_ex, 0, true);
-	m_heartFlame = new GraphHandles((path + "sabi/" + "heartFlame").c_str(), 1, m_ex, 0, true);
+	m_heartframe = new GraphHandles((path + "sabi/" + "heartframe").c_str(), 1, m_ex, 0, true);
 	m_rmem = new GraphHandles((path + "sabi/" + "rmem").c_str(), 8, m_ex);
 	m_heartSabi = new GraphHandles((path + "sabi/" + "heart").c_str(), 2, m_ex);
 	m_tvSiesta = new GraphHandles((path + "sabi/" + "シエスタ").c_str(), 1, m_ex);
@@ -436,7 +448,7 @@ OpMovie::~OpMovie() {
 	delete m_duplications;
 	delete m_orangeAnime;
 	delete m_duplicationsAnime;
-	delete m_heartFlame;
+	delete m_heartframe;
 	delete m_rmem;
 	delete m_heartSabi;
 	delete m_tvSiesta;
@@ -621,11 +633,11 @@ void OpMovie::play() {
 		if (m_cnt == 3050) {
 			m_animation->setX(m_centerX);
 			m_animation->setY(m_centerY);
-			m_heartFlame->setEx(m_ex * 11);
-			m_animation->changeGraph(m_heartFlame);
+			m_heartframe->setEx(m_ex * 11);
+			m_animation->changeGraph(m_heartframe);
 		}
-		if (m_heartFlame->getGraphHandle()->getEx() > m_ex) {
-			m_heartFlame->setEx(m_heartFlame->getGraphHandle()->getEx() * 239 / 240);
+		if (m_heartframe->getGraphHandle()->getEx() > m_ex) {
+			m_heartframe->setEx(m_heartframe->getGraphHandle()->getEx() * 239 / 240);
 		}
 		if (m_cnt > 3610 && m_cnt <= 3640) {
 			m_animation->changeGraph(m_rmem, 3);
@@ -736,7 +748,7 @@ void OpMovie::draw() {
 	if (m_cnt > 2950 && m_cnt < 3050 && m_animation->getFinishFlag()) {
 		DrawBox(0, 0, GAME_WIDE, GAME_HEIGHT, BLACK, TRUE);
 	}
-	drawFlame();
+	drawframe();
 
 	// Zキー長押しでスキップの表示
 	drawSkip(m_skipCnt, m_exX, m_exY, m_textHandle);
@@ -771,7 +783,7 @@ void OpMovieMp4::draw() {
 
 	DrawRotaGraph(GAME_WIDE / 2, GAME_HEIGHT / 2, m_ex, 0, m_mp4, TRUE);
 
-	drawFlame();
+	drawframe();
 
 	// Zキー長押しでスキップの表示
 	drawSkip(m_skipCnt, m_exX, m_exY, m_textHandle);

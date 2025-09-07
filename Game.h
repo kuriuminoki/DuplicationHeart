@@ -308,6 +308,9 @@ private:
 	// 複製のキャラID スキル終了時に消すため
 	std::vector<int> m_duplicationId;
 
+	// サウンドプレイヤー(bgm用)
+	SoundPlayer* m_soundPlayer;
+
 	// サウンドプレイヤー
 	SoundPlayer* m_soundPlayer_p;
 
@@ -333,6 +336,8 @@ public:
 
 	// 操作記録が終わったかどうかの判定
 	bool finishRecordFlag();
+
+	void controlBGM(bool on, int soundVolume = -1);
 
 private:
 	// 世界のコピーを作る コピーの変更はオリジナルに影響しない

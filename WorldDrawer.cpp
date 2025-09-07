@@ -275,7 +275,7 @@ void WorldDrawer::drawBattleField(const Camera* camera, int bright, bool drawSki
 		DrawExtendGraph((int)(1600 * m_exX), (int)(10 * m_exY), (int)(1900 * m_exX), (int)(80 * m_exY), m_moneyBoxGraph, TRUE);
 		int money = m_world->getMoney();
 		ostringstream oss;
-		oss << "F" << money;
+		oss << "‚oF" << money;
 		DrawStringToHandle((int)(1650 * m_exX), (int)(20 * m_exY), oss.str().c_str(), BLACK, m_font);
 	}
 

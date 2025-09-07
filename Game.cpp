@@ -604,6 +604,9 @@ bool Game::play() {
 			if (m_timeSpeed == DEFAULT_TIME_SPEED) {
 				m_battleOption = new BattleOption(m_soundPlayer);
 				m_soundPlayer->stopBGM();
+				if (m_skill != nullptr) {
+					m_skill->controlBGM(false);
+				}
 			}
 			else {
 				// 速度アップモード中なら一時停止せずモード解除だけ
@@ -615,7 +618,12 @@ bool Game::play() {
 			m_gameData->saveCommon(m_battleOption->getNewSoundVolume(), GAME_WIDE, GAME_HEIGHT);
 			delete m_battleOption;
 			m_battleOption = nullptr;
-			m_soundPlayer->playBGM();
+			if (m_skill == nullptr) {
+				m_soundPlayer->playBGM();
+			}
+			else {
+				m_skill->controlBGM(true, m_soundPlayer->getVolume());
+			}
 		}
 		m_soundPlayer->pushSoundQueue(m_pauseSound);
 	}
@@ -633,7 +641,12 @@ bool Game::play() {
 			}
 			delete m_battleOption;
 			m_battleOption = nullptr;
-			m_soundPlayer->playBGM();
+			if (m_skill == nullptr) {
+				m_soundPlayer->playBGM();
+			}
+			else {
+				m_skill->controlBGM(true, m_soundPlayer->getVolume());
+			}
 		}
 		m_soundPlayer->play();
 		return false;
@@ -820,6 +833,16 @@ bool Game::skillUsable() {
 * ハートのスキル
 */
 HeartSkill::HeartSkill(int loopNum, World* world, SoundPlayer* soundPlayer) {
+	m_soundPlayer_p = soundPlayer;
+	m_sound = LoadSoundMem("sound/battle/skill.wav");
+	m_soundPlayer_p->pushSoundQueue(m_sound);
+	m_soundPlayer_p->stopBGM();
+
+	m_soundPlayer = new SoundPlayer();
+	m_soundPlayer->setVolume(m_soundPlayer_p->getVolume());
+	m_soundPlayer->setBGM("sound/bgm/skill.mp3"); // クライマックスではloopNum==10?でskill2.mp3再生予定
+	m_soundPlayer->playBGM();
+
 	m_loopNum = loopNum;
 	m_loopNow = 0;
 	m_world_p = world;
@@ -833,14 +856,13 @@ HeartSkill::HeartSkill(int loopNum, World* world, SoundPlayer* soundPlayer) {
 
 	// 最初の複製
 	m_duplicationWorld = createDuplicationWorld(m_world_p);
-
-	m_soundPlayer_p = soundPlayer;
-	m_sound = LoadSoundMem("sound/battle/skill.wav");
-	m_soundPlayer_p->pushSoundQueue(m_sound);
 }
 
 
 HeartSkill::~HeartSkill() {
+	m_soundPlayer_p->playBGM();
+	m_soundPlayer->stopBGM();
+	delete m_soundPlayer;
 	for (unsigned int i = 0; i < m_duplicationId.size(); i++) {
 		m_world_p->popCharacterController(m_duplicationId[i]);
 		m_world_p->eraseRecorder();
@@ -893,6 +915,18 @@ void HeartSkill::battle() {
 // 終わったかどうかの判定
 bool HeartSkill::finishRecordFlag() {
 	return m_loopNow >= m_loopNum;
+}
+
+void HeartSkill::controlBGM(bool on, int soundVolume) {
+	if (soundVolume != -1) {
+		m_soundPlayer->setVolume(soundVolume);
+	}
+	if (on) {
+		m_soundPlayer->playBGM();
+	}
+	else {
+		m_soundPlayer->stopBGM();
+	}
 }
 
 

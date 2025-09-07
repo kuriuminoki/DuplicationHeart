@@ -213,7 +213,9 @@ World::World(int fromAreaNum, int toAreaNum, SoundPlayer* soundPlayer) :
 
 	m_camera->setEx(m_cameraMaxEx);
 
+	m_energyGetGraph = new GraphHandles("picture/effect/getEnergy", 8, 1.0, 0.0, true);
 	m_characterDeadGraph = new GraphHandles("picture/effect/dead", 6, 1.0, 0, true);
+	m_skillFinishGraph = new GraphHandles("picture/effect/skillFinish", 6, 1.0, 0, true);
 	m_characterDamageGraph = new GraphHandles("picture/effect/damage", 1, 0.2, 0, true);
 	m_bombGraph = new GraphHandles("picture/effect/bomb", 9, 1.0, 0, true);
 	m_characterDeadSound = LoadSoundMem("sound/battle/dead.wav");
@@ -241,7 +243,9 @@ World::World(const World* original) :
 
 	// エリアをコピー (コピー元と共有するもの)
 	m_soundPlayer_p = original->getSoundPlayer();
+	m_energyGetGraph = original->getEnergyGetGraph();
 	m_characterDeadGraph = original->getCharacterDeadGraph();
+	m_skillFinishGraph = original->getSkillFinishGraph();
 	m_characterDamageGraph = original->getCharacterDamageGraph();
 	m_bombGraph = original->getBombGraph();
 	m_characterDeadSound = original->getCharacterDeadSound();
@@ -284,6 +288,9 @@ World::World(const World* original) :
 	for (unsigned int i = 0; i < original->getAnimations().size(); i++) {
 		Animation* copy;
 		copy = original->getAnimations()[i]->createCopy();
+		if (original->getAnimations()[i]->getCharacter() != nullptr) {
+			copy->setCharacter(getCharacterWithId(original->getAnimations()[i]->getCharacterId()));
+		}
 		m_animations.push_back(copy);
 	}
 	for (unsigned int i = 0; i < original->getItemVector().size(); i++) {
@@ -331,7 +338,9 @@ World::~World() {
 	// 背景
 	if (!m_duplicationFlag) {
 		DeleteGraph(m_backGroundGraph);
+		delete m_energyGetGraph;
 		delete m_characterDeadGraph;
+		delete m_skillFinishGraph;
 		delete m_characterDamageGraph;
 		delete m_bombGraph;
 		DeleteSoundMem(m_characterDeadSound);
@@ -393,8 +402,10 @@ vector<const Animation*> World::getConstAnimations() const {
 	// アイテム
 	for (unsigned int i = 0; i < m_itemVector.size(); i++) {
 		if (!m_itemVector[i]->getDeleteFlag()) {
-			// 消滅しそうなら点滅 ただし重力の影響を受けないアイテムは点滅しない
-			if (!m_itemVector[i]->getEnableGravity() || m_itemVector[i]->getCnt() < m_itemVector[i]->getEraseCnt() * 2 / 3 || m_itemVector[i]->getCnt() / 3 % 2 == 0) {
+			// 消滅しそうなら点滅 ただし一部アイテムは点滅しない
+			if (m_itemVector[i]->getItemCode() == ITEM_CODE::ITEM_ENERGY
+				|| m_itemVector[i]->getCnt() < m_itemVector[i]->getEraseCnt() * 2 / 3
+				|| m_itemVector[i]->getCnt() / 3 % 2 == 0) {
 				allAnimations.push_back(m_itemVector[i]->getAnimation());
 			}
 		}
@@ -465,6 +476,11 @@ void World::clearCharacter() {
 			m_characters.pop_back();
 		}
 	}
+	// キャラを追従しているアニメがあるかもしれない。ループ時はどうせすべていらなくなるので全アニメを削除
+	for (int j = 0; j < m_animations.size(); j++) {
+		delete m_animations[j];
+	}
+	m_animations.clear();
 }
 
 // ストーリーによるキャラの性能変化
@@ -531,6 +547,13 @@ void World::popCharacterController(int id) {
 			continue;
 		}
 		if (m_characterControllers[i]->getAction()->getCharacter()->getId() == id) {
+			const Character* character = m_characterControllers[i]->getAction()->getCharacter();
+			int targetX1 = 0, targetY1 = 0, targetX2 = 0, targetY2 = 0;
+			character->getAtariArea(&targetX1, &targetY1, &targetX2, &targetY2);
+			// エフェクト作成
+			int x = (targetX1 + targetX2) / 2;
+			int y = (targetY1 + targetY2) / 2;
+			m_animations.push_back(new Animation(x, y, 3, m_skillFinishGraph));
 			delete m_characterControllers[i];
 			m_characterControllers[i] = m_characterControllers.back();
 			m_characterControllers.pop_back();
@@ -857,7 +880,9 @@ void World::battle() {
 
 	m_dispHpInfoFlag = true;
 
-	playBGM();
+	if (!m_skillFlag) {
+		playBGM();
+	}
 
 	// 世界のフリーズ処理
 	if (m_worldFreezeTime > 0) {
@@ -1171,6 +1196,11 @@ void World::controlItem() {
 			// ここでお金をWorldに反映
 			m_money = min(m_money + targetCharacter->getMoney(), MAX_MONEY);
 			targetCharacter->setMoney(0);
+			if (m_itemVector[i]->getItemCode() == ITEM_CODE::ITEM_ENERGY) {
+				Animation* anime = new Animation(0, 0, 3, m_energyGetGraph);
+				anime->setCharacter(targetCharacter);
+				m_animations.push_back(anime);
+			}
 			break;
 		}
 		// 動き
