@@ -737,7 +737,6 @@ Item* BulletObject::createAttackEnergy() {
 	m_energyCnt++;
 	if (m_energyEraseTime > 0 && m_energyCnt % 15 == 0) {
 		EnergyItem* energyItem = new EnergyItem("energy", (m_x1 + m_x2) / 2, (m_y1 + m_y2) / 2, m_damage, m_energyEraseTime);
-		m_energyEraseTime = 0; // ヒットストップなどが起きてもエネルギー放出は一度だけ
 		return energyItem;
 	}
 	return nullptr;

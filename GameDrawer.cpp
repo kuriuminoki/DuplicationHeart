@@ -27,6 +27,11 @@ GameDrawer::GameDrawer(const Game* game) {
 	m_skillInfoHandle = LoadGraph("picture/battleMaterial/skillInfo.png");
 	m_skillInfoBackHandle = LoadGraph("picture/battleMaterial/skillInfoBack.png");
 
+	m_timeBarNoonHandle = LoadGraph("picture/battleMaterial/timeBarNoon.png");
+	m_timeBarEveningHandle = LoadGraph("picture/battleMaterial/timeBarEvening.png");
+	m_timeBarNightHandle = LoadGraph("picture/battleMaterial/timeBarNight.png");
+	m_needleHandle = LoadGraph("picture/battleMaterial/needle.png");
+
 	m_gameoverHandle = LoadGraph("picture/system/gameover.png");
 
 	m_quickModeHandle = LoadGraph("picture/battleMaterial/quickMode.png");
@@ -47,6 +52,10 @@ GameDrawer::~GameDrawer() {
 	DeleteFontToHandle(m_quickModeFontHandle);
 	DeleteGraph(m_skillInfoHandle);
 	DeleteGraph(m_skillInfoBackHandle);
+	DeleteGraph(m_timeBarNoonHandle);
+	DeleteGraph(m_timeBarEveningHandle);
+	DeleteGraph(m_timeBarNightHandle);
+	DeleteGraph(m_needleHandle);
 	DeleteGraph(m_gameoverHandle);
 	DeleteGraph(m_quickModeHandle);
 	DeleteGraph(m_noticeSaveDataHandle);
@@ -96,14 +105,21 @@ void GameDrawer::draw() {
 	}
 	// Œo‰ßŽžŠÔ TODO: ‰æ‘œ‚É‚·‚é
 	else if (m_worldDrawer->getWorld()->getBrightValue() == 255 && !m_game->getStory()->eventNow()) {
+		int date = m_game->getStory()->getDate();
+		int barHandle = m_timeBarNoonHandle;
+		if (date == 1) { barHandle = m_timeBarEveningHandle; }
+		else if (date == 2) { barHandle = m_timeBarNightHandle; }
+		int x = (int)(1350 * m_exX);
+		int y = (int)(40 * m_exY);
+		double ex = 0.08 * min(m_exX, m_exY);
+		DrawRotaGraph(x, y, ex, 0.0, barHandle, TRUE);
+
 		int time = m_game->getStory()->getTimer()->getTime();
 		int lifespan = m_game->WORLD_LIFESPAN;
-		int wide = GAME_WIDE / 4;
-		int barWide = (int)(10 * m_exX);
-		int leftX = (int)(850 * m_exX);
-		DrawBox(leftX, (int)(50 * m_exY), leftX + wide, (int)(80 * m_exY), BLACK, TRUE);
-		int p = leftX + (time * wide / lifespan);
-		DrawBox(p - barWide, (int)(20 * m_exY), p + barWide, (int)(110 * m_exY), WHITE, TRUE);
+		int wide = (int)(390 * m_exX);
+		int height = (int)(50 * m_exY);
+		int leftX = (int)(1185 * m_exX);
+		DrawRotaGraph(leftX + (time * wide / lifespan), y + height / 2, ex, 0.0, m_needleHandle, TRUE);
 	}
 
 	if (m_game->quickModeNow()) {
