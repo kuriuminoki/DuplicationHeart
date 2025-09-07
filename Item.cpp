@@ -152,6 +152,7 @@ bool Item::atariCharacter(Character* player) {
 CureItem::CureItem(const char* itemName, int x, int y, int cureValue):
 	Item(itemName, x, y)
 {
+	m_itemCode = ITEM_CURE;
 	m_cureValue = cureValue;
 	loadItemGraph();
 }
@@ -176,6 +177,7 @@ void CureItem::arrangePlayer(Character* player) {
 MoneyItem::MoneyItem(const char* itemName, int x, int y, int moneyValue) :
 	Item(itemName, x, y)
 {
+	m_itemCode = ITEM_MONEY;
 	m_moneyValue = moneyValue;
 	loadItemGraph();
 }
@@ -200,6 +202,7 @@ void MoneyItem::arrangePlayer(Character* player) {
 EnergyItem::EnergyItem(const char* itemName, int x, int y, int energyValue, int eraseTime) :
 	Item(itemName, x, y)
 {
+	m_itemCode = ITEM_ENERGY;
 	m_energyValue = energyValue;
 	m_eraseTime = eraseTime;
 	// 獲得量に応じてサイズアップ

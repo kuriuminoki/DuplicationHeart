@@ -9,6 +9,7 @@ class GraphHandle;
 class GraphHandles;
 class SoundPlayer;
 class AnimationDrawer;
+class Character;
 
 class Animation {
 private:
@@ -23,6 +24,10 @@ private:
 
 	// 速度を使う
 	bool m_movable;
+
+	// 座標を追うキャラ（m_x, m_yを使うなら設定不要）
+	const Character* m_character_p;
+	int m_characterId;
 	
 	// カウント
 	int m_cnt;
@@ -31,7 +36,7 @@ private:
 	int m_finishCnt;
 
 	// 画像１枚の表示時間
-	int m_flameCnt;
+	int m_frameCnt;
 
 	// アニメーションが終了
 	bool m_finishFlag;
@@ -40,7 +45,7 @@ private:
 	bool m_loopFlag;
 
 public:
-	Animation(int x, int y, int flameCnt, GraphHandles* graphHandles);
+	Animation(int x, int y, int frameCnt, GraphHandles* graphHandles);
 
 	Animation* createCopy();
 
@@ -49,6 +54,8 @@ public:
 	inline int getY() const { return m_y; }
 	inline int getVx() const { return m_vx; }
 	inline int getVy() const { return m_vy; }
+	inline const Character* getCharacter() const { return m_character_p; }
+	inline int getCharacterId() const { return m_characterId; }
 	inline bool getFinishFlag() const { return m_finishFlag; }
 	inline int getCnt() const { return m_cnt; }
 
@@ -57,6 +64,7 @@ public:
 	inline void setY(int y) { m_y = y; }
 	inline void setVx(int vx) { m_vx = vx; }
 	inline void setVy(int vy) { m_vy = vy; }
+	void setCharacter(Character* character);
 	inline void setMovable(bool movable) { m_movable = movable; }
 	inline void setCnt(int cnt) { m_cnt = cnt; }
 	inline void setFinishCnt(int finishCnt) { m_finishCnt = finishCnt; }
@@ -67,7 +75,7 @@ public:
 	void init();
 
 	// アニメーションの切り替え
-	void changeGraph(GraphHandles* nextGraph, int flameCnt = -1);
+	void changeGraph(GraphHandles* nextGraph, int frameCnt = -1);
 
 	// カウント
 	void count();
@@ -76,7 +84,7 @@ public:
 	GraphHandle* getHandle() const;
 
 	// 今何枚目か
-	int getAnimeNum() const { return m_cnt / m_flameCnt; }
+	int getAnimeNum() const { return m_cnt / m_frameCnt; }
 };
 
 
@@ -94,7 +102,7 @@ protected:
 	int m_textHandle;
 	const int TEXT_SIZE = 50;
 
-	int m_flameWide, m_flameHeight;
+	int m_frameWide, m_frameHeight;
 
 	// 終了したらtrue
 	bool m_finishFlag;
@@ -136,7 +144,7 @@ public:
 	virtual void draw();
 
 protected:
-	void drawFlame();
+	void drawframe();
 };
 
 
@@ -246,7 +254,7 @@ private:
 	GraphHandles* m_duplications;
 	Animation* m_orangeAnime;
 	Animation* m_duplicationsAnime;
-	GraphHandles* m_heartFlame;
+	GraphHandles* m_heartframe;
 	GraphHandles* m_rmem;
 	GraphHandles* m_heartSabi;
 	GraphHandles* m_tvSiesta;

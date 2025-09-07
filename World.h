@@ -146,6 +146,9 @@ private:
 	// エリアに落ちているアイテム
 	std::vector<Item*> m_itemVector;
 
+	// エネルギーアイテム取得時のエフェクト画像
+	GraphHandles* m_energyGetGraph;
+
 	// キャラがやられた時のエフェクト画像
 	GraphHandles* m_characterDeadGraph;
 
@@ -221,6 +224,7 @@ public:
 	inline SoundPlayer* getSoundPlayer() const { return m_soundPlayer_p; }
 	inline double getCameraMaxEx() const { return m_cameraMaxEx; }
 	inline double getCameraMinEx() const { return m_cameraMinEx; }
+	inline GraphHandles* getEnergyGetGraph() const { return m_energyGetGraph; }
 	inline GraphHandles* getCharacterDeadGraph() const { return m_characterDeadGraph; }
 	inline GraphHandles* getSkillFinishGraph() const { return m_skillFinishGraph; }
 	inline GraphHandles* getCharacterDamageGraph() const { return m_characterDamageGraph; }

@@ -10,6 +10,13 @@ class Character;
 class GraphHandles;
 
 
+enum ITEM_CODE {
+	ITEM_CURE,
+	ITEM_MONEY,
+	ITEM_ENERGY
+};
+
+
 /*
 * アイテム
 */
@@ -20,6 +27,8 @@ private:
 	const int ERASE_CNT = 600;
 
 protected:
+	ITEM_CODE m_itemCode;
+
 	int m_cnt;
 
 	// 座標
@@ -66,6 +75,7 @@ public:
 	void setParam(Item* item);
 
 	// ゲッタ
+	inline ITEM_CODE getItemCode() const { return m_itemCode; }
 	inline int getCnt() const { return m_cnt; }
 	inline int getX() const { return m_x; }
 	inline int getY() const { return m_y; }
