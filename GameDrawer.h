@@ -22,6 +22,12 @@ private:
 	int m_skillInfoHandle;
 	int m_skillInfoBackHandle;
 
+	// 時間
+	int m_timeBarNoonHandle;
+	int m_timeBarEveningHandle;
+	int m_timeBarNightHandle;
+	int m_needleHandle;
+
 	// ゲームオーバーの画像
 	int m_gameoverHandle;
 

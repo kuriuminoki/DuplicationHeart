@@ -243,7 +243,7 @@ void WorldDrawer::drawBattleField(const Camera* camera, int bright, bool drawSki
 		// ƒn[ƒg‚Ìî•ñ
 		if (player != -1) {
 			const int x = 30;
-			const int y = 30;
+			const int y = 10;
 			const int wide = 700;
 			const int height = 70;
 			const Character* playerCharacter = actions[player]->getCharacter();
