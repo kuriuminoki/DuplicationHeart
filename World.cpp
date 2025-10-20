@@ -1268,6 +1268,10 @@ void World::atariCharacterAndObject(CharacterController* controller, vector<Obje
 			Animation* atariAnimation = objects[i]->createAnimation(x, y, 3); // 攻撃がキャラに当たったエフェクト
 			if (atariAnimation != nullptr) {
 				m_animations.push_back(atariAnimation);
+				if (character->getId() == m_playerId || objects[i]->getCharacterId() == m_playerId) {
+					// 成功と失敗を実感させるためプレイヤーが関与している当たりのみ画面振動
+					m_camera->shakingStart(10, 10);
+				}
 			}
 			createDamageEffect(x, y, GetRand(3) + 1); // 丸のエフェクト
 			// 効果音
