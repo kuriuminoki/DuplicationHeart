@@ -610,7 +610,7 @@ void TriangleObject::action() {
 
 
 BulletObject::BulletObject(int x, int y, int color, int gx, int gy, int energyEraseTime, AttackInfo* attackInfo) :
-	Object(x - attackInfo->bulletRx(), y - attackInfo->bulletRx(), x + attackInfo->bulletRx(), y + attackInfo->bulletRy())
+	Object(x - attackInfo->bulletRx(), y - attackInfo->bulletRy(), x + attackInfo->bulletRx(), y + attackInfo->bulletRy())
 {
 	// 必要なら後からセッタで設定
 	m_characterId = -1;
@@ -628,8 +628,8 @@ BulletObject::BulletObject(int x, int y, int color, int gx, int gy, int energyEr
 	m_bomb = attackInfo->bulletBomb();
 
 	// 角度を計算し、VXとVYを決定
-	int dx = gx - x;
-	int dy = gy - y;
+	int dx = gx - (x + m_rx);
+	int dy = gy - (y + m_ry);
 	double r = std::atan2((double)dy, (double)dx);
 	m_v = attackInfo->bulletSpeed();
 	m_vx = (int)(m_v * std::cos(r));
