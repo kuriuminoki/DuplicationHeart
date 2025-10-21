@@ -13,11 +13,13 @@ void getGameEx(double& exX, double& exY) {
 }
 
 // 解像度変更
-void ChangeGameResolution() {
-	SetGraphMode(GAME_WIDE, GAME_HEIGHT, GAME_COLOR_BIT_NUM);
+void ChangeGameResolution(int* screen) {
 	InitGraph();
 	InitSoundMem();
 	InitFontToHandle();
-	ChangeWindowMode(WINDOW), DxLib_Init(), SetDrawScreen(DX_SCREEN_BACK);
-	SetMouseDispFlag(MOUSE_DISP); //マウス表示
+	SetGraphMode(GAME_WIDE, GAME_HEIGHT, GAME_COLOR_BIT_NUM);
+	ChangeWindowMode(WINDOW), DxLib_Init();
+	*screen = MakeScreen(GAME_WIDE, GAME_HEIGHT, TRUE);
+	SetDrawScreen(*screen);
+	SetMouseDispFlag(MOUSE_DISP);
 }

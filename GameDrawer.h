@@ -8,6 +8,8 @@ class GameDrawer {
 private:
 	const Game* m_game;
 
+	int m_screenEffectHandle;
+
 	// テキストやフォントのサイズの倍率
 	double m_exX;
 	double m_exY;
@@ -42,12 +44,18 @@ private:
 	int m_noticeX, m_noticeY;
 	double m_noticeEx;
 
+	// 画面の加工用
+	const int THIN = 4;
+	int m_tmpScreenR;
+	int m_tmpScreenG;
+	int m_tmpScreenB;
+
 public:
 	GameDrawer(const Game* game);
 
 	~GameDrawer();
 
-	void draw();
+	void draw(int screen);
 };
 
 

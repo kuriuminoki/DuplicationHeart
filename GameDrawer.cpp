@@ -17,6 +17,8 @@ using namespace std;
 GameDrawer::GameDrawer(const Game* game) {
 	m_game = game;
 
+	m_screenEffectHandle = LoadGraph("picture/battleMaterial/screen.png");
+
 	getGameEx(m_exX, m_exY);
 
 	m_worldDrawer = new WorldDrawer(nullptr);
@@ -44,12 +46,17 @@ GameDrawer::GameDrawer(const Game* game) {
 	m_noticeY = (int)(m_noticeY * (m_exY / 2 * m_noticeEx));
 	m_noticeX += (int)(10 * m_exX);
 	m_noticeY = GAME_HEIGHT - m_noticeY - (int)(10 * m_exY);
+
+	m_tmpScreenR = MakeScreen(GAME_WIDE, GAME_HEIGHT, TRUE);
+	m_tmpScreenG = MakeScreen(GAME_WIDE, GAME_HEIGHT, TRUE);
+	m_tmpScreenB = MakeScreen(GAME_WIDE, GAME_HEIGHT, TRUE);
 }
 
 GameDrawer::~GameDrawer() {
 	delete m_worldDrawer;
 	DeleteFontToHandle(m_skillHandle);
 	DeleteFontToHandle(m_quickModeFontHandle);
+	DeleteGraph(m_screenEffectHandle);
 	DeleteGraph(m_skillInfoHandle);
 	DeleteGraph(m_skillInfoBackHandle);
 	DeleteGraph(m_timeBarNoonHandle);
@@ -59,9 +66,12 @@ GameDrawer::~GameDrawer() {
 	DeleteGraph(m_gameoverHandle);
 	DeleteGraph(m_quickModeHandle);
 	DeleteGraph(m_noticeSaveDataHandle);
+	DeleteGraph(m_tmpScreenR);
+	DeleteGraph(m_tmpScreenG);
+	DeleteGraph(m_tmpScreenB);
 }
 
-void GameDrawer::draw() {
+void GameDrawer::draw(int screen) {
 
 	// ゲームオーバー
 	int gameoverCnt = m_game->getGameoverCnt();
@@ -159,4 +169,29 @@ void GameDrawer::draw() {
 		SetMouseDispFlag(MOUSE_DISP);//マウス表示
 	}
 
+
+	// ここから画面の加工を行う
+	SetDrawScreen(m_tmpScreenR);
+	SetDrawBright(255, 0, 0);
+	DrawGraph(0, 0, screen, TRUE);
+
+	SetDrawScreen(m_tmpScreenG);
+	SetDrawBright(0, 255, 0);
+	DrawGraph(THIN, THIN / 2, screen, TRUE);
+	GraphBlend(m_tmpScreenR, m_tmpScreenG, 255, DX_GRAPH_BLEND_SCREEN);
+
+	SetDrawScreen(m_tmpScreenB);
+	SetDrawBright(0, 0, 255);
+	DrawGraph(THIN / 2, THIN, screen, TRUE);
+	GraphBlend(m_tmpScreenR, m_tmpScreenB, 255, DX_GRAPH_BLEND_SCREEN);
+
+	SetDrawScreen(screen);
+	SetDrawBright(255, 255, 255);
+	DrawGraph(0, 0, m_tmpScreenR, TRUE);
+	GraphBlend(screen, m_screenEffectHandle, 100, DX_GRAPH_BLEND_OVERLAY);
+
+	DrawBox(0, 0, THIN, GAME_HEIGHT, BLACK, TRUE);
+	DrawBox(0, 0, GAME_WIDE, THIN, BLACK, TRUE);
+	DrawBox(GAME_WIDE - THIN, 0, GAME_WIDE, GAME_HEIGHT, BLACK, TRUE);
+	DrawBox(0, GAME_HEIGHT - THIN, GAME_WIDE, GAME_HEIGHT, BLACK, TRUE);
 }
