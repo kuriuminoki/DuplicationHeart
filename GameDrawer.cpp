@@ -171,18 +171,19 @@ void GameDrawer::draw(int screen) {
 
 
 	// Ç±Ç±Ç©ÇÁâÊñ ÇÃâ¡çHÇçsÇ§
+	int fixThin = THIN * m_exX;
 	SetDrawScreen(m_tmpScreenR);
 	SetDrawBright(255, 0, 0);
 	DrawGraph(0, 0, screen, TRUE);
 
 	SetDrawScreen(m_tmpScreenG);
 	SetDrawBright(0, 255, 0);
-	DrawGraph(THIN, THIN / 2, screen, TRUE);
+	DrawGraph(fixThin, fixThin / 2, screen, TRUE);
 	GraphBlend(m_tmpScreenR, m_tmpScreenG, 255, DX_GRAPH_BLEND_SCREEN);
 
 	SetDrawScreen(m_tmpScreenB);
 	SetDrawBright(0, 0, 255);
-	DrawGraph(THIN / 2, THIN, screen, TRUE);
+	DrawGraph(fixThin / 2, fixThin, screen, TRUE);
 	GraphBlend(m_tmpScreenR, m_tmpScreenB, 255, DX_GRAPH_BLEND_SCREEN);
 
 	SetDrawScreen(screen);
@@ -190,8 +191,8 @@ void GameDrawer::draw(int screen) {
 	DrawGraph(0, 0, m_tmpScreenR, TRUE);
 	GraphBlend(screen, m_screenEffectHandle, 100, DX_GRAPH_BLEND_OVERLAY);
 
-	DrawBox(0, 0, THIN, GAME_HEIGHT, BLACK, TRUE);
-	DrawBox(0, 0, GAME_WIDE, THIN, BLACK, TRUE);
-	DrawBox(GAME_WIDE - THIN, 0, GAME_WIDE, GAME_HEIGHT, BLACK, TRUE);
-	DrawBox(0, GAME_HEIGHT - THIN, GAME_WIDE, GAME_HEIGHT, BLACK, TRUE);
+	DrawBox(0, 0, fixThin, GAME_HEIGHT, BLACK, TRUE);
+	DrawBox(0, 0, GAME_WIDE, fixThin, BLACK, TRUE);
+	DrawBox(GAME_WIDE - fixThin, 0, GAME_WIDE, GAME_HEIGHT, BLACK, TRUE);
+	DrawBox(0, GAME_HEIGHT - fixThin, GAME_WIDE, GAME_HEIGHT, BLACK, TRUE);
 }
