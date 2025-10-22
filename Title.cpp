@@ -20,7 +20,7 @@ using namespace std;
 /*
 * セーブデータ選択画面
 */
-SelectSaveData::SelectSaveData() {
+SelectSaveData::SelectSaveData(int* screen) {
 
 	m_initCnt = 0;
 
@@ -29,7 +29,7 @@ SelectSaveData::SelectSaveData() {
 		oss << "savedata/" << i + 1 << "/";
 		m_gameData[i] = new GameData(oss.str().c_str());
 	}
-	ChangeGameResolution();
+	ChangeGameResolution(screen);
 
 	// ボタン
 	double exX, exY;
@@ -180,10 +180,10 @@ void SelectSaveData::saveCommon(int soundVolume) {
 /*
 * タイトル画面
 */
-Title::Title() {
+Title::Title(int* screen) {
 
 	// セーブデータ選択画面
-	m_selectSaveData = new SelectSaveData();
+	m_selectSaveData = new SelectSaveData(screen);
 
 	m_state = TITLE;
 

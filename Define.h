@@ -30,7 +30,7 @@ extern int SLASH_STOP_CNT;
 void getGameEx(double& exX, double& exY);
 
 // ‰ğ‘œ“x•ÏX
-void ChangeGameResolution();
+void ChangeGameResolution(int* screen);
 
 #define GAME_COLOR_BIT_NUM 16
 

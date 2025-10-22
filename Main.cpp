@@ -42,20 +42,18 @@ void Wait() {
 
 //////////メイン関数///////////////////////
 int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
-	SetWindowSizeChangeEnableFlag(TRUE);//windowサイズ変更可能
-	SetUseDirectInputFlag(TRUE);
+
 	SetGraphMode(GAME_WIDE, GAME_HEIGHT, GAME_COLOR_BIT_NUM);
-
-	ChangeWindowMode(WINDOW), DxLib_Init(), SetDrawScreen(DX_SCREEN_BACK);
-	
-	//SetAlwaysRunFlag(TRUE);//画面を常にアクティブ
-
-	// ウィンドウの名前
-	SetMainWindowText("複製のHeart");
-
-	////マウス関連////
+	ChangeWindowMode(WINDOW), DxLib_Init();
+	int screen = MakeScreen(GAME_WIDE, GAME_HEIGHT, TRUE); 
+	SetDrawScreen(screen);
 	SetMouseDispFlag(MOUSE_DISP);//マウス表示
+
+	SetWindowSizeChangeEnableFlag(TRUE);//windowサイズ変更可能
+	SetMainWindowText("Duplication Heart"); // ウィンドウの名前
+	SetUseDirectInputFlag(TRUE);
 	//SetMousePoint(320, 240);//マウスカーソルの初期位置
+	//SetAlwaysRunFlag(TRUE);//画面を常にアクティブ
 	
 	// 画像の拡大処理方式
 	const int DRAW_MODE = DX_DRAWMODE_BILINEAR;
@@ -68,11 +66,11 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 	// ゲーム描画用
 	GameDrawer* gameDrawer = nullptr;
 	// タイトル画面
-	Title* title = new Title();
+	Title* title = new Title(&screen);
 	// ゲーム中ならtrue タイトル画面ならfalse
 	bool gamePlay = false;
 
-	while (ScreenFlip() == 0 && ProcessMessage() == 0 && ClearDrawScreen() == 0)
+	while (SetDrawScreen(screen) == 0 && ProcessMessage() == 0 && ClearDrawScreen() == 0)
 	{
 		updateKey();
 		mouseClick();
@@ -93,10 +91,11 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 				InitFontToHandle();
 				gamePlay = false;
 				SetMouseDispFlag(MOUSE_DISP);//マウス表示
-				title = new Title();
+				title = new Title(&screen);
 			}
 			else if(game->ableDraw()){ 
-				gameDrawer->draw();
+				gameDrawer->draw(screen);
+				//GraphFilter(screen, DX_GRAPH_FILTER_MONO, -60, 7); // test
 			}
 		}
 		else {
@@ -111,8 +110,8 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 			else if (result == Title::REBOOT) {
 				// ゲームを再起動
 				delete title;
-				ChangeGameResolution();
-				title = new Title();
+				ChangeGameResolution(&screen);
+				title = new Title(&screen);
 			}
 		}
 		///////////////
@@ -133,6 +132,10 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 		Wait();
 		if (controlEsc() == TRUE) { DxLib_End(); }
 		//FPS操作ここまで
+
+		// 表画面に描画
+		SetDrawScreen(DX_SCREEN_FRONT);
+		DrawGraph(0, 0, screen, FALSE);
 	}
 
 	DxLib_End(); // DXライブラリ終了処理

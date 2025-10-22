@@ -54,7 +54,7 @@ private:
 
 public:
 
-	SelectSaveData();
+	SelectSaveData(int* screen);
 
 	~SelectSaveData();
 
@@ -127,7 +127,7 @@ private:
 
 public:
 
-	Title();
+	Title(int* screen);
 
 	~Title();
 
