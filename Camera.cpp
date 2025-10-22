@@ -100,11 +100,14 @@ void Camera::setCamera(int* x, int* y, double* ex) const {
 
 
 void Camera::getMouse(int* x, int* y) const {
-	GetMousePoint(x, y);
 
 	// ‰æ–Ê’†‰›‚©‚ç‚Ì‚¸‚ê‚ğŒvZ
 	int dx = *x - m_centerX;
 	int dy = *y - m_centerY;
+
+	// Šg‘å—¦Ÿ‘æ‚Å‹——£‚à•Ï‚í‚é
+	dx = (int)(dx / m_ex);
+	dy = (int)(dy / m_ex);
 
 	// m_x‚Æm_y‚Í‰æ–Ê’†‰›‚É‘Î‰‚·‚éWorld‚ÌÀ•W
 	*x = m_x + dx;
