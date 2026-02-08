@@ -1057,7 +1057,7 @@ void World::controlCharacter() {
 			controller->setCharacterDeadFlag(true);
 		}
 
-		// 斬撃が当たった時のヒットストップ
+		// 斬撃が当たった時のヒットストップ中はスキップ
 		if(controller->getAction()->getCharacter()->getStopCnt() > 0 && controller->getAction()->getCharacter()->getStopCnt() != SLASH_STOP_CNT){
 			continue;
 		}
@@ -1101,10 +1101,10 @@ void World::controlCharacter() {
 	for (unsigned int i = 0; i < size; i++) {
 		CharacterController* controller = m_characterControllers[i];
 
-		// 斬撃が当たった時のヒットストップ
+		// 斬撃が当たった時のヒットストップ中の処理
 		if (controller->getAction()->getCharacter()->getStopCnt() > 0) {
 			controller->consumeStopCnt();
-			// 1フレーム目はcontinueしない（斬撃が二十で発生しないため）
+			// 1フレーム目はcontinueしない（斬撃が二重で発生しないため）
 			if (controller->getAction()->getCharacter()->getStopCnt() != SLASH_STOP_CNT - 1) {
 				continue;
 			}
@@ -1258,7 +1258,8 @@ void World::atariCharacterAndObject(CharacterController* controller, vector<Obje
 	for (unsigned int i = 0; i < objects.size(); i++) {
 		if (objects[i]->slopeFlag() != slope) { continue; }
 		// 当たり判定をここで行う
-		if (objects[i]->atari(controller)) {
+		if (objects[i]->atari(controller) && objects[i]->getId() != controller->getDamagedObjectId()) {
+			controller->setDamagedObjectId(objects[i]->getId()); // 二重で攻撃を受けないように直近で受けた攻撃のIDを記録しておく
 			const Character* character = controller->getAction()->getCharacter();
 			int targetX1 = 0, targetY1 = 0, targetX2 = 0, targetY2 = 0;
 			character->getAtariArea(&targetX1, &targetY1, &targetX2, &targetY2);

@@ -39,6 +39,9 @@ protected:
 	// ダメージの記録 変化したらそれ以降のレコードを削除する
 	ControllerRecorder* m_damageRecorder;
 
+	// 操作対象に攻撃を与えたObjectのID(2重で攻撃を与えない用)
+	int m_damagedObjectId;
+
 public:
 	static const char* CONTROLLER_NAME;
 	virtual const char* getControllerName() const { return this->CONTROLLER_NAME; }
@@ -62,6 +65,7 @@ public:
 	inline const ControllerRecorder* getSlashRecorder() const { return m_slashRecorder; }
 	inline const ControllerRecorder* getBulletRecorder() const { return m_bulletRecorder; }
 	inline const ControllerRecorder* getDamageRecorder() const { return m_damageRecorder; }
+	inline const int getDamagedObjectId() const { return m_damagedObjectId; }
 
 	// セッタ
 	void setAction(CharacterAction* action);
@@ -74,6 +78,7 @@ public:
 	void setDamageRecorder(ControllerRecorder* recorder);
 	void setTarget(Character* character);
 	void setDuplicationFlag(bool flag) { m_duplicationFlag = flag; }
+	void setDamagedObjectId(int damagedObjectId) { m_damagedObjectId = damagedObjectId; }
 
 	// レコーダを初期化
 	void initRecorder();
