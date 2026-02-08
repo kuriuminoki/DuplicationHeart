@@ -45,10 +45,11 @@ const Character* PlayerChanger::play(SoundPlayer* soundPlayer_p, std::vector<Cha
 		return nullptr;
 	}
 
-	const Character* minCharacter = nullptr;
-	const Character* nextPlayer = nullptr;
+	const Character* minCharacter = nullptr; // IDが最小の仲間 これを採用=キャラが一周する
+	const Character* nextPlayer = nullptr; // nowCharacterの次のIDの仲間 基本的にはこれを採用
 	for (unsigned int i = 0; i < controllers_p.size(); i++) {
 		const Character* target = controllers_p[i]->getAction()->getCharacter();
+		if (target->getHp() == 0) { continue; }
 		int groupId = target->getGroupId();
 		int id = target->getId();
 		if (id == m_nowCharacter_p->getId()) { continue; }
@@ -1257,9 +1258,8 @@ void World::atariCharacterAndObject(CharacterController* controller, vector<Obje
 	// 壁や床オブジェクトの処理 (当たり判定と動き)
 	for (unsigned int i = 0; i < objects.size(); i++) {
 		if (objects[i]->slopeFlag() != slope) { continue; }
-		// 当たり判定をここで行う
-		if (objects[i]->atari(controller) && objects[i]->getId() != controller->getDamagedObjectId()) {
-			controller->setDamagedObjectId(objects[i]->getId()); // 二重で攻撃を受けないように直近で受けた攻撃のIDを記録しておく
+		// 当たり判定をここで行う (二重で攻撃を受けないようにobjectIdのチェックと記録もやる)
+		if (objects[i]->atari(controller) && !controller->checkAndPushDamagedObjectId(objects[i]->getId())) {
 			const Character* character = controller->getAction()->getCharacter();
 			int targetX1 = 0, targetY1 = 0, targetX2 = 0, targetY2 = 0;
 			character->getAtariArea(&targetX1, &targetY1, &targetX2, &targetY2);
@@ -1292,7 +1292,7 @@ void World::atariCharacterAndObject(CharacterController* controller, vector<Obje
 			}
 
 			// HP = 0になったとき（やられたとき）
-			if (character->getHp() == 0) {
+			if (character->getHp() <= 0) {
 				if (!character->haveDeadGraph()) {
 					if (character->getBossFlag()) {
 						m_bossDeadEffectCnt = 300; // ボスのやられエフェクトの継続時間
