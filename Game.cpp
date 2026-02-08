@@ -22,7 +22,7 @@ using namespace std;
 
 
 // エリア0でデバッグするときはtrueにする
-const bool TEST_MODE = false;
+const bool TEST_MODE = true;
 
 
 /*
@@ -666,8 +666,17 @@ bool Game::play() {
 			m_skill->play();
 		}
 	}
+	else if (TEST_MODE) {
+		m_world->battle();
+		if (m_skill != nullptr) { // スキル発動中で、最後のループ中
+			if (m_world->getWorldFreezeTime() == 0 && m_skill->play()) {
+				endSkill();
+			}
+		}
+		return false;
+	}
 	// ストーリー進行
-	else if (m_story->play(WORLD_LIFESPAN, MAX_VERSION, m_timeSpeed)) {
+	else if (!TEST_MODE && m_story->play(WORLD_LIFESPAN, MAX_VERSION, m_timeSpeed)) {
 		m_timeSpeed = DEFAULT_TIME_SPEED;
 		// 次のループへ移行の場合Storyを作り直す
 		if (m_story->getLoop() > m_gameData->getLoop()) {
@@ -708,9 +717,6 @@ bool Game::play() {
 	if (m_world->getWorldFreezeTime() == 0) {
 		m_soundPlayer->play();
 	}
-
-	// テストは以降を実行しない
-	if (TEST_MODE) { return false; }
 
 	// 前のセーブポイントへ戻ることが要求された TODO: 削除
 	int prevLoop = m_story->getBackPrevSave();

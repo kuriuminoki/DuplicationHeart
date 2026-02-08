@@ -208,6 +208,7 @@ std::string Conversation::getText() const {
 
 // 画像を返す（描画用）
 GraphHandle* Conversation::getGraph() const {
+	if (m_speakerGraph_p == nullptr) { return nullptr; }
 	int size = (int)m_speakerGraph_p->getSize();
 	int index = size - (m_textNow / 2 % size) - 1;
 	index = m_textNow == (unsigned int)m_text.size() ? 0 : index;
@@ -598,7 +599,12 @@ void Conversation::setNextText(const int size, char* buff) {
 
 void Conversation::setSpeakerGraph(const char* faceName) {
 	Character* c = m_world_p->getCharacterWithName(m_speakerName);
-	m_speakerGraph_p = c->getFaceHandle()->getGraphHandle(faceName);
+	if (c == nullptr) {
+		m_speakerGraph_p = nullptr;
+	}
+	else {
+		m_speakerGraph_p = c->getFaceHandle()->getGraphHandle(faceName);
+	}
 }
 
 // セッタ

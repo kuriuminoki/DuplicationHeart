@@ -50,7 +50,9 @@ void ConversationDrawer::draw() {
 	// キャラの顔画像は正方形を想定
 	int graphSize = 0;
 	GetGraphSize(graph->getHandle(), &graphSize, &graphSize);
-	graphSize = (int)(graphSize * m_exX);
+	if (graph != nullptr) {
+		graphSize = (int)(graphSize * m_exX);
+	}
 	// フキダシのフチの幅
 	const int TEXT_GRAPH_EDGE = (int)(35 * m_exX);
 	// 端の余白
@@ -117,7 +119,9 @@ void ConversationDrawer::draw() {
 				// セリフ
 				drawText(EDGE_X + TEXT_GRAPH_EDGE * 2 + graphSize + dx, Y1 + TEXT_GRAPH_EDGE + dy, (int)(TEXT_SIZE * m_exX) + CHAR_EDGE, text, BLACK, m_textHandle);
 				// キャラの顔画像
-				graph->draw(EDGE_X + TEXT_GRAPH_EDGE + graphSize / 2 + dx, Y1 + TEXT_GRAPH_EDGE + graphSize / 2 + dy, m_exX);
+				if (graph != nullptr) {
+					graph->draw(EDGE_X + TEXT_GRAPH_EDGE + graphSize / 2 + dx, Y1 + TEXT_GRAPH_EDGE + graphSize / 2 + dy, m_exX);
+				}
 			}
 		}
 	}
