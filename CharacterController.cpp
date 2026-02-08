@@ -50,7 +50,6 @@ CharacterController::CharacterController(Brain* brain, CharacterAction* characte
 
 	m_duplicationFlag = false;
 
-	m_damagedObjectId = -1;
 }
 
 CharacterController::CharacterController() :
@@ -259,6 +258,18 @@ void CharacterController::stopCharacter(int cnt) {
 	m_characterAction->stopCharacter(cnt);
 }
 
+bool CharacterController::checkAndPushDamagedObjectId(int id) {
+	for (unsigned i = 0; i < m_damagedObjectIds.size(); i++) {
+		if (m_damagedObjectIds[i] == id) {
+			return true;
+		}
+	}
+	m_damagedObjectIds.push_back(id);
+	// 増加し続けるのを防ぐため古いIDは不要とみなし掃除する
+	if (m_damagedObjectIds.size() > 10) { m_damagedObjectIds.erase(m_damagedObjectIds.begin(), m_damagedObjectIds.begin() + 4); }
+	return false;
+}
+
 
 /*
 * キャラコントロール マウスを使う可能性もあるのでCameraが必要
@@ -282,7 +293,7 @@ CharacterController* NormalController::createCopy(std::vector<Character*> charac
 	res->setSlashRecorder(m_slashRecorder);
 	res->setBulletRecorder(m_bulletRecorder);
 	res->setDamageRecorder(m_damageRecorder);
-	res->setDamagedObjectId(m_damagedObjectId);
+	res->setDamagedObjectIds(m_damagedObjectIds);
 	return res;
 }
 

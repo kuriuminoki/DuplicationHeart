@@ -40,7 +40,7 @@ protected:
 	ControllerRecorder* m_damageRecorder;
 
 	// 操作対象に攻撃を与えたObjectのID(2重で攻撃を与えない用)
-	int m_damagedObjectId;
+	std::vector<int> m_damagedObjectIds;
 
 public:
 	static const char* CONTROLLER_NAME;
@@ -65,7 +65,6 @@ public:
 	inline const ControllerRecorder* getSlashRecorder() const { return m_slashRecorder; }
 	inline const ControllerRecorder* getBulletRecorder() const { return m_bulletRecorder; }
 	inline const ControllerRecorder* getDamageRecorder() const { return m_damageRecorder; }
-	inline const int getDamagedObjectId() const { return m_damagedObjectId; }
 
 	// セッタ
 	void setAction(CharacterAction* action);
@@ -78,7 +77,7 @@ public:
 	void setDamageRecorder(ControllerRecorder* recorder);
 	void setTarget(Character* character);
 	void setDuplicationFlag(bool flag) { m_duplicationFlag = flag; }
-	void setDamagedObjectId(int damagedObjectId) { m_damagedObjectId = damagedObjectId; }
+	inline void setDamagedObjectIds(std::vector<int>& list) { for (unsigned int i = 0; i < list.size(); i++) { m_damagedObjectIds.push_back(list[i]); } }
 
 	// レコーダを初期化
 	void initRecorder();
@@ -149,6 +148,9 @@ public:
 
 	// キャラをストップ
 	void stopCharacter(int cnt);
+
+	// 攻撃を受けたことがあるIDかチェックし、ないならpushしてfalseを返す
+	bool checkAndPushDamagedObjectId(int id);
 };
 
 
