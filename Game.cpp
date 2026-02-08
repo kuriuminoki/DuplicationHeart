@@ -675,6 +675,9 @@ bool Game::play() {
 				endSkill();
 			}
 		}
+		if (m_world->getWorldFreezeTime() == 0) {
+			m_soundPlayer->play();
+		}
 		return false;
 	}
 	// ストーリー進行

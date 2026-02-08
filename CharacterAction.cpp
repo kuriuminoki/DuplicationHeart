@@ -150,7 +150,7 @@ void CharacterAction::setParam(CharacterAction* action) {
 }
 
 void CharacterAction::setState(CHARACTER_STATE state) {
-	if (m_state == CHARACTER_STATE::DAMAGE) { return; }
+	if (m_state == CHARACTER_STATE::DAMAGE || m_state == CHARACTER_STATE::INIT) { return; }
 	m_state = state;
 }
 

@@ -891,7 +891,7 @@ void Valkyria::switchPreJump(int cnt) {
 }
 
 // 斬撃攻撃をする
-vector<Object*>* Valkyria::slashAttack(bool leftDirection, int cnt, bool grand, SoundPlayer* soundPlayer) {
+vector<Object*>* Valkyria::slashZanzouAttack(bool leftDirection, int cnt, bool grand, SoundPlayer* soundPlayer, GraphHandles* slashGraphHandles) {
 	// 攻撃範囲を決定
 	int attackWide, attackHeight;
 	GetGraphSize(m_graphHandle->getStandSlashHandle()->getGraphHandles()->getHandle(0), &attackWide, &attackHeight);
@@ -905,16 +905,15 @@ vector<Object*>* Valkyria::slashAttack(bool leftDirection, int cnt, bool grand, 
 	int index = 0;
 	int slashCountSum = m_attackInfo->slashCountSum() / 3 + 1;
 	SlashObject* attackObject = nullptr;
-	GraphHandles* slashHandles = m_graphHandle->getSlashHandle()->getGraphHandles();
 	// 攻撃の方向
-	slashHandles->setReverseX(m_leftDirection);
+	slashGraphHandles->setReverseX(m_leftDirection);
 	// キャラの身長
 	int height = attackHeight;
 	// cntが攻撃のタイミングならオブジェクト生成
 	if (cnt == m_attackInfo->slashCountSum() - 1) {
-		index = 0 % slashHandles->getSize();
+		index = 0 % slashGraphHandles->getSize();
 		attackObject = new SlashObject(x1, m_y, x2, m_y + height,
-			slashHandles->getGraphHandle(index), m_attackInfo->slashCountSum() - 12, DEFAULT_SLASH_ENERGY_TIME, m_attackInfo);
+			slashGraphHandles->getGraphHandle(index), m_attackInfo->slashCountSum() - 12, DEFAULT_SLASH_ENERGY_TIME, m_attackInfo);
 		// 効果音
 		if (soundPlayer != nullptr) {
 			soundPlayer->pushSoundQueue(m_attackInfo->slashStartSoundHandle(),
@@ -923,14 +922,14 @@ vector<Object*>* Valkyria::slashAttack(bool leftDirection, int cnt, bool grand, 
 		}
 	}
 	else if (cnt == m_attackInfo->slashCountSum() * 2 / 3) {
-		index = 1 % slashHandles->getSize();
+		index = 1 % slashGraphHandles->getSize();
 		attackObject = new SlashObject(x1, m_y, x2, m_y + height,
-			slashHandles->getGraphHandle(index), m_attackInfo->slashCountSum() - slashCountSum - 6, DEFAULT_SLASH_ENERGY_TIME, m_attackInfo);
+			slashGraphHandles->getGraphHandle(index), m_attackInfo->slashCountSum() - slashCountSum - 6, DEFAULT_SLASH_ENERGY_TIME, m_attackInfo);
 	}
 	else if (cnt == m_attackInfo->slashCountSum() / 3) {
-		index = 2 % slashHandles->getSize();
+		index = 2 % slashGraphHandles->getSize();
 		attackObject = new SlashObject(x1, m_y, x2, m_y + height,
-			slashHandles->getGraphHandle(index), m_attackInfo->slashCountSum() - 2 * slashCountSum, DEFAULT_SLASH_ENERGY_TIME, m_attackInfo);
+			slashGraphHandles->getGraphHandle(index), m_attackInfo->slashCountSum() - 2 * slashCountSum, DEFAULT_SLASH_ENERGY_TIME, m_attackInfo);
 	}
 	if (attackObject != nullptr) {
 		// 自滅防止
@@ -942,6 +941,11 @@ vector<Object*>* Valkyria::slashAttack(bool leftDirection, int cnt, bool grand, 
 		return nullptr;
 	}
 	return new std::vector<Object*>{ attackObject };
+}
+
+// 斬撃攻撃をする
+vector<Object*>* Valkyria::slashAttack(bool leftDirection, int cnt, bool grand, SoundPlayer* soundPlayer) {
+	return slashZanzouAttack(leftDirection, cnt, grand, soundPlayer, m_graphHandle->getSlashHandle()->getGraphHandles());
 }
 
 
@@ -1194,12 +1198,12 @@ vector<Object*>* Sun::bulletAttack(int cnt, int gx, int gy, SoundPlayer* soundPl
 * Boss1: アーカイブ
 */
 Archive::Archive(const char* name, int hp, int x, int y, int groupId) :
-	Heart(name, hp, x, y, groupId)
+	Valkyria(name, hp, x, y, groupId)
 {
 
 }
 Archive::Archive(const char* name, int hp, int x, int y, int groupId, AttackInfo* attackInfo) :
-	Heart(name, hp, x, y, groupId, attackInfo)
+	Valkyria(name, hp, x, y, groupId, attackInfo)
 {
 
 }
@@ -1227,7 +1231,10 @@ void Archive::switchSlash(int cnt) {
 // 斬撃攻撃をする
 vector<Object*>* Archive::slashAttack(bool leftDirection, int cnt, bool grand, SoundPlayer* soundPlayer) {
 
-	if (!grand) { return nullptr; }
+	// 空中はモーションが違う
+	if (!grand) { 
+		return Valkyria::slashZanzouAttack(leftDirection, cnt, grand, soundPlayer, m_graphHandle->getAirSlashEffectHandle()->getGraphHandles());
+	}
 
 	// 攻撃範囲を決定
 	int centerX = getCenterX();
