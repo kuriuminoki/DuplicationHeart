@@ -613,7 +613,7 @@ class ArchiveAction :
 {
 private:
 
-	// 最初のHP表示アニメ用
+	// 最初のHP表示アニメ用 falseの間は動かない
 	bool m_initCompFlag;
 
 	// 初期体力
