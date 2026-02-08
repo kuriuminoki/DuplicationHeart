@@ -546,7 +546,9 @@ Game::Game(const char* saveFilePath, int loop) {
 	m_world->setDate(m_story->getDate());
 
 	// セーブデータに上書き
-	m_gameData->updateStory(m_story);
+	if (!TEST_MODE) {
+		m_gameData->updateStory(m_story);
+	}
 
 	// データを世界に反映
 	m_gameData->asignWorld(m_world, false);
