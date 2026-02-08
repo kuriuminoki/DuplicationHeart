@@ -552,6 +552,9 @@ public:
 
 	Character* createCopy();
 
+	// —§‚¿ËŒ‚‰æ‘œ‚ğƒZƒbƒg
+	void switchBullet(int cnt);
+
 	// ËŒ‚UŒ‚‚ğ‚·‚é
 	std::vector<Object*>* bulletAttack(int cnt, int gx, int gy, SoundPlayer* soundPlayer);
 

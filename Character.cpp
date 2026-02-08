@@ -824,6 +824,11 @@ Character* Hierarchy::createCopy() {
 	return res;
 }
 
+// —§‚¿ËŒ‚‰æ‘œ‚ğƒZƒbƒg
+void Hierarchy::switchBullet(int cnt) {
+	Character::switchBullet(cnt);
+}
+
 // ËŒ‚UŒ‚‚ğ‚·‚é
 vector<Object*>* Hierarchy::bulletAttack(int cnt, int gx, int gy, SoundPlayer* soundPlayer) {
 	if (cnt != getBulletRapid()) { return nullptr; }
