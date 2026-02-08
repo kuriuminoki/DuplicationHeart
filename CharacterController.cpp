@@ -49,6 +49,8 @@ CharacterController::CharacterController(Brain* brain, CharacterAction* characte
 	m_damageRecorder = nullptr;
 
 	m_duplicationFlag = false;
+
+	m_damagedObjectId = -1;
 }
 
 CharacterController::CharacterController() :
@@ -280,6 +282,7 @@ CharacterController* NormalController::createCopy(std::vector<Character*> charac
 	res->setSlashRecorder(m_slashRecorder);
 	res->setBulletRecorder(m_bulletRecorder);
 	res->setDamageRecorder(m_damageRecorder);
+	res->setDamagedObjectId(m_damagedObjectId);
 	return res;
 }
 
