@@ -7,6 +7,8 @@
 #include<vector>
 
 class Object;
+class BulletObject;
+class SlashObject;
 class GraphHandle;
 class GraphHandles;
 class CharacterGraphHandle;
@@ -434,6 +436,13 @@ public:
 
 protected:
 	void countDrawCnt(){ if (SHAKING_FLAG) { m_drawCnt++; } }
+
+	// 作成した攻撃オブジェクトの最終調整
+	void prepareBulletObject(BulletObject* bulletObject);
+	void prepareSlashObject(SlashObject* slashObject);
+
+	// キャラから発せられる効果音をキューに入れる
+	void pushCharacterSoundQueue(int handle, SoundPlayer* soundPlayer);
 };
 
 
