@@ -61,6 +61,9 @@ public:
 
 	virtual void setGoalToTarget() = 0;
 
+	// aŒ‚UŒ‚‚ğU‚éÅ‘å‹——£
+	virtual int getSlashReach() const { return 0; }
+
 	// UŒ‚‘ÎÛ‚ğŒˆ‚ß‚é(AIƒNƒ‰ƒX‚ÅƒI[ƒoƒ‰ƒCƒh‚·‚éB)
 	virtual void searchTarget(const Character* character) { }
 
@@ -238,6 +241,9 @@ public:
 	int bulletOrder();
 	void setGoalToTarget();
 
+	// aŒ‚UŒ‚‚ğU‚éÅ‘å‹——£
+	int getSlashReach() const { return 800; }
+
 	// UŒ‚‘ÎÛ‚ğŒˆ‚ß‚é(target‚Ì‚Ü‚Ü‚©Acharacter‚É•ÏX‚·‚é‚©)
 	void searchTarget(const Character* character);
 
@@ -344,10 +350,6 @@ public:
 class ValkiriaAI :
 	public FollowNormalAI
 {
-private:
-
-	const int SLASH_REACH = 1200;
-
 public:
 	static const char* BRAIN_NAME;
 	const char* getBrainName() const { return this->BRAIN_NAME; }
@@ -360,6 +362,9 @@ public:
 	int bulletOrder() { return 0; }
 	void moveOrder(int& right, int& left, int& up, int& down);
 	int jumpOrder();
+
+	// aŒ‚UŒ‚‚ğU‚éÅ‘å‹——£
+	int getSlashReach() const { return 1200; }
 
 	// UŒ‚‘ÎÛ‚ğ•ÏX‚·‚é•K—v‚ª‚ ‚é‚È‚çtrue‚ÅƒAƒs[ƒ‹‚·‚éB
 	bool needSearchTarget() const;
@@ -448,10 +453,6 @@ public:
 class FrenchAI :
 	public NormalAI
 {
-private:
-
-	const int SLASH_REACH = 1500;
-
 public:
 	static const char* BRAIN_NAME;
 	const char* getBrainName() const { return this->BRAIN_NAME; }
@@ -465,6 +466,28 @@ public:
 	void moveOrder(int& right, int& left, int& up, int& down);
 	int jumpOrder() { return 0; }
 	int squatOrder() { m_squatCnt = 0; return 0; }
+
+	// aŒ‚UŒ‚‚ğU‚éÅ‘å‹——£
+	int getSlashReach() const { return 1500; }
+};
+
+
+/*
+* ƒJƒeƒSƒŠ[Z—pAI
+*/
+class CategoryZAI :
+	public FrenchAI
+{
+public:
+	static const char* BRAIN_NAME;
+	const char* getBrainName() const { return this->BRAIN_NAME; }
+
+	CategoryZAI();
+
+	Brain* createCopy(std::vector<Character*> characters, const Camera* camera);
+
+	// aŒ‚UŒ‚‚ğU‚éÅ‘å‹——£
+	int getSlashReach() const { return 500; }
 };
 
 
