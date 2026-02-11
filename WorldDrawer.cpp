@@ -278,5 +278,4 @@ void WorldDrawer::drawBattleField(const Camera* camera, int bright, bool drawSki
 		oss << "‚oF" << money;
 		DrawStringToHandle((int)(1650 * m_exX), (int)(20 * m_exY), oss.str().c_str(), BLACK, m_font);
 	}
-
 }

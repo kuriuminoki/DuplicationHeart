@@ -132,6 +132,8 @@ void GameDrawer::draw(int screen) {
 		DrawRotaGraph(leftX + (time * wide / lifespan), y + height / 2, ex, 0.0, m_needleHandle, TRUE);
 	}
 
+	filterRetroDisp(screen);
+
 	if (m_game->quickModeNow()) {
 		m_quickModeCnt++;
 		double angle = PI / 180 * m_quickModeCnt;
@@ -168,9 +170,11 @@ void GameDrawer::draw(int screen) {
 	else{
 		SetMouseDispFlag(MOUSE_DISP);//マウス表示
 	}
+}
 
 
-	// ここから画面の加工を行う
+// レトロゲーム風の画面加工を行う
+void GameDrawer::filterRetroDisp(int screen) {
 	int fixThin = THIN * m_exX;
 	SetDrawScreen(m_tmpScreenR);
 	SetDrawBright(255, 0, 0);
