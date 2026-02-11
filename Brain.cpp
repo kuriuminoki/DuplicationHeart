@@ -25,6 +25,7 @@ const char* FlightAI::BRAIN_NAME = "FlightAI";
 const char* FollowFlightAI::BRAIN_NAME = "FollowFlightAI";
 const char* HierarchyAI::BRAIN_NAME = "HierarchyAI";
 const char* FrenchAI::BRAIN_NAME = "FrenchAI";
+const char* CategoryZAI::BRAIN_NAME = "CategoryZAI";
 const char* SunAI::BRAIN_NAME = "SunAI";
 
 // ƒNƒ‰ƒX–¼‚©‚çBrain‚ğì¬‚·‚éŠÖ”
@@ -62,6 +63,9 @@ Brain* createBrain(const string brainName, const Camera* camera_p) {
 	}
 	else if (brainName == FrenchAI::BRAIN_NAME) {
 		brain = new FrenchAI();
+	}
+	else if (brainName == CategoryZAI::BRAIN_NAME) {
+		brain = new CategoryZAI();
 	}
 	else if (brainName == SunAI::BRAIN_NAME) {
 		brain = new SunAI();
@@ -405,7 +409,7 @@ int NormalAI::slashOrder() {
 		return 0;
 	}
 	// ‰“‹——£‚Ì“G‚É‚ÍaŒ‚‚µ‚È‚¢
-	if (abs(m_target_p->getCenterX() - m_characterAction_p->getCharacter()->getCenterX()) > 800) {
+	if (abs(m_target_p->getCenterX() - m_characterAction_p->getCharacter()->getCenterX()) > getSlashReach()) {
 		return 0;
 	}
 	// ƒ‰ƒ“ƒ_ƒ€‚ÅaŒ‚
@@ -744,14 +748,14 @@ int ValkiriaAI::slashOrder() {
 	int x = m_characterAction_p->getCharacter()->getCenterX();
 	int y = m_characterAction_p->getCharacter()->getY() + m_characterAction_p->getCharacter()->getHeight();
 	// ‹——£‚Ì‹ß‚¢“G‚ª‚‚­‚É‚¢‚é‚È‚ç
-	if ((abs(x - m_target_p->getCenterX()) < SLASH_REACH) && (y - m_target_p->getCenterY() > 200)) {
+	if ((abs(x - m_target_p->getCenterX()) < getSlashReach()) && (y - m_target_p->getCenterY() > 200)) {
 		// ’n–Ê‚É‚¢‚é‚¤‚¿‚ÍaŒ‚‚µ‚È‚¢
 		if (m_characterAction_p->getGrand()) {
 			return 0;
 		}
 	}
 	// ‰“‹——£‚Ì“G‚É‚ÍaŒ‚‚µ‚È‚¢
-	if (abs(m_target_p->getCenterX() - x) >= SLASH_REACH) {
+	if (abs(m_target_p->getCenterX() - x) >= getSlashReach()) {
 		return 0;
 	}
 	// ƒ‰ƒ“ƒ_ƒ€‚ÅaŒ‚
@@ -777,7 +781,7 @@ void ValkiriaAI::moveOrder(int& right, int& left, int& up, int& down) {
 	int x = m_characterAction_p->getCharacter()->getCenterX();
 	if (m_follow_p != nullptr && m_target_p != nullptr && m_target_p->getHp() > 0) {
 		// í“¬’†‚Ì“G‚ª‹ß‚­‚É‚¢‚é‚È‚çƒn[ƒg‚Æ‚Ì‹——£‚ğ‚ ‚é’ö“x‹C‚É‚¹‚¸target‚ğ’ÇÕ
-		if (abs(m_follow_p->getCenterX() - x) < FOLLOW_X_ERROR * 2 && abs(m_target_p->getCenterX() - x) < SLASH_REACH) {
+		if (abs(m_follow_p->getCenterX() - x) < FOLLOW_X_ERROR * 2 && abs(m_target_p->getCenterX() - x) < getSlashReach()) {
 			NormalAI::moveOrder(right, left, up, down);
 			return;
 		}
@@ -794,7 +798,7 @@ int ValkiriaAI::jumpOrder() {
 		// ƒ‰ƒ“ƒ_ƒ€‚ÅƒWƒƒƒ“ƒv
 		if (m_squatCnt == 0 && GetRand(99) < 20 && m_target_p != nullptr && m_target_p->getHp() > 0) {
 			// ‹——£‚Ì‹ß‚¢“G‚ª‚‚­‚É‚¢‚é‚È‚ç
-			if ((abs(x - m_target_p->getCenterX()) < SLASH_REACH) && (y - m_target_p->getCenterY() > 200)) {
+			if ((abs(x - m_target_p->getCenterX()) < getSlashReach()) && (y - m_target_p->getCenterY() > 200)) {
 				m_jumpCnt = GetRand(maxJump - minJump) + minJump;
 			}
 		}
@@ -806,7 +810,7 @@ int ValkiriaAI::jumpOrder() {
 bool ValkiriaAI::needSearchTarget() const {
 	// ¡‚Ìƒ^[ƒQƒbƒg‚Í‹——£‚ª‰“‚¢‚©‚ç
 	if (m_target_p != nullptr && m_target_p->getHp() > 0) {
-		if (abs(m_target_p->getCenterX() - m_characterAction_p->getCharacter()->getCenterX()) > SLASH_REACH * 2) {
+		if (abs(m_target_p->getCenterX() - m_characterAction_p->getCharacter()->getCenterX()) > getSlashReach() * 2) {
 			return true;
 		}
 	}
@@ -997,14 +1001,14 @@ int FrenchAI::slashOrder() {
 	int x = m_characterAction_p->getCharacter()->getCenterX();
 	int y = m_characterAction_p->getCharacter()->getY() + m_characterAction_p->getCharacter()->getHeight();
 	// ‹——£‚Ì‹ß‚¢“G‚ª‚‚­‚É‚¢‚é‚È‚ç
-	if ((abs(x - m_target_p->getCenterX()) < SLASH_REACH) && (y - m_target_p->getCenterY() > 200)) {
+	if ((abs(x - m_target_p->getCenterX()) < getSlashReach()) && (y - m_target_p->getCenterY() > 200)) {
 		// ’n–Ê‚É‚¢‚é‚¤‚¿‚ÍaŒ‚‚µ‚È‚¢
 		if (m_characterAction_p->getGrand()) {
 			return 0;
 		}
 	}
 	// ‰“‹——£‚Ì“G‚É‚ÍaŒ‚‚µ‚È‚¢
-	if (abs(m_target_p->getCenterX() - x) >= SLASH_REACH) {
+	if (abs(m_target_p->getCenterX() - x) >= getSlashReach()) {
 		return 0;
 	}
 	// ƒ‰ƒ“ƒ_ƒ€‚ÅaŒ‚
@@ -1023,6 +1027,23 @@ void FrenchAI::moveOrder(int& right, int& left, int& up, int& down) {
 		return;
 	}
 	NormalAI::moveOrder(right, left, up, down);
+}
+
+
+/*
+*  ƒJƒeƒSƒŠ[Z—pAI
+*/
+CategoryZAI::CategoryZAI() :
+	FrenchAI()
+{
+
+}
+
+Brain* CategoryZAI::createCopy(std::vector<Character*> characters, const Camera* camera) {
+	CategoryZAI* res = new CategoryZAI();
+	copyTarget(characters, getTargetId(), res);
+	setParam(res);
+	return res;
 }
 
 

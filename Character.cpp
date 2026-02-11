@@ -37,7 +37,7 @@ Character* createCharacter(const char* characterName, int hp, int x, int y, int 
 	else if (name == "コハル") {
 		character = new Koharu(name.c_str(), hp, x, y, groupId);
 	}
-	else if (name == "棒人間" || name == "クロ人間" || name == "ソッリーソ") {
+	else if (name == "棒人間" || name == "クロ人間" || name == "ソッリーソ" || name == "カテゴリーZ") {
 		character = new SlashOnly(name.c_str(), hp, x, y, groupId);
 	}
 	else if (name == "緑人間" || name == "フェーレース") {
